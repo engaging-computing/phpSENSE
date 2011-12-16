@@ -1,0 +1,88 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Soap
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+Wsdl.php
+file
+
+
+
+
+2009-09-16T20:54:41.000000Z
+9e968ae3ebe8d8771c07bbbebad8d7e3
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Client.php
+file
+
+
+
+
+2009-09-16T20:54:41.000000Z
+2942584b445cc4f870d14c66d0c51ec2
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Server
+dir
+
+AutoDiscover
+dir
+
+Wsdl
+dir
+
+Server.php
+file
+
+
+
+
+2009-09-16T20:54:41.000000Z
+3eb63a7f3ab297332ae8b9a46d11cc2c
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+AutoDiscover.php
+file
+
+
+
+
+2009-09-16T20:54:41.000000Z
+5870a710b1376789287e0b030add3e50
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Client
+dir
+

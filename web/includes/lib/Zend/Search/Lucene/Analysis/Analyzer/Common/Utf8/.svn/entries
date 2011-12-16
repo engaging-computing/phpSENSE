@@ -1,0 +1,40 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Search/Lucene/Analysis/Analyzer/Common/Utf8
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+CaseInsensitive.php
+file
+
+
+
+
+2009-09-16T20:54:49.000000Z
+48989e4751a73f4b5025cf7d926b0667
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+

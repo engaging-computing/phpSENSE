@@ -1,0 +1,68 @@
+8
+
+dir
+2467
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/html/img/vis
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2011-06-09T15:29:34.774080Z
+2140
+hmckusic
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+marker.png
+file
+
+
+
+
+2011-11-10T01:05:36.000000Z
+fbfe56663142968adf7b3e3acfeb50e3
+2011-06-07T16:26:58.705918Z
+2123
+hmckusic
+has-props
+
+v3icon.php
+file
+
+
+
+
+2011-11-10T01:05:36.000000Z
+83cbdd8a880b811f8a3df77aed962c4c
+2011-06-07T13:17:45.396566Z
+2117
+hmckusic
+
+custommap
+dir
+
+measured.php
+file
+
+
+
+
+2011-11-10T01:05:36.000000Z
+238bbf0d9f4fed9f0c454f7c18b03ef4
+2011-06-09T15:29:34.774080Z
+2140
+hmckusic
+

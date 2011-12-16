@@ -1,0 +1,52 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Service/Nirvanix/Namespace
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+Base.php
+file
+
+
+
+
+2009-09-16T20:54:41.000000Z
+e729ad01667d10d5c30e8e563e3c4ad7
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Imfs.php
+file
+
+
+
+
+2009-09-16T20:54:41.000000Z
+82483c2f0e784407dece9567ff7f1b0c
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+

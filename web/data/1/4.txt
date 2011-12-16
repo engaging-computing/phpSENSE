@@ -1,0 +1,2 @@
+time,latitude,longitude,movement,"room temperature","room light","sound levels","external temperature"
+123456789,42,-70,1,20,30,40,50

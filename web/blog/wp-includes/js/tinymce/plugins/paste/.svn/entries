@@ -1,0 +1,79 @@
+8
+
+dir
+2114
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/blog/wp-includes/js/tinymce/plugins/paste
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2011-02-14T21:21:04.684310Z
+1917
+ccorcora
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+editor_plugin.js
+file
+
+
+
+
+2011-05-31T16:14:32.000000Z
+96c894139b58313c7db685343689df3e
+2011-02-14T21:21:04.684310Z
+1917
+ccorcora
+
+pasteword.htm
+file
+
+
+
+
+2011-05-31T16:14:32.000000Z
+60d6e9aaf1aafe06b85da92df1a486d3
+2011-02-14T21:21:04.684310Z
+1917
+ccorcora
+
+pastetext.htm
+file
+
+
+
+
+2011-05-31T16:14:32.000000Z
+892be984236242a11a6d4490a978d754
+2011-02-14T21:21:04.684310Z
+1917
+ccorcora
+
+js
+dir
+
+blank.htm
+file
+
+
+
+
+2011-05-31T16:14:32.000000Z
+5dbbcbc1f4bcbe5fe9f22905a7838b57
+2011-02-14T21:21:04.684310Z
+1917
+ccorcora
+

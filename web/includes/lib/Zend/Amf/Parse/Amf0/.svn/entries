@@ -1,0 +1,52 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Amf/Parse/Amf0
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+Serializer.php
+file
+
+
+
+
+2009-09-16T20:54:48.000000Z
+5964986895c67f50135c16d9e8870d1b
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Deserializer.php
+file
+
+
+
+
+2009-09-16T20:54:48.000000Z
+8000f519193680046b639fb8454b7cc5
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+

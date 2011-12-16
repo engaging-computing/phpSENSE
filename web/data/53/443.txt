@@ -1,0 +1,2 @@
+time,light,temperature,sound
+1245777567,123,12,4

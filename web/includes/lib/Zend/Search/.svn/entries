@@ -1,0 +1,55 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Search
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+Lucene.php
+file
+
+
+
+
+2009-09-16T20:54:49.000000Z
+364d5b7addfc3360975a59f81eccdb91
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Exception.php
+file
+
+
+
+
+2009-09-16T20:54:49.000000Z
+623bd98435d24e38fd942eba688bd3df
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Lucene
+dir
+

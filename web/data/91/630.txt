@@ -1,0 +1,2 @@
+date,time,station,latitude,longitude,"(turbidity) ntu",do%,"do ","temp c","ms/cm cond.",ms/cmc,ph,"(redox)   orp",nh4,nh3
+11/16/2009,"12:16:00 PM",7,42.64,-71.31,7.2,,12.82,9.06,0.15,0.22,8.34,76.5,0.26,0.01

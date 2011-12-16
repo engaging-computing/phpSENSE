@@ -1,0 +1,70 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Search/Lucene/Analysis
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+Analyzer
+dir
+
+TokenFilter
+dir
+
+Token.php
+file
+
+
+
+
+2009-09-16T20:54:49.000000Z
+01b05ec0b6cd22df2c3a93924a38d09d
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Analyzer.php
+file
+
+
+
+
+2009-09-16T20:54:49.000000Z
+955f77cbf115c947dcf5393042303596
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+TokenFilter.php
+file
+
+
+
+
+2009-09-16T20:54:49.000000Z
+2555c1d0881f42b9ba4c0f48555e4889
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+

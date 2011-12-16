@@ -1,0 +1,70 @@
+8
+
+dir
+2114
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/blog/wp-content/plugins/wordpress-importer
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2011-05-31T16:25:22.137907Z
+2081
+ccorcora
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+parsers.php
+file
+
+
+
+
+2011-05-31T16:25:38.000000Z
+0fd07f859fe4b7029a6f3c9e7ceb16b3
+2011-05-31T16:25:22.137907Z
+2081
+ccorcora
+has-props
+
+languages
+dir
+
+readme.txt
+file
+
+
+
+
+2011-05-31T16:25:38.000000Z
+2e4b2c726683cc431a5f68137e7df607
+2011-05-31T16:25:22.137907Z
+2081
+ccorcora
+has-props
+
+wordpress-importer.php
+file
+
+
+
+
+2011-05-31T16:25:38.000000Z
+0c5bad8d87565f9c262f767135b63e6f
+2011-05-31T16:25:22.137907Z
+2081
+ccorcora
+has-props
+

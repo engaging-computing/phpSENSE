@@ -1,0 +1,52 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Tool/Project/Profile/Iterator
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+ContextFilter.php
+file
+
+
+
+
+2009-09-16T20:54:46.000000Z
+5d03e81fd8c27d1eb5179050b2add12e
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+EnabledResourceFilter.php
+file
+
+
+
+
+2009-09-16T20:54:46.000000Z
+93805fc1767a13fc66025da6debdd417
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+

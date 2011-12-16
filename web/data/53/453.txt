@@ -1,0 +1,2 @@
+time,light,temperature,sound
+1,1,1,1

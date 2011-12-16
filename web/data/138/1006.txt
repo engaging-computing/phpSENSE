@@ -1,0 +1,2 @@
+time,latitude,longitude,acceleration,light,temperature,sound,altitude
+0,1,1,1,1,1,1,1

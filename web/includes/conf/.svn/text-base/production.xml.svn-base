@@ -1,0 +1,49 @@
+<config>
+	<timezone>America/New_York</timezone>
+	<database>
+		<user>root</user>
+		<pass>Redsox*101188</pass>
+		<host>127.0.0.1</host>
+		<name>vulture</name>
+		<port>3306</port>	
+	</database>
+	<mongo>
+		<name>condor</name>
+	</mongo>
+	<apis>
+		<twitter>
+			<user>isenseproject</user>
+			<pass>heyjude*12</pass>
+			<publish>on</publish>
+		</twitter>
+		<delicious>
+			<user>isenseproject</user>
+			<pass>heyjude12</pass>
+			<publish>on</publish>
+		</delicious>
+		<youtube>
+			<user>isenseproject</user>
+			<pass>heyjude12</pass>
+			<key>AI39si5DEFz9slqkH8nqKjRIWe8Whk12GpgHABzceuFU2r7e_6vUz-Epj8ufyg3kEQQ-I3fQikKl8u5PP8Axs2EHlC8lDZ0KXA</key>
+			<clientid>iSENSE Project</clientid>
+			<appid>iSENSE Project</appid>
+			<publish>on</publish>
+		</youtube>
+		<aws>
+			<accesskey>0P6RH8PE9P8FSTBG8H82</accesskey>
+			<secretkey>wmmGRzvu5KYefRamU5XXhkA/gtZg/Twqnth+NHf8</secretkey>
+			<bucket>isenseimgs</bucket>
+		</aws>
+		<gmaps>
+			<key>ABQIAAAAvOUgoN7lAOWNxvFW-huboxRf3wxtBSJgTFU7wabvFqRqsiMk_RTv_n47Vaw11WQ6F7u0-P09X7evGQ</key>
+		</gmaps>
+		<recaptcha>
+			<public>6Ld_5wYAAAAAAJczasdTAf1GMQ4Sz1TN0hoDJ50R</public>
+			<private>6Ld_5wYAAAAAAH5BWLPZSjwtkC0VUruo-2r2Ex9s</private>
+		</recaptcha>
+	</apis>
+	<analytics>
+		<account>UA-8529417-1</account>
+	</analytics>
+	<flot>false</flot>
+</config>

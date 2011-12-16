@@ -1,0 +1,54 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/html/swf
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2010-03-02T01:17:06.723153Z
+1452
+ccorcora
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+DataUploadDemo.swf
+file
+
+
+
+
+2010-03-02T01:17:56.000000Z
+3063e10aa58ca2dda1341c8c6569c70c
+2010-03-02T01:17:06.723153Z
+1452
+ccorcora
+has-props
+
+PINCushionDemo.swf
+file
+
+
+
+
+2010-03-02T01:17:56.000000Z
+c5dc76b69b05d610d39413ecc64e6ebb
+2010-03-02T01:17:06.723153Z
+1452
+ccorcora
+has-props
+

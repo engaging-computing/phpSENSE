@@ -1,0 +1,54 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Cache/Backend/ZendServer
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+ShMem.php
+file
+
+
+
+
+2009-09-16T20:54:48.000000Z
+b5ed13a50e5c1562938fc4e7f5c67a70
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+has-props
+
+Disk.php
+file
+
+
+
+
+2009-09-16T20:54:48.000000Z
+295f589fa4da5b4974dcdf9318bb5cb1
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+has-props
+

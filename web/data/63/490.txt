@@ -1,0 +1,2 @@
+Temperature,Time
+100,200

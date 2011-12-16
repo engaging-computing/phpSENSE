@@ -1,0 +1,52 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Wildfire/Plugin/FirePhp
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+TableMessage.php
+file
+
+
+
+
+2009-09-16T20:54:47.000000Z
+c52d75326f51ce54d8d733d03170ff4a
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Message.php
+file
+
+
+
+
+2009-09-16T20:54:47.000000Z
+02d1e0b2a36243cc9a93eebc32dbda96
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+

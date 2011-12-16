@@ -1,0 +1,52 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Validate/Barcode
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+Ean13.php
+file
+
+
+
+
+2009-09-16T20:54:47.000000Z
+54910068ef82ccd792cf294fb049c288
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+UpcA.php
+file
+
+
+
+
+2009-09-16T20:54:47.000000Z
+f772b7b3ab5f34525bfb064e0c7e25e5
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+

@@ -1,0 +1,54 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Service/Amazon/S3
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+Stream.php
+file
+
+
+
+
+2009-09-16T20:54:41.000000Z
+6ee5e17eca7d62a586974ce528f54e42
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+has-props
+
+Exception.php
+file
+
+
+
+
+2009-09-16T20:54:41.000000Z
+5c41a891d3b30022992dc0eceb12e716
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+has-props
+

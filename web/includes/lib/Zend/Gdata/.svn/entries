@@ -1,0 +1,372 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Gdata
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+Exif.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+127d7bad4f807c61a75ef77e9d4f03a8
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+has-props
+
+Gbase
+dir
+
+HttpAdapterStreamingProxy.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+db2f3c2aada72ac094a28918098f992a
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Entry.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+7adb8680532fa7d70c9f63b1bc7fa2ba
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+MediaMimeStream.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+0f5cdb8a5e060322538eefb81f2c8b74
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Feed.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+3e08444fa22e03dbe3c3f4ffdb3444a7
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+HttpAdapterStreamingSocket.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+c7e6599e9301f417f600988e72556d5d
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Exif
+dir
+
+Calendar.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+7a91311f59c211bf7395b5cf0ea27085
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Gapps.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+2faf473532c44c1b96efcc29867fe124
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Extension.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+3b797e5fcf04c8d3f2af5dbab34b20ee
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Media.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+c5f47e2468eb0d6aa7b5e79ebcaaf692
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+has-props
+
+App.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+132065e48278a3ee11c3cc2afde8e68f
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Calendar
+dir
+
+Gapps
+dir
+
+Extension
+dir
+
+DublinCore.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+fb43dd7c63ebcdab6367e57c76d684d1
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+has-props
+
+Docs.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+4e4ee82657c44040b51ebc803e8b5a33
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+has-props
+
+Media
+dir
+
+App
+dir
+
+Spreadsheets.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+ba2bc425d42fce6f259efcad597be157
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+YouTube.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+9388017918efc1acdd60d3a363dbb68c
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Kind
+dir
+
+DublinCore
+dir
+
+Docs
+dir
+
+Spreadsheets
+dir
+
+Query.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+71cfc61a76d8cbd6f4da393a4be46937
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Health.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+23a120981a0de44ad61d70016d65908b
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+has-props
+
+YouTube
+dir
+
+ClientLogin.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+a80b7bde9731480e975cb74d82531b5d
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Geo.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+fd88d87410bd8736c0f7b80c7cb31d4e
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+has-props
+
+AuthSub.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+4179636b926097f6065e961b88599dd0
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Photos.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+b47f669593262824a992f0517e2b7d15
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+has-props
+
+Books.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+86dc3bdca8369efbf12a2a6ea7455303
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+has-props
+
+HttpClient.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+0be1c0a3e036ce2877953bbe6c8f3ff5
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Health
+dir
+
+Gbase.php
+file
+
+
+
+
+2009-09-16T20:54:43.000000Z
+92bc3f595019785aabb86f875ffa1934
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Geo
+dir
+
+Photos
+dir
+
+Books
+dir
+

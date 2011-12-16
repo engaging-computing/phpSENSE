@@ -1,0 +1,6 @@
+"Data point number",Temperature
+,10
+,12
+,14
+,16
+,18

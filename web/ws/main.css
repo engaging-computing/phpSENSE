@@ -1,0 +1,23 @@
+.formLabel {
+  width:200px;
+  display:inline-block;
+  text-align:right;
+  font-weight:bold;
+}
+
+.submitButton {
+  width:100%;
+  display:inline-block;
+
+}
+
+#wrapper {
+  width:500px;
+}
+
+div img {
+
+  display:block;
+  margin:auto;
+
+}

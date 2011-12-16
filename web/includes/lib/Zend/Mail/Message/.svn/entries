@@ -1,0 +1,52 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Mail/Message
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+File.php
+file
+
+
+
+
+2009-09-16T20:54:46.000000Z
+7724c97b251836ed07f51f51b13c182b
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Interface.php
+file
+
+
+
+
+2009-09-16T20:54:46.000000Z
+b8fdc49dfe28cfe67f4262ad0f1ba8b3
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+

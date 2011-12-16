@@ -1,0 +1,58 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/OpenId/Provider
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+Storage
+dir
+
+User.php
+file
+
+
+
+
+2009-09-16T20:54:42.000000Z
+2508f23a1224e6c80185654d439cb7b7
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+Storage.php
+file
+
+
+
+
+2009-09-16T20:54:42.000000Z
+e70fd678ad50af3cff48be5cece05897
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+User
+dir
+

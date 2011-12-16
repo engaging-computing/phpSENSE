@@ -1,0 +1,40 @@
+8
+
+dir
+1875
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Ldap
+svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
+
+
+
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+45977e34-9846-0410-a4b5-d75449e00c37
+
+Exception.php
+file
+
+
+
+
+2009-09-16T20:54:42.000000Z
+6f8bc1a99e778aeacae78fd68b2053db
+2009-07-04T04:23:02.326129Z
+1038
+ccorcoran
+

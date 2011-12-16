@@ -1,0 +1,49 @@
+<config>
+	<timezone>America/New_York</timezone>
+	<database>
+		<user>root</user>
+		<pass></pass>
+		<host>127.0.0.1</host>
+		<name>vulture</name>
+		<port>3306</port>	
+	</database>
+	<mongo>
+		<name>condor</name>
+	</mongo>
+	<apis>
+		<twitter>
+			<user>isenseproject</user>
+			<pass></pass>
+			<publish>on</publish>
+		</twitter>
+		<delicious>
+			<user>isenseproject</user>
+			<pass></pass>
+			<publish>on</publish>
+		</delicious>
+		<youtube>
+			<user>isenseproject</user>
+			<pass></pass>
+			<key></key>
+			<clientid>iSENSE Project</clientid>
+			<appid>iSENSE Project</appid>
+			<publish>on</publish>
+		</youtube>
+		<aws>
+			<accesskey></accesskey>
+			<secretkey></secretkey>
+			<bucket>isenseimgs</bucket>
+		</aws>
+		<gmaps>
+			<key></key>
+		</gmaps>
+		<recaptcha>
+			<public></public>
+			<private></private>
+		</recaptcha>
+	</apis>
+	<analytics>
+		<account>UA-8529417-1</account>
+	</analytics>
+	<flot>false</flot>
+</config>
