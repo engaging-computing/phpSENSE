@@ -1,88 +1,0 @@
-8
-
-dir
-1875
-svn+ssh://isense.cs.uml.edu/home/svn/iSENSE/trunk/web/webapp/includes/lib/Zend/Search/Lucene/Analysis/Analyzer/Common
-svn+ssh://isense.cs.uml.edu/home/svn/iSENSE
-
-
-
-2009-07-04T04:23:02.326129Z
-1038
-ccorcoran
-
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-45977e34-9846-0410-a4b5-d75449e00c37
-
-Text
-dir
-
-TextNum
-dir
-
-Utf8
-dir
-
-Utf8Num
-dir
-
-Text.php
-file
-
-
-
-
-2009-09-16T20:54:49.000000Z
-2983601f0ea2f3df573cde2d19be2bd1
-2009-07-04T04:23:02.326129Z
-1038
-ccorcoran
-
-TextNum.php
-file
-
-
-
-
-2009-09-16T20:54:49.000000Z
-99a8c81cc804506dc4dd7b69f14c7da4
-2009-07-04T04:23:02.326129Z
-1038
-ccorcoran
-
-Utf8.php
-file
-
-
-
-
-2009-09-16T20:54:49.000000Z
-e96d2bd75eae0e0bcbfc6e8fa3554841
-2009-07-04T04:23:02.326129Z
-1038
-ccorcoran
-
-Utf8Num.php
-file
-
-
-
-
-2009-09-16T20:54:49.000000Z
-78d9f31bc1c99a37e16dcbff8d17583a
-2009-07-04T04:23:02.326129Z
-1038
-ccorcoran
-
