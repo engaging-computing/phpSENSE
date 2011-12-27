@@ -1,7 +1,7 @@
-<?php /* Smarty version 2.6.22, created on 2011-12-09 10:51:44
+<?php /* Smarty version 2.6.22, created on 2011-12-27 00:51:27
          compiled from experiment.tpl */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
-smarty_core_load_plugins(array('plugins' => array(array('function', 'counter', 'experiment.tpl', 138, false),)), $this); ?>
+smarty_core_load_plugins(array('plugins' => array(array('function', 'counter', 'experiment.tpl', 165, false),)), $this); ?>
 <div id="main">
 	<?php $_smarty_tpl_vars = $this->_tpl_vars;
 $this->_smarty_include(array('smarty_include_tpl_file' => "parts/errors.tpl", 'smarty_include_vars' => array()));
