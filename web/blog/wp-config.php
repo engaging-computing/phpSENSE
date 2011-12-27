@@ -26,9 +26,9 @@ define('DB_USER', 'root');
 
 /** MySQL database password */
 if($_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
-    define('DB_PASSWORD', 'Redsox*101188');
+    define('DB_PASSWORD', '');
 } else { 
-    define('DB_PASSWORD', 'Redsox*101188');
+    define('DB_PASSWORD', '');
 }
 
 /** MySQL hostname */
