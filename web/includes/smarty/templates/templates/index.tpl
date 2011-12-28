@@ -66,7 +66,7 @@
 			<h1>PINPoint Data Logger</h1>
 			<div>
 				<p>
-					<img src="http://www.isense.cs.uml.edu/html/img/PINPointv4.png" width="203px" />
+					<img src="html/img/PINPointv4.png" width="203px" />
 					The portable iSENSE Network Point (PINPoint) is a GPS-enabled data logger designed specifically for use with the iSENSE web site.<br/>
 					<a href="/blog/doc/pinpoint-data-logger">Learn More...</a>
 				</p>
@@ -106,7 +106,7 @@
 			<div>
 				<p>
 					<div style="text-align:center">
-						<img src="http://isense.cs.uml.edu/html/img/VernierLogo.gif" />
+						<img src="html/img/VernierLogo.gif" />
 					</div>
 				</p>
 				<p>
