@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# iSENSE Website Configuration Script
+#
+# Automated installation and deployment of required packages for hosting 
+# the ISENSE website.
+#
+# Supported Operating Systems/Versions
+# 
+# Ubuntu 10.04 LTS
+# Ubuntu 11.10
+#
+# Changelog
+# 12262011 cadorett Initial version
+
+echo "Installing key for mongodb debian repository"
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
+
+echo "Appending the repository url to /etc/apt/sources.list"
+
+sudo cp mongo.sources.list /etc/apt/sources.list.d/mongo.sources.list
+
+echo "Updating apt-get package list"
+sudo apt-get update
+
+echo "Installing required packages for good times in iSENSE world"
+sudo apt-get install drupal6-mod-image php5-dev openssh-server apache2 php5 libapache2-mod-php5 mysql-server mongodb-10gen php-pear
+
+echo "Installing php extensions for mongo"
+sudo pecl install mongo
+sudo cp php.ini /etc/php5/apache2/php.ini
+
+echo "Installing/enabling isense site configuration"
+sudo cp isense /etc/apache2/sites-available/isense
+sudo a2dissite default
+sudo a2ensite isense
+
+echo "Restarting apache2"
+sudo /etc/init.d/apache2 reload
+
+echo "Dumping mongodb/mysql database on isense.cs.uml.edu." 
+mkdir ~/databasebackup
+echo "Enter your isense.cs.uml.edu password when prompted"
+ssh isense.cs.uml.edu "mkdir ~/databasebackup; cd ~/databasebackup; mongodump --host localhost; mysqldump -u root -pRedsox*101188 -x --all-databases > fullsql.sql;"
+scp -r $(whoami)@isense.cs.uml.edu:~/databasebackup ~/
+
+echo "A current copy of the database should be stored in ~/databasebackup"
+echo "Attempting to import this into the local databases. Enter your root mysql password when prompted"
+mysql -u root -p < sqlcommands
+mysql -u root -p vulture < ~/databasebackup/fullsql.sql
+mongorestore ~/databasebackup/dump
+
+echo "Hardcore hoping action that that worked..."
+
