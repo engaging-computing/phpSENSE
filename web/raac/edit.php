@@ -9,16 +9,6 @@ else
 
 $keys = array_keys($presort[0]);
 
-echo '<html><head><script src="/html/js/lib/jquery.js" type="text/javascript"></script>';
-echo '<script src="/html/js/lib/jquery-ui.js" type="text/javascript"></script>';
-echo '<script src="/html/js/lib/MillisecondClock.js" type="text/javascript"></script>';
-echo '<title>iSENSE : River As A Classroom - Edit Page</title>';
-echo '<link rel="stylesheet" type="text/css" href="/html/css/table.css" />';
-echo '<link rel="stylesheet" type="text/css" href="/html/css/jss.css" />';
-echo '<link rel="stylesheet" type="text/css" href="/html/css/jclock.css" />';
-
-echo '</head><body>';
-
 
 $javascript = '<script> var keys = [';
 foreach( $keys as $i => $key ) {
@@ -31,136 +21,6 @@ foreach( $keys as $i => $key ) {
 
 $javascript .= '];';
 
-
-$javascript .= <<<EOT
-
-	$(document).ready(function () {
-		
-		$('td[name="Time"]').children().datetimepicker({
-			changeMonth: true,
-			changeYear: true,
-			showSecond: true,
-			showMillisec: true,
-			timeFormat: 'hh:mm:ss:l',
-			create: function (evt, ui) {
-				
-				var thing = this._getDate();
-				console.log(thing); 
-			}
-
-		});
-		
-
-    	$("input:submit").click( function ( event ) {
-
-        	event.preventDefault();
-        	var rows = $(this).parent().find('table').find('tr');
-        	var data = new Array();
-        
-        	rows.each( function ( index ) { 
-
-            	var row = new Array();
-                        
-            	$(this).children().each( function ( index ) {
-                                
-					if( index != 0 )
-                    	row[row.length] = $(this).find('input[name!=add↑][name!=add↓][name!=sub]').val();
-					
-            	});
-
-            	data[data.length] = row;
-                        
-        	});
-        
-        	console.log(data);
-        
-        	var send = [ data, keys ];
-        
-        	$.ajax({
-            	url: 'http://127.0.0.1/raac/update.php',
-            	data: { data : send },
-            	jsonp: true,
-            	type: 'POST',
-            	}).done( function( msg ) {
-                	alert( "Data Saved: " + msg );
-            });
-
-    	});
-
-		function DoThings() {
-			
-			var x;
-			
-			x = $('<tr></tr>');
-
-			for( i = 0; i < keys.length; i++ )
-				if(keys[i] == 'Time'||keys[i] == 'time')
-					var tkey = i;
-			
-			console.log(keys.length);
-							
-			for( i = 0; i < keys.length; i++ ) {
-				
-				if(i == 0) {
-					x.append('<td><input type="button" name="add↑" value="+"/><input type="button" name="sub" value="-"/><input type="button" name="add↓" value="+"/></td><td name="_id"><input type="hidden" /> New ID</td>');
-				} else if( i != keys.length-1 && i != keys.length-2 ) {
-					if( i == tkey )
-						x.append('<td name=' + keys[i] + ' ><input type="text"/></td>');
-					else
-						x.append('<td><input type="text"/></td>');
-				} else{
-					x.append('<td><input type="hidden" value="' + $(this).parent().parent().children().eq(i+1).text() + '" />' + $(this).parent().parent().children().eq(i+1).text() + '</td>');
-				}
-			}
-			
-			x.find('input[name=add↓]').click(DoThings);
-			x.find('input[name=add↑]').click(DoThings);
-			x.find('input[name=sub]').click( function() {
-				$(this).parent().parent().remove();
-			})
-			
-			if($(this).attr('name') == 'add↓')
-				x.insertBefore($(this).parent().parent());
-			else
-				x.insertAfter($(this).parent().parent());
-				
-			$('td[name="Time"]').children().datetimepicker({
-				changeMonth: true,
-				changeYear: true,
-				showSecond: true,
-				showMillisec: true,
-				timeFormat: 'hh:mm:ss:l',
-				create: function (evt, ui) {
-
-					var thing = this._getDate();
-					console.log(thing); 
-				}
-
-			});
-
-		}
-
-		$('input[name="add↑"]').each( function () {
-			$(this).click(DoThings);
-		});
-		
-		$('input[name="add↓"]').each( function () {
-			$(this).click(DoThings);
-		});
-		
-
-		
-		$('input[name="sub"]').each( function () {
-			$(this).click( function() {
-				$(this).parent().parent().remove();
-			});
-		});
-		
-	});
-	
-</script>
-
-EOT;
 
 //Loads data from mongo into a sortable array
 
@@ -222,26 +82,34 @@ if( $empty == count($keys) ) {
 
 unset($empty);
 
+$content = '<div style="width:100%;height:100%;overflow-x:scroll;overflow-y:hidden;">';
+
 foreach($sortArray as $ses) {
-    if( isset($ses[0][$i_ses]) ){         //&& $ses[0][$i_ses] > 2830 ) {
-    echo '<form name="' . $ses[0][$i_ses] . '" ><table>';
+    if( isset($ses[0][$i_ses]) ) {         //&& $ses[0][$i_ses] > 2830 ) {
+    $content .= '<form name="' . $ses[0][$i_ses] . ' ><table>';
     foreach($ses as $dp) {
-        echo '<tr>';
+        $content .= '<tr>';
         foreach($dp as $i => $d) {
             if( $i == $i_id )
-                echo '<td><input type="button" name="add↓" value="+"/><input type="button" name="sub" value="-"/><input type="button" name="add↑" value="+"/></td><td name="' . $keys[$i] . '"><input type="hidden" value="' . $d . '" />Mongo_ID</td>';
+                $content .= '<td><input type="button" name="add↓" value="+"/><input type="button" name="sub" value="-"/><input type="button" name="add↑" value="+"/></td><td name="' . $keys[$i] . '"><input type="hidden" value="' . $d . '" />Mongo_ID</td>';
             else if($i == $i_ses || $i == $i_exp)
-                echo '<td name="' . $keys[$i] . '"><input type="hidden" value="' . $d . '" />' . $d . '</td>';
+                $content .= '<td name="' . $keys[$i] . '"><input type="hidden" value="' . $d . '" />' . $d . '</td>';
 			else
-                echo '<td name="' . $keys[$i] . '"><input type="text" value="' . $d . '" /></td>';
+                $content .= '<td name="' . $keys[$i] . '"><input type="text" value="' . $d . '" /></td>';
                 
         }
-        echo '</tr>';    
+        $content .= '</tr>';    
     }
-    echo '</table><input type="submit" value="Save!" class="submit" /></form>';
+    $content .= '</table><input type="submit" value="Save!" class="submit" /></form>';
 
     }
 }
 
-echo $javascript;
-echo '</body></html>';
+$content .= '</div>';
+
+$smarty->assign('head', '<link rel="stylesheet" type="text/css" href="/html/css/table.css" />' . 
+						'<script type="text/javascript" src="/html/js/edit.js"></script>');
+$smarty->assign('title', 'Edit Page');
+$smarty->assign('user', $session->getUser());
+$smarty->assign('content', $content);
+$smarty->display('skeleton.tpl');

@@ -58,6 +58,8 @@ Minify::serve('Groups', array(
                             BASE_DIR . '/html/css/lightbox.css',
                             BASE_DIR . '/html/css/jquery-ui.css',
                             BASE_DIR . '/html/css/tsor.css',
+							BASE_DIR . '/html/css/jclock.css',
+							BASE_DIR . '/html/css/jss.css'
                         ),
         
         'vis'     => array(     

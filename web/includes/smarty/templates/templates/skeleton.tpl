@@ -39,16 +39,17 @@
         <script type="text/javascript" src="/html/js/lib/autocomplete.js"></script>
         <script type="text/javascript" src="/html/js/lib/rating.js"></script>
         <script type="text/javascript" src="/html/js/isense.js"></script>
+        <script src="/html/js/lib/MillisecondClock.js" type="text/javascript"></script>
 		
-		<link rel="stylesheet" type="text/css" href="loader.php/css" />
-		<link rel="shortcut icon" href="img/favicon.png" />
+		<link rel="stylesheet" type="text/css" href="/loader.php/css" />
+		<link rel="shortcut icon" href="/img/favicon.png" />
 		
 		{ $head }
 	</head>
 	<body>
 		<div id="container">
   			<div id="header">
-    			<div id="logo"><a href="." title="iSENSE"><img src="html/img/logo.png" alt="iSENSE"/></a></div>
+    			<div id="logo"><a href="." title="iSENSE"><img src="/html/img/logo.png" alt="iSENSE"/></a></div>
     			<div id="navigation">
       				<div id="quickbar">
         				<div id="user">{include file="parts/user.tpl"}</div>
