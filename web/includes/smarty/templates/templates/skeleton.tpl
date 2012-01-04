@@ -62,7 +62,6 @@
 				<div id="pagetitle">{ if $link != "" }{$link}{else}{$title|capitalize}{/if}</div>
 			{ /if }
   			<div id="content">{$content}</div>
-  			<div class="button"></div>
 		</div>
 		<div id="footer">{include file="parts/footer.tpl"}</div>
 		{ include file="parts/google.tpl" }

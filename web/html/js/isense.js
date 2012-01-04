@@ -423,6 +423,7 @@ function addManualDataRow() {
        
        $(this).attr('id', id);
        $(this).attr('name', name);
+	   //$(this).addClass('numeric');
     });
     
     org.css('display', '');

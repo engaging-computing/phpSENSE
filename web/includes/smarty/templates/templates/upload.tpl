@@ -37,20 +37,20 @@
 				{ if $state == 1 }
 					<legend>Create a new session</legend>
 			    	<p>Your session will be created with the following information.</p>
-					<label for="session_name">* Name:</label><input type="text" name="session_name" value="{ $session_name }"/><br/>
-			    	<span class="hint">Example: "Northern River Afternoon Test"</span><br/>
-			    	<label for="session_description">* Procedure:</label><textarea name="session_description">{ $session_description }</textarea><br/>
-			    	<span class="hint">Describe the session procedure and other details.</span><br/>
-					<label for="session_street">* Street:</label><input type="text" name="session_street" value=" "/><br/>
-					<span class="hint">Example: "4 Yawkey Way"</span><br/>
-					<label for="session_citystate">* City, State:</label><input type="text" name="session_citystate" value="{ $session_citystate }"/><br/>
-					<span class="hint">Example: "Boston, Ma"</span><br/>
+					<label for="session_name">* Name:</label><input type="text" name="session_name" id="session_name" class="required urlSafe" value="{ $session_name }"/><img height="10px" width="10px" id="session_name_validated" src="/html/img/validated.png" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_name_failed" src="/html/img/failed.png" style="position:relative;left:-15px;" /><br/>
+			    	<span id="session_name_hint" class="hint">Example: "Northern River Afternoon Test"</span><br/>
+			    	<label for="session_description">* Procedure:</label><textarea name="session_description" id="session_description" class="required">{ $session_description }</textarea><img height="10px" width="10px" id="session_description_validated" src="/html/img/validated.png" style="position:relative;left:-15px;top:-15px;" /><img height="10px" width="10px" id="session_description_failed" src="/html/img/failed.png" style="position:relative;left:-15px;top:-15px;" /><br/>
+			    	<span id="session_description_hint" class="hint">Describe the session procedure and other details.</span><br/>
+					<label for="session_street">* Street:</label><input type="text" name="session_street" id="session_street" value=" " class="required street" /><img height="10px" width="10px" id="session_street_validated" src="/html/img/validated.png" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_street_failed" src="/html/img/failed.png" style="position:relative;left:-15px;" /><br/>
+					<span id="session_street_hint" class="hint">Example: "4 Yawkey Way"</span><br/>
+					<label for="session_citystate">* City, State:</label><input type="text" name="session_citystate" id="session_citystate" value="{ $session_citystate }" class="required cityState"/><img height="10px" width="10px" id="session_citystate_validated" src="/html/img/validated.png" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_citystate_failed" src="/html/img/failed.png" style="position:relative;left:-15px;" /><br/>
+					<span id="session_citystate_hint" class="hint">Example: "Boston, Ma"</span><br/>
 					<label for="session_type">Session Type:</label>
 					<div style="width:480px;">
-					    <input type="radio" id="manual_upload" name="session_type" group="session_type" value="manual" style="width:20px;" selected="selected" checked/><span>Manual Entry</span>
+					    <input type="radio" id="manual_upload" name="session_type" group="session_type" value="manual" style="width:20px;" CHECKED /><span>Manual Entry</span>
 						<input type="radio" id="file_upload" name="session_type" group="session_type" value="file" style="width:20px;"/><span>Data File</span>
 					</div>
-					<br/>
+					<div id="error_rows" style="display:none;text-align:center"></div><br/>
 					<label for="session_file" >* Session Data:</label>
 					<div id="type_file" style="display:none;">
 						<input type="file" name="session_file"/><br/>
@@ -70,7 +70,7 @@
 							</tr>
 							<tr>
 								{ foreach from=$fields item=field }
-									<td><input type="text" id="{ $field.field_name|replace:' ':'_'  }_1" name="{ $field.field_name|replace:' ':'_'  }_1" style="width:90%;"></td>
+									<td><input type="text"  id="{ $field.field_name|replace:' ':'_'  }_1" name="{ $field.field_name|replace:' ':'_'  }_1" style="width:90%;"></td>
 								{ /foreach }
 							</tr>
 						</table>
@@ -217,7 +217,7 @@
 					<legend>Review and Finish</legend>
 				    <p>Your session will be created with the information entered above.</p>
 					<input type="hidden" name="id" value="{ $meta.experiment_id }" />
-					<button type="button" name="session_create" onclick="readyUploadForm();">
+					<button type="submit" name="session_create">
 						{ if $state == 1 }Create Session{ /if }
 						{ if $state == 2 or $state == 3 or $state == 4 }Complete Session{ /if }
 					</button>

@@ -82,11 +82,15 @@ if( $empty == count($keys) ) {
 
 unset($empty);
 
-$content = '<div style="width:100%;height:100%;overflow-x:scroll;overflow-y:hidden;">';
+$content = '';
 
-foreach($sortArray as $ses) {
+foreach($sortArray as $index=>$ses) {
     if( isset($ses[0][$i_ses]) ) {         //&& $ses[0][$i_ses] > 2830 ) {
-    $content .= '<form name="' . $ses[0][$i_ses] . ' ><table>';
+    $content .= '<table id="table_' . $index . '">'; //'<form name="' . $ses[0][$i_ses] . ' ><table>';
+ 	$content .= '<thead><tr><th>Ctrl</th>';
+	foreach($keys as $key)
+		$content .= '<th>' . $key . '</th>';
+	$content .= '</tr></thead>';
     foreach($ses as $dp) {
         $content .= '<tr>';
         foreach($dp as $i => $d) {
@@ -100,15 +104,18 @@ foreach($sortArray as $ses) {
         }
         $content .= '</tr>';    
     }
-    $content .= '</table><input type="submit" value="Save!" class="submit" /></form>';
+    $content .= '</table>';//'<input type="submit" value="Save!" class="submit" /></form>';
 
     }
 }
 
-$content .= '</div>';
+$content .= '<input type="button" value="Last!" id="last" /><input type="button" value="Next!" id="next" />';
 
-$smarty->assign('head', '<link rel="stylesheet" type="text/css" href="/html/css/table.css" />' . 
-						'<script type="text/javascript" src="/html/js/edit.js"></script>');
+$smarty->assign('head', '<link rel="stylesheet" type="text/css" href="/html/css/table.css" />' .
+						'<link href="/html/css/table/fancyTable.css" rel="stylesheet" media="screen" />' .
+						'<script src="/html/js/lib/jquery.fixedheadertable.js"></script>' .
+						'<script type="text/javascript" src="/html/js/edit.js"></script>' );
+						
 $smarty->assign('title', 'Edit Page');
 $smarty->assign('user', $session->getUser());
 $smarty->assign('content', $content);
