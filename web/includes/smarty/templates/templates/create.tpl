@@ -32,14 +32,14 @@
 { else }
 	<div id="main">
 		{include file="parts/errors.tpl"}
-		<form method="post">
+		<form id="upload_form" method="post">
 	 		{ if !$created }
 				<fieldset id="basic-info">
 					<legend>Step 1: Basic Info</legend>
 		    		<p>Please describe the basics of your experiment, and the experimental procedure, and its keywords.</p>
-		    		<label for="experiment_name">* Name:</label><input type="text" name="experiment_name" value="{$values.name}" /><br/>
+		    		<label for="experiment_name">* Name:</label><input type="text" name="experiment_name" id="experiment_name" class="required urlSafe" /><img height="10px" width="10px" id="experiment_name_validated" src="/html/img/validated.png" style="position:relative;left:-15px;" class="validated" /><img height="10px" width="10px" id="experiment_name_failed" class="failed" src="/html/img/failed.png" style="position:relative;left:-15px;" /><br/>
 		    		<span class="hint">Example: "Salinity Levels in Rivers"</span><br/>
-		    		<label for="experiment_description">* Procedure:</label><textarea name="experiment_description">{$values.description}</textarea><br/>
+		    		<label for="experiment_description">* Procedure:</label><textarea name="experiment_description" class="required" id="experiment_description" >{$values.description}</textarea><img height="10px" width="10px" id="experiment_description_validated" src="/html/img/validated.png" style="position:relative;left:-15px;top:-15px" class="validated" /><img height="10px" width="10px" id="experiment_description_failed" class="failed" src="/html/img/failed.png" style="position:relative;left:-15px;top:-15px" /><br/>
 		    		<span class="hint">Describe the experimental procedure and other details.</span><br/>
 		    		<label for="experiment_tags">Tags:</label><input type="text" id="experiment_tags" name="experiment_tags" value="{$values.tags}" />
 		    		<span class="hint">Tags are keywords associated with an experiment. Separate tags with commas.<br/>Example: salinity river water</span><br/>
