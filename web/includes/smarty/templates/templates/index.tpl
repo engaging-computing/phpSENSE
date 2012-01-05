@@ -1,4 +1,4 @@
-<!--
+user<!--
  * Copyright (c) 2011, iSENSE Project. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,13 +31,13 @@
 			<div class="featureditemwrapper">
 				<div class="featureditem">
 					<div class="featuredimage">
-						<a href="experiment.php?id={$exp.experiment_id}"><img height="200" width="287" src="picture.php?url={$exp.provider_url}&h=200&w=287"></a>
+						<a href="/experiment.php?id={$exp.experiment_id}"><img height="200" width="287" src="picture.php?url={$exp.provider_url}&h=200&w=287"></a>
 					</div>
 					<div class="featuredtext">
-						<a href="experiment.php?id={$exp.experiment_id}">{ $exp.name|capitalize|truncate:32:"":true }</a>
+						<a href="/experiment.php?id={$exp.experiment_id}">{ $exp.name|capitalize|truncate:32:"":true }</a>
 					</div>
 					<div class="featuredsubtext">
-						Created by <a href="profile.php?id={$exp.owner_id}">{ $exp.firstname } { $exp.lastname }</a>
+						Created by <a href="/profile.php?id={$exp.owner_id}">{ $exp.firstname } { $exp.lastname }</a>
 					</div>
 				</div>
 			</div>
@@ -66,7 +66,7 @@
 			<h1>PINPoint Data Logger</h1>
 			<div>
 				<p>
-					<img src="html/img/PINPointv4.png" width="203px" />
+					<img src="/html/img/PINPointv4.png" width="203px" />
 					The portable iSENSE Network Point (PINPoint) is a GPS-enabled data logger designed specifically for use with the iSENSE web site.<br/>
 					<a href="/blog/doc/pinpoint-data-logger">Learn More...</a>
 				</p>
@@ -106,7 +106,7 @@
 			<div>
 				<p>
 					<div style="text-align:center">
-						<img src="html/img/VernierLogo.gif" />
+						<img src="/html/img/VernierLogo.gif" />
 					</div>
 				</p>
 				<p>
