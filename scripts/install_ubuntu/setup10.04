@@ -24,7 +24,7 @@ echo "Updating apt-get package list"
 sudo apt-get update
 
 echo "Installing required packages for good times in iSENSE world"
-sudo apt-get install php5-mysql drupal6-mod-image php5-dev openssh-server apache2 php5 libapache2-mod-php5 mysql-server mongodb-10gen php-pear
+sudo apt-get install php5-gd php5-mysql drupal6-mod-image php5-dev openssh-server apache2 php5 libapache2-mod-php5 mysql-server mongodb-10gen php-pear
 
 echo "Installing php extensions for mongo"
 sudo pecl install mongo
@@ -34,6 +34,7 @@ echo "Installing/enabling isense site configuration"
 sudo cp isense /etc/apache2/sites-available/isense
 sudo a2dissite default
 sudo a2ensite isense
+sudo a2enmod rewrite
 
 echo "Restarting apache2"
 sudo /etc/init.d/apache2 reload
