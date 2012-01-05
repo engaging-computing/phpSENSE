@@ -125,6 +125,9 @@ if(isset($_POST['experiment_create'])) {
 	}
 }
 
+$smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>' . 
+						'<script src="/html/js/lib/validate.js"></script>');
+
 $smarty->assign('values', $values);
 $smarty->assign('marker', 'create');
 $smarty->assign('created', $created);

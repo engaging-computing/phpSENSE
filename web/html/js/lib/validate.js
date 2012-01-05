@@ -6,14 +6,8 @@
 $(document).ready( function() {
 	
 	//Hide the _validated and _failed images (checkbox and x'ed out circle)
-	$('#session_name_validated').hide();
-	$('#session_description_validated').hide();
-	$('#session_street_validated').hide();
-	$('#session_citystate_validated').hide();
-	$('#session_name_failed').hide();
-	$('#session_description_failed').hide();
-	$('#session_street_failed').hide();
-	$('#session_citystate_failed').hide();
+	$('.failed').hide();
+	$('.validated').hide();
 	
 	//Create a new validator for the upload form
 	var validator = $('#upload_form').validate({
