@@ -1076,11 +1076,12 @@ $.extend($.validator, {
 			return this.optional(element) || /^[a-zA-Z0-9 ,.\-=_+\\/?!@#$%^&*()\[\]\{\}]+$/.test(value);
 		},
 		
-		// Accepts City, State format string (Pepperell, MA)
+		// Accepts city/state format string (Pepperell, MA)
 		cityState: function(value, element) {
 			return this.optional(element) || /^[a-zA-Z ]+, [a-zA-Z]{2}$/.test(value);
 		},
 		
+		// Accepts a string for street name (123 fake st. or fake ave.)
 		street: function(value, element) {
 			return this.optional(element) || /^[0-9 ]*[a-zA-Z ]+ [a-zA-Z.]+$/.test(value);
 		},
