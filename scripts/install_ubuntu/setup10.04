@@ -34,6 +34,7 @@ echo "Installing/enabling isense site configuration"
 sudo cp isense /etc/apache2/sites-available/isense
 sudo a2dissite default
 sudo a2ensite isense
+sudo a2enmod rewrite
 
 echo "Restarting apache2"
 sudo /etc/init.d/apache2 reload
