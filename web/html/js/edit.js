@@ -7,6 +7,8 @@ $(document).ready(function () {
 		if( $(this).attr('id') != undefined )
 			tab_tables.push($(this).attr('id'));
 	});
+	
+	//$('#sessionNumber').text(tab_tables[0]);
 			
 	$('td[name="Time"]').children().datetimepicker({
 		changeMonth: true,
@@ -26,10 +28,13 @@ $(document).ready(function () {
     $("input:submit").click( function ( event ) {
 
        	event.preventDefault();
-       	var rows = $(this).parent().find('table').find('tr');
+       	ses = $(this).attr('id').split('_');
+       	var rows = $('#table_' + ses[1]).find('tr');
        	var data = new Array();
         
        	rows.each( function ( index ) { 
+
+            if( index != 0 ) {
 
            	var row = new Array();
                         
@@ -41,10 +46,8 @@ $(document).ready(function () {
            	});
 
            	data[data.length] = row;
-                        
+            }
        	});
-        
-       	console.log(data);
         
        	var send = [ data, keys ];
         
@@ -62,7 +65,7 @@ $(document).ready(function () {
 	function DoThings() {
 			
 		var x;
-			
+		
 		x = $('<tr></tr>');
 
 		for( i = 0; i < keys.length; i++ )
@@ -138,19 +141,34 @@ $(document).ready(function () {
 			$('#last').hide();
 		else if( tab_index == tab_tables.length - 1 )
 			$('#next').hide();
+			
+		var stng = tab_tables[tab_index].split('_');	
+			
+		$('#SessionNumber').text('Session ' +  stng[1] + ' : ' + sessionNames[tab_index] );
 		
 		for( var i = 0; i < tab_tables.length; i++ ) {
 				$('#' + tab_tables[i]).fixedHeaderTable('show');
+				ses = tab_tables[i].split('_');
+				$('#save_' + ses[1]).show().css('position','relative').css('left', ($('#content').width()/2) - $('#save_' + ses[1]).width());
+				
 		}
 		
 		for( var i = 0; i < tab_tables.length; i++ ) {
-			if( tab_index != i )
+			if( tab_index != i ) {
 				$('#' + tab_tables[i]).fixedHeaderTable('hide');
+				ses = tab_tables[i].split('_');
+                $('#save_' + ses[1]).hide();
+			}
 		}
 		
 	}
 	
 	hideTabs();
+	
+	$('#next').css('position', 'relative');
+	$('#last').css('position', 'relative');
+	$('#next').css('left', $('#content').width() - ( $('#next').width() * 3 ) + 'px' );
+	$('#last').css('right', ( $('#last').width() * 2 ) + 'px' );
 	
 	$('#last').click(function(){ 
 		tab_index--;

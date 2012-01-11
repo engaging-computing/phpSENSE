@@ -56,9 +56,13 @@ class MDB {
 	
     function dropUpdate( $data, $keys, $exp, $ses) {
         
-        $this->selectCollection( 'e' . $exp );
+        $this->selectCollection( 'e' . $exp );    
                 
-        $this->col->remove( array( 'session' => floatval($ses) ));
+        $this->col->remove( array( 'session' => intval($ses) ));
+        
+        /*$test = $this->find( array( 'session' => 2904 ) );
+        
+        $doc = $test;*/
                 
         foreach($data as $dat) {
             foreach( $dat as $k => $d ){
@@ -67,6 +71,8 @@ class MDB {
                         echo '_id \'en it';
                     else if( $k == 1 )
                         $doc[$keys[$k]] = new MongoInt64( $d );
+                    else if( $k == sizeof($dat) -1 || $k == sizeof($dat) - 2 )
+                        $doc[$keys[$k]] = new MongoInt32( $d );
                     else
                         $doc[$keys[$k]] = $d;
                 }

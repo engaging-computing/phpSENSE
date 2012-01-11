@@ -216,6 +216,18 @@ function getExperimentNameFromSession($sid) {
 	return 'Visualization';
 }
 
+function getNameFromEid( $eid ) {
+    global $db;
+    
+    $output = $db->query("SELECT name FROM experiments WHERE experiment_id = {$eid}");
+    
+	if($db->numOfRows) {
+		return $output[0]['name'];
+	}
+
+	return 'Visualization';
+}
+
 function getExperimentsByTag($tag) {
 	global $db;
 	
