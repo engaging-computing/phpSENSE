@@ -218,7 +218,7 @@ function getSessionsTitle($sids) {
 	        $sql .= ' OR session_id = ' . $sid;
 	}
 	
-	$sql .= ' AND finalized = 1	ORDER BY session_id DESC';
+	$sql .= ' AND finalized = 1	ORDER BY session_id ASC';
 						
 	$output = $db->query($sql);
 										

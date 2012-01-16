@@ -4,25 +4,17 @@ require_once '../includes/config.php';
 
 if(isset($_GET['exp'])) {
 	$presort = $mdb->find('e' . $_GET['exp']);
-
-    $session_name = getSessionTitle($_GET['exp']);
-
+	
     $keys = array_keys($presort[0]);
 
-    $tmpUsr = $session->getUser();
+    $me = $session->getUser();
 
-    if($tmpUsr['administrator']) {
-    
+    if($me['administrator']) {
         $tmp = getSessionsForExperiment($_GET['exp']);
-    
         foreach( $tmp as $ses_data ) {
-        
             $owners[] = getSessionOwner($ses_data['session_id']);
-        
         }
-
         unset($tmp);
-        
     }
 
     //Dump Keys into javascript
@@ -62,11 +54,9 @@ if(isset($_GET['exp'])) {
     //Dump unsorted data
 
     unset($tmp);
-    
-    //print_r($sortArray);
 
     //Tabularize data
-
+    //Set i_ses and i_exp
     $empty = 0;
 
     for( $in = 0; $in < count($keys); $in++ ) {
@@ -87,28 +77,25 @@ if(isset($_GET['exp'])) {
     
     unset($empty);
 
-    $content = '';
-
-    $format_table = array_keys($sortArray);
-
+    //Sort Data object by sessions with ses_id as the key
+    $sessions = array_keys($sortArray);
     $newArray = $sortArray;
 
-    sort($format_table);
-
+    sort($sessions);
     unset($sortArray);
 
-    foreach( $format_table as $index=>$f ) {
-        $sortArray[$f] = $newArray[$f];
+    foreach( $sessions as $index=>$ses ) {
+        $sortArray[$ses] = $newArray[$ses];
     }
 
-    $me = $session->getUser();
-
+    //Marks sessions for removal based on ownership
     foreach( $format_table as $index => $table ) {
         $rem[$table] = 0;
         if( intval($owners[$index]) != intval($me['user_id']) && !$me['administrator'] )
             $rem[$table]--;
     }
     
+    //Unsets sessions marked for removal
     foreach( $format_table as $index => $table ) {
         if($rem[$table] == -1) {
             unset($sortArray[$table]);
@@ -116,6 +103,7 @@ if(isset($_GET['exp'])) {
         } else
             $sortArray[$table] = $newArray[$table];
     }
+    
     
     $session_name = getSessionsTitle(array_keys($sortArray));
     
@@ -135,45 +123,21 @@ if(isset($_GET['exp'])) {
         $content = 'Error: You are not the creator of any of these sessions!';
     } else {
 
-        foreach($sortArray as $index=>$ses) {
-            if( isset($ses[0][$i_ses]) ) {         //&& $ses[0][$i_ses] > 2830 ) {
-                $content .= '<table id="table_' . $index . '">'; //'<form name="' . $ses[0][$i_ses] . ' ><table>';
- 	            $content .= '<thead><tr><th>Ctrl</th>';
-	            foreach($keys as $key)
-		            $content .= '<th>' . $key . '</th>';
-	            $content .= '</tr></thead>';
-                foreach($ses as $dp) {
-                    $content .= '<tr>';
-                    foreach($dp as $i => $d) {
-                        if( $i == $i_id )
-                            $content .= '<td><input type="button" name="add↓" value="+"/><input type="button" name="sub" value="-"/><input type="button" name="add↑" value="+"/></td><td name="' . $keys[$i] . '"><input type="hidden" value="' . $d . '" />Mongo_ID</td>';
-                        else if($i == $i_ses || $i == $i_exp)
-                            $content .= '<td name="' . $keys[$i] . '"><input type="hidden" value="' . $d . '" />' . $d . '</td>';
-			            else
-                            $content .= '<td name="' . $keys[$i] . '"><input type="text" value="' . $d . '" /></td>';
-                
+    $smarty->assign('head', '<link rel="stylesheet" type="text/css" href="/html/css/table.css" />' .
+					        '<link href="/html/css/table/fancyTable.css" rel="stylesheet" media="screen" />' .
+					        '<script src="/html/js/lib/jquery.fixedheadertable.js"></script>' .
+					        $javascript .
+					        '<script type="text/javascript" src="/html/js/edit.js"></script>' );
                     }
-                    $content .= '</tr>';    
-                }
-                $content .= '</table> <input id="save_' . $index . '" type="submit" value="Save!" class="submit" /></form>';
-
-            }
-        }
-    
-        if(sizeof($sortArray) > 1)
-            $content .= '<input type="button" value="Last!" id="last" /><input type="button" value="Next!" id="next" />';
-
-        $smarty->assign('head', '<link rel="stylesheet" type="text/css" href="/html/css/table.css" />' .
-						        '<link href="/html/css/table/fancyTable.css" rel="stylesheet" media="screen" />' .
-						        '<script src="/html/js/lib/jquery.fixedheadertable.js"></script>' .
-						        $javascript .
-						        '<script type="text/javascript" src="/html/js/edit.js"></script>' );
-                        }
-
 
     $smarty->assign('title', 'Experiment# : ' . getNameFromEid($_GET['exp']) . '</div><div id="sessionNumber">');
     $smarty->assign('user', $session->getUser());
-    $smarty->assign('content', $content);
+
+    $smarty->assign('i_ses', $i_ses);
+    $smarty->assign('i_exp', $i_exp);
+    $smarty->assign('tableKeys', $keys);
+    $smarty->assign('sortArray', $sortArray);
+    $smarty->assign('content', $smarty->fetch('edit.tpl'));
     $smarty->display('skeleton.tpl');
     
 }
