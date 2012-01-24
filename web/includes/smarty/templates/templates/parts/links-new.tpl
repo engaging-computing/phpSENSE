@@ -1,4 +1,4 @@
-<!--
+{*
  * Copyright (c) 2011, iSENSE Project. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
- -->
+ *}
 <ul>
     { if not $user.guest } <li><a href="profile.php?id={ $user.user_id }" { if $marker == 'user' } class="youarehere" { /if } ><img src="html/img/tags.png" alt="View the map"/>My Stuff</a></li> { /if }
 <li><a href="browse.php?type=experiments" { if $marker == 'experiments' } class="youarehere" { /if } ><img src="html/img/drawer.png" alt="Browse experiments and their sessions"/>Experiments</a></li>
