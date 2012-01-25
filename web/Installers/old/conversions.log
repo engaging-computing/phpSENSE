@@ -1,0 +1,9 @@
+0,Counter Type,Counts,x
+1,Voltage,Voltage,x*3.3/1023
+2,PINPoint Temperature Probe,Temperature Probe,(1587.787/x) - (0.00008071358 * x * x) + 45.75087
+3,Vernier Temperature Probe,Temperature Probe, (4548.5815/x) - (0.0001010072228 * x * x) + 19.55366
+4,Vernier UV(A) Sensor,(mW/m^2),((3940*x*3)/(1024))
+5,Vernier CO2 Gas Sensor - Low  Range (ppm),CO2 Low,((x*2500)/256)
+6,Vernier CO2 Gas Sensor - High Range (ppm),CO2 High,((x*25000)/256)
+7,Vernier pH Sensor,PH,-10.5275*((x*3.3)/1023)+29.279
+8,Vernier Salinity Sensor,ppt,0.0224*((x*3.3)/1023)+1.51
