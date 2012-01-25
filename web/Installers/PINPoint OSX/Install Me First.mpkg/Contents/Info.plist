@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleGetInfoString</key>
+	<string>iCODE Setup 1.1 Copyright © 2009 iCODE</string>
+	<key>CFBundleIdentifier</key>
+	<string>edu.icode.pkg.iCODE_Setup</string>
+	<key>CFBundleName</key>
+	<string>iCODE Setup</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.1</string>
+	<key>IFMajorVersion</key>
+	<integer>1</integer>
+	<key>IFMinorVersion</key>
+	<integer>0</integer>
+	<key>IFPkgBuildDate</key>
+	<date>2009-11-04T11:31:02Z</date>
+	<key>IFPkgBuildVersion</key>
+	<string>10B504</string>
+	<key>IFPkgCreator</key>
+	<string>IcebergBuilder 1.2.7</string>
+	<key>IFPkgFlagComponentDirectory</key>
+	<string>Contents/Resources</string>
+	<key>IFPkgFlagPackageList</key>
+	<array>
+		<dict>
+			<key>IFPkgFlagPackageLocation</key>
+			<string>RXTX.mpkg</string>
+			<key>IFPkgFlagPackageSelection</key>
+			<string>required</string>
+		</dict>
+		<dict>
+			<key>IFPkgFlagPackageLocation</key>
+			<string>FTDI Drivers.mpkg</string>
+			<key>IFPkgFlagPackageSelection</key>
+			<string>selected</string>
+		</dict>
+	</array>
+	<key>IFPkgFormatVersion</key>
+	<real>0.10000000149011612</real>
+	<key>IFRequirementDicts</key>
+	<array>
+		<dict>
+			<key>LabelKey</key>
+			<string>SystemVersion &gt;= 10.4</string>
+			<key>Level</key>
+			<string>requires</string>
+			<key>SpecArgument</key>
+			<string>/System/Library/CoreServices/SystemVersion.plist</string>
+			<key>SpecProperty</key>
+			<string>ProductVersion</string>
+			<key>SpecType</key>
+			<string>plist</string>
+			<key>TestObject</key>
+			<string>10.4</string>
+			<key>TestOperator</key>
+			<string>&gt;=</string>
+		</dict>
+	</array>
+</dict>
+</plist>

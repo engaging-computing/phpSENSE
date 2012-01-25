@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleGetInfoString</key>
+	<string>RXTX 2.2r10302009 - CVS</string>
+	<key>CFBundleIdentifier</key>
+	<string>edu.icode.pkg.RXTX</string>
+	<key>CFBundleName</key>
+	<string>RXTX 2.2pre2</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.2r10302009</string>
+	<key>IFMajorVersion</key>
+	<integer>2</integer>
+	<key>IFMinorVersion</key>
+	<integer>2</integer>
+	<key>IFPkgBuildDate</key>
+	<date>2009-11-04T11:31:02Z</date>
+	<key>IFPkgBuildVersion</key>
+	<string>10B504</string>
+	<key>IFPkgCreator</key>
+	<string>IcebergBuilder 1.2.7</string>
+	<key>IFPkgFlagComponentDirectory</key>
+	<string>..</string>
+	<key>IFPkgFlagPackageList</key>
+	<array>
+		<dict>
+			<key>IFPkgFlagPackageLocation</key>
+			<string>RXTX - Universal.pkg</string>
+			<key>IFPkgFlagPackageSelection</key>
+			<string>selected</string>
+		</dict>
+		<dict>
+			<key>IFPkgFlagPackageLocation</key>
+			<string>RXTX - Snow Leopard.pkg</string>
+			<key>IFPkgFlagPackageSelection</key>
+			<string>selected</string>
+		</dict>
+	</array>
+	<key>IFPkgFormatVersion</key>
+	<real>0.10000000149011612</real>
+</dict>
+</plist>

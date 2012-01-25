@@ -1,0 +1,12 @@
+echo "Dumping mongodb/mysql database on isense.cs.uml.edu." 
+mkdir ~/databasebackup
+echo "Enter your isense.cs.uml.edu password when prompted"
+ssh isense.cs.uml.edu "mkdir ~/databasebackup; cd ~/databasebackup; mongodump --host localhost; mysqldump -u root -pRedsox*101188 -x --all-databases > fullsql.sql;"
+scp -r $(whoami)@isense.cs.uml.edu:~/databasebackup ~/
+
+echo "A current copy of the database should be stored in ~/databasebackup"
+echo "Attempting to import this into the local databases. Enter your root mysql password when prompted"
+mysql -u root -p < sqlcommands
+mysql -u root -p vulture < ~/databasebackup/fullsql.sql
+mongorestore ~/databasebackup/dump
+
