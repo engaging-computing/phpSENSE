@@ -189,7 +189,7 @@
 											</select>
 										</td>
 										<td>
-											<select id="custom_field_unit_xxx" id="custom_field_unit_xxx" style="width:201px;">
+											<select id="custom_field_unit_xxx" name="custom_field_unit_xxx" style="width:201px;">
 												<option value="-1">Select one...</option>
 												{ foreach from=$type_units item=unit }
 												<option ref="{$unit.type_id}" value="{ $unit.unit_id }">{ $unit.unit_name }</option>
