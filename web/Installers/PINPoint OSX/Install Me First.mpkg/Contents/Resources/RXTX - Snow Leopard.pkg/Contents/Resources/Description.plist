@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IFPkgDescriptionDeleteWarning</key>
+	<string></string>
+	<key>IFPkgDescriptionDescription</key>
+	<string>RXTX Package for Mac OS X 10.6. Supports Java 1.6 in 32-bit and 64-bit variants</string>
+	<key>IFPkgDescriptionTitle</key>
+	<string>RXTX - Snow Leopard</string>
+	<key>IFPkgDescriptionVersion</key>
+	<string>2.2rHEAD</string>
+</dict>
+</plist>
