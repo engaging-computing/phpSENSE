@@ -70,7 +70,11 @@
 							</tr>
 							<tr>
 								{ foreach from=$fields item=field }
-									<td><input type="text"  id="{ $field.field_name|replace:' ':'_'  }_1" name="{ $field.field_name|replace:' ':'_'  }_1" style="width:90%;"></td>
+								    { if $field.field_name == 'Time' }
+								      	 <td><input type="text" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" class="time"></td>
+								    { else }
+									<td><input type="text"  id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" ></td>
+								    { /if }
 								{ /foreach }
 							</tr>
 						</table>
