@@ -1,0 +1,1 @@
+This package will install the RXTX Java serial libraries and the driver for FTDI USB->Serial adaptors.
