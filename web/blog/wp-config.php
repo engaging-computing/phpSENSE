@@ -14,7 +14,7 @@
  * @package WordPress
  */
 /*Pull Config file from iSENSE*/
-
+print $_SERVER['HTTP_HOST'];
 define('CONF_DIR','http://' . $_SERVER['REMOTE_ADDR'] . '/includes/conf/');
 $config_file = CONF_DIR;
 $config_file .= ($_SERVER['REMOTE_ADDR'] == '127.0.0.1') ? "debugging.xml" : "production.xml";
