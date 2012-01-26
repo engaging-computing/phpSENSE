@@ -32,7 +32,7 @@
 { else }
 	<div id="main">
 		{include file="parts/errors.tpl"}
-		<form id="upload_form" method="post">
+		<form name="create_form" id="create_form" method="post">
 	 		{ if !$created }
 				<fieldset id="basic-info">
 					<legend>Step 1: Basic Info</legend>
@@ -41,7 +41,7 @@
 		    		<span class="hint">Example: "Salinity Levels in Rivers"</span><br/>
 		    		<label for="experiment_description">* Procedure:</label><textarea name="experiment_description" class="required" id="experiment_description" >{$values.description}</textarea><img height="10px" width="10px" id="experiment_description_validated" src="/html/img/validated.png" style="position:relative;left:-15px;top:-15px" class="validated" /><img height="10px" width="10px" id="experiment_description_failed" class="failed" src="/html/img/failed.png" style="position:relative;left:-15px;top:-15px" /><br/>
 		    		<span class="hint">Describe the experimental procedure and other details.</span><br/>
-		    		<label for="experiment_tags">Tags:</label><input type="text" id="experiment_tags" name="experiment_tags" value="{$values.tags}" />
+		    		<label for="experiment_tags">Tags:</label><input type="text" id="experiment_tags" name="experiment_tags" class="required" value="{$values.tags}" />
 		    		<span class="hint">Tags are keywords associated with an experiment. Separate tags with commas.<br/>Example: salinity river water</span><br/>
 					<table width="100%" cellpadding="0" cellspacing="0">
 						<tr>
