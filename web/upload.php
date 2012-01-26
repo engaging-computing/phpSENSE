@@ -214,7 +214,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 					}
 				}
 
-				if($debug) {
+				if(false) {
 					if($is_verneir) { echo "This is a verneir file"; } else { echo "This not a verneir file"; }
 					echo "<br/>";
 
@@ -721,8 +721,10 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
                 } 
                 
                 else {
+					//TODO: Discover the true nature of this commented out echo
                     // This value is no a time, so just plug in to the row record
-			        echo $x[] = $val;
+			        //echo $x[] = $val;
+					;
 			    }
 		    }
 		    

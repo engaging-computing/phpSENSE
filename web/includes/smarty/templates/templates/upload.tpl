@@ -70,7 +70,7 @@
 							</tr>
 							<tr>
 								{ foreach from=$fields item=field }
-									<td><input type="text"  id="{ $field.field_name|replace:' ':'_'  }_1" name="{ $field.field_name|replace:' ':'_'  }_1" style="width:90%;"></td>
+									<td><input type="text"  id="{ $field.field_name|replace:' ':'_'  }_1" name="{ $field.field_name|replace:' ':'_'  }_1" class="required" style="width:90%;"></td>
 								{ /foreach }
 							</tr>
 						</table>
