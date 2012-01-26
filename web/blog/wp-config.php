@@ -14,8 +14,7 @@
  * @package WordPress
  */
 /*Pull Config file from iSENSE*/
-print $_SERVER['HTTP_HOST'];
-define('CONF_DIR','http://' . $_SERVER['REMOTE_ADDR'] . '/includes/conf/');
+define('CONF_DIR','http://' . $_SERVER['HTTP_HOST'] . '/includes/conf/');
 $config_file = CONF_DIR;
 $config_file .= ($_SERVER['REMOTE_ADDR'] == '127.0.0.1') ? "debugging.xml" : "production.xml";
 $config = simplexml_load_file($config_file);
@@ -26,8 +25,8 @@ define('DB_PORT', (string) $config->database->port);
 define('DB_NAME', (string) $config->database->name);
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-define('WP_HOME','http://' . $_SERVER['REMOTE_ADDR'] . '/blog');
-define('WP_SITEURL','http://' . $_SERVER['REMOTE_ADDR'] . '/blog');
+define('WP_HOME','http://' . $_SERVER['HTTP_HOST'] . '/blog');
+define('WP_SITEURL','http://' . $_SERVER['HTTP_HOST'] . '/blog');
 
 /** Database Charset to use in creating database tables. */
 define('DB_CHARSET', 'utf8');
