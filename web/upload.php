@@ -721,10 +721,8 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
                 } 
                 
                 else {
-					//TODO: Discover the true nature of this commented out echo
-                    // This value is no a time, so just plug in to the row record
-			        //echo $x[] = $val;
-					;
+                    // This value is not a time type, so we directly insert into the row
+			        $x[] = $val;
 			    }
 		    }
 		    
