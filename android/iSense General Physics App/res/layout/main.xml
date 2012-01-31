@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/white"
+    android:keepScreenOn="true">
+    
+    <TextView android:id="@+id/loginInfo"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:background="#000000"
+    	android:text=" null"
+    	android:textColor="#FFFFFF"
+    	android:textSize="12sp"
+    />
+    
+    <LinearLayout android:orientation="vertical"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_weight="1">
+    
+
+			<ImageView android:id="@+id/ImageViewLogo"
+				android:layout_width="fill_parent" 
+				android:background="@android:color/white"
+				android:src="@drawable/logo"
+				android:layout_height="wrap_content"
+				android:scaleType="center"/>
+
+			<TextView android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/ridename"
+				android:text="Ride/St#: "
+				android:textSize="18dip"
+				android:background="@android:color/black"
+				android:textColor="@android:color/white"
+				android:layout_gravity="center_horizontal"
+				android:gravity="center_horizontal"/>
+	
+		<LinearLayout android:orientation="vertical"
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:background="@android:color/black">
+
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/values"
+				android:text="X: , Y: , Z:"
+				android:textSize="18dip"
+				android:textStyle="bold"
+				android:background="@android:color/black"
+				android:textColor="@android:color/white"
+				android:layout_gravity="center_horizontal"/>
+			
+		</LinearLayout>
+		
+		<Button android:text="Hold to Start" 
+			android:textSize="30dip"
+			android:id="@+id/startStop" 
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="20dp"
+			android:layout_marginRight="20dp"
+			android:layout_marginTop="20dp"
+			android:layout_marginBottom="20dp"
+			android:layout_weight="1"/>
+			
+	</LinearLayout>
+	
+	<LinearLayout android:orientation="vertical"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:layout_marginBottom="20dp">
+			
+		<TextView android:id="@+id/menuPrompt"
+			android:layout_height="wrap_content"
+			android:layout_width = "fill_parent"
+			android:layout_gravity="center_horizontal"
+			android:gravity="center"
+			android:textSize="15sp"
+			android:text="Use Menu to Setup, Login, or Upload"
+			android:background="@android:color/white"
+			android:textColor="@android:color/black"/>
+			
+		<TextView android:id="@+id/pictureCount"
+			android:gravity="center"
+			android:layout_height="fill_parent"
+			android:layout_width = "fill_parent"
+			android:layout_gravity="center_horizontal"
+			android:text="Pictures and Videos taken: 0"
+			android:textSize="15sp"
+			android:background="@android:color/white"
+			android:textColor="@android:color/black"/>
+		
+	</LinearLayout>
+	
+	
+</LinearLayout>

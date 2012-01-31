@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, AmuesmentPark!</string>
+    <string name="app_name">Amusement Park Physics</string>
+    
+    <string name="iSenseConfig"><u><b>iSENSE Only Configurations</b></u></string>
+    <string name="otherConfig"><u><b>Other Configurations</b></u></string>
+    
+    <string name="rides_prompt">Choose a ride</string>
+    <string-array name="rides_array">
+        <item>Unknown</item>
+        <item>Bumper Cars</item>
+        <item>Carousel</item>
+        <item>Drop Tower</item>
+        <item>Ferris Wheel</item>
+        <item>Frisbee</item>
+        <item>Gravitron</item>
+        <item>Jump-and-Smile</item>
+        <item>Kiddie Ride</item>
+        <item>Log Flume</item>
+        <item>Matterhorn</item>
+        <item>Orbiter</item>
+        <item>Other</item>
+        <item>Pirate Ship</item>
+        <item>Railway</item>
+        <item>River Rafting</item>
+        <item>Roller Coaster (wooden)</item>
+        <item>Roller Coaster (steel)</item>
+        <item>Rotor</item>
+        <item>Scrambler</item>
+        <item>Slide</item>
+        <item>Speed</item>
+        <item>Swings</item>
+        <item>Teacups</item>
+        <item>Tilt-A-Whirl</item>
+        <item>Wipeout</item>
+        <item>Zero Gravity</item>
+        <item>Zipper</item>
+    </string-array>
+    <string-array name="canobie_array">
+    	<item>Unknown</item>
+    	<item>Alpine Swing</item>
+        <item>Antique Cars</item>
+        <item>Canobie 500</item>
+        <item>Caterpillar</item>
+        <item>Corkscrew</item>
+        <item>daVinvi\'s Dream</item>
+        <item>Dodgems</item>
+        <item>Dragon Coaster</item>
+        <item>Giant Sky Wheel</item>
+        <item>Jungle Bounce</item>
+        <item>Junior Sports Cars</item>
+        <item>Kiddie Carousel</item>
+        <item>Over the Rainbow</item>
+        <item>Pirata</item>
+        <item>Psychodrome</item>
+        <item>Skater</item>
+        <item>StarBlaster</item>
+        <item>Turkish Twist</item>
+        <item>Twist and Shout</item>
+        <item>Untamed</item>
+        <item>Wave Blaster</item>
+        <item>Wipeout</item>
+        <item>Xtreme Frisbee</item>
+        <item>Yankee Cannonball</item>
+        <item>Zero Gravity</item>
+    </string-array>
+    
+    <string name="experiments_no_items">No experiments were found.</string>
+    
+    <string name="updates">Please carefully review the following agreement for this version of this app:</string>
+	<string name ="eula">This end user license agreement (Agreement) is a legal agreement between you 
+		and the developers at iSENSE (Internet System for Networked Sensor Experimentation) and 
+		ECG (Engaging Computing Group) of the University of Massachusetts Lowell (the Developer) 
+		stating the terms and conditions that govern your use of the Amusement Park Application for 
+		the Android device (the Application). Please read this agreement carefully. By purchasing, 
+		downloading, installing and/or using the Application, you are indicating that you agree to be 
+		bound by and comply with the terms and conditions set forth in this agreement. If you do not agree 
+		to these terms and conditions, do not purchase, download, install and/or use the Application.\n\n
+		
+		Developer may enable access to content, information and services (including external and/or 
+		online) through the Application (collectively and individually, the Services), and as a condition 
+		of your use of the Services, you agree to be bound by and comply with Developer’s Terms of Service 
+		and Privacy Policy as communicated by Developer at such time, each of which shall become 
+		incorporated herein by reference. You agree that the Privacy Policy and Terms of Service may 
+		be updated from time to time, without prior notice, and any such changes shall be effective as 
+		soon as posted. If applicable, you should also refer back to the Terms of Service and Privacy 
+		Policy on a regular basis so that you remain aware of the most current terms and conditions that 
+		apply to you.\n\n
+		
+		1. LICENSE GRANT. Subject to the terms and conditions of this Agreement, Developer hereby 
+		grants to you a limited, non-transferable, non-sublicensable, non-assignable and revocable 
+		license to install and use the Application solely for your own personal, non-commercial use 
+		on your present Android device that you own or control. For the avoidance of doubt, the Application 
+		is licensed, not sold, to you by Developer pursuant to and subject to the terms and conditions of 
+		this Agreement and any other applicable terms and conditions promulgated by any third party (e.g., 
+		Android Marketplace, storefront, network, and other operators, etc.), including, without limitation, 
+		Google. Developer reserves all rights not expressly granted to you herein. You acknowledge and 
+		agree that this Agreement is between you and Developer, and Google and its subsidiaries are not 
+		a party to this Agreement and are not responsible for the Application.  In the event of a conflict, 
+		the terms and conditions of the present Agreement shall supersede and have priority over the 
+		terms and conditions of the Android Marketplace.\n\n
+		
+		2. RESTRICTIONS. This Agreement does not allow you to use the Application on any Android 
+		device that you do not own or control, and you may not distribute or make the Application 
+		available over a network where it could be used by multiple devices at the same time. You may 
+		not rent, lease, lend, sell, redistribute or sublicense the Application. You may not copy, 
+		decompile, reverse engineer, disassemble, attempt to derive the source code of, modify, or 
+		create derivative works of the Application, any updates or upgrades, or any part thereof. Any 
+		attempt to do so is a violation of the rights of Developer, its affiliates and licensors, as 
+		applicable. If you breach this restriction, you may be subject to prosecution and damages. The 
+		terms and conditions of the Agreement shall govern any upgrades or updates provided by Developer 
+		that replace and/or supplement the original Application, unless such upgrade is accompanied by 
+		or references a separate license agreement in which case the terms of that license agreement 
+		shall govern.\n\n
+		
+		3. CONSENT TO USE OF DATA. All data and information collected, used and/or disclosed by Developer 
+		and its affiliates in connection with your use of the Application and the Services, which shall 
+		include, without limitation, all technical information about your device, system, Application 
+		software, peripherals and the use thereof, shall be governed by and subject to the terms and 
+		conditions set forth in the Privacy Policy.\n\n
+		
+		4. PROPRIETARY RIGHTS. Developer, its affiliates and/or their respective licensors own all right, 
+		title and interest in and to the Application, including, without limitation, all intellectual and 
+		proprietary rights appurtenant thereto, and, except for the limited license granted to you herein, 
+		nothing in this Agreement shall be construed to restrict, transfer, convey, encumber, alter, impair 
+		or otherwise adversely affect Developer’s, its affiliates and/or their respective licensors’ ownership 
+		or proprietary rights therein or any other of Developer’s, its affiliates’ and/or their licensors’ 
+		information, processes, methodologies, products, goods, services, or materials, tangible or intangible, 
+		in any form and in any medium.\n\n
+		
+		5. NO WARRANTY. You expressly acknowledge and agree that use of the Application is at your 
+		sole risk and that the entire risk as to satisfactory quality, performance, accuracy and 
+		effort of the Application is with you. To the maximum extent permitted by applicable law, 
+		the Application and any services performed or provided by or in connection with the Application 
+		are provided “as is” and “as available”, with all bugs and faults and without warranty of any 
+		kind, and Developer, its affiliates and licensors hereby disclaim all warranties and conditions 
+		with respect to the Application and any services, either express, implied or statutory, 
+		including, without limitation, any implied warranties and/or conditions of merchantability, 
+		of satisfactory quality, of fitness for a particular purpose, of accuracy, of quiet enjoyment, 
+		of title, and of non-infringement of third party rights. Neither Developer, nor any of its 
+		affiliates or licensors warrant that the functions or services contained in, accessed from, 
+		performed by, displayed on, linked to/from, or provided by, the Application will meet your 
+		requirements, that the operation of the Application or services will be uninterrupted or 
+		error-free, or that defects in the Application or services will be corrected. No oral or 
+		written information or advice given by Developer, its affiliates or any of their respective 
+		authorized representatives shall create a warranty. Should the Application or services prove 
+		defective, you assume the entire cost of all necessary servicing, repair or correction. Some 
+		jurisdictions do not allow the exclusion of implied warranties or limitations on applicable 
+		statutory rights of a consumer, so the above exclusion and limitations may not apply to you.\n\n
+		
+		6. LIMITATION OF LIABILITY. To the extent not prohibited by law, in no event shall Developer 
+		or its affiliates be liable for any loss or damage of any kind, whether direct, indirect, 
+		incidental, special, exemplary or consequential, including, without limitation, damages for 
+		loss of profits, loss of data, data charges, business interruption or any other commercial 
+		damages or losses, arising out of or related to your use or inability to use the Application, 
+		however caused, regardless of the theory of liability (contract, tort or otherwise) and even 
+		if Developer or its affiliates have been advised of the possibility of such damages.  In no 
+		event shall Developer’s liability exceed the price paid for the Application by the user.  
+		Developer or its affiliates shall not be liable should (i) the Application or any Update be 
+		removed and/or unavailable from the Android Marketplace for any reason, (ii) the Application 
+		cease to function as a result of any modifications or updates to the Android software, changes 
+		to the firmware of your device or a change of device.\n\n
+		
+		7. INDEMNIFICATION. You agree to indemnify, defend, and hold Developer, its affiliates and 
+		their respective successors and assigns, officers, directors, employees, agents, licensors, 
+		representatives, advertisers, service providers, and suppliers harmless against any and all 
+		claims, demands, actions, losses, damages, costs and expenses (including reasonable attorneys\' 
+		fees), arising out of or relating to your (a) breach or violation of this Agreement, (b) 
+		infringement, misappropriation or any violation of the rights of any other party, (c) violation 
+		or non-compliance with any applicable law, rule or regulation, and (d) use, alteration 
+		or export of the Application (or any component thereof) in violation of this Agreement.\n\n
+		
+		8. WIRELESS ACCESS CHARGES. Certain Application functions and Services require data access, 
+		and the provider of data access for your device may charge you data access fees in 
+		connection with your use of the Application. You are solely responsible for any data 
+		access or other charges you incur.\n\n
+		
+		9. CONTINUED USE OR AVAILABILITY. Developer and its affiliates reserve the right to modify, 
+		update, supplement, limit, discontinue, remove or disable access to the Application and/or 
+		any Services without notice to you and neither Developer, its affiliates nor any of their 
+		respective licensors shall be liable to you or any third party should it exercise such rights.\n\n
+		
+		10. UPDATES AND UPGRADES.  You are only granted the right to the version of the Application 
+		as provided when purchased and solely incorporating the features and functionality provided 
+		with such version.   You are not granted any rights to any updates, upgrades, future versions, 
+		modifications, supplements, and/or additional features and components (including any 
+		online or external functionality or Services) of the Application that may subsequently 
+		be made available by Developer with the Application or for use with the Application 
+		(collectively the Updates).  From time to time, Developer may make available Updates to 
+		the Application via software download or other means. Such download may occur automatically 
+		without the need for any act on your part, or it may require you to manually download an 
+		update or upgrade through the same source from which the Application was originally 
+		downloaded. Certain functions of the Application may be modified or discontinued as a 
+		result of any such update or upgrade, or may not be available if you have not downloaded 
+		all Updates made available by Developer or otherwise.  Developer may, in its sole and 
+		absolute discretion, provide you free of charge with Updates to the Application but reserves 
+		itself the right to charge additional sums for such Updates the amount of which shall be 
+		determined by Developer in its sole and absolute discretion.  Developer does not warrant, 
+		represent nor undertake to provide Updates and in no event shall Developer incur any liability 
+		for a failure to do so.  Developer may, in its sole and absolute discretion, by means of 
+		Updates or otherwise, offer Services as a complement to the Application and reserves itself 
+		the right to charge additional sums for same, including a monthly or yearly fee or a fee 
+		based on usage.\n\n
+		
+		11. CHANGES TO THE AGREEMENT. Developer may make changes to this Agreement, at any time 
+		and from time to time, by notifying you of the change, including, without limitation, 
+		by including notice on the Services or by other electronic means, and a new copy of this 
+		Agreement shall be made available on the Services. By using the Application and/or any 
+		Services after such changes are made to the Agreement, you signify that you agree to be 
+		bound by and comply with such changes and Developer shall treat your use as acceptance of 
+		the changed provisions.\n\n
+		
+		12. TERMINATION. This Agreement is effective until terminated by you or Developer. Your 
+		rights under the license granted herein shall terminate automatically without notice from 
+		Developer if you fail to comply with any terms or conditions of this Agreement. Upon 
+		termination of this Agreement, you shall cease all use of the Application, and destroy 
+		all copies, full or partial, thereof.\n\n
+		
+		13. GOVERNING LAW AND INTERPRETATION. To the extent not prohibited by law, you agree 
+		(a) that this Agreement and all disputes, claims, actions, suits or other proceedings 
+		arising hereunder shall be governed by, and construed in accordance with, the substantive 
+		law of the state of Massachusetts (b) to irrevocably submit to the sole and exclusive 
+		jurisdiction of the courts of Massachusetts, and (c) to irrevocably consent to the exercise 
+		of personal jurisdiction by such courts and waive any right to plead, claim or allege that 
+		any of the judicial districts of Massachusetts, USA is an inconvenient forum. No failure or 
+		delay by Developer, its affiliates or licensors to exercise any right or enforce any 
+		obligation shall impair or be construed as a waiver or ongoing waiver of that or any or 
+		other right or power. If any provision of this Agreement is held to be illegal, invalid or 
+		unenforceable, the remaining provisions of this Agreement shall be unimpaired and remain in 
+		full force and effect. You may not assign your rights under this Agreement without Developer’s 
+		prior written permission and any attempt by you to do so shall be void. Any provision of this 
+		Agreement which by its nature must survive the termination of this Agreement in order to 
+		give effect to its meaning shall survive such termination. You agree that Apple is an 
+		intended third party beneficiary of this Agreement and will have the right to enforce this 
+		Agreement as a third party beneficiary.\n\n
+		
+		14. CONTACT INFORMATION. You may contact Developer at:\n
+		Engaging Computing Group\n
+		Olsen Hall, Room 306\n
+		198 Riverside St.\n
+		Lowell, MA, USA\n
+		01854\n
+		fredm@cs.uml.edu\n
+		http://isense.cs.uml.edu/\n
+		
+	</string>
+
+</resources>
