@@ -1,4 +1,4 @@
-<!--
+{*
  * Copyright (c) 2011, iSENSE Project. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
- -->
+ *}
 <!--<p>This page is part of the iSENSE Project at the University of Massachusetts Lowell.</p>-->
 <!--<p>The iSENSE Project is supported by grants DRL-0735597 and DRL-0735592 from the National Science Foundation, and a gift from Google Inc.</p>-->
 <p>The iSENSE project is a collaborative effort of the University of Massachusetts Lowell and Machine Science Inc.</p> 

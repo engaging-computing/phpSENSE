@@ -1,4 +1,4 @@
-<!--
+{*
  * Copyright (c) 2011, iSENSE Project. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
- -->
+ *}
 <div class="module">
 	{ if !$user.guest }<div style="float:right; font-size:80%;"><a href="upload-videos.php?id={ $meta.experiment_id }">Add Videos</a></div>{ /if }
 	<h1>Videos</h1>

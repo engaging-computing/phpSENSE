@@ -1,4 +1,4 @@
-<!--
+{*
  * Copyright (c) 2011, iSENSE Project. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
- -->
+ *}
 <ul>
 <li><a href="index.php" { if $marker == 'home' } class="youarehere" { /if } ><img src="/html/img/home.png" alt="Your experiments and sessio"/html/ns"/>Home</a></li>
 <li><a href="browse.php" { if $marker == 'browse' } class="youarehere" { /if } ><img src="/html/img/drawer.png" alt="Browse experiments and their sessions"/>Browse</a></li>

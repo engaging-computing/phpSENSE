@@ -1,0 +1,58 @@
+#!/usr/bin/env perl
+use Sys::Syslog;
+
+openlog( "iCODE Setup", "ndelay,pid", "notice" );
+
+my $volume = $ARGV[2];
+syslog( "notice", "Using volume '$volume'" );
+syslog( "notice", "ARGV[0] == '".$ARGV[0]."'" );
+syslog( "notice", "ARGV[1] == '".$ARGV[1]."'" );
+syslog( "notice", "ARGV[2] == '".$ARGV[2]."'" );
+syslog( "notice", "ARGV[3] == '".$ARGV[3]."'" );
+
+my @find_cmds = ( "/usr/bin/find $volume/System/Library/Frameworks/JavaVM.framework \\
+                		-iname '*rxtx*jar' -or \\
+                		-iname '*rxtx*jnilib' 2>/dev/null",
+                	"/usr/bin/find $volume/usr/lib/java \\
+                    -iname 'libSerial.jnilib' 2>/dev/null",
+                	"/usr/bin/find $volume/private/tmp \\
+                    -iname '*rxtx*.jnilib' 2>/dev/null"
+                	#"/usr/bin/find $volume/Library/Java/Extensions \\
+                  #  -iname '*rxtx*.jnilib' -or \\
+                  #  -iname '*rxtx*.jar' 2>/dev/null"
+                 );
+my @errors = ();
+my @libraries = ();
+
+         
+foreach( @find_cmds ) {
+  my $result = qx( $_ );
+  my $status = ($? >> 8);
+  
+  if( length $result eq 0 ) {
+    next;
+  } elsif( $status ne 0 ) {
+    syslog( "notice", "'$_' exited with non-zero status" );
+    next;
+  } else {
+    @libraries = (@libraries, split( /\n/, $result ));
+  }
+}
+
+if( scalar @libraries > 0 ) {
+  my $list = join( " ", @libraries );
+  $list =~ s://:/:g;
+
+  my $cmd = '"'.$ARGV[0].'/Contents/Resources/Tools/TableAlert.app/Contents/MacOS/TableAlert"'." iCODE\\ Setup $list";
+
+  my $result = system( $cmd );
+  $result = $result >> 8;
+} else {
+  $result = 0;
+}
+
+foreach( @errors ) {
+  syslog( "notice", $_ );
+}
+  
+exit( $result );
