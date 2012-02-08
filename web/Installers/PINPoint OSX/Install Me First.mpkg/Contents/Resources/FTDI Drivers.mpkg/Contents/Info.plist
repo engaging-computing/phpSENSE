@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.ftdichip.pkg</string>
+	<key>CFBundleName</key>
+	<string>FTDI Kernel Extensions</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.2.14</string>
+	<key>IFMajorVersion</key>
+	<integer>2</integer>
+	<key>IFMinorVersion</key>
+	<integer>2</integer>
+	<key>IFPkgBuildDate</key>
+	<date>2009-11-04T11:31:03Z</date>
+	<key>IFPkgBuildVersion</key>
+	<string>10B504</string>
+	<key>IFPkgCreator</key>
+	<string>IcebergBuilder 1.2.7</string>
+	<key>IFPkgFlagComponentDirectory</key>
+	<string>Contents/Resources</string>
+	<key>IFPkgFlagPackageList</key>
+	<array>
+		<dict>
+			<key>IFPkgFlagPackageLocation</key>
+			<string>FTDI - Universal.pkg</string>
+			<key>IFPkgFlagPackageSelection</key>
+			<string>selected</string>
+		</dict>
+		<dict>
+			<key>IFPkgFlagPackageLocation</key>
+			<string>FTDI - Snow Leopard.pkg</string>
+			<key>IFPkgFlagPackageSelection</key>
+			<string>selected</string>
+		</dict>
+	</array>
+	<key>IFPkgFormatVersion</key>
+	<real>0.10000000149011612</real>
+	<key>IFRequirementDicts</key>
+	<array>
+		<dict>
+			<key>LabelKey</key>
+			<string>No existing FTDI kexts</string>
+			<key>Level</key>
+			<string>recommends</string>
+			<key>SpecArgument</key>
+			<string>/System/Library/Extensions/FTDIUSBSerialDriver.kext</string>
+			<key>SpecType</key>
+			<string>bundle</string>
+			<key>TestObject</key>
+			<string></string>
+			<key>TestOperator</key>
+			<string>=</string>
+		</dict>
+	</array>
+</dict>
+</plist>
