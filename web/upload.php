@@ -722,7 +722,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
                 
                 else {
                     // This value is no a time, so just plug in to the row record
-			        echo $x[] = $val;
+			        //echo $x[] = $val;
 			    }
 		    }
 		    

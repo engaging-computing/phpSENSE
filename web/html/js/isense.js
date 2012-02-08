@@ -609,11 +609,14 @@ var createWizard = {
 
     step_pinpoint_advance:function() {
 	        var filled = true;
-	        var labels = Array("#external_label");
-	        var boxes = Array("#external");
+	        var labels = Array("#external_label_A");
+	        var boxes = Array("#external_A");
+	
+	        var labels2 = Array("#external_label_B");
+	        var boxes2 = Array("#external_B");
 
 	        $('#error_msg_custom').children().remove();
-
+/*
 	        for(i = 0; i < labels.length; i++) {
 	            if(($(labels[i]).val() == "") && $(boxes[i]).attr('checked')) {
 	                if(filled) {
@@ -623,11 +626,11 @@ var createWizard = {
 	                }
 	            }
 	        }
-
+*/
 	        if(filled) {
 	            createWizard.next = createWizard.step_post_process;
 
-	            /* Add Temperature to fields */
+	            /* Add Time to fields */
 	            createWizard.store_field('time', 7, 22);
 
 	            /* Add gps to fields */
@@ -647,7 +650,7 @@ var createWizard = {
 	            }
 
 	            if($('#temperature').attr('checked')) {
-	                createWizard.store_field('temperature', 1, 2);
+	                createWizard.store_field('air temperature', 1, 2);
 	            }
 	
 				if($('#pressure').attr('checked')) {
@@ -659,48 +662,210 @@ var createWizard = {
 	            }
 
 	            /* Add External */
-	            if($('#external').attr('checked')) {
+	            if($('#external_A').attr('checked')) {
+		
+					var external_port = "";
+					
+					switch($('#external_port_A').val()){
+						case 0:
+						external_port = "~Any";
+						break;
+						case 1:
+						external_port = "~BTA1";
+						break;
+						case 2:
+						external_port = "~BTA2";
+						break;
+						case 3:
+						external_port = "~MINI1";
+						break;
+						case 4:
+						external_port = "~MINI2";
+						break;
+					}
+		
 	                /* Add PinPoint Temp Probe */
-	                if($('#external_type').val() == 1) {
+	                if($('#external_type_A').val() == 1) {
+	                    createWizard.store_field('temperature probe'+external_port, 1, 2);
+	                }
+	                /* Add Generic Voltage Probe */
+	                else if($('#external_type_A').val() == 2) {
+	                    createWizard.store_field('voltage'+external_port, 11, 34);
+	                }
+	                /* Add Giger Counter Probe */
+	                else if($('#external_type_A').val() == 3 || $('#external_type').val() == 4){
+	                    createWizard.store_field('counts'+external_port, 20, 60);
+	                }
+	                /* Need to throw error, this is a bad value */
+	                else if($('#external_type_A').val() == 0) {
+	                    // Error
+	                }
+	                else if($('#external_type_A').val() == 5) {
+	                    createWizard.store_field('ph'+external_port, 24, 70);
+	                }
+	                else if($('#external_type_A').val() == 6) {
+	                    createWizard.store_field('salinity'+external_port, 23, 69);
+	                }
+	                else if($('#external_type_A').val() == 7) {
+	                    createWizard.store_field('co2 high'+external_port, 22, 67);
+	                }
+					else if($('#external_type_A').val() == 8) {
+	                    createWizard.store_field('dissolved oxygen'+external_port, 30, 77);
+	                }
+					else if($('#external_type_A').val() == 9) {
+	                    createWizard.store_field('anemometer'+external_port, 31, 45);
+	                }
+					else if($('#external_type_A').val() == 10) {
+	                    createWizard.store_field('turbidity'+external_port, 32, 78);
+	                }
+					else if($('#external_type_A').val() == 11) {
+	                    createWizard.store_field('flow rate'+external_port, 33, 45);
+	                }
+					else if($('#external_type_A').val() == 12) {
+	                    createWizard.store_field('motor monitor'+external_port, 34, 34);
+	                }
+					else if($('#external_type_A').val() == 13) {
+	                    createWizard.store_field('conductivity'+external_port, 35, 79);
+	                }
+	            }
+	
+	            /* Add External 2 */
+	            if($('#external_B').attr('checked')) {
+	                /* Add PinPoint Temp Probe */
+	                if($('#external_type_B').val() == 1) {
 	                    createWizard.store_field('temperature probe', 1, 2);
 	                }
 	                /* Add Generic Voltage Probe */
-	                else if($('#external_type').val() == 2) {
+	                else if($('#external_type_B').val() == 2) {
 	                    createWizard.store_field('voltage', 11, 34);
 	                }
 	                /* Add Giger Counter Probe */
-	                else if($('#external_type').val() == 3 || $('#external_type').val() == 4){
+	                else if($('#external_type_B').val() == 3 || $('#external_type').val() == 4){
 	                    createWizard.store_field('counts', 20, 60);
 	                }
 	                /* Need to throw error, this is a bad value */
-	                else if($('#external_type').val() == 0) {
+	                else if($('#external_type_B').val() == 0) {
 	                    // Error
 	                }
-	                else if($('#external_type').val() == 5) {
+	                else if($('#external_type_B').val() == 5) {
 	                    createWizard.store_field('ph', 24, 70);
 	                }
-	                else if($('#external_type').val() == 6) {
+	                else if($('#external_type_B').val() == 6) {
 	                    createWizard.store_field('salinity', 23, 69);
 	                }
-	                else if($('#external_type').val() == 7) {
+	                else if($('#external_type_B').val() == 7) {
 	                    createWizard.store_field('co2 high', 22, 67);
 	                }
-					else if($('#external_type').val() == 8) {
+					else if($('#external_type_B').val() == 8) {
 	                    createWizard.store_field('dissolved oxygen', 30, 77);
 	                }
-					else if($('#external_type').val() == 9) {
+					else if($('#external_type_B').val() == 9) {
 	                    createWizard.store_field('anemometer', 31, 45);
 	                }
-					else if($('#external_type').val() == 10) {
+					else if($('#external_type_B').val() == 10) {
 	                    createWizard.store_field('turbidity', 32, 78);
 	                }
-					else if($('#external_type').val() == 11) {
+					else if($('#external_type_B').val() == 11) {
 	                    createWizard.store_field('flow rate', 33, 45);
 	                }
-					else if($('#external_type').val() == 12) {
+					else if($('#external_type_B').val() == 12) {
 	                    createWizard.store_field('motor monitor', 34, 34);
 	                }
-					else if($('#external_type').val() == 13) {
+					else if($('#external_type_B').val() == 13) {
+	                    createWizard.store_field('conductivity', 35, 79);
+	                }
+	            }
+	
+	            /* Add External 2 */
+	            if($('#external_C').attr('checked')) {
+	                /* Add PinPoint Temp Probe */
+	                if($('#external_type_C').val() == 1) {
+	                    createWizard.store_field('temperature probe', 1, 2);
+	                }
+	                /* Add Generic Voltage Probe */
+	                else if($('#external_type_C').val() == 2) {
+	                    createWizard.store_field('voltage', 11, 34);
+	                }
+	                /* Add Giger Counter Probe */
+	                else if($('#external_type_C').val() == 3 || $('#external_type').val() == 4){
+	                    createWizard.store_field('counts', 20, 60);
+	                }
+	                /* Need to throw error, this is a bad value */
+	                else if($('#external_type_C').val() == 0) {
+	                    // Error
+	                }
+	                else if($('#external_type_C').val() == 5) {
+	                    createWizard.store_field('ph', 24, 70);
+	                }
+	                else if($('#external_type_C').val() == 6) {
+	                    createWizard.store_field('salinity', 23, 69);
+	                }
+	                else if($('#external_type_C').val() == 7) {
+	                    createWizard.store_field('co2 high', 22, 67);
+	                }
+					else if($('#external_type_C').val() == 8) {
+	                    createWizard.store_field('dissolved oxygen', 30, 77);
+	                }
+					else if($('#external_type_C').val() == 9) {
+	                    createWizard.store_field('anemometer', 31, 45);
+	                }
+					else if($('#external_type_C').val() == 10) {
+	                    createWizard.store_field('turbidity', 32, 78);
+	                }
+					else if($('#external_type_C').val() == 11) {
+	                    createWizard.store_field('flow rate', 33, 45);
+	                }
+					else if($('#external_type_C').val() == 12) {
+	                    createWizard.store_field('motor monitor', 34, 34);
+	                }
+					else if($('#external_type_C').val() == 13) {
+	                    createWizard.store_field('conductivity', 35, 79);
+	                }
+	            }
+	
+	            /* Add External 2 */
+	            if($('#external_D').attr('checked')) {
+	                /* Add PinPoint Temp Probe */
+	                if($('#external_type_D').val() == 1) {
+	                    createWizard.store_field('temperature probe', 1, 2);
+	                }
+	                /* Add Generic Voltage Probe */
+	                else if($('#external_type_D').val() == 2) {
+	                    createWizard.store_field('voltage', 11, 34);
+	                }
+	                /* Add Giger Counter Probe */
+	                else if($('#external_type_D').val() == 3 || $('#external_type').val() == 4){
+	                    createWizard.store_field('counts', 20, 60);
+	                }
+	                /* Need to throw error, this is a bad value */
+	                else if($('#external_type_D').val() == 0) {
+	                    // Error
+	                }
+	                else if($('#external_type_D').val() == 5) {
+	                    createWizard.store_field('ph', 24, 70);
+	                }
+	                else if($('#external_type_D').val() == 6) {
+	                    createWizard.store_field('salinity', 23, 69);
+	                }
+	                else if($('#external_type_D').val() == 7) {
+	                    createWizard.store_field('co2 high', 22, 67);
+	                }
+					else if($('#external_type_D').val() == 8) {
+	                    createWizard.store_field('dissolved oxygen', 30, 77);
+	                }
+					else if($('#external_type_D').val() == 9) {
+	                    createWizard.store_field('anemometer', 31, 45);
+	                }
+					else if($('#external_type_D').val() == 10) {
+	                    createWizard.store_field('turbidity', 32, 78);
+	                }
+					else if($('#external_type_D').val() == 11) {
+	                    createWizard.store_field('flow rate', 33, 45);
+	                }
+					else if($('#external_type_D').val() == 12) {
+	                    createWizard.store_field('motor monitor', 34, 34);
+	                }
+					else if($('#external_type_D').val() == 13) {
 	                    createWizard.store_field('conductivity', 35, 79);
 	                }
 	            }
