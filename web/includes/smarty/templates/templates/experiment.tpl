@@ -175,7 +175,8 @@
 								{ if $session.owner_id == $user.user_id or $user.administrator == 1 }
 								    <td style="border-bottom:1px solid #CCC;">
 										<a href="session-upload-pictures.php?sid={ $session.session_id }&id={ $id }">Add Image</a> - 
-								        <a href="javascript:void(0);" onclick="window.location.href='session-edit.php?id={$session.session_id}';">Edit</a>
+								        <a href="javascript:void(0);" onclick="window.location.href='session-edit.php?id={$session.session_id}';">Edit Session</a>
+								        - <a href-"javasript:void(0)" onclick="window.location.href='/raac/edit.php?exp={$session.experiment_id}';">Edit Data</a>
 								    </td>
 								{ /if }
 							</tr>
