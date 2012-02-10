@@ -588,5 +588,17 @@ function getAllExperiments() {
     return false;
 }
 
+function getExpOwner($sid) {
+    global $db;
+    
+    $sql = "SELECT owner_id FROM experiments WHERE experiment_id=( SELECt experiment_id FROM experimentSessionMap WHERE session_id= {$sid} )";
+    $query = $db->query($sql);
+    
+    if($db->numOfRows) {
+        return $query;
+    }
+    
+    return false;
+}
 
 ?>
