@@ -37,8 +37,6 @@ var table = new function Table() {
 		n = Math.max(0, Math.min(n, 255));
 		return '0123456789ABCDEF'.charAt( (n-n%16) / 16 ) + '0123456789ABCDEF'.charAt(n%16);
 	}
-
-
 	
 	this.inited = 0;
 	this.order = null;
@@ -157,7 +155,7 @@ var table = new function Table() {
 
 		var count = 0;
 		
-		$('#table_canvas').append('<table id="data_table" border="1px"><tr id="label"></tr></table>');
+		$('#table_canvas').append('<table id="data_table" border="1px" style="border-collapse:collapse;"><tr id="label"></tr></table>');
 		$('#label').append('<td id="dP">Data Point</td>');
 		$('#label').append('<td id="ses">Session #</td>');
 
@@ -270,9 +268,7 @@ var table = new function Table() {
 		
 		timer = new Date();
 		
-		console.log(timer.getTime());
 		this.draw(data, sort);
-		console.log(timer.getTime());
 		
 		this.drawControls();
 		this.setListeners();

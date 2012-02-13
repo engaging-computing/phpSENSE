@@ -50,6 +50,16 @@ var timeline = new function Timeline(){
 		return '0123456789ABCDEF'.charAt( (n-n%16) / 16 ) + '0123456789ABCDEF'.charAt(n%16);
 	}
 	
+	function clip(input, lbound, ubound){
+		
+		input = input > ubound ? ubound : input;
+		
+		input = input < lbound ? lbound : input;
+		
+		return input;
+		
+	}
+	
 	this.inited = 0;
 	
 	/*
@@ -60,49 +70,73 @@ var timeline = new function Timeline(){
 	
 	this.drawControls = function(){
 		
-		var controls = '<div id="sessioncontrols">';
+		var controls = '';
 		
-		controls += '<button id="resetview" type="button">Reset View</button><br><br>';
+		controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div><button id="resetview" type="button">Reset View</button></div>';
+		
+		controls += '<div id="sessioncontrols" style="float:left;margin:10px;">';
+		
+		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>';
 		
 		for( var i in data.sessions ){
 			
 			var color = hslToRgb( ( 0.6 + ( 1.0*i/data.sessions.length ) ) % 1.0, 0.825, 0.425 );
 			
-			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;height:100px;width:150px;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
+			controls += '<tr><td>';
 			
-			controls += data.sessions[i].meta.name + '&nbsp;';
+			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
 			
-			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>';
+			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
+			
+			controls += data.sessions[i].meta.name;
 			
 			controls += '</div>';
 			
+			controls += '</td></tr>';
+			
 		}
+		
+		controls += '</table>'
 		
 		controls += '</div>';
 		
 		// --- //
 		
-		controls += '<br><div id="fieldcontrols">';
+		controls += '<div id="fieldcontrols" style="float:left;margin:10px;">';
+		
+		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Fields:</tr></td>';
 		
 		for( var i in data.fields ){
 			
-			if( data.fields[i].type_id != 7 && data.fields[i].type_id != 19 ){ // Should properly check if field is time
+			if( data.fields[i].type_id != 7 && data.fields[i].type_id != 19 && data.fields[i].type_id != 37 ){ // Should properly check if field is time
+				
+				controls += '<tr><td>';
 			
 				var color = Math.floor(((0.75*i/data.fields.length)) * 256);
 			
 				controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color.toString(16) + color.toString(16) + color.toString(16) + ';float:left;">';
 			
+				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
+
 				controls += data.fields[i].name + '&nbsp;';
 			
-				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
-			
 				controls += '</div>';
+				
+				controls += '</td></tr>';
 			
 			}
 			
 		}
 		
+		controls += '</table>'
+		
 		controls += '</div>';
+		
+		controls += '<div style="clear:both;"></div>';
+		
+		// --- //
+		
+		controls += '';
 		
 		//controls += '<br><br>One To One: <input id="one2one" type="checkbox" ' + ( timeline.one2one ? 'checked' : '' ) + '></input>'; // bkmk
 
@@ -176,6 +210,9 @@ var timeline = new function Timeline(){
 			timeline.mouseX = e.pageX - $('canvas#viscanvas').offset().left - timeline.xoff;
 			timeline.mouseY = e.pageY - $('canvas#viscanvas').offset().top - timeline.yoff;
 			
+			timeline.mouseX = clip( timeline.mouseX, 0, timeline.drawwidth );
+			timeline.mouseY = clip( timeline.mouseY, 0, timeline.drawheight );
+			
 			timeline.drawflag = true;
 			
 		});
@@ -245,6 +282,9 @@ var timeline = new function Timeline(){
 			var x = e.pageX - $('canvas#viscanvas').offset().left - timeline.xoff;
             var y = timeline.drawheight - ( e.pageY - $('canvas#viscanvas').offset().top - timeline.yoff );
 
+			x = clip(x, 0, timeline.drawwidth);
+			y = clip(y, 0, timeline.drawheight);
+
 			mouseClkX = x;
 			mouseClkY = y;
 
@@ -263,34 +303,33 @@ var timeline = new function Timeline(){
             var x = e.pageX - $('canvas#viscanvas').offset().left - timeline.xoff;
             var y = e.pageY - $('canvas#viscanvas').offset().top - timeline.yoff;
 
+			x = clip(x, 0, timeline.drawwidth);
+			y = clip(y, 0, timeline.drawheight);
+
             var hdiff = timeline.hRangeUpper - timeline.hRangeLower;
             var vdiff = timeline.vRangeUpper - timeline.vRangeLower;
 
             if( x != mouseClkX && y != mouseClkY ){
-
-                if( x >= 0 && x < timeline.drawwidth && y >= 0 && y < timeline.drawheight ){
 	
-					var temp;
+				var temp;
 
-                    mouseRlsX = x;
-                    mouseRlsY = ( timeline.drawheight ) - y;
+                mouseRlsX = x;
+                mouseRlsY = ( timeline.drawheight ) - y;
 
-                    var hrl = ( mouseClkX > mouseRlsX ? mouseRlsX : mouseClkX ) / timeline.drawwidth;
-                    var hru = ( mouseClkX < mouseRlsX ? mouseRlsX : mouseClkX ) / timeline.drawwidth;
+                var hrl = ( mouseClkX > mouseRlsX ? mouseRlsX : mouseClkX ) / timeline.drawwidth;
+                var hru = ( mouseClkX < mouseRlsX ? mouseRlsX : mouseClkX ) / timeline.drawwidth;
 
-                    var vrl = ( mouseClkY > mouseRlsY ? mouseRlsY : mouseClkY ) / timeline.drawheight;
-                    var vru = ( mouseClkY < mouseRlsY ? mouseRlsY : mouseClkY ) / timeline.drawheight;
-					
+                var vrl = ( mouseClkY > mouseRlsY ? mouseRlsY : mouseClkY ) / timeline.drawheight;
+                var vru = ( mouseClkY < mouseRlsY ? mouseRlsY : mouseClkY ) / timeline.drawheight;
+	
 
-                    timeline.hRangeUpper = timeline.hRangeLower + hru * hdiff;
-                    timeline.hRangeLower = timeline.hRangeLower + hrl * hdiff;
-                    
-                    timeline.vRangeUpper = timeline.vRangeLower + vru * vdiff;
-                    timeline.vRangeLower = timeline.vRangeLower + vrl * vdiff;
-
-                    timeline.drawflag = true;
+                timeline.hRangeUpper = timeline.hRangeLower + hru * hdiff;
+                timeline.hRangeLower = timeline.hRangeLower + hrl * hdiff;
                 
-                }
+                timeline.vRangeUpper = timeline.vRangeLower + vru * vdiff;
+                timeline.vRangeLower = timeline.vRangeLower + vrl * vdiff;
+
+                timeline.drawflag = true;
             
             }
 
@@ -472,6 +511,8 @@ var timeline = new function Timeline(){
 			
 				var inc = 0;
 				
+				/*
+				
 				if( data.sessions[i].visibility == 1 && data.fields[j].visibility == 1 ){
 			
 					for( var k = 0; k < datalen; k++ ){						
@@ -508,13 +549,54 @@ var timeline = new function Timeline(){
 				
 				}
 				
+				*/ //bkmk for interpolation code
+				
+				if( data.sessions[i].visibility == 1 && data.fields[j].visibility == 1 ){
+				
+					var numpoints = this.minpoints > datalen ? this.minpoints : datalen;
+				
+					for( var k = 0; k < numpoints; k++ ){
+						
+						var pos		= k*datalen/numpoints;
+						var floor 	= Math.floor(pos);
+						var ceil	= Math.ceil(pos);
+						
+						var xdata	= timedata[floor]*(ceil-pos) + timedata[ceil]*(pos-floor);
+						var ydata	= displaydata[floor]*(ceil-pos) + displaydata[ceil]*(pos-floor);
+						
+						//console.log( "(" + datalen + ", " + numpoints + ")" );
+						
+						//xdata = timedata[floor];
+						//ydata = displaydata[floor];
+						
+						xdata = (xdata-hmin)/hdif;
+						ydata = (ydata-vmin)/vdif;
+						
+						plotarray[k] = new Array();
+						
+						if( xdata >= this.hRangeLower && xdata <= this.hRangeUpper && ydata >= this.vRangeLower && ydata <= this.vRangeUpper ){
+						
+							plotarray[k][0] = xdata;
+							plotarray[k][1] = ydata;
+							
+						} else {
+							
+							plotarray[k][0] = null;
+							plotarray[k][1] = null;
+							
+						}
+						
+					}
+					
+				}
+				
 				var color = hslToRgb( ( 0.6 + ( 1.0*i/data.sessions.length ) ) % 1.0, 1.0, 0.125 + (0.75*j/data.fields.length) );
 
 				this.context.strokeStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ", 0.825)";
 
 			    this.context.lineWidth = 1 + (j/data.fields.length);
 		
-				if( data.fields[j].type_id != 7 && data.fields[j].type_id != 19 ) this.plot(plotarray);
+				if( data.fields[j].type_id != 7 && data.fields[j].type_id != 19 && data.fields[j].type_id != 37 ) this.plot(plotarray);
 			
 			}
 		
@@ -566,11 +648,11 @@ var timeline = new function Timeline(){
 			
 				var inc = 0;
 				
-				if( data.sessions[i].visibility == 1 && data.fields[j].visibility == 1 && data.fields[j].type_id != 7 && data.fields[j].type_id != 19 ){
+				if( data.sessions[i].visibility == 1 && data.fields[j].visibility == 1 && data.fields[j].type_id != 7 && data.fields[j].type_id != 19 && data.fields[j].type_id != 37 ){
 				
 					for( var k = 0; k < datalen; k++ ){					
 			
-						if( data.fields[j].type_id != 7 && data.fields[j].type_id != 19  ){ // bkmk must add checks for lat/long
+						if( data.fields[j].type_id != 7 && data.fields[j].type_id != 19 && data.fields[j].type_id != 37 ){ // bkmk must add checks for lat/long
 		
 							if( (k-hmin)/hdif >= this.hRangeLower && (k-hmin)/hdif <= this.hRangeUpper ){
 			
@@ -594,7 +676,7 @@ var timeline = new function Timeline(){
 				
 				}
 			
-				if( data.fields[j].type_id != 7 && data.fields[j].type_id != 19 ) this.plot(plotarray); //bkmk
+				if( data.fields[j].type_id != 7 && data.fields[j].type_id != 19 && data.fields[j].type_id != 37 ) this.plot(plotarray); //bkmk
 			
 			}
 		
@@ -732,109 +814,6 @@ var timeline = new function Timeline(){
 
 	this.drawLabelsXAxis = function(xmin,xmax,inc){
 		
-		/*
-		var divs = 10;
-		
-		if( this.one2one ){
-
-			var lower = 0;
-			var upper = data.getMaxDatapoints();
-			
-			var lower = upper * this.hRangeLower;
-			var upper = upper * this.hRangeUpper;
-			
-			var diff = upper - lower;
-		
-			var maxtextwidth = this.context.measureText( upper ).width;
-		
-			divs = Math.floor(this.drawwidth/maxtextwidth*4/5);
-		
-		
-			if( this.fontheight > 4 ){
-
-				this.context.font = this.fontheight + "px sans-serif";
-		
-				this.context.fillStyle = "rgb(0,0,0)";
-		
-				for( var i = 1; i < divs; i++ ){
-				
-					var text = Math.floor(lower + (i*diff/divs));
-			
-					//text = diff;
-			
-					var textwidth = Math.floor( this.context.measureText( text ).width );
-			
-					this.context.fillText( text, (i*this.drawwidth/divs) - (textwidth*3/5), this.drawheight + this.fontheight + this.yoff);
-					
-					this.context.strokeStyle = this.gridcolor;
-					this.context.lineWidth = 0.25;
-					this.context.beginPath();
-			        this.context.moveTo(i*this.drawwidth/divs, 0 + this.yoff);
-			        this.context.lineTo(i*this.drawwidth/divs, this.drawheight + this.yoff);
-			        this.context.stroke();
-					this.context.closePath();
-			
-				}
-		
-			}
-
-		} else {
-			
-			var divs = 5;
-
-			var xdiff = xmax - xmin;
-
-			var hrdiff = this.hRangeUpper - this.hRangeLower;
-
-			xmax = xdiff * this.hRangeUpper + xmin;
-			xmin = xdiff * this.hRangeLower + xmin;
-
-			xdiff = xmax - xmin;
-
-			this.context.font = this.fontheight + "px sans-serif";
-
-			this.context.fillStyle = "rgb(0,0,0)";
-
-			for( var i = 1; i < divs; i++ ){
-
-				var label = this.formatDate(xmin*1000, Math.floor(i*(xdiff*1000)/divs), this.getResolution(xdiff*1000));
-
-				var textwidth = Math.floor( this.context.measureText( label ).width );
-
-				this.context.fillText( label.toString(), (i*this.drawwidth/divs) - (textwidth*3/5), this.drawheight + this.fontheight + this.yoff );
-				
-				this.context.strokeStyle = this.gridcolor;
-				this.context.lineWidth = 0.25;
-				this.context.beginPath();
-		        this.context.moveTo(i*this.drawwidth/divs, 0 + this.yoff);
-		        this.context.lineTo(i*this.drawwidth/divs, this.drawheight + this.yoff);
-		        this.context.stroke();
-				this.context.closePath();
-
-			}
-
-			
-			if( this.fontheight > 4 ){
-
-				this.context.font = this.fontheight + "px sans-serif";
-
-				this.context.fillStyle = "rgb(0,0,0)";
-
-				for( var i = 0; i <= divs; i++ ){
-
-					var label = Math.round( min + (i*diff/divs) );//diff >= 10 ? Math.floor(((((i*(this.vRangeUpper-this.vRangeLower))+this.vRangeLower)*diff/divs) + min)) : ((i*diff/divs) + min);
-
-					this.context.fillText(  label.toString(), this.drawwidth + this.fontheight/2, this.drawheight - (i*this.drawheight/divs-this.fontheight/3) + this.fontheight/2);
-
-				}
-
-			}
-			
-		}
-
-		return divs;
-		*/
-		
 		if( this.one2one ){
 			
 			
@@ -861,7 +840,7 @@ var timeline = new function Timeline(){
 				
 				if( (i-xmin)*this.drawwidth/xdiff >= xpos ){
 				
-					var label = this.formatDate(xmin,i-xmin,this.getResolution(xdiff));
+					var label = this.formatDate(xmin*1000,(i-xmin)*1000,this.getResolution(xdiff*1000));
 				
 					labels[label] = new Array();
 				
@@ -886,10 +865,15 @@ var timeline = new function Timeline(){
 				this.context.beginPath();
 		        this.context.moveTo(labels[i]['xpos'] + this.xoff, 0 + this.yoff);
 		        this.context.lineTo(labels[i]['xpos'] + this.xoff, this.drawheight + this.yoff);
-		        this.context.stroke();
+		        
 				this.context.closePath();
+				this.context.stroke();
 				
 			}
+			
+			//bkmk
+			
+			this.context.fillText("Starting: " + (new Date((xmin+(xdiff*this.hRangeLower))*1000)).toString(), this.xoff, this.fontheight);
 			
 		}
 		
@@ -973,11 +957,11 @@ var timeline = new function Timeline(){
 		
 		// --- //
 		
-		var label = ymin.toFixed(n);
+		var label = ymin;//.toFixed(n);
 
 		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.drawheight + this.fontheight*1/3 + this.yoff );
 
-		var label = (ymin + ydiff).toFixed(n);
+		var label = (ymin + ydiff);//.toFixed(n);
 
 		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.fontheight*1/3 + this.yoff );
 		
@@ -1186,6 +1170,8 @@ var timeline = new function Timeline(){
 
 		this.drawwidth	= Math.floor(this.canvaswidth	- (this.ylabelsize*1.5));
 		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*1.5));
+		
+		this.minpoints = this.drawwidth*2;
 
 		this.xoff = 0;
 		this.yoff = this.fontheight*3/2;
