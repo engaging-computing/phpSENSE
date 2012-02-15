@@ -53,7 +53,7 @@ imagefill($img, 5, 5, $color);
 header("Content-type: image/png");
 
 imagepng( $img );
-imagecolordeallocate( $color );
+imagecolordeallocate( $img, $color );
 imagedestroy( $srcimg );
 imagedestroy( $img );
 
