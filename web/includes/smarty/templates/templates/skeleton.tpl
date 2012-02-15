@@ -49,7 +49,7 @@
 	<body>
 		<div id="container">
   			<div id="header">
-    			<div id="logo"><a href="." title="iSENSE"><img src="/html/img/logo.png" alt="iSENSE"/></a></div>
+    			<div id="logo"><a href="/" title="iSENSE"><img src="/html/img/logo.png" alt="iSENSE"/></a></div>
     			<div id="navigation">
       				<div id="quickbar">
         				<div id="user">{include file="parts/user.tpl"}</div>

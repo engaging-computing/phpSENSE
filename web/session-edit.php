@@ -38,6 +38,9 @@ if(isset($_GET['id'])) {
     
     // Get the experiment meta data
     $values = getSession($sid);
+    $exp = getExpOwner($sid);
+        
+    $smarty->assign('owner', $exp[0]['owner_id'] );
     
     $title = "Edit Session - {$values['name']}";
     
