@@ -32,6 +32,21 @@ fieldset {
   border: 0px;
 }
 
+.failed {
+    height: 10px;
+    width: 10px;
+}
+
+.validated {
+    height: 10px;
+    width: 10px;
+}
+
+.vfloat {
+    position:relative;
+    left:-15px;
+}
+
 legend {
   font-size: 120%;
   font-weight: bold;
@@ -44,6 +59,20 @@ legend {
   font-weight: bold;
   padding-right: 10px;
   float:left;
+}
+
+.options > p {
+  width:170px;
+  position: relative;
+  left:100px;
+  text-align: right;
+  padding-right: 10px;
+  display:inline;
+}
+
+.options > select {
+  position: relative;
+  left:100px;
 }
 
 #basic-info input {
