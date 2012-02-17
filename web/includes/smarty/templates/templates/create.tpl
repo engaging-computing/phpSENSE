@@ -68,7 +68,7 @@
                         
     					<span style="float:none" class="hint">Select the subject area or areas that best describe your experiment.</span><br /><br />
                         
-                        <label>Options:</label><br />
+                        <!--<label>Options:</label><br />
                         <div class="options">
                         <p>Require Session Name:</p>
                             <select class="sel">
@@ -88,6 +88,7 @@
                                 <option value="0">no</option>
                             </select><br /><br /><br />
                         </div>
+                        -->
 					<span id="requiredfields">* <span id="requiredfieldstext">Denotes a required field.</span></span>
 					
 				</fieldset>
