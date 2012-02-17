@@ -691,7 +691,7 @@ class HTTP_Request
             $host = 'ssl://' . $host;
         }
 
-        // magic quotes may fuck up file uploads and chunked response processing
+        // magic quotes may muck up file uploads and chunked response processing
         $magicQuotes = ini_get('magic_quotes_runtime');
         ini_set('magic_quotes_runtime', false);
 

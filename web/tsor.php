@@ -81,6 +81,9 @@ if (isset($_POST['submit'])) {
   echo "<html><head><script type=\"text/javascript\">window.location=\"../vis.php?sessions=" . $sid . "\"</script></head></html>";
 
 } else {
+	
+	$smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>' . 
+							'<script src="/tsor/validate.js"></script>');
 
 $smarty->assign('title', 'The Science of Rivers Rapid Entry Form');
 $smarty->assign('content', $smarty->fetch('tsor.tpl'));
