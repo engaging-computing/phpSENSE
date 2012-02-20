@@ -125,6 +125,9 @@ if(isset($_POST['experiment_create'])) {
 	}
 }
 
+$defaultSensors = array( 0 => "temperature", 1 => "light", 2 => "acceleration", 3 => "altitude", 4 => "preasure", 5 => "humidity" );
+$smarty->assign('defaultSensors', $defaultSensors);
+
 $smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>' . 
 						'<script src="/html/js/lib/validate.js"></script>');
 

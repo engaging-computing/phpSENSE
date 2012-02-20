@@ -7,7 +7,7 @@
 ?>
 
 <?php while(have_posts()) { ?>
-    <?php the_post(); // This is just fucking dumb ?>
+    <?php the_post(); // This is just dumb ?>
     <div class="result">
     
         <table width="100%" cellpaddding="0" cellspacing="0">

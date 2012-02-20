@@ -26,16 +26,16 @@
  * DAMAGE.
  -->
 <div id="main">
-    <form action="tsor.php" method=post>
+    <form action="tsor.php" id="upload_form" method=post>
       <fieldset id="raac-info">
         <legend> Step 1. Enter Collected Data </legend>
         <p>Please enter the collected data as instructed. Fields may be left blank if they were not measured. </p>
 
         <label for="school">School Name:</label> 
-        <input type="text" style="width:250px;" name="school"><br/>
+        <input type="text" style="width:250px;" name="school" id="school" class="required urlSafe" /><img height="10px" width="10px" id="school_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="school_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
 
         <label for="team">Team:</label>
-        <select name="team">
+        <select name="team" id="team">
           <option value="">Choose....</option>
           <option value="A">A</option>
           <option value="B">B</option>
@@ -46,14 +46,16 @@
         </select></br>
 
         <label for="testType">Test Type:</label>
-        <select name="testType">
+        <select name="testType" id="testType">
+          <option>Choose...</option>
           <option value="Manual">Manual</option>
           <option value="Chemical">Chemical</option>
           <option value="PINPoint">PINPoint</option>
         </select></br>
+        
         <label for="sessionLoc">Location:</label>
-
-        <select name="sessionLoc">
+        <select name="sessionLoc" id="sessionLoc">
+          <option>Choose...</option>
           <option value="upriver">Up River</option>
           <option value="downriver">Down River</option>
           <option value="dock">Dock</option>
@@ -61,28 +63,28 @@
         </select></br>
         
         <label for="pH">pH:</label> 
-        <input type="text" name="pH"><br/>
+        <input type="text" name="pH" id="pH"><br/>
 
         <label for="temp">Water Temp(Celsius):</label> 
-        <input type="text" name="temp"><br/>
+        <input type="text" name="temp" id="temp"><br/>
 
         <label for="disox">Dissolved Oxygen(ppm):</label> 
-        <input type="text" name="disox"><br/>
+        <input type="text" name="disox" id="disox"><br/>
 
-        <label for="vernierClarity">Vernier Clarity(ntu)</label>
-        <input type="text" name="vernierClarity"><br/>
+        <label for="vernierClarity">Vernier Clarity(ntu):</label>
+        <input type="text" name="vernierClarity" id="vernierClarity"><br/>
 
-        <label for="secchiClarity">Secchi Clarity(meter)</label>
-        <input type="text" name="secchiClarity"><br/>
+        <label for="secchiClarity">Secchi Clarity(meter):</label>
+        <input type="text" name="secchiClarity" id="secchiClarity"><br/>
 
         <label for="airTemp">Air Temp(Celsius):</label> 
-        <input type="text" name="airTemp"><br/>
+        <input type="text" name="airTemp" id="airTemp"><br/>
 
         <label for="copper">Copper(ppm):</label> 
-        <input type="text" name="copper"><br/>
+        <input type="text" name="copper" id="copper"><br/>
 
-        <label for="phosphorus">Phosphorus(ppm)</label> 
-        <input type="text" name="phosphorus"><br/>
+        <label for="phosphorus">Phosphorus(ppm):</label> 
+        <input type="text" name="phosphorus" id="phosphorus"><br/>
       </fieldset>    
       <fieldset>
         <legend> Step 2: Review and Submit </legend>

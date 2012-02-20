@@ -417,6 +417,11 @@ function addManualDataRow() {
     org.find('td > input').each(function(i){
        var id =  $(this).attr('id');
        var name = $(this).attr('name');
+
+       console.log(id);
+
+	if( id == 'Time_xxx' || id == 'time_xxx' )
+	    $(this).attr('class', 'time');
        
        id = id.replace(/(xxx)/g, $('#row_count').val());
        name = name.replace(/(xxx)/g, $('#row_count').val());
