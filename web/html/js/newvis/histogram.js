@@ -3,51 +3,6 @@
 
 var histogram = new function Histogram(){
 	
-	/*
-	// hslToRGB convers Hue/Saturation/Lightness values
-	// to 8bit RGB values. This is for generating unique
-	// colors for sessions/fields. I copy/pasted this from
-	// the interwebs because I'm a classy programmer.
-	//
-	//										- Eric F.
-	*/ 
-	
-	function hslToRgb(h, s, l){
-	    var r, g, b;
-
-	    if(s == 0){
-	        r = g = b = l; // achromatic
-	    }else{
-	        function hue2rgb(p, q, t){
-	            if(t < 0) t += 1;
-	            if(t > 1) t -= 1;
-	            if(t < 1/6) return p + (q - p) * 6 * t;
-	            if(t < 1/2) return q;
-	            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-	            return p;
-	        }
-
-	        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-	        var p = 2 * l - q;
-	        r = Math.floor( hue2rgb(p, q, h + 1/3) * 255 );
-	        g = Math.floor( hue2rgb(p, q, h) * 255 );
-	        b = Math.floor( hue2rgb(p, q, h - 1/3) * 255 );
-	    }
-
-	    return [r, g, b];
-	}
-
-	function rgbToHex(hex){
-		return toHex(hex[0])+toHex(hex[1])+toHex(hex[2]);
-	}
-
-	function toHex(n){
-		n = parseInt(n, 10);
-		if( isNaN(n) ) return '00';
-		n = Math.max(0, Math.min(n, 255));
-		return '0123456789ABCDEF'.charAt( (n-n%16) / 16 ) + '0123456789ABCDEF'.charAt(n%16);
-	}
-	
 	function ArrayMax( n ){
 		
 		var x = n[0];
