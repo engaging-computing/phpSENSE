@@ -273,30 +273,33 @@ var timeline = new function Timeline(){
 	*/
 	
 	this.plotDataNormal = function(){
+        
+		//var max = data.getMax();
+		//var min = data.getMin();//data.getMin() >= 0 ? 0 : data.getMin();
+		//var diff = max - min;
 		
-		var max = data.getMax();
-	
-		var min = data.getMin();//data.getMin() >= 0 ? 0 : data.getMin();
-	
-		var diff = max - min;
+		var hbounds = data.getVisibleFieldBounds(['time']);
+        var hmin = hbounds[0];
+        var hmax = hbounds[1];
+        var hdif = hmax - hmin;
+		
+		//var hmin = data.getFieldMin('time');
+        //var hmax = data.getFieldMax('time');
+        //var hdif = hmax - hmin;
+        
+        var vbounds = data.getVisibleDataBounds();
+        var vmin = vbounds[0];
+        var vmax = vbounds[1];
+        var vdif = vmax - vmin;
+        
+        //var vmin = data.getMin();
+        //var vmax = data.getMax();
+        //var vdif = vmax - vmin;
+        
 	
 		// --- Display point-by-point --- //
 	
 		for( var i = 0; i < data.sessions.length; i++ ){
-		
-			var hmin = data.getFieldMin('time');
-		
-			var hmax = data.getFieldMax('time');
-		
-			var hdif = hmax - hmin;
-		
-			var vmin = data.getMin();
-			
-			var vmax = data.getMax();
-				
-			var vdif = vmax - vmin;
-		
-			// --- //
 		
 			for( var j = 0; j < data.fields.length; j++ ){
 				
@@ -804,8 +807,9 @@ var timeline = new function Timeline(){
 	
 	this.draw = function(){
 		
-		var xmin = data.getFieldMin("time");
-		var xmax = data.getFieldMax("time");
+        var xbounds = data.getVisibleFieldBounds(['time']);
+		var xmin = xbounds[0];//data.getFieldMin("time");
+		var xmax = xbounds[1];//data.getFieldMax("time");
 		
 		var xdiff = xmax - xmin;
 		
@@ -817,9 +821,9 @@ var timeline = new function Timeline(){
 		var xinc = xdiff/(this.drawwidth/(this.fontheight*5));
 		
 		// --- //
-		
-		var ymin = data.getMin();
-		var ymax = data.getMax();
+		var ybounds = data.getVisibleDataBounds();
+		var ymin = ybounds[0];//data.getMin();
+		var ymax = ybounds[1];//data.getMax();
 		
 		var ydiff = ymax - ymin;
 		
