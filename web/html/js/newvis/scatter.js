@@ -6,51 +6,6 @@ console.log(data);
 var scatter = new function Scatter(){
 	
 	/*
-	// hslToRGB convers Hue/Saturation/Lightness values
-	// to 8bit RGB values. This is for generating unique
-	// colors for sessions/fields. I copy/pasted this from
-	// the interwebs because I'm a classy programmer.
-	//
-	//										- Eric F.
-	*/ 
-	
-	function hslToRgb(h, s, l){
-	    var r, g, b;
-
-	    if(s == 0){
-	        r = g = b = l; // achromatic
-	    }else{
-	        function hue2rgb(p, q, t){
-	            if(t < 0) t += 1;
-	            if(t > 1) t -= 1;
-	            if(t < 1/6) return p + (q - p) * 6 * t;
-	            if(t < 1/2) return q;
-	            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-	            return p;
-	        }
-
-	        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-	        var p = 2 * l - q;
-	        r = Math.floor( hue2rgb(p, q, h + 1/3) * 255 );
-	        g = Math.floor( hue2rgb(p, q, h) * 255 );
-	        b = Math.floor( hue2rgb(p, q, h - 1/3) * 255 );
-	    }
-
-	    return [r, g, b];
-	}
-
-	function rgbToHex(hex){
-		return toHex(hex[0])+toHex(hex[1])+toHex(hex[2]);
-	}
-
-	function toHex(n){
-		n = parseInt(n, 10);
-		if( isNaN(n) ) return '00';
-		n = Math.max(0, Math.min(n, 255));
-		return '0123456789ABCDEF'.charAt( (n-n%16) / 16 ) + '0123456789ABCDEF'.charAt(n%16);
-	}
-	
-	/*
 	// Use: myscatter.drawControls();
 	//
 	// This will populate controls (it's broken right now)
@@ -58,49 +13,73 @@ var scatter = new function Scatter(){
 	
 	this.drawControls = function(){
 		
-		var controls = '<div id="sessioncontrols">';
+		var controls = '';
 		
-		controls += '<button id="resetview" type="button">Reset View</button><br><br>';
+		controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div><button id="resetview" type="button">Reset View</button></div>';
+		
+		controls += '<div id="sessioncontrols" style="float:left;margin:10px;">';
+		
+		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>';
 		
 		for( var i in data.sessions ){
 			
 			var color = hslToRgb( ( 0.6 + ( 1.0*i/data.sessions.length ) ) % 1.0, 0.825, 0.425 );
 			
-			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;height:100px;width:150px;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
+			controls += '<tr><td>';
 			
-			controls += data.sessions[i].meta.name + '&nbsp;';
+			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
 			
-			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>';
+			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
+			
+			controls += data.sessions[i].meta.name;
 			
 			controls += '</div>';
 			
+			controls += '</td></tr>';
+			
 		}
+		
+		controls += '</table>'
 		
 		controls += '</div>';
 		
 		// --- //
 		
-		controls += '<br><div id="fieldcontrols">';
+		controls += '<div id="fieldcontrols" style="float:left;margin:10px;">';
+		
+		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Fields:</tr></td>';
 		
 		for( var i in data.fields ){
 			
-			if( data.fields[i].type_id != 7 && data.fields[i].type_id != 19 ){ // Should properly check if field is time
+			if( data.fields[i].type_id != 7 && data.fields[i].type_id != 19 && data.fields[i].type_id != 37 ){ // Should properly check if field is time
+				
+				controls += '<tr><td>';
 			
 				var color = Math.floor(((0.75*i/data.fields.length)) * 256);
 			
 				controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color.toString(16) + color.toString(16) + color.toString(16) + ';float:left;">';
 			
+				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
+
 				controls += data.fields[i].name + '&nbsp;';
 			
-				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
-			
 				controls += '</div>';
+				
+				controls += '</td></tr>';
 			
 			}
 			
 		}
 		
+		controls += '</table>'
+		
 		controls += '</div>';
+		
+		controls += '<div style="clear:both;"></div>';
+		
+		// --- //
+		
+		controls += '';
 
 		// --- //
 		
@@ -145,140 +124,7 @@ var scatter = new function Scatter(){
 			
 		});
 		
-		$('#viscanvas').mousemove(function(e){
-			
-			scatter.mouseX = e.pageX - $('canvas#viscanvas').offset().left - scatter.xoff;
-			scatter.mouseY = e.pageY - $('canvas#viscanvas').offset().top - scatter.yoff;
-			
-			scatter.drawflag = true;
-			
-		});
-		
-		$('#viscanvas').bind('mousewheel', function(e){
-			
-			if( scatter.mouseX > 0 && 
-				scatter.mouseY > 0 && 
-				scatter.mouseX <= scatter.drawwidth &&
-				scatter.mouseY <= scatter.drawheight ){
-			
-				e.preventDefault();
-				e.stopPropagation();
-				
-				var hdiff = scatter.hRangeUpper - scatter.hRangeLower;
-				var vdiff = scatter.vRangeUpper - scatter.vRangeLower;
-				
-				var delta = (e.wheelDelta/2400);
-					
-				var ldx = delta*scatter.mouseX/scatter.drawwidth;
-				var udx = delta*(1-scatter.mouseX/scatter.drawwidth);
-				var ldy = delta*(1-scatter.mouseY/scatter.drawheight);
-				var udy = delta*scatter.mouseY/scatter.drawheight;
-				
-				scatter.hRangeLower += ldx*hdiff;
-				scatter.hRangeUpper -= udx*hdiff;
-				scatter.vRangeLower += ldy*vdiff;
-				scatter.vRangeUpper -= udy*vdiff;
-				
-				if( scatter.hRangeLower < 0 ) scatter.hRangeLower = 0;
-				if( scatter.hRangeUpper > 1 ) scatter.hRangeUpper = 1;
-				if( scatter.vRangeLower < 0 ) scatter.vRangeLower = 0;
-				if( scatter.vRangeUpper > 1 ) scatter.vRangeUpper = 1;
-				
-				if( scatter.vRangeLower > scatter.vRangeUpper ){
-					
-					var temp = scatter.vRangeLower;
-					
-					scatter.vRangeLower = scatter.vRangeUpper;
-					
-					scatter.vRangeUpper = temp;
-					
-				}
-				
-				if( scatter.hRangeLower > scatter.hRangeUpper ){
-					
-					var temp = scatter.hRangeLower;
-					
-					scatter.hRangeLower = scatter.hRangeUpper;
-					
-					scatter.hRangeUpper = temp;
-					
-				}
-				
-				scatter.drawflag = true;
-			
-			}
-			
-		});
-		
-		// --- //
-		
-		$('#viscanvas').mousedown(function(e){
-     
-			var x = e.pageX - $('canvas#viscanvas').offset().left - scatter.xoff;
-            var y = scatter.drawheight - ( e.pageY - $('canvas#viscanvas').offset().top - scatter.yoff );
-
-			mouseClkX = x;
-			mouseClkY = y;
-
-			scatter.dragflag = true;
-
-			scatter.drawflag = true;
-                
-        });
-
-		$('#viscanvas').mouseup(function(e){
-            
-            // still need to check # of points under selection
-
-            var x = e.pageX - $('canvas#viscanvas').offset().left - scatter.xoff;
-            var y = e.pageY - $('canvas#viscanvas').offset().top - scatter.yoff;
-
-            var hdiff = scatter.hRangeUpper - scatter.hRangeLower;
-            var vdiff = scatter.vRangeUpper - scatter.vRangeLower;
-
-            if( x != mouseClkX && y != mouseClkY ){
-
-                if( x >= 0 && x < scatter.drawwidth && y >= 0 && y < scatter.drawheight ){
-	
-					var temp;
-
-                    mouseRlsX = x;
-                    mouseRlsY = ( scatter.drawheight ) - y;
-
-                    var hrl = ( mouseClkX > mouseRlsX ? mouseRlsX : mouseClkX ) / scatter.drawwidth;
-                    var hru = ( mouseClkX < mouseRlsX ? mouseRlsX : mouseClkX ) / scatter.drawwidth;
-
-                    var vrl = ( mouseClkY > mouseRlsY ? mouseRlsY : mouseClkY ) / scatter.drawheight;
-                    var vru = ( mouseClkY < mouseRlsY ? mouseRlsY : mouseClkY ) / scatter.drawheight;
-					
-
-                    scatter.hRangeUpper = scatter.hRangeLower + hru * hdiff;
-                    scatter.hRangeLower = scatter.hRangeLower + hrl * hdiff;
-                    
-                    scatter.vRangeUpper = scatter.vRangeLower + vru * vdiff;
-                    scatter.vRangeLower = scatter.vRangeLower + vrl * vdiff;
-
-                    scatter.drawflag = true;
-                
-                }
-            
-            }
-
-			scatter.dragflag = false;
-			
-			scatter.drawflag = true;
-
-        });
-		
-		scatter.drawTimeout = setTimeout( function(){
-			
-			if(scatter.drawflag) scatter.draw();
-			
-			scatter.drawflag = false;
-			
-			scatter.drawTimeout = setTimeout(arguments.callee, 1000/15);
-			
-		}, 1000/15 );
+        bindMouseZoom(scatter);		
 		
 	}
 	

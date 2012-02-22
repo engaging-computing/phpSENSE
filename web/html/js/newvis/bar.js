@@ -2,52 +2,7 @@
 // Function descriptions are all above the function they describe
 
 var bar = new function Bar(){
-	
-	/*
-	// hslToRGB convers Hue/Saturation/Lightness values
-	// to 8bit RGB values. This is for generating unique
-	// colors for sessions/fields. I copy/pasted this from
-	// the interwebs because I'm a classy programmer.
-	//
-	//										- Eric F.
-	*/ 
-	
-	function hslToRgb(h, s, l){
-	    var r, g, b;
-
-	    if(s == 0){
-	        r = g = b = l; // achromatic
-	    }else{
-	        function hue2rgb(p, q, t){
-	            if(t < 0) t += 1;
-	            if(t > 1) t -= 1;
-	            if(t < 1/6) return p + (q - p) * 6 * t;
-	            if(t < 1/2) return q;
-	            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-	            return p;
-	        }
-
-	        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-	        var p = 2 * l - q;
-	        r = Math.floor( hue2rgb(p, q, h + 1/3) * 255 );
-	        g = Math.floor( hue2rgb(p, q, h) * 255 );
-	        b = Math.floor( hue2rgb(p, q, h - 1/3) * 255 );
-	    }
-
-	    return [r, g, b];
-	}
-
-	function rgbToHex(hex){
-		return toHex(hex[0])+toHex(hex[1])+toHex(hex[2]);
-	}
-
-	function toHex(n){
-		n = parseInt(n, 10);
-		if( isNaN(n) ) return '00';
-		n = Math.max(0, Math.min(n, 255));
-		return '0123456789ABCDEF'.charAt( (n-n%16) / 16 ) + '0123456789ABCDEF'.charAt(n%16);
-	}
-	
+		
 	/*
 	// Use: mybar.drawControls();
 	//
@@ -56,27 +11,41 @@ var bar = new function Bar(){
 	
 	this.drawControls = function(){
 		
-		var controls = '<div id="sessioncontrols">';
+		var controls = '';
+		
+		controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div></div>';
+		
+		controls += '<div id="sessioncontrols" style="float:left;margin:10px;">';
+		
+		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>';
 		
 		for( var i in data.sessions ){
 			
 			var color = hslToRgb( ( 0.6 + ( 1.0*i/data.sessions.length ) ) % 1.0, 0.825, 0.425 );
 			
-			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;height:100px;width:150px;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
+			controls += '<tr><td>';
 			
-			controls += data.sessions[i].meta.name + '&nbsp;';
+			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
 			
-			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? ' checked' : '' ) + '></input>';
+			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
+			
+			controls += data.sessions[i].meta.name;
 			
 			controls += '</div>';
 			
+			controls += '</td></tr>';
+			
 		}
+		
+		controls += '</table>'
 		
 		controls += '</div>';
 		
 		// --- //
 		
-		controls += '<br><div id="fieldcontrols">';
+		controls += '<div id="fieldcontrols" style="float:left;margin:10px;">';
+		
+		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Fields:</tr></td>';
 		
 		for( var i in data.fields ){
 			
@@ -84,7 +53,7 @@ var bar = new function Bar(){
 			
 				var color = Math.floor(((0.75*i/data.fields.length)) * 256);
 			
-				controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color.toString(16) + color.toString(16) + color.toString(16) + ';float:left;">';
+				controls += '<td><div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color.toString(16) + color.toString(16) + color.toString(16) + ';float:left;">';
 			
 				controls += data.fields[i].name + '&nbsp;';
 			
@@ -94,13 +63,21 @@ var bar = new function Bar(){
 				
 				// <option>Mean</option><option>Median</option><option>Mode</option>
 			
-				controls += '</div>';
+				controls += '</div></td>';
 			
 			}
 			
 		}
 		
+		controls += '</table>'
+		
 		controls += '</div>';
+		
+		controls += '<div style="clear:both;"></div>';
+		
+		// --- //
+		
+		controls += '';
 
 		// --- //
 		
@@ -518,6 +495,8 @@ var bar = new function Bar(){
 	*/
 	
 	this.start = function(){
+			
+		this.clear();
 			
 		this.draw();
 		

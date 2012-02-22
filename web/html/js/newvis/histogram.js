@@ -3,51 +3,6 @@
 
 var histogram = new function Histogram(){
 	
-	/*
-	// hslToRGB convers Hue/Saturation/Lightness values
-	// to 8bit RGB values. This is for generating unique
-	// colors for sessions/fields. I copy/pasted this from
-	// the interwebs because I'm a classy programmer.
-	//
-	//										- Eric F.
-	*/ 
-	
-	function hslToRgb(h, s, l){
-	    var r, g, b;
-
-	    if(s == 0){
-	        r = g = b = l; // achromatic
-	    }else{
-	        function hue2rgb(p, q, t){
-	            if(t < 0) t += 1;
-	            if(t > 1) t -= 1;
-	            if(t < 1/6) return p + (q - p) * 6 * t;
-	            if(t < 1/2) return q;
-	            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-	            return p;
-	        }
-
-	        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-	        var p = 2 * l - q;
-	        r = Math.floor( hue2rgb(p, q, h + 1/3) * 255 );
-	        g = Math.floor( hue2rgb(p, q, h) * 255 );
-	        b = Math.floor( hue2rgb(p, q, h - 1/3) * 255 );
-	    }
-
-	    return [r, g, b];
-	}
-
-	function rgbToHex(hex){
-		return toHex(hex[0])+toHex(hex[1])+toHex(hex[2]);
-	}
-
-	function toHex(n){
-		n = parseInt(n, 10);
-		if( isNaN(n) ) return '00';
-		n = Math.max(0, Math.min(n, 255));
-		return '0123456789ABCDEF'.charAt( (n-n%16) / 16 ) + '0123456789ABCDEF'.charAt(n%16);
-	}
-	
 	function ArrayMax( n ){
 		
 		var x = n[0];
@@ -84,47 +39,77 @@ var histogram = new function Histogram(){
 	
 	this.drawControls = function(){
 		
-		var controls = '<div id="sessioncontrols">';
+		var controls = '';
+		
+		controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div>';
+
+		controls += '<button id="set_bins" type="button">Set #Bins:</button><input type="text" id="num_bins" value="' + this.numbins + '"></input>';
+		
+		controls += '</div>';
+		
+		controls += '<div id="sessioncontrols" style="float:left;margin:10px;">';
+		
+		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>';
 		
 		for( var i in data.sessions ){
 			
 			var color = hslToRgb( ( 0.6 + ( 1.0*i/data.sessions.length ) ) % 1.0, 0.825, 0.425 );
 			
-			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;height:100px;width:150px;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
+			controls += '<tr><td>';
 			
-			controls += data.sessions[i].meta.name + '&nbsp;';
+			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
 			
-			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>';
+			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
+			
+			controls += data.sessions[i].meta.name;
 			
 			controls += '</div>';
 			
+			controls += '</td></tr>';
+			
 		}
+		
+		controls += '</table>'
 		
 		controls += '</div>';
 		
 		// --- //
 		
-		controls += '<br><div id="fieldcontrols">';
+		controls += '<div id="fieldcontrols" style="float:left;margin:10px;">';
+		
+		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Fields:</tr></td>';
 		
 		for( var i in data.fields ){
 			
-			if( i != 0 ){ // Should properly check if field is time
+			if( data.fields[i].type_id != 7 && data.fields[i].type_id != 19 && data.fields[i].type_id != 37 ){ // Should properly check if field is time
+				
+				controls += '<tr><td>';
 			
 				var color = Math.floor(((0.75*i/data.fields.length)) * 256);
 			
 				controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color.toString(16) + color.toString(16) + color.toString(16) + ';float:left;">';
 			
+				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
+
 				controls += data.fields[i].name + '&nbsp;';
 			
-				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
-			
 				controls += '</div>';
+				
+				controls += '</td></tr>';
 			
 			}
 			
 		}
 		
+		controls += '</table>'
+		
 		controls += '</div>';
+		
+		controls += '<div style="clear:both;"></div>';
+		
+		// --- //
+		
+		controls += '';
 
 		// --- //
 		
@@ -165,6 +150,16 @@ var histogram = new function Histogram(){
 			
 		});
 		
+		$('button#set_bins').click(function(e){
+			
+			if($('input#num_bins').val() > 50) $('input#num_bins').val(50);
+			
+			histogram.numbins = $('input#num_bins').val();
+			
+			histogram.draw();
+			
+		});
+		
 	}
 	
 	/*
@@ -177,46 +172,11 @@ var histogram = new function Histogram(){
 		
 		this.context.fillStyle = this.bgcolor;
 	    this.context.fillRect (0, 0, this.canvaswidth, this.canvasheight);
-	
+		
 		this.context.strokeStyle = this.gridcolor;
 	    this.context.lineWidth = 0.25;
-		this.context.rect(0, 0 + this.fontheight/2, this.drawwidth, this.drawheight);
-	    this.context.stroke();
+		this.context.strokeRect(0, 0 + this.fontheight/2, this.drawwidth, this.drawheight);
 		
-	}
-	
-	/*
-	// Use: myhistogram.drawGrid( xAxisDivisions, yAxisDivisions );
-	//
-	// This should be used after calling drawLabelsXAxis() and
-	// drawLabelsYAxis(), as they return the optimal number of X
-	// and Y axis divisions. The methods mentioned may be and
-	// should be used as arguments to drawGrid().
-	*/
-	
-	this.drawGrid = function(xdivs, ydivs){
-
-	    this.context.strokeStyle = this.gridcolor;
-	    this.context.lineWidth = 0.25;
-
-	    for( var i = 1; i < xdivs; i++ ){
-
-	        this.context.beginPath();
-	        this.context.moveTo(i * this.drawwidth/xdivs, 0 + this.fontheight/2);
-	        this.context.lineTo(i * this.drawwidth/xdivs, this.drawheight + this.fontheight/2);
-	        this.context.stroke();
-
-	    }
-
-	    for( var i = 1; i < ydivs; i++ ){
-
-	        this.context.beginPath();
-	        this.context.moveTo(0, i*this.drawheight/ydivs + this.fontheight/2);
-	        this.context.lineTo(this.drawwidth, i*this.drawheight/ydivs + this.fontheight/2);
-	        this.context.stroke();
-
-	    }
-
 	}
 	
 	/*
@@ -225,43 +185,6 @@ var histogram = new function Histogram(){
 	// This method plots the line that corresponds to the point
 	// data. It takes into account X and Y axis zoom/range.
 	*/
-	
-	this.plot = function(points){
-		
-		if( points.length ){
-		
-		}
-		
-	}
-	
-	/*
-	// Use: myhistogram.plotData();
-	//
-	// This method plots the lines that correspond to the session
-	// data. It takes into account X and Y axis zoom/range.
-	*/
-	
-	this.plotDataNormal = function(){
-
-	}
-	
-	this.plotData = function(){
-		
-	}
-	
-	/*
-	// Use: myhistogram.drawLabelsXAxis();
-	//
-	// This draws the labels for the X axis of the graph.
-	*/
-	
-	this.drawLabelsXAxis = function(){
-		
-		var divs = 10;
-		
-		return divs;
-		
-	}
 	
 	/*
 	// Use: myhistogram.drawLabelsYAxis();
@@ -319,11 +242,7 @@ var histogram = new function Histogram(){
 		
 	}
 	
-	this.drawLabelsYAxis = function(){
-		
-		var ymax = data.getMax();
-		
-		var ymin = data.getMin();
+	this.drawLabelsYAxis = function(ymin, ymax){
 		
 		if( ymin > 0 ) ymin = 0;
 		
@@ -388,81 +307,257 @@ var histogram = new function Histogram(){
 		
 		this.clear();
 		
-		var numbins = 5;
+		// --- //
 		
-		this.drawGrid( 0, this.drawLabelsYAxis() );
+		var numfields = 0;
 		
-		var alldata = new Array();
+		var inc = 0;
 		
-		var bins = new Array();
-		
-		var field = 3;
-		
-		var max = data.getFieldMax(data.fields[field].name);
-		
-		var min = data.getFieldMin(data.fields[field].name);
-		
-		for( i in data.sessions ){
-				
-			alldata = alldata.concat(data.getDataFrom(i,field));
+		for( var i in data.fields ){
+			
+			if( data.fields[i].visibility && data.fields[i].type_id != 7 && data.fields[i].type_id != 19 ) numfields++;
 			
 		}
 		
-		console.log(alldata);
+		var binmax = null;
 		
-		for( i in alldata ){
+		var binmin = 0;
+		
+		var numbins = this.numbins;
+		
+		// --- //
+		
+		for( var field in data.fields ){
 			
-			var index = Math.floor( ((alldata[i]-min)/(max-min))*numbins );
+			var max = data.getFieldMax(data.fields[field].name);
+
+			var min = data.getFieldMin(data.fields[field].name);
 			
-			if( index != numbins ){
+			// --- //
 			
-				if( bins[index] ){
+			if( data.fields[field].visibility && data.fields[field].type_id != 7 && data.fields[field].type_id != 19 /* && field == 3 */ ){
+		
+				var alldata = new Array();
+			
+				var bins = new Array();
+			
+				// --- //
+			
+				for( var i in data.sessions ){
+		
+					alldata = alldata.concat(data.getDataFrom(i,field));
+		
+				}
+			
+				// --- //
+			
+				for( var i in alldata ){
+		
+					var index = Math.floor( ((alldata[i]-min)/(max-min))*numbins );
+		
+					if( index != numbins ){
+		
+						if( bins[index] ){
+			
+							bins[index]++;
+			
+						} else {
+			
+							bins[index] = 1;
+			
+						}
+			
+					} else {
+			
+						if( bins[numbins-1] ){
+			
+							bins[numbins-1]++;
+			
+						} else {
+			
+							bins[numbins-1] = 1;
+			
+						}
+			
+					}
+		
+				}
 				
-					bins[index]++;
+				// --- //
+			
+				for( var session in data.sessions ){
 				
-				} else {
-				
-					bins[index] = 1;
+					if( bimmax = null ){
+					
+						binmax = ArrayMax(bins);
+					
+					} else {
+					
+						if( ArrayMax(bins) > binmax ) binmax = ArrayMax(bins);
+					
+					}
 				
 				}
 				
-			} else {
-				
-				if( bins[numbins-1] ){
-				
-					bins[numbins-1]++;
-				
-				} else {
-				
-					bins[numbins-1] = 1;
-				
-				}
-				
+				// --- End --- //
+			
 			}
 			
 		}
 		
-		var binmax = ArrayMax(bins);
+		// --- //
 		
-		var binmin = ArrayMin(bins);
+		this.drawLabelsYAxis(binmin,binmax);
 		
-		for( i in bins ){
-			
-			var hue = hslToRgb( 0.6, 0.75, 0.5 );
-			
-			var color = "rgb("+hue[0]+","+hue[1]+","+hue[2]+")";
-			
-			this.context.fillStyle = color;
-			
-			this.context.fillRect( this.drawwidth*i/numbins + this.xoff, this.drawheight + this.yoff, this.drawwidth/numbins, (-this.drawheight)*bins[i]/binmax );
-			
-			var linewidth = 0.5;
+		// --- //
 		
-			this.context.lineWidth = linewidth;
+		for( var field in data.fields ){
+			
+			if( data.fields[field].visibility && data.fields[field].type_id != 7 && data.fields[field].type_id != 19 /* && field == 3 */ ){
+		
+				var alldata = new Array();
+		
+				var visibledata = new Array();
+		
+				var bins = new Array();
+		
+				var visiblebins = new Array();
+		
+				var max = data.getFieldMax(data.fields[field].name);
+				
+				if( isNaN(max) ) max = 0;
+		
+				var min = data.getFieldMin(data.fields[field].name);
+				
+				if( isNaN(min) ) min = 0;
+				
+				var diff = max - min;
+		
+				for( i in data.sessions ){
+			
+					if( data.sessions[i].visibility ) visibledata = visibledata.concat(data.getDataFrom(i,field));
+			
+					alldata = alldata.concat(data.getDataFrom(i,field));
+			
+				}
+		
+				for( var i in alldata ){
+			
+					var index = Math.floor( ((alldata[i]-min)/(max-min))*numbins );
+			
+					if( index != numbins ){
+			
+						if( bins[index] ){
+				
+							bins[index]++;
+				
+						} else {
+				
+							bins[index] = 1;
+				
+						}
+				
+					} else {
+				
+						if( bins[numbins-1] ){
+				
+							bins[numbins-1]++;
+				
+						} else {
+				
+							bins[numbins-1] = 1;
+				
+						}
+				
+					}
+			
+				}
+		
+				for( var i in visibledata ){
+			
+					var index = Math.floor( ((visibledata[i]-min)/(max-min))*numbins );
+			
+					if( index != numbins ){
+			
+						if( visiblebins[index] ){
+				
+							visiblebins[index]++;
+				
+						} else {
+				
+							visiblebins[index] = 1;
+				
+						}
+				
+					} else {
+				
+						if( visiblebins[numbins-1] ){
+				
+							visiblebins[numbins-1]++;
+				
+						} else {
+				
+							visiblebins[numbins-1] = 1;
+				
+						}
+				
+					}
+			
+				}
+				
+				if( bimmax = null ){
+					
+					binmax = ArrayMax(bins);
+					
+				} else {
+					
+					if( ArrayMax(bins) > binmax ) binmax = ArrayMax(bins);
+					
+				}
+		
+				for( var i = 0; i < numbins; i++ ){
+			
+					var hue = hslToRgb( 0.6, 0.75, 0.125 + (0.75*field/data.fields.length) );
+			
+					var color = "rgb("+hue[0]+","+hue[1]+","+hue[2]+")";
+			
+					this.context.fillStyle = color;
+			
+					this.context.fillRect( this.drawwidth*inc/(numbins*numfields+(numfields-1)) + this.xoff, this.drawheight + this.yoff, this.drawwidth/(numbins*numfields+(numfields-1)), (-this.drawheight)*visiblebins[i]/binmax );
+			
+					var linewidth = 0.5;
+		
+					this.context.lineWidth = linewidth;
 
-			this.context.strokeStyle = "rgba( 0,0,0,1.0)";
+					this.context.strokeStyle = "rgba( 0,0,0,1.0)";
 
-			this.context.strokeRect( this.drawwidth*i/numbins + this.xoff, this.drawheight + this.yoff, this.drawwidth/numbins, (-this.drawheight)*bins[i]/binmax );
+					this.context.strokeRect( this.drawwidth*inc/(numbins*numfields+(numfields-1)) + this.xoff, this.drawheight + this.yoff, this.drawwidth/(numbins*numfields+(numfields-1)), (-this.drawheight)*visiblebins[i]/binmax );
+					
+					// Draw X axis stuff
+					
+					var textpos = ((this.drawwidth*inc/(numbins*numfields+(numfields-1))) + (this.drawwidth*(inc+1)/(numbins*numfields+(numfields-1))))/2;
+					
+					textpos = textpos - ((this.drawwidth/(numbins*numfields+(numfields-1))))*3/12;
+					
+					this.context.save();
+					this.context.translate( textpos + this.xoff, this.fontheight/2 + this.drawheight + this.yoff);
+					this.context.rotate(Math.PI*1/4);
+					this.context.textAlign = "left";
+					
+					this.context.fillStyle = "rgb(0,0,0)";
+					
+					this.context.font = this.fontheight*2/3 + "px sans-serif";
+					
+					this.context.fillText( parseFloat((diff*i/numbins+min)).toFixed(3) + " to " + parseFloat((diff*(i+1)/numbins+min)).toFixed(3), 0, 0 );
+					this.context.restore();
+		
+					inc++;
+			
+				}
+			
+				inc++;
+				
+			}
 			
 		}
 		
@@ -476,6 +571,8 @@ var histogram = new function Histogram(){
 	*/
 	
 	this.start = function(){
+			
+		this.clear();
 			
 		this.draw();
 		
@@ -503,7 +600,7 @@ var histogram = new function Histogram(){
 		this.ylabelsize = this.context.measureText( data.getMax() + "" ).width + this.fontheight/2;
 
 		this.drawwidth	= Math.floor(this.canvaswidth	- (this.ylabelsize*1.5));
-		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*1.5));
+		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*3));
 
 		this.xoff = 0;
 		this.yoff = this.fontheight/2;
@@ -514,6 +611,8 @@ var histogram = new function Histogram(){
 		this.vRangeUpper = 1.0;
 
 		this.one2one = false;
+		
+		this.numbins = 10;
 
 		this.animateTimeout = null;
 
