@@ -273,28 +273,16 @@ var timeline = new function Timeline(){
 	*/
 	
 	this.plotDataNormal = function(){
-        
-		//var max = data.getMax();
-		//var min = data.getMin();//data.getMin() >= 0 ? 0 : data.getMin();
-		//var diff = max - min;
 		
-		var hbounds = data.getVisibleFieldBounds(['time']);
+		var hbounds = data.getVisibleTimeBounds();
         var hmin = hbounds[0];
         var hmax = hbounds[1];
         var hdif = hmax - hmin;
-		
-		//var hmin = data.getFieldMin('time');
-        //var hmax = data.getFieldMax('time');
-        //var hdif = hmax - hmin;
         
         var vbounds = data.getVisibleDataBounds();
         var vmin = vbounds[0];
         var vmax = vbounds[1];
         var vdif = vmax - vmin;
-        
-        //var vmin = data.getMin();
-        //var vmax = data.getMax();
-        //var vdif = vmax - vmin;
         
 	
 		// --- Display point-by-point --- //
@@ -807,7 +795,7 @@ var timeline = new function Timeline(){
 	
 	this.draw = function(){
 		
-        var xbounds = data.getVisibleFieldBounds(['time']);
+        var xbounds = data.getVisibleTimeBounds();
 		var xmin = xbounds[0];//data.getFieldMin("time");
 		var xmax = xbounds[1];//data.getFieldMax("time");
 		
