@@ -600,10 +600,45 @@ function getAllExperiments() {
     return false;
 }
 
+function isNameRequired($eid){
+    global $db;
+    $sql = "SELECT req_name FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]["req_name"];
+}
+
+function isLocationRequired($eid){
+    global $db;
+    $sql = "SELECT req_location FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]["req_location"];
+}
+
+function isProcedureRequired($eid){
+    global $db;
+    $sql = "SELECT req_procedure FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]["req_procedure"];
+}
+
+function getSessionPrefix($eid){
+    global $db;
+    $sql = "SELECT name_prefix FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]["name_prefix"];
+}
+
+function getExperimentLocation($eid){
+    global $db;
+    $sql = "SELECT location FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]["location"];
+}
+
 function getExpOwner($sid) {
     global $db;
     
-    $sql = "SELECT owner_id FROM experiments WHERE experiment_id=( SELECt experiment_id FROM experimentSessionMap WHERE session_id= {$sid} )";
+    $sql = "SELECT owner_id FROM experiments WHERE experiment_id=( SELECt experiment_id FROM experimentSessionMap WHERE session_id={$sid} )";
     $query = $db->query($sql);
     
     if($db->numOfRows) {
