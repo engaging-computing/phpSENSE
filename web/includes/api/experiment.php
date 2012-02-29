@@ -26,7 +26,7 @@
  * DAMAGE.
  */
  
-function createExperiment($token, $name, $description, $fields, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
+function createExperiment($token, $name, $description, $fields, $req_name, $req_procedure, $req_location, $name_prefix, $location, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
 	global $db;
 	
 	$uid = $token['uid'];
@@ -44,7 +44,7 @@ function createExperiment($token, $name, $description, $fields, $defaultJoin = t
 		return false;
 	}
 	
-	$db->query("INSERT INTO experiments ( experiment_id, owner_id, name, description, timecreated, timemodified, default_read, default_join) VALUES ( NULL, {$uid}, '{$name}', '{$description}', NOW(), NOW(), {$defaultBrowse}, {$defaultJoin})");
+	$db->query("INSERT INTO experiments ( experiment_id, owner_id, name, description, timecreated, timemodified, default_read, default_join ,req_name, req_procedure, req_location, name_prefix, location) VALUES ( NULL, {$uid}, '{$name}', '{$description}', NOW(), NOW(), {$defaultBrowse}, {$defaultJoin}, '{$req_name}', '{$req_procedure}', '{$req_location}', '{$name_prefix}', '{$location}')");
 
 	if($db->numOfRows) {
 		
