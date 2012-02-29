@@ -136,7 +136,7 @@
                                                 {else}
                                                     <a style="display:none;" id="pickimage_{ $result.meta.experiment_id }" href="pickexpimage.php?id={ $result.meta.experiment_id }">Pick Image</a>
                                                 {/if}
-                                                <span style="color:#444">Hidden:</span> <input type="checkbox" id="hide_vis" value="{$result.meta.vis_id}" {if $result.meta.hidden == 1} checked {/if} />
+                                                <span style="color:#444">Hidden:</span> <input type="checkbox" class="hide_experiment" id="{$result.meta.experiment_id}" {if $result.meta.hidden == 1} checked {/if} />
                                                 
                                             {/if}
 											<span>Last Modified { $result.meta.timemodified|date_diff }</span>
