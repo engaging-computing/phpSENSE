@@ -119,11 +119,7 @@
 										<td><input id="humidity" name="humidity" type="checkbox" /></td>
 										<td colspan="2">Humidity</td>
 									</tr>
-									<tr>
-										<td><input type="checkbox" id="external_A" name="external_A" {literal} onclick="if(this.checked){$('#external_type_wrapper_A').show(); }else{ $('#external_type_wrapper_A').hide(); }" {/literal} /></td>
-										<td>External</td>
-										<td style="display:none;"></td>
-									</tr>
+
 									<!--
 									<tr id="external_label_wrapper" style="display:none;">
 										<td>&nbsp;</td>
@@ -132,7 +128,14 @@
 											<input id="external_label" name="external_label" type="text" disabled />
 										</td>
 									</tr>
-									-->		
+									-->
+									
+									<tr>
+										<td><input type="checkbox" id="external_A" name="external_A" {literal} onclick="if(this.checked){$('#external_type_wrapper_A').show(); }else{ $('#external_type_wrapper_A').hide(); }" {/literal} /></td>
+										<td>External</td>
+										<td style="display:none;"></td>
+									</tr>
+									
 									<tr id="external_type_wrapper_A" style="display:none;">
 										<td>&nbsp;</td>
 										<td>External Sensor Type:</td>
@@ -164,7 +167,13 @@
 											</select>
 										</td>
 									</tr>
-										
+								
+									<tr>
+										<td><input type="checkbox" id="external_B" name="external_B" {literal} onclick="if(this.checked){$('#external_type_wrapper_B').show(); }else{ $('#external_type_wrapper_B').hide(); }" {/literal} /></td>
+										<td>External</td>
+										<td style="display:none;"></td>
+									</tr>
+									
 									<tr id="external_type_wrapper_B" style="display:none;">
 										<td>&nbsp;</td>
 										<td>External Sensor Type:</td>
@@ -186,6 +195,15 @@
 												<option value="13">Conductivity</option>
 											</select>
 										</td>
+										<td>
+											<select id="external_port_B" name="external_type_B">
+												<option value="0">Any</option>
+												<option value="1">BTA1</option>
+												<option value="3">BTA2</option>
+												<option value="4">MINI1</option>
+												<option value="2">MINI2</option>
+											</select>
+										</td>
 									</tr>
 									
 									<tr>
@@ -193,7 +211,7 @@
 										<td>External</td>
 										<td style="display:none;"></td>
 									</tr>
-	
+									
 									<tr id="external_type_wrapper_C" style="display:none;">
 										<td>&nbsp;</td>
 										<td>External Sensor Type:</td>
@@ -213,6 +231,15 @@
 												<option value="11">Flow Rate</option>
 												<option value="12">Motor Monitor</option>
 												<option value="13">Conductivity</option>
+											</select>
+										</td>
+										<td>
+											<select id="external_port_C" name="external_type_C">
+												<option value="0">Any</option>
+												<option value="1">BTA1</option>
+												<option value="3">BTA2</option>
+												<option value="4">MINI1</option>
+												<option value="2">MINI2</option>
 											</select>
 										</td>
 									</tr>
@@ -242,6 +269,15 @@
 												<option value="11">Flow Rate</option>
 												<option value="12">Motor Monitor</option>
 												<option value="13">Conductivity</option>
+											</select>
+										</td>
+										<td>
+											<select id="external_port_D" name="external_type_D">
+												<option value="0">Any</option>
+												<option value="1">BTA1</option>
+												<option value="3">BTA2</option>
+												<option value="4">MINI1</option>
+												<option value="2">MINI2</option>
 											</select>
 										</td>
 									</tr>
