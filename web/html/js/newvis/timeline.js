@@ -273,28 +273,16 @@ var timeline = new function Timeline(){
 	*/
 	
 	this.plotDataNormal = function(){
-        
-		//var max = data.getMax();
-		//var min = data.getMin();//data.getMin() >= 0 ? 0 : data.getMin();
-		//var diff = max - min;
 		
-		var hbounds = data.getVisibleFieldBounds(['time']);
+		var hbounds = data.getVisibleTimeBounds();
         var hmin = hbounds[0];
         var hmax = hbounds[1];
         var hdif = hmax - hmin;
-		
-		//var hmin = data.getFieldMin('time');
-        //var hmax = data.getFieldMax('time');
-        //var hdif = hmax - hmin;
         
         var vbounds = data.getVisibleDataBounds();
         var vmin = vbounds[0];
         var vmax = vbounds[1];
         var vdif = vmax - vmin;
-        
-        //var vmin = data.getMin();
-        //var vmax = data.getMax();
-        //var vdif = vmax - vmin;
         
 	
 		// --- Display point-by-point --- //
@@ -529,83 +517,58 @@ var timeline = new function Timeline(){
 		switch(resolution){
 			
 			case 0:
-			return 1;
-			break;
+                return 1;
+            
 			case 1:
-			return 1000;
-			break;
+                return 1000;
+            
 			case 2:
-			return 1000*60;
-			break;
-			case 3:
-			return 1000*60*60;
-			break;
+                return 1000*60;
+            
+            case 3:
+                return 1000*60*60;
+            
 			case 4:
-			return 1000*60*60*24;
-			break;
-			case 5:
-			return 1000*60*60*24*365/12;
-			break;
+                return 1000*60*60*24;
+            
+            case 5:
+                return 1000*60*60*24*365/12;
+            
 			case 6:
-			return 1000*60*60*24*365;
-			break;
-			
+                return 1000*60*60*24*365;
 		}
 		
 	}
 	
 	this.formatDate = function(startdate, dateoffset, resolution){
-		
-		var date = new Date(startdate + dateoffset);
-		
-		switch(resolution){
-			
-			case 0: // Milliseconds
-			
-			return Math.floor(dateoffset) + "ms";
-			
-			break;
-			
-			case 1: // Seconds
-			
-			return Math.floor(dateoffset/1000) + "s";
-			
-			break;
-			
-			case 2: // Minutes
-			
-			return Math.floor(dateoffset/(1000*60)) + "m";
-			
-			break;
-			
-			case 3: // Hours
-			
-			return ( ( date.getMonth() + 1 ) + '/' + date.getDate() + '/' + date.getFullYear() ) + ": " + date.getHours() + "h";
-			
-			break;
-			
-			case 4: // Days
-			
-			return ( date.getMonth() + 1 ) + '/' + date.getDate() + '/' + date.getFullYear();
-			
-			break;
-			
-			case 5: // Months
-			
-			return ( date.getMonth() + 1 ) + '/' + date.getDate() + '/' + date.getFullYear();
-			
-			break;
-			
-			case 6: // Years
-			
-			return date.getFullYear();
-			
-			break;
-			
-		}
+        
+        var date = new Date(startdate + dateoffset);
+        
+        switch(resolution){
+            // Milliseconds
+            case 0: 
+                return Math.floor(dateoffset) + "ms";
+            // Seconds
+            case 1: 
+                return Math.floor(dateoffset/1000) + "s";
+            // Minutes
+            case 2: 
+                return Math.floor(dateoffset/(1000*60)) + "m";
+            // Hours
+            case 3: 
+                return ( ( date.getMonth() + 1 ) + '/' + date.getDate() + '/' + date.getFullYear() ) + ": " + date.getHours() + "h";
+            // Days
+            case 4: 
+                return ( date.getMonth() + 1 ) + '/' + date.getDate() + '/' + date.getFullYear();
+			// Months
+            case 5: 
+                return ( date.getMonth() + 1 ) + '/' + date.getDate() + '/' + date.getFullYear();
+            // Years
+            case 6: 
+                return date.getFullYear();
+        }
 		
 		return "";
-		
 	}
 
 	/*
@@ -621,15 +584,13 @@ var timeline = new function Timeline(){
 			
 			
 		} else {
-
-			xmin = xmin; // Used to be * 1000
-			
-			xmax = xmax; // Used to be * 1000
-
+            xmax *= 1000;
+            xmin *= 1000;
 			var xdiff = xmax - xmin;
 			
-			inc = this.getIncX(this.getResolution(xdiff));
-			
+			//inc = this.getIncX(this.getResolution(xdiff));
+			inc = getTimeIncrement(3, 8, xdiff);
+            
 			this.context.font = this.fontheight + "px sans-serif";
 
 			this.context.fillStyle = "rgb(0,0,0)";
@@ -637,13 +598,16 @@ var timeline = new function Timeline(){
 			var labels = new Array();
 			
 			var xpos = 0;
-			
-			for( var i = this.getOffset(xmin, inc); i < xmax; i += inc ){
-				
+            //var istart = (Math.floor(xmin/inc) * inc) + inc;
+			var i = null;
+			//for( var i = istart; i < xmax; i += inc ){
+			while ((i = getNextTimeIncrement(xmin, inc, i)) <= xmax){
+                
 				if( (i-xmin)*this.drawwidth/xdiff >= xpos ){
 				
-					var label = this.formatDate(xmin*1000,(i-xmin)*1000,this.getResolution(xdiff*1000));
-				
+					//var label = this.formatDate(xmin,(i-xmin),this.getResolution(xdiff));
+					var label = formatTime(i, inc);
+					
 					labels[label] = new Array();
 				
 					labels[label]['label'] = label;
@@ -680,58 +644,6 @@ var timeline = new function Timeline(){
 		}
 		
 	}
-
-	// Below are some helper functions for drawLabelsYAxis()
-
-	this.getIncrement = function(mininc){
-		
-		var out = 1;
-		
-		var minincint = mininc;
-		
-		var divtonormalize = 1;
-		/*
-		while( minincint != Math.floor(minincint) ){
-			
-			minincint *= 10;
-			
-			divtonormalize *= 10;
-			
-		}*/
-		
-		var i = 1;
-		
-		if( minincint >= 1 ){
-		
-			while( out < minincint ){
-			
-				out = Math.pow(10, i);
-			
-				i++;
-			
-			}
-		
-		} else {
-			
-			while( out/Math.pow(10, i) > minincint ){
-			
-				out = out/Math.pow(10, i);
-			
-				i++;
-			
-			}
-			
-		}
-
-		return out/divtonormalize;
-		
-	}
-	
-	this.getOffset = function(min, inc){
-		
-		return (Math.floor(min/inc)*inc) + inc;
-		
-	}
 	
 	/*
 	// Use: mytimeline.drawLabelsYAxis();
@@ -739,49 +651,34 @@ var timeline = new function Timeline(){
 	// This draws the labels for the Y axis of the graph.
 	*/
 	
-	this.drawLabelsYAxis = function(ymin, ymax, inc){
-
-		var ydiff = ymax - ymin;
-
+	this.drawLabelsYAxis = function(ymin, ymax, ydiff, inc){
+        
 		this.context.font = this.fontheight + "px sans-serif";
-
 		this.context.fillStyle = "rgb(0,0,0)";
 		
 		// --- //
 		
-		var iinc = this.getIncrement(inc);
-		
-		var istart = this.getOffset(ymin, iinc);
-		
-		var n = Math.floor(Math.log(1/iinc)/Math.log(10));
-		
-		n = n > 0 ? n : 0;
+		var inc = getDataIncrement(3, (this.drawheight / this.fontheight) * 0.66, ydiff);
 		
 		// --- //
 		
-		var label = ymin;//.toFixed(n);
+		//var label = formatData(ymin, inc);//ymin.toFixed(n + 1);
+		//this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.drawheight + this.fontheight*1/3 + this.yoff );
 
-		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.drawheight + this.fontheight*1/3 + this.yoff );
-
-		var label = (ymin + ydiff);//.toFixed(n);
-
-		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.fontheight*1/3 + this.yoff );
+		//var label = ymax.toFixed(n + 1);
+		//this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.fontheight*1/3 + this.yoff );
 		
 		// --- //
-					
-		for( var i = istart; i < ymax; i += iinc ){
-			
+		//for( var i = istart; i < ymax; i += inc ){
+        var i = null;
+        while ((i = getNextDataIncrement(ymin, inc, i)) <= ymax){
 			var y = this.drawheight - ((i-ymin)*this.drawheight/ydiff-this.fontheight/3) + this.yoff;
 			
 			var gridy =  this.drawheight - ((i-ymin)*this.drawheight/ydiff) + this.yoff;
 			
-			var n = Math.floor(Math.log(1/iinc)/Math.log(10));
+			label = (formatData(i, inc));//.toString();//(i.toFixed(n)).toString();
 			
-			n = n > 0 ? n : 0;
-			
-			label = (i.toFixed(n)).toString();
-			
-			if( y > this.fontheight + this.yoff && y < this.yoff + this.drawheight - this.fontheight/2 )
+			//if( y > this.fontheight + this.yoff && y < this.yoff + this.drawheight - this.fontheight/2 )
 		
 				this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, y );
 						
@@ -807,39 +704,33 @@ var timeline = new function Timeline(){
 	
 	this.draw = function(){
 		
-        var xbounds = data.getVisibleFieldBounds(['time']);
-		var xmin = xbounds[0];//data.getFieldMin("time");
-		var xmax = xbounds[1];//data.getFieldMax("time");
-		
+        var xbounds = data.getVisibleTimeBounds();
+		var xmin = xbounds[0];
+		var xmax = xbounds[1];
 		var xdiff = xmax - xmin;
 		
 		xmax = xdiff * this.hRangeUpper + xmin;
 		xmin = xdiff * this.hRangeLower + xmin;
-
 		xdiff = xmax - xmin;
 		
 		var xinc = xdiff/(this.drawwidth/(this.fontheight*5));
-		
 		// --- //
 		var ybounds = data.getVisibleDataBounds();
-		var ymin = ybounds[0];//data.getMin();
-		var ymax = ybounds[1];//data.getMax();
-		
+		var ymin = ybounds[0];
+		var ymax = ybounds[1];
 		var ydiff = ymax - ymin;
 		
 		ymax = ydiff * this.vRangeUpper + ymin;
 		ymin = ydiff * this.vRangeLower + ymin;
-
 		ydiff = ymax - ymin;
 		
 		var yinc = ydiff/(this.drawheight/(this.fontheight*3/2));
-		
 		// --- //
 			
 		this.clear();
 		
 		this.drawLabelsXAxis(xmin,xmax,xinc);
-		this.drawLabelsYAxis(ymin,ymax,yinc);
+		this.drawLabelsYAxis(ymin,ymax,ydiff,yinc);
 		
 		this.plotData();
 		
