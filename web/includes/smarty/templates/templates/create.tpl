@@ -68,27 +68,38 @@
                         
     					<span style="float:none" class="hint">Select the subject area or areas that best describe your experiment.</span><br /><br />
                         
-                        <!--<label>Options:</label><br />
+                        <label>Options:</label><br />
                         <div class="options">
-                        <p>Require Session Name:</p>
-                            <select class="sel">
+                        <p>Should collaborators enter session names:</p>
+                            <select class="sel" name="req_name" id="req_name">
                                 <option value="1">yes</option>
                                 <option value="0">no</option>
-                            </select><br /><br /><br />
+                            </select><br /><br />
                             
-                        <p>Require Session Location:</p>
-                            <select>
+                        <p id="name_pref">Enter name prefix:</p>
+                            <input type="text" name="name_prefix" id="name_input" style="position:absolute;left:30%;width:35%"/><br />
+                            <br />
+                            <span style="float:none" id="name_hint" class="hint">e.g., Session #: 1 (numbers will be appended automatically)</span><br />
+                            
+                        <p>Should collaborators enter a location:</p>
+                            <select name="req_location" id="req_location">
                                 <option value="1">yes</option>
                                 <option value="0">no</option>
-                            </select><br /><br /><br />
+                            </select><br /><br />
+                            
+                        <p id="loc_label">Enter static location:</p>
+                            <input type="text" name="location" id="loc_input" style="position:absolute;left:30%;width:35%" /><br />
+                            <br />
+                            <span style="float:none" id="loc_hint" class="hint">i.e., All sessions will have the same location</span><br />
 
-                        <p>Require Session Procedure:</p>
-                            <select>
+                        <p>Should collaborators enter a procedure:</p>
+                            <select name="req_procedure" id="req_procedure">
                                 <option value="1">yes</option>
                                 <option value="0">no</option>
-                            </select><br /><br /><br />
+                            </select><br /><br />
+                                
                         </div>
-                        -->
+
 					<span id="requiredfields">* <span id="requiredfieldstext">Denotes a required field.</span></span>
 					
 				</fieldset>
