@@ -175,7 +175,7 @@ function formatTime(time, inc){
 function getDataIncrement(minDiv, maxDiv, diff){
     
     var base = 1;
-    
+    console.log('e');
     resolutions = [2,5,10]
     
     while (diff / base > maxDiv || diff / base < minDiv){
@@ -183,6 +183,7 @@ function getDataIncrement(minDiv, maxDiv, diff){
         if (diff / base > maxDiv){
             for (res in resolutions){
                 if (diff / (base * resolutions[res]) <= maxDiv){
+                    console.log('m');
                     return base * resolutions[res];
                 }
             }
@@ -192,6 +193,7 @@ function getDataIncrement(minDiv, maxDiv, diff){
             
             for (res in resolutions){
                 if (diff / (base / resolutions[res]) >= minDiv){
+                    console.log('d');
                     return base / resolutions[res];
                 }
             }
@@ -212,10 +214,43 @@ function getNextDataIncrement(min, inc, cur){
 }
 
 function formatData(data, inc){
-    var n = Math.floor(Math.log(1/inc)/Math.log(10));
-    n = n > 0 ? n : 0;
     
-    if (n < 10){
-        return data.toFixed(n);
-    }   
+    if (Math.abs(data) < -1e-16){
+        data = 0;
+    }
+    
+    s = (Math.abs(data)).toPrecision(6).toString();
+    
+    var i;
+    var len;
+    if (s.search("\\.") === -1){
+        len = i = s.length;
+    }
+    else{
+        for (i = s.length - 1; i >= 0; i--){
+            if (s[i] != '0'){
+                if (s[i] === '.'){
+                }
+                else{
+                    i++;
+                }
+                
+                break
+            }
+        }
+        
+        len = s.length - (s.length - i - 1);
+    }
+    
+    if (len > 8){
+        return data.toExponential(4);
+    }
+    else{
+        if (data >= 0){
+            return s.substr(0, i)
+        }
+        else{
+            return data.toPrecision(6).toString().substr(0, i + 1);
+        }
+    }
 }

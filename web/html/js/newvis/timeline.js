@@ -590,8 +590,6 @@ var timeline = new function Timeline(){
 			
 			//inc = this.getIncX(this.getResolution(xdiff));
 			inc = getTimeIncrement(3, 8, xdiff);
-            console.log('inc');
-            console.log(inc);
             
 			this.context.font = this.fontheight + "px sans-serif";
 
@@ -662,16 +660,13 @@ var timeline = new function Timeline(){
 		
 		var inc = getDataIncrement(3, (this.drawheight / this.fontheight) * 0.66, ydiff);
 		
-		var n = Math.floor(Math.log(1/inc)/Math.log(10));
-		n = n > 0 ? n : 0;
-		
 		// --- //
 		
-		var label = ymin.toFixed(n + 1);
-		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.drawheight + this.fontheight*1/3 + this.yoff );
+		//var label = formatData(ymin, inc);//ymin.toFixed(n + 1);
+		//this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.drawheight + this.fontheight*1/3 + this.yoff );
 
-		var label = ymax.toFixed(n + 1);
-		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.fontheight*1/3 + this.yoff );
+		//var label = ymax.toFixed(n + 1);
+		//this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.fontheight*1/3 + this.yoff );
 		
 		// --- //
 		//for( var i = istart; i < ymax; i += inc ){
@@ -681,9 +676,9 @@ var timeline = new function Timeline(){
 			
 			var gridy =  this.drawheight - ((i-ymin)*this.drawheight/ydiff) + this.yoff;
 			
-			label = (i.toFixed(n)).toString();
+			label = (formatData(i, inc));//.toString();//(i.toFixed(n)).toString();
 			
-			if( y > this.fontheight + this.yoff && y < this.yoff + this.drawheight - this.fontheight/2 )
+			//if( y > this.fontheight + this.yoff && y < this.yoff + this.drawheight - this.fontheight/2 )
 		
 				this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, y );
 						
