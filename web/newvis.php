@@ -68,6 +68,7 @@ if(isset($_REQUEST['sessions'])) {
     //Close the script
     $head .= '"></script>';
     $head .= '<script type="text/javascript" src="/html/js/newvis/viscommon.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/newvis/visaxiscommon.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mousewheel.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/modifiers.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/newvis/timeline.js"></script>';
