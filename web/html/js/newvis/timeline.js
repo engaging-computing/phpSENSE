@@ -696,6 +696,40 @@ var timeline = new function Timeline(){
 
 	}
 	
+	/**
+     * Applies the suggested zoom bounds. If the bounds are too small
+     * (within floating point error for example) they are not used.
+     * 
+     * @param hLow Suggested horizontal lower bound.
+     * @param hUp  Suggested horizontal upper bound.
+     * @param vLow Suggested vertical lower bound.
+     * @param vUp  Suggested vertical upper bound.
+     */
+	this.setBounds = function(hLow, hUp, vLow, vUp){
+        
+        var xbounds = data.getVisibleTimeBounds();
+        var xdiff = xbounds[1] - xbounds[0];
+        var xMinRange = 10 / xdiff;
+        xMinRange = Math.max(xMinRange, 1e-14); //Clamp for FPEs
+        
+        if (hUp - hLow >= xMinRange || 
+            (hUp >= this.hRangeUpper && hLow <= this.hRangeLower)) {
+            this.hRangeLower = hLow;
+            this.hRangeUpper = hUp;
+        }
+        
+        var ybounds = data.getVisibleDataBounds();
+        var ydiff = ybounds[1] - ybounds[0];
+        var yMinRange = (1e-15) / xdiff;
+        yMinRange = Math.max(yMinRange, 1e-14); //Clamp for FPEs
+        
+        if (vUp - vLow >= yMinRange ||
+            (vUp >= this.vRangeUpper && vLow <= this.vRangeLower)) {
+            this.vRangeLower = vLow;
+            this.vRangeUpper = vUp;
+        }
+    }
+	
 	/*
 	// Use: mytimeline.draw();
 	//
