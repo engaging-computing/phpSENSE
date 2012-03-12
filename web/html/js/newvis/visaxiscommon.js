@@ -299,3 +299,126 @@ function formatData(data, inc){
         }
     }
 }
+
+/**
+ * Draws an X axis (with grid marks) on the given visObject.
+ * 
+ * @param xmin Minimum value visible on screen.
+ * @param xmax Maximum value visible on screen.
+ * @param visObject The vis object itself (eg. timeline)
+ * @param type The type of data being displayed, if
+ *             type is === "time" then time data is shown, 
+ *             otherwise data is shown.
+ */
+function drawXAxis(xmin, xmax, visObject, type){
+    
+    var getIncrement, getNextIncrement, formatter;
+    
+    if (type === "time"){
+        getIncrement = getTimeIncrement;
+        getNextIncrement = getNextTimeIncrement;
+        formatter = formatTime;
+        
+        xmax *= 1000;
+        xmin *= 1000;
+    }
+    else{
+        getIncrement = getDataIncrement;
+        getNextIncrement = getNextDataIncrement;
+        formatter = formatData;
+    }
+    
+    var xdiff = xmax - xmin;
+    
+    inc = getIncrement(3, 7, xdiff);
+    
+    visObject.context.font = visObject.fontheight + "px sans-serif";
+    visObject.context.fillStyle = "rgb(0,0,0)";
+    
+    var labels = new Array();
+    
+    var xpos = 0;
+    var i = null;
+    
+    while ((i = getNextIncrement(xmin, inc, i)) <= xmax){
+        
+        if( (i-xmin)*visObject.drawwidth/xdiff >= xpos ){
+            
+            var label = formatter(i, inc);
+            
+            labels[label] = new Array();
+            labels[label]['label'] = label;
+            labels[label]['xpos'] = (i-xmin)*visObject.drawwidth/xdiff;
+            
+            xpos = ((i-xmin)*visObject.drawwidth/xdiff) + (visObject.context.measureText(label).width*4/3);
+            
+        }
+        
+    }
+    
+    for( i in labels ){
+        
+        if( visObject.context.measureText(labels[i]['label']).width + labels[i]['xpos'] < visObject.drawwidth ){
+            
+            visObject.context.fillText( labels[i]['label'], labels[i]['xpos'] + visObject.xoff, visObject.drawheight + visObject.yoff + visObject.fontheight );
+        }
+        
+        visObject.context.strokeStyle = visObject.gridcolor;
+        visObject.context.lineWidth = 0.25;
+        visObject.context.beginPath();
+        visObject.context.moveTo(labels[i]['xpos'] + visObject.xoff, 0 + visObject.yoff);
+        visObject.context.lineTo(labels[i]['xpos'] + visObject.xoff, visObject.drawheight + visObject.yoff);
+        
+        visObject.context.closePath();
+        visObject.context.stroke();
+        
+    }
+    
+    //bkmk
+    if (type === "time"){
+        visObject.context.fillText("Starting: " + (new Date((xmin+(xdiff*visObject.hRangeLower))*1000)).toString(), visObject.xoff, visObject.fontheight);
+    }
+        
+}
+
+/**
+ * Draws a Y axis (with grid marks) on the given visObject.
+ * 
+ * @param ymin Minimum value visible on screen.
+ * @param ymax Maximum value visible on screen.
+ * @param visObject The vis object itself (eg. timeline)
+ */
+function drawYAxis(ymin, ymax, visObject){
+    
+    visObject.context.font = visObject.fontheight + "px sans-serif";
+    visObject.context.fillStyle = "rgb(0,0,0)";
+    
+    // --- //
+    var ydiff = ymax - ymin;
+    var inc = getDataIncrement(3, (visObject.drawheight / visObject.fontheight) * 0.66, ydiff);
+    
+    var i = null;
+    while ((i = getNextDataIncrement(ymin, inc, i)) <= ymax){
+        var y = visObject.drawheight - ((i-ymin)*visObject.drawheight/ydiff-visObject.fontheight/3) + visObject.yoff;
+        
+        var gridy =  visObject.drawheight - ((i-ymin)*visObject.drawheight/ydiff) + visObject.yoff;
+        
+        label = (formatData(i, inc));//.toString();//(i.toFixed(n)).toString();
+        
+        //if( y > visObject.fontheight + visObject.yoff && y < visObject.yoff + visObject.drawheight - visObject.fontheight/2 )
+        
+        visObject.context.fillText( label.toString(), visObject.drawwidth + visObject.fontheight/2, y );
+        
+        visObject.context.strokeStyle = visObject.gridcolor;
+        visObject.context.lineWidth = 0.25;      
+        visObject.context.beginPath();
+        visObject.context.moveTo(0, gridy);
+        visObject.context.lineTo(visObject.drawwidth, gridy);
+        visObject.context.stroke();
+        visObject.context.closePath();
+        
+    }
+    
+    return 0;
+    
+}
