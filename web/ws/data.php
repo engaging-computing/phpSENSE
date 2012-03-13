@@ -152,6 +152,11 @@ class Field {
         $this->type_name = func_get_arg(4);
         $this->unit_name = func_get_arg(5);
         $this->unit_abb = func_get_arg(6);
+        
+        //set default of geolocation and text to not visible
+        if ($this->type_id == 37 || $this->type_id == 19) {
+            $this->visibility = 0;
+        }
     }
     
     public function is_visible() { return $this->visibility; }

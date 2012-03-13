@@ -16,7 +16,7 @@ var timeSizes = {
     year:  1000*60*60*24*365.25
 };
 timeSizes.resolutions = 
-     [[timeSizes.month  * 6,  [1, 6]],
+     [[timeSizes.month * 6,  [1, 6]],
      [timeSizes.month  * 3,  [1, 3]],
      [timeSizes.month  * 2,  [1, 2]],
      [timeSizes.month  * 1,  [1, 1]],
@@ -314,11 +314,12 @@ function drawXAxis(xmin, xmax, visObject, type){
     
     var getIncrement, getNextIncrement, formatter;
     
-    if (type === "time"){
+    if (type.toLowerCase() === "time"){
         getIncrement = getTimeIncrement;
         getNextIncrement = getNextTimeIncrement;
         formatter = formatTime;
         
+        //Remove this once the database gets fixed!
         xmax *= 1000;
         xmin *= 1000;
     }
