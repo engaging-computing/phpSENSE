@@ -67,7 +67,7 @@
                         
                         
     					<span style="float:none" class="hint">Select the subject area or areas that best describe your experiment.</span><br /><br />
-                        
+                  {if $user.administrator == 1}      
                         <label>Options:</label><br />
                         <div class="options">
                         <p>Should collaborators enter session names:</p>
@@ -99,7 +99,7 @@
                             </select><br /><br />
                                 
                         </div>
-
+                      {/if}
 					<span id="requiredfields">* <span id="requiredfieldstext">Denotes a required field.</span></span>
 					
 				</fieldset>
