@@ -759,7 +759,6 @@ var createWizard = {
 				createWizard.next = createWizard.step_post_process;
 
 	            $('#step_pinpoint').hide();
-
 	            $('#step_done').show();
 	            $('#create_advance').val('Done');
 	            $('#create_previous').hide();
