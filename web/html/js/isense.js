@@ -629,10 +629,31 @@ var createWizard = {
 	
 			// - Check to see if there are duplicate sensors - //
 				
-			var dupsensors = false;
+			var errors		= false;
+			var errormessage = "";
 			
 			var portselectarray = [];
 			var porttestarray = [false,false,false,false];
+			
+			var ports = ['A','B','C','D'];
+			
+			var sensortypes = {
+				
+				1:  {name: 'temperature probe', type_id: 1, unit_id: 2},
+				2:  {name: 'voltage', type_id: 11, unit_id: 34},
+				3:  {name: 'counts', type_id: 20, unit_id: 60},
+				4:  {name: 'counts', type_id: 20, unit_id: 60},
+				5:  {name: 'ph', type_id: 24, unit_id: 70},
+				6:  {name: 'salinity', type_id: 23, unit_id: 69},
+				7:  {name: 'co2 high', type_id: 22, unit_id: 67},
+				8:  {name: 'dissolved oxygen', type_id: 30, unit_id: 77},
+				9:  {name: 'anenometer', type_id: 31, unit_id: 45},
+				10: {name: 'turbidity', type_id: 32, unit_id: 78},
+				11: {name: 'flow rate', type_id: 33, unit_id: 45},
+				12: {name: 'motor monitor', type_id: 34, unit_id: 34},
+				13: {name: 'conductivity', type_id: 35, unit_id: 79}
+				
+			};
 			
 			portselectarray[portselectarray.length] = $('#external_port_A').val();
 			portselectarray[portselectarray.length] = $('#external_port_B').val();
@@ -647,7 +668,13 @@ var createWizard = {
 				
 					var used = porttestarray[port];
 				
-					if(used) dupsensors = true;
+					if(used){
+						
+						errors = true;
+						
+						errormessage += "Error: Multiple sensors cannot use the same port.<br>";
+						
+					}
 				
 					porttestarray[port] = true;
 				
@@ -655,12 +682,20 @@ var createWizard = {
 				
 			};
 			
+			for( i in ports ) if($('#external_type_' + ports[i]).val() == 0 && $('#external_' + ports[i]).attr('checked')){
+				
+				errors = true;
+				
+				errormessage += "Error: Please select a sensor type.<br>";
+
+			}
+			
 			// - end - //
 
             /* Clean Up Form */
-
-			if(!dupsensors){
 				
+			if(!errors){
+			
 				/* Add Time to fields */
 	            createWizard.store_field('time', 7, 22);
 
@@ -691,33 +726,13 @@ var createWizard = {
 				if($('#humidity').attr('checked')) {
 	                createWizard.store_field('humidity', 28, 77);
 	            }
-	
+
 				/* Add Altitude to fields */
 	            if($('#altitude').attr('checked')) {
 	                createWizard.store_field('altitude', 3, 5);
 	            }
-	
+
 				// - //
-	
-				var ports = ['A','B','C','D'];
-				
-				var sensortypes = {
-					
-					1:  {name: 'temperature probe', type_id: 1, unit_id: 2},
-					2:  {name: 'voltage', type_id: 11, unit_id: 34},
-					3:  {name: 'counts', type_id: 20, unit_id: 60},
-					4:  {name: 'counts', type_id: 20, unit_id: 60},
-					5:  {name: 'ph', type_id: 24, unit_id: 70},
-					6:  {name: 'salinity', type_id: 23, unit_id: 69},
-					7:  {name: 'co2 high', type_id: 22, unit_id: 67},
-					8:  {name: 'dissolved oxygen', type_id: 30, unit_id: 77},
-					9:  {name: 'anenometer', type_id: 31, unit_id: 45},
-					10: {name: 'turbidity', type_id: 32, unit_id: 78},
-					11: {name: 'flow rate', type_id: 33, unit_id: 45},
-					12: {name: 'motor monitor', type_id: 34, unit_id: 34},
-					13: {name: 'conductivity', type_id: 35, unit_id: 79}
-					
-				};
 
 				for( i in ports ){
 
@@ -744,33 +759,35 @@ var createWizard = {
 							break;
 						}
 						
-						for( j in sensortypes ){
-							
-							var sensortype = $('#external_type_' + ports[i]).val();
-							
-							createWizard.store_field(sensortypes[j].name + external_port, sensortypes[j].type_id, sensortypes[j].unit_id);
-							
-						}
+						var sensortype = $('#external_type_' + ports[i]).val();
+					
+						createWizard.store_field(sensortypes[sensortype].name + external_port, sensortypes[sensortype].type_id, sensortypes[sensortype].unit_id);
+
 		            }
 				}
-				
-				// - //
-				
-				createWizard.next = createWizard.step_post_process;
-
-	            $('#step_pinpoint').hide();
-	            $('#step_done').show();
-	            $('#create_advance').val('Done');
-	            $('#create_previous').hide();
-				$('div#wizard_error').hide();
 			
+				// - //
+			
+				if(!errors){
+			
+					createWizard.next = createWizard.step_post_process;
+
+		            $('#step_pinpoint').hide();
+		            $('#step_done').show();
+		            $('#create_advance').val('Done');
+		            $('#create_previous').hide();
+					$('div#wizard_error').hide();
+				
+				}
+				
 			} else {
 				
-				$('div#wizard_error').html("Error: Multiple sensors cannot use the same port.");
-				
+				$('div#wizard_error').html(errormessage);
+
 				$('div#wizard_error').show();
 				
 			}
+				
 	    },
         
     step_custom:function() {
