@@ -560,8 +560,6 @@ var createWizard = {
     },
     
     store_field:function(namey, type, unit) {
-	
-	alert(namey);
         var spaceFix = /(\s)/g;
         var newname = namey.replace(spaceFix, '_');
         var x = new Array(newname, type, unit);
@@ -611,15 +609,11 @@ var createWizard = {
     },
 
     step_pinpoint_advance:function() {
-	        var filled = true;
-	        var labels = Array("#external_label_A");
-	        var boxes = Array("#external_A");
 	
-	        var labels2 = Array("#external_label_B");
-	        var boxes2 = Array("#external_B");
+			/*
+			var labels = Array("#external_label_A");
+			var boxes = Array("#external_A");
 
-	        $('#error_msg_custom').children().remove();
-/*
 	        for(i = 0; i < labels.length; i++) {
 	            if(($(labels[i]).val() == "") && $(boxes[i]).attr('checked')) {
 	                if(filled) {
@@ -629,11 +623,45 @@ var createWizard = {
 	                }
 	            }
 	        }
-*/
-	        if(filled) {
-	            createWizard.next = createWizard.step_post_process;
+			*/
 
-	            /* Add Time to fields */
+    		$('#error_msg_custom').children().remove();
+	
+			// - Check to see if there are duplicate sensors - //
+				
+			var dupsensors = false;
+			
+			var portselectarray = [];
+			var porttestarray = [false,false,false,false];
+			
+			portselectarray[portselectarray.length] = $('#external_port_A').val();
+			portselectarray[portselectarray.length] = $('#external_port_B').val();
+			portselectarray[portselectarray.length] = $('#external_port_C').val();
+			portselectarray[portselectarray.length] = $('#external_port_D').val();
+			
+			for(i in portselectarray){
+				
+				var port = parseInt(portselectarray[i])-1;
+				
+				if(port>=0){
+				
+					var used = porttestarray[port];
+				
+					if(used) dupsensors = true;
+				
+					porttestarray[port] = true;
+				
+				}
+				
+			};
+			
+			// - end - //
+
+            /* Clean Up Form */
+
+			if(!dupsensors){
+				
+				/* Add Time to fields */
 	            createWizard.store_field('time', 7, 22);
 
 	            /* Add gps to fields */
@@ -655,20 +683,27 @@ var createWizard = {
 	            if($('#temperature').attr('checked')) {
 	                createWizard.store_field('air temperature', 1, 2);
 	            }
-	
+
 				if($('#pressure').attr('checked')) {
 	                createWizard.store_field('pressure', 27, 75);
 	            }
-	
+
 				if($('#humidity').attr('checked')) {
 	                createWizard.store_field('humidity', 28, 77);
 	            }
+	
+				/* Add Altitude to fields */
+	            if($('#altitude').attr('checked')) {
+	                createWizard.store_field('altitude', 3, 5);
+	            }
+	
+				//var ports = ['A','B','C','D'];
 
 	            /* Add External */
 	            if($('#external_A').attr('checked')) {
-		
+
 					var external_port = "";
-					
+
 					switch(parseInt($('#external_port_A').val())){
 						case 0:
 						external_port = "";
@@ -686,7 +721,7 @@ var createWizard = {
 						external_port = "~MINI2";
 						break;
 					}
-		
+
 	                /* Add PinPoint Temp Probe */
 	                if($('#external_type_A').val() == 1) {
 	                    createWizard.store_field('temperature probe'+external_port, 1, 2);
@@ -696,7 +731,7 @@ var createWizard = {
 	                    createWizard.store_field('voltage'+external_port, 11, 34);
 	                }
 	                /* Add Giger Counter Probe */
-	                else if($('#external_type_A').val() == 3 || $('#external_type').val() == 4){
+	                else if($('#external_type_A').val() == 3 || $('#external_type_A').val() == 4){
 	                    createWizard.store_field('counts'+external_port, 20, 60);
 	                }
 	                /* Need to throw error, this is a bad value */
@@ -731,7 +766,7 @@ var createWizard = {
 	                    createWizard.store_field('conductivity'+external_port, 35, 79);
 	                }
 	            }
-	
+
 				switch(parseInt($('#external_port_B').val())){
 					case 0:
 					external_port = "";
@@ -749,7 +784,7 @@ var createWizard = {
 					external_port = "~MINI2";
 					break;
 				}
-	
+
 	            /* Add External 2 */
 	            if($('#external_B').attr('checked')) {
 	                /* Add PinPoint Temp Probe */
@@ -761,7 +796,7 @@ var createWizard = {
 	                    createWizard.store_field('voltage'+external_port, 11, 34);
 	                }
 	                /* Add Giger Counter Probe */
-	                else if($('#external_type_B').val() == 3 || $('#external_type').val() == 4){
+	                else if($('#external_type_B').val() == 3 || $('#external_type_B').val() == 4){
 	                    createWizard.store_field('counts'+external_port, 20, 60);
 	                }
 	                /* Need to throw error, this is a bad value */
@@ -796,7 +831,7 @@ var createWizard = {
 	                    createWizard.store_field('conductivity'+external_port, 35, 79);
 	                }
 	            }
-	
+
 				switch(parseInt($('#external_port_C').val())){
 					case 0:
 					external_port = "";
@@ -814,7 +849,7 @@ var createWizard = {
 					external_port = "~MINI2";
 					break;
 				}
-	
+
 	            /* Add External 2 */
 	            if($('#external_C').attr('checked')) {
 	                /* Add PinPoint Temp Probe */
@@ -826,7 +861,7 @@ var createWizard = {
 	                    createWizard.store_field('voltage'+external_port, 11, 34);
 	                }
 	                /* Add Giger Counter Probe */
-	                else if($('#external_type_C').val() == 3 || $('#external_type').val() == 4){
+	                else if($('#external_type_C').val() == 3 || $('#external_type_C').val() == 4){
 	                    createWizard.store_field('counts'+external_port, 20, 60);
 	                }
 	                /* Need to throw error, this is a bad value */
@@ -861,7 +896,7 @@ var createWizard = {
 	                    createWizard.store_field('conductivity'+external_port, 35, 79);
 	                }
 	            }
-	
+
 				switch(parseInt($('#external_port_D').val())){
 					case 0:
 					external_port = "";
@@ -879,7 +914,7 @@ var createWizard = {
 					external_port = "~MINI2";
 					break;
 				}
-	
+
 	            /* Add External 2 */
 	            if($('#external_D').attr('checked')) {
 	                /* Add PinPoint Temp Probe */
@@ -891,7 +926,7 @@ var createWizard = {
 	                    createWizard.store_field('voltage'+external_port, 11, 34);
 	                }
 	                /* Add Giger Counter Probe */
-	                else if($('#external_type_D').val() == 3 || $('#external_type').val() == 4){
+	                else if($('#external_type_D').val() == 3 || $('#external_type_D').val() == 4){
 	                    createWizard.store_field('counts'+external_port, 20, 60);
 	                }
 	                /* Need to throw error, this is a bad value */
@@ -926,26 +961,30 @@ var createWizard = {
 	                    createWizard.store_field('conductivity'+external_port, 35, 79);
 	                }
 	            }
+				
+				createWizard.next = createWizard.step_post_process;
 
-	            /* Add Altitude to fields */
-	            if($('#altitude').attr('checked')) {
-	                createWizard.store_field('altitude', 3, 5);
-	            }
-
-	            /* Clean Up Form */
 	            $('#step_pinpoint').hide();
 
 	            $('#step_done').show();
 	            $('#create_advance').val('Done');
 	            $('#create_previous').hide();
-	        }
+				$('div#wizard_error').hide();
+			
+			} else {
+				
+				$('div#wizard_error').html("Error: Multiple sensors cannot use the same port.");
+				
+				$('div#wizard_error').show();
+				
+			}
 	    },
         
     step_custom:function() {
         createWizard.next = createWizard.step_custom_advance;
         createWizard.prev = createWizard.step_restart;
         $('#step_custom').show();
-	$('#create_advance').val('Done');
+		$('#create_advance').val('Done');
     },
     
     step_custom_advance:function() {

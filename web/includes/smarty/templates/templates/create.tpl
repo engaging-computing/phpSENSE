@@ -161,9 +161,9 @@
 											<select id="external_port_A" name="external_type_A">
 												<option value="0">Any</option>
 												<option value="1">BTA1</option>
-												<option value="3">BTA2</option>
-												<option value="4">MINI1</option>
-												<option value="2">MINI2</option>
+												<option value="2">BTA2</option>
+												<option value="3">MINI1</option>
+												<option value="4">MINI2</option>
 											</select>
 										</td>
 									</tr>
@@ -199,9 +199,9 @@
 											<select id="external_port_B" name="external_type_B">
 												<option value="0">Any</option>
 												<option value="1">BTA1</option>
-												<option value="3">BTA2</option>
-												<option value="4">MINI1</option>
-												<option value="2">MINI2</option>
+												<option value="2">BTA2</option>
+												<option value="3">MINI1</option>
+												<option value="4">MINI2</option>
 											</select>
 										</td>
 									</tr>
@@ -237,9 +237,9 @@
 											<select id="external_port_C" name="external_type_C">
 												<option value="0">Any</option>
 												<option value="1">BTA1</option>
-												<option value="3">BTA2</option>
-												<option value="4">MINI1</option>
-												<option value="2">MINI2</option>
+												<option value="2">BTA2</option>
+												<option value="3">MINI1</option>
+												<option value="4">MINI2</option>
 											</select>
 										</td>
 									</tr>
@@ -275,9 +275,9 @@
 											<select id="external_port_D" name="external_type_D">
 												<option value="0">Any</option>
 												<option value="1">BTA1</option>
-												<option value="3">BTA2</option>
-												<option value="4">MINI1</option>
-												<option value="2">MINI2</option>
+												<option value="2">BTA2</option>
+												<option value="3">MINI1</option>
+												<option value="4">MINI2</option>
 											</select>
 										</td>
 									</tr>
@@ -363,6 +363,8 @@
 								<div class="wizard_step_content">
 									<input type="submit" id="create_previous" name="create_previous" value="Back" onclick="createWizard.prev_step();" /> <input type="submit" id="create_advance" name="create_advance" value="Next" onclick="createWizard.next_step();" />
 								</div>
+								<br>
+								<div id="wizard_error" style="display:none;">Error test</div>
 							</div>
 						</div>
 					</div>
