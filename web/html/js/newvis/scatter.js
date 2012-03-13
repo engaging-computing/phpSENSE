@@ -817,6 +817,17 @@ var scatter = new function Scatter(){
 		return 0;
 
 	}
+	
+	/*
+     * Stub for zooming bounds - needs to be set up like the timeline one
+     * to actually consider... anything.
+     */
+	this.setBounds = function(hLow, hUp, vLow, vUp){
+        this.hRangeLower = hLow;
+        this.hRangeUpper = hUp;
+        this.vRangeLower = vLow;
+        this.vRangeUpper = vUp;
+    }
 
 	/*
 	// Use: myscatter.draw();

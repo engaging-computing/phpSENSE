@@ -5,51 +5,6 @@
 
 var timeline = new function Timeline(){
 	
-	/*
-	// hslToRGB convers Hue/Saturation/Lightness values
-	// to 8bit RGB values. This is for generating unique
-	// colors for sessions/fields. I copy/pasted this from
-	// the interwebs because I'm a classy programmer.
-	//
-	//										- Eric F.
-	*/ 
-	
-	function hslToRgb(h, s, l){
-	    var r, g, b;
-
-	    if(s == 0){
-	        r = g = b = l; // achromatic
-	    }else{
-	        function hue2rgb(p, q, t){
-	            if(t < 0) t += 1;
-	            if(t > 1) t -= 1;
-	            if(t < 1/6) return p + (q - p) * 6 * t;
-	            if(t < 1/2) return q;
-	            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-	            return p;
-	        }
-
-	        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-	        var p = 2 * l - q;
-	        r = Math.floor( hue2rgb(p, q, h + 1/3) * 255 );
-	        g = Math.floor( hue2rgb(p, q, h) * 255 );
-	        b = Math.floor( hue2rgb(p, q, h - 1/3) * 255 );
-	    }
-
-	    return [r, g, b];
-	}
-
-	function rgbToHex(hex){
-		return toHex(hex[0])+toHex(hex[1])+toHex(hex[2]);
-	}
-
-	function toHex(n){
-		n = parseInt(n, 10);
-		if( isNaN(n) ) return '00';
-		n = Math.max(0, Math.min(n, 255));
-		return '0123456789ABCDEF'.charAt( (n-n%16) / 16 ) + '0123456789ABCDEF'.charAt(n%16);
-	}
-	
 	this.inited = 0;
 	
 	/*
@@ -436,7 +391,16 @@ var timeline = new function Timeline(){
 	
 	this.plotDataNormal = function(){
 		
-		var max = data.getMax();
+		var hbounds = data.getVisibleTimeBounds();
+        var hmin = hbounds[0];
+        var hmax = hbounds[1];
+        var hdif = hmax - hmin;
+        
+        var vbounds = data.getVisibleDataBounds();
+        var vmin = vbounds[0];
+        var vmax = vbounds[1];
+        var vdif = vmax - vmin;
+        
 	
 		var min = data.getMin();//data.getMin() >= 0 ? 0 : data.getMin();
 	
@@ -618,400 +582,39 @@ var timeline = new function Timeline(){
 		
 	}
 
-	// Below are some helper functions for drawLabelsXAxis()
-	
-	this.getResolution = function(timediff){
-		
-		var threshold = 5;
-		
-		if( ( timediff /= 1000 ) < threshold ) return 0;
-		
-		if( ( timediff /= 60 ) < threshold ) return 1;
-		
-		if( ( timediff /= 60 ) < threshold ) return 2;
-		
-		if( ( timediff /= 24 ) < threshold ) return 3;
-		
-		if( ( timediff /= 30 ) < threshold ) return 4;
-		
-		if( ( timediff /= 12 ) < threshold ) return 5;
-		
-		return 6;
-		
-	}
-	
-	this.getIncX = function(resolution){
-		
-		switch(resolution){
-			
-			case 0:
-			return 1;
-			break;
-			case 1:
-			return 1000;
-			break;
-			case 2:
-			return 1000*60;
-			break;
-			case 3:
-			return 1000*60*60;
-			break;
-			case 4:
-			return 1000*60*60*24;
-			break;
-			case 5:
-			return 1000*60*60*24*365/12;
-			break;
-			case 6:
-			return 1000*60*60*24*365;
-			break;
-			
-		}
-		
-	}
-	
-	this.formatDate = function(startdate, dateoffset, resolution){
-		
-		var date = new Date(startdate + dateoffset);
-		
-		switch(resolution){
-			
-			case 0: // Milliseconds
-			
-			return Math.floor(dateoffset) + "ms";
-			
-			break;
-			
-			case 1: // Seconds
-			
-			return Math.floor(dateoffset/1000) + "s";
-			
-			break;
-			
-			case 2: // Minutes
-			
-			return Math.floor(dateoffset/(1000*60)) + "m";
-			
-			break;
-			
-			case 3: // Hours
-			
-			return ( ( date.getMonth() + 1 ) + '/' + date.getDate() + '/' + date.getFullYear() ) + ": " + date.getHours() + "h";
-			
-			break;
-			
-			case 4: // Days
-			
-			return ( date.getMonth() + 1 ) + '/' + date.getDate() + '/' + date.getFullYear();
-			
-			break;
-			
-			case 5: // Months
-			
-			return ( date.getMonth() + 1 ) + '/' + date.getDate() + '/' + date.getFullYear();
-			
-			break;
-			
-			case 6: // Years
-			
-			return date.getFullYear();
-			
-			break;
-			
-		}
-		
-		return "";
-		
-	}
-
-	/*
-	// Use: mytimeline.drawLabelsXAxis();
-	//
-	// This draws the labels for the X axis of the graph.
-	*/
-
-	this.drawLabelsXAxis = function(xmin,xmax,inc){
-		
-		/*
-		var divs = 10;
-		
-		if( this.one2one ){
-
-			var lower = 0;
-			var upper = data.getMaxDatapoints();
-			
-			var lower = upper * this.hRangeLower;
-			var upper = upper * this.hRangeUpper;
-			
-			var diff = upper - lower;
-		
-			var maxtextwidth = this.context.measureText( upper ).width;
-		
-			divs = Math.floor(this.drawwidth/maxtextwidth*4/5);
-		
-		
-			if( this.fontheight > 4 ){
-
-				this.context.font = this.fontheight + "px sans-serif";
-		
-				this.context.fillStyle = "rgb(0,0,0)";
-		
-				for( var i = 1; i < divs; i++ ){
-				
-					var text = Math.floor(lower + (i*diff/divs));
-			
-					//text = diff;
-			
-					var textwidth = Math.floor( this.context.measureText( text ).width );
-			
-					this.context.fillText( text, (i*this.drawwidth/divs) - (textwidth*3/5), this.drawheight + this.fontheight + this.yoff);
-					
-					this.context.strokeStyle = this.gridcolor;
-					this.context.lineWidth = 0.25;
-					this.context.beginPath();
-			        this.context.moveTo(i*this.drawwidth/divs, 0 + this.yoff);
-			        this.context.lineTo(i*this.drawwidth/divs, this.drawheight + this.yoff);
-			        this.context.stroke();
-					this.context.closePath();
-			
-				}
-		
-			}
-
-		} else {
-			
-			var divs = 5;
-
-			var xdiff = xmax - xmin;
-
-			var hrdiff = this.hRangeUpper - this.hRangeLower;
-
-			xmax = xdiff * this.hRangeUpper + xmin;
-			xmin = xdiff * this.hRangeLower + xmin;
-
-			xdiff = xmax - xmin;
-
-			this.context.font = this.fontheight + "px sans-serif";
-
-			this.context.fillStyle = "rgb(0,0,0)";
-
-			for( var i = 1; i < divs; i++ ){
-
-				var label = this.formatDate(xmin*1000, Math.floor(i*(xdiff*1000)/divs), this.getResolution(xdiff*1000));
-
-				var textwidth = Math.floor( this.context.measureText( label ).width );
-
-				this.context.fillText( label.toString(), (i*this.drawwidth/divs) - (textwidth*3/5), this.drawheight + this.fontheight + this.yoff );
-				
-				this.context.strokeStyle = this.gridcolor;
-				this.context.lineWidth = 0.25;
-				this.context.beginPath();
-		        this.context.moveTo(i*this.drawwidth/divs, 0 + this.yoff);
-		        this.context.lineTo(i*this.drawwidth/divs, this.drawheight + this.yoff);
-		        this.context.stroke();
-				this.context.closePath();
-
-			}
-
-			
-			if( this.fontheight > 4 ){
-
-				this.context.font = this.fontheight + "px sans-serif";
-
-				this.context.fillStyle = "rgb(0,0,0)";
-
-				for( var i = 0; i <= divs; i++ ){
-
-					var label = Math.round( min + (i*diff/divs) );//diff >= 10 ? Math.floor(((((i*(this.vRangeUpper-this.vRangeLower))+this.vRangeLower)*diff/divs) + min)) : ((i*diff/divs) + min);
-
-					this.context.fillText(  label.toString(), this.drawwidth + this.fontheight/2, this.drawheight - (i*this.drawheight/divs-this.fontheight/3) + this.fontheight/2);
-
-				}
-
-			}
-			
-		}
-
-		return divs;
-		*/
-		
-		if( this.one2one ){
-			
-			
-			
-		} else {
-
-			xmin = xmin; // Used to be * 1000
-			
-			xmax = xmax; // Used to be * 1000
-
-			var xdiff = xmax - xmin;
-			
-			inc = this.getIncX(this.getResolution(xdiff));
-			
-			this.context.font = this.fontheight + "px sans-serif";
-
-			this.context.fillStyle = "rgb(0,0,0)";
-			
-			var labels = new Array();
-			
-			var xpos = 0;
-			
-			for( var i = this.getOffset(xmin, inc); i < xmax; i += inc ){
-				
-				if( (i-xmin)*this.drawwidth/xdiff >= xpos ){
-				
-					var label = this.formatDate(xmin,i-xmin,this.getResolution(xdiff));
-				
-					labels[label] = new Array();
-				
-					labels[label]['label'] = label;
-				
-					labels[label]['xpos'] = (i-xmin)*this.drawwidth/xdiff;
-				
-					xpos = ((i-xmin)*this.drawwidth/xdiff) + (this.context.measureText(label).width*4/3);
-					
-				}
-				
-			}
-			
-			for( i in labels ){
-				
-				if( this.context.measureText(labels[i]['label']).width + labels[i]['xpos'] < this.drawwidth )
-				
-				this.context.fillText( labels[i]['label'], labels[i]['xpos'] + this.xoff, this.drawheight + this.yoff + this.fontheight );
-
-				this.context.strokeStyle = this.gridcolor;
-				this.context.lineWidth = 0.25;
-				this.context.beginPath();
-		        this.context.moveTo(labels[i]['xpos'] + this.xoff, 0 + this.yoff);
-		        this.context.lineTo(labels[i]['xpos'] + this.xoff, this.drawheight + this.yoff);
-		        this.context.stroke();
-				this.context.closePath();
-				
-			}
-			
-		}
-		
-	}
-
-	// Below are some helper functions for drawLabelsYAxis()
-
-	this.getIncrement = function(mininc){
-		
-		var out = 1;
-		
-		var minincint = mininc;
-		
-		var divtonormalize = 1;
-		/*
-		while( minincint != Math.floor(minincint) ){
-			
-			minincint *= 10;
-			
-			divtonormalize *= 10;
-			
-		}*/
-		
-		var i = 1;
-		
-		if( minincint >= 1 ){
-		
-			while( out < minincint ){
-			
-				out = Math.pow(10, i);
-			
-				i++;
-			
-			}
-		
-		} else {
-			
-			while( out/Math.pow(10, i) > minincint ){
-			
-				out = out/Math.pow(10, i);
-			
-				i++;
-			
-			}
-			
-		}
-
-		return out/divtonormalize;
-		
-	}
-	
-	this.getOffset = function(min, inc){
-		
-		return (Math.floor(min/inc)*inc) + inc;
-		
-	}
-	
-	/*
-	// Use: mytimeline.drawLabelsYAxis();
-	//
-	// This draws the labels for the Y axis of the graph.
-	*/
-	
-	this.drawLabelsYAxis = function(ymin, ymax, inc){
-
-		var ydiff = ymax - ymin;
-
-		this.context.font = this.fontheight + "px sans-serif";
-
-		this.context.fillStyle = "rgb(0,0,0)";
-		
-		// --- //
-		
-		var iinc = this.getIncrement(inc);
-		
-		var istart = this.getOffset(ymin, iinc);
-		
-		var n = Math.floor(Math.log(1/iinc)/Math.log(10));
-		
-		n = n > 0 ? n : 0;
-		
-		// --- //
-		
-		var label = ymin.toFixed(n);
-
-		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.drawheight + this.fontheight*1/3 + this.yoff );
-
-		var label = (ymin + ydiff).toFixed(n);
-
-		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.fontheight*1/3 + this.yoff );
-		
-		// --- //
-					
-		for( var i = istart; i < ymax; i += iinc ){
-			
-			var y = this.drawheight - ((i-ymin)*this.drawheight/ydiff-this.fontheight/3) + this.yoff;
-			
-			var gridy =  this.drawheight - ((i-ymin)*this.drawheight/ydiff) + this.yoff;
-			
-			var n = Math.floor(Math.log(1/iinc)/Math.log(10));
-			
-			n = n > 0 ? n : 0;
-			
-			label = (i.toFixed(n)).toString();
-			
-			if( y > this.fontheight + this.yoff && y < this.yoff + this.drawheight - this.fontheight/2 )
-		
-				this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, y );
-						
-			this.context.strokeStyle = this.gridcolor;
-			this.context.lineWidth = 0.25;		
-			this.context.beginPath();
-	        this.context.moveTo(0, gridy);
-	        this.context.lineTo(this.drawwidth, gridy);
-	        this.context.stroke();
-			this.context.closePath();
-			
-		}
-
-		return 0;
-
-	}
+	/**
+     * Applies the suggested zoom bounds. If the bounds are too small
+     * (within floating point error for example) they are not used.
+     * 
+     * @param hLow Suggested horizontal lower bound.
+     * @param hUp  Suggested horizontal upper bound.
+     * @param vLow Suggested vertical lower bound.
+     * @param vUp  Suggested vertical upper bound.
+     */
+	this.setBounds = function(hLow, hUp, vLow, vUp){
+        
+        var xbounds = data.getVisibleTimeBounds();
+        var xdiff = xbounds[1] - xbounds[0];
+        var xMinRange = 10 / xdiff;
+        xMinRange = Math.max(xMinRange, 1e-14); //Clamp for FPEs
+        
+        if (hUp - hLow >= xMinRange || 
+            (hUp >= this.hRangeUpper && hLow <= this.hRangeLower)) {
+            this.hRangeLower = hLow;
+            this.hRangeUpper = hUp;
+        }
+        
+        var ybounds = data.getVisibleDataBounds();
+        var ydiff = ybounds[1] - ybounds[0];
+        var yMinRange = (1e-15) / xdiff;
+        yMinRange = Math.max(yMinRange, 1e-14); //Clamp for FPEs
+        
+        if (vUp - vLow >= yMinRange ||
+            (vUp >= this.vRangeUpper && vLow <= this.vRangeLower)) {
+            this.vRangeLower = vLow;
+            this.vRangeUpper = vUp;
+        }
+    }
 	
 	/*
 	// Use: mytimeline.draw();
@@ -1021,38 +624,27 @@ var timeline = new function Timeline(){
 	
 	this.draw = function(){
 		
-		var xmin = data.getFieldMin("time");
-		var xmax = data.getFieldMax("time");
-		
+        var xbounds = data.getVisibleTimeBounds();
+		var xmin = xbounds[0];
+		var xmax = xbounds[1];
 		var xdiff = xmax - xmin;
 		
 		xmax = xdiff * this.hRangeUpper + xmin;
 		xmin = xdiff * this.hRangeLower + xmin;
-
-		xdiff = xmax - xmin;
-		
-		var xinc = xdiff/(this.drawwidth/(this.fontheight*5));
-		
 		// --- //
-		
-		var ymin = data.getMin();
-		var ymax = data.getMax();
-		
+		var ybounds = data.getVisibleDataBounds();
+		var ymin = ybounds[0];
+		var ymax = ybounds[1];
 		var ydiff = ymax - ymin;
 		
 		ymax = ydiff * this.vRangeUpper + ymin;
 		ymin = ydiff * this.vRangeLower + ymin;
-
-		ydiff = ymax - ymin;
-		
-		var yinc = ydiff/(this.drawheight/(this.fontheight*3/2));
-		
 		// --- //
 			
 		this.clear();
 		
-		this.drawLabelsXAxis(xmin,xmax,xinc);
-		this.drawLabelsYAxis(ymin,ymax,yinc);
+		drawXAxis(xmin, xmax, this, "time");
+		drawYAxis(ymin, ymax, this);
 		
 		this.plotData();
 		

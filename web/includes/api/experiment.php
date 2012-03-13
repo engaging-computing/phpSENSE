@@ -26,7 +26,7 @@
  * DAMAGE.
  */
  
-function createExperiment($token, $name, $description, $fields, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
+function createExperiment($token, $name, $description, $fields, $req_name, $req_procedure, $req_location, $name_prefix, $location, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
 	global $db;
 	
 	$uid = $token['uid'];
@@ -44,7 +44,7 @@ function createExperiment($token, $name, $description, $fields, $defaultJoin = t
 		return false;
 	}
 	
-	$db->query("INSERT INTO experiments ( experiment_id, owner_id, name, description, timecreated, timemodified, default_read, default_join) VALUES ( NULL, {$uid}, '{$name}', '{$description}', NOW(), NOW(), {$defaultBrowse}, {$defaultJoin})");
+	$db->query("INSERT INTO experiments ( experiment_id, owner_id, name, description, timecreated, timemodified, default_read, default_join ,req_name, req_procedure, req_location, name_prefix, location) VALUES ( NULL, {$uid}, '{$name}', '{$description}', NOW(), NOW(), {$defaultBrowse}, {$defaultJoin}, '{$req_name}', '{$req_procedure}', '{$req_location}', '{$name_prefix}', '{$location}')");
 
 	if($db->numOfRows) {
 		
@@ -213,6 +213,18 @@ function getExperimentNameFromSession($sid) {
 		return $output[0];
 	}
 	
+	return 'Visualization';
+}
+
+function getNameFromEid( $eid ) {
+    global $db;
+    
+    $output = $db->query("SELECT name FROM experiments WHERE experiment_id = {$eid}");
+    
+	if($db->numOfRows) {
+		return $output[0]['name'];
+	}
+
 	return 'Visualization';
 }
 
@@ -588,5 +600,52 @@ function getAllExperiments() {
     return false;
 }
 
+function isNameRequired($eid){
+    global $db;
+    $sql = "SELECT req_name FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]["req_name"];
+}
+
+function isLocationRequired($eid){
+    global $db;
+    $sql = "SELECT req_location FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]["req_location"];
+}
+
+function isProcedureRequired($eid){
+    global $db;
+    $sql = "SELECT req_procedure FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]["req_procedure"];
+}
+
+function getSessionPrefix($eid){
+    global $db;
+    $sql = "SELECT name_prefix FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]["name_prefix"];
+}
+
+function getExperimentLocation($eid){
+    global $db;
+    $sql = "SELECT location FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]["location"];
+}
+
+function getExpOwner($sid) {
+    global $db;
+    
+    $sql = "SELECT owner_id FROM experiments WHERE experiment_id=( SELECt experiment_id FROM experimentSessionMap WHERE session_id={$sid} )";
+    $query = $db->query($sql);
+    
+    if($db->numOfRows) {
+        return $query;
+    }
+    
+    return false;
+}
 
 ?>

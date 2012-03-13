@@ -106,7 +106,7 @@ $(document).ready(function(){
             $('#hidden_loading_msg').show();
             if($(this).attr("checked")) {
                 // Make Featured
-                $.get('actions/experiments.php', { action:"hide", pid:$(this).val() }, function(data){
+                $.get('actions/experiments.php', { action:"hide", id:$(this).val() }, function(data){
                     $('#hide_experiment').show();
                     $('#hidden_loading_msg').hide();
                 });

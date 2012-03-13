@@ -331,3 +331,74 @@ data.fullSort = function( fieldName ) {
 			return quickSort(returnData, field);
 
 }
+
+/*
+ * Gets the minimum and maximum values for visible non-time data.
+ * 
+ * @return an array of [min, max]
+ */
+data.getVisibleDataBounds = function() {
+    var max = 0;
+    var min = 0;
+    
+    for (var i = 0; i < data.sessions.length; i++) {
+        for (var j = 0; j < data.fields.length; j++) {
+            if (data.fields[j].visibility === 1 && data.sessions[i].visibility === 1 &&
+                data.fields[j].name.toLowerCase() != "time") {
+                max = Math.max(max, Math.max.apply(null, data.getDataFrom(i, j)));
+                min = Math.min(min, Math.min.apply(null, data.getDataFrom(i, j)));
+            }
+        }
+    }
+    
+    return [min, max];
+}
+
+/*
+ * Gets the minimum and maximum values for visible times.
+ * 
+ * @return an array of [min, max]
+ */
+data.getVisibleTimeBounds = function() {
+    var max = 0;
+    var min = Number.POSITIVE_INFINITY;
+    
+    for (var i = 0; i < data.sessions.length; i++) {
+        for (var j = 0; j < data.fields.length; j++) {
+            if (data.fields[j].visibility === 1 && data.sessions[i].visibility === 1 &&
+                data.fields[j].name.toLowerCase() === 'time') {
+                max = Math.max(max, Math.max.apply(null, data.getDataFrom(i, j)));
+                min = Math.min(min, Math.min.apply(null, data.getDataFrom(i, j)));
+            }
+        }
+    }
+    
+    return [min, max];
+}
+
+/*
+ * Gets the minimum and maximum values for visible data of the given fields.
+ * 
+ * @param fields an array of field names, eg. ['humidity', 'temperature'].
+ * 
+ * @return an array of [min, max]
+ */
+data.getVisibleFieldBounds = function(fields) {
+    var max = 0;
+    var min = 0;
+    
+    for (var i = 0; i < data.sessions.length; i++) {
+        for (var j = 0; j < data.fields.length; j++) {
+            for (f in fields) {
+                if (data.fields[j].visibility === 1 && data.sessions[i].visibility === 1 &&
+                    data.fields[j].name.toLowerCase() === fields[f].toLowerCase()) {
+                    max = Math.max(max, Math.max.apply(null, data.getDataFrom(i, j)));
+                    min = Math.min(min, Math.min.apply(null, data.getDataFrom(i, j)));
+                }
+            }
+        }
+    }
+    
+    return [min, max];
+}
+

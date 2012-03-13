@@ -72,8 +72,8 @@ function toHex(n){
     if( isNaN(n) ) return '00';
     n = Math.max(0, Math.min(n, 255));
     return '0123456789ABCDEF'.charAt( (n-n%16) / 16 ) + '0123456789ABCDEF'.charAt(n%16);
-} 
-
+}
+  
 /* 
     TODO: Describe global mouseevent functions 
 */
@@ -119,36 +119,37 @@ function bindMouseZoom(visObject) {
     		var ldy = delta*(1-visObject.mouseY/visObject.drawheight);
     		var udy = delta*visObject.mouseY/visObject.drawheight;
     		
-    		visObject.hRangeLower += ldx*hdiff;
-    		visObject.hRangeUpper -= udx*hdiff;
-    		visObject.vRangeLower += ldy*vdiff;
-    		visObject.vRangeUpper -= udy*vdiff;
+            
+    		var hLow = visObject.hRangeLower + ldx*hdiff;
+    		var hUp  = visObject.hRangeUpper - udx*hdiff;
+    		var vLow = visObject.vRangeLower + ldy*vdiff;
+    		var vUp  = visObject.vRangeUpper - udy*vdiff;
     		
-    		if( visObject.hRangeLower < 0 ) visObject.hRangeLower = 0;
-    		if( visObject.hRangeUpper > 1 ) visObject.hRangeUpper = 1;
-    		if( visObject.vRangeLower < 0 ) visObject.vRangeLower = 0;
-    		if( visObject.vRangeUpper > 1 ) visObject.vRangeUpper = 1;
+    		if( hLow < 0 ) hLow = 0;
+    		if( hUp  > 1 ) hUp  = 1;
+    		if( vLow < 0 ) vLow = 0;
+    		if( vUp  > 1 ) vUp  = 1;
     		
-    		if( visObject.vRangeLower > visObject.vRangeUpper ){
+    		if( vLow > vUp ){
     			
-    			var temp = visObject.vRangeLower;
+    			var temp = vLow;
     			
-    			visObject.vRangeLower = visObject.vRangeUpper;
+    			vLow = vUp;
     			
-    			visObject.vRangeUpper = temp;
+    			vUp = temp;
     			
     		}
     		
-    		if( visObject.hRangeLower > visObject.hRangeUpper ){
+    		if( hLow > hUp ){
     			
-    			var temp = visObject.hRangeLower;
+    			var temp = hLow;
     			
-    			visObject.hRangeLower = visObject.hRangeUpper;
+    			hLow = hUp;
     			
-    			visObject.hRangeUpper = temp;
+    			hUp = temp;
     			
     		}
-    		
+    		visObject.setBounds(hLow, hUp, vLow, vUp);
     		visObject.drawflag = true;
     	     
     	}
@@ -169,8 +170,6 @@ function bindMouseZoom(visObject) {
     	mouseClkY = y;
     
     	visObject.dragflag = true;
-    
-    	visObject.drawflag = true;
             
     });
     
@@ -186,12 +185,10 @@ function bindMouseZoom(visObject) {
     	x = clip(x, 0, visObject.drawwidth);
     	y = clip(y, 0, visObject.drawheight);
     
-        var hdiff = visObject.hRangeUpper - visObject.hRangeLower;
-        var vdiff = visObject.vRangeUpper - visObject.vRangeLower;
-    
         if( x != mouseClkX && y != mouseClkY ){
-    
-    		var temp;
+            
+            var hdiff = visObject.hRangeUpper - visObject.hRangeLower;
+            var vdiff = visObject.vRangeUpper - visObject.vRangeLower;
     
             mouseRlsX = x;
             mouseRlsY = ( visObject.drawheight ) - y;
@@ -202,21 +199,17 @@ function bindMouseZoom(visObject) {
             var vrl = ( mouseClkY > mouseRlsY ? mouseRlsY : mouseClkY ) / visObject.drawheight;
             var vru = ( mouseClkY < mouseRlsY ? mouseRlsY : mouseClkY ) / visObject.drawheight;
     
-    
-            visObject.hRangeUpper = visObject.hRangeLower + hru * hdiff;
-            visObject.hRangeLower = visObject.hRangeLower + hrl * hdiff;
+            var hUp  = visObject.hRangeLower + hru * hdiff;
+            var hLow = visObject.hRangeLower + hrl * hdiff;
             
-            visObject.vRangeUpper = visObject.vRangeLower + vru * vdiff;
-            visObject.vRangeLower = visObject.vRangeLower + vrl * vdiff;
+            var vUp  = visObject.vRangeLower + vru * vdiff;
+            var vLow = visObject.vRangeLower + vrl * vdiff;
     
+            visObject.setBounds(hLow, hUp, vLow, vUp);
             visObject.drawflag = true;
-        
         }
-    
-    	visObject.dragflag = false;
-    	
-    	visObject.drawflag = true;
-    
+        
+        visObject.dragflag = false;
     });
     
     visObject.drawTimeout = setTimeout( function(){

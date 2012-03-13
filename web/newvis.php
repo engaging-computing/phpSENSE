@@ -67,7 +67,9 @@ if(isset($_REQUEST['sessions'])) {
 
     //Close the script
     $head .= '"></script>';
-    
+    $head .= '<script type="text/javascript" src="/html/js/newvis/viscommon.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/newvis/visaxiscommon.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mousewheel.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/modifiers.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/newvis/timeline.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/newvis/scatter.js"></script>';
@@ -77,6 +79,7 @@ if(isset($_REQUEST['sessions'])) {
     $head .= '<script type="text/javascript" src="/html/js/newvis/map.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/newvis/table.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/newvis/runtime.js"></script>';
+    
     
     $smarty->assign('head', $head);
 }

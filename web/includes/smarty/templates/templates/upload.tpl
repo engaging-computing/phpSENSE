@@ -41,7 +41,7 @@
 			    	<span id="session_name_hint" class="hint">Example: "Northern River Afternoon Test"</span><br/>
 			    	<label for="session_description">* Procedure:</label><textarea name="session_description" id="session_description" class="required">{ $session_description }</textarea><img height="10px" width="10px" id="session_description_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;top:-15px;" /><img height="10px" width="10px" id="session_description_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;top:-15px;" /><br/>
 			    	<span id="session_description_hint" class="hint">Describe the session procedure and other details.</span><br/>
-					<label for="session_street">* Street:</label><input type="text" name="session_street" id="session_street" value=" " class="required street" /><img height="10px" width="10px" id="session_street_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_street_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
+					<label for="session_street">&nbsp;&nbsp;Street:</label><input type="text" name="session_street" id="session_street" value=" " /><img height="10px" width="10px" id="session_street_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_street_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
 					<span id="session_street_hint" class="hint">Example: "4 Yawkey Way"</span><br/>
 					<label for="session_citystate">* City, State:</label><input type="text" name="session_citystate" id="session_citystate" value="{ $session_citystate }" class="required"/><img height="10px" width="10px" id="session_citystate_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_citystate_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
 					<span id="session_citystate_hint" class="hint">Example: "Boston, Ma"</span><br/>
@@ -70,7 +70,11 @@
 							</tr>
 							<tr>
 								{ foreach from=$fields item=field }
-									<td><input type="text"  id="{ $field.field_name|replace:' ':'_'  }_1" name="{ $field.field_name|replace:' ':'_'  }_1" class="required" style="width:90%;"></td>
+								    { if $field.field_name == 'Time' }
+								      	 <td><input type="text" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" class="time"></td>
+								    { else }
+									<td><input type="text"  id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" ></td>
+								    { /if }
 								{ /foreach }
 							</tr>
 						</table>
