@@ -131,9 +131,15 @@ for( var ses in data.sessions ) {
 }
 
 for( var field in data.fields ) {
-	
+    
 	data.fields[field].is_visible = function() {
-		return this.visibility;
+        if (this.type_id === 37){
+            //Text is always hidden
+            return 0;
+        }
+        else{
+            return this.visibility;
+        }
 	}
 	
 	data.fields[field].set_visiblity = function( on ) {
@@ -337,9 +343,17 @@ data.fullSort = function( fieldName ) {
  * 
  * @return an array of [min, max]
  */
-data.getVisibleDataBounds = function() {
-    var max = 0;
-    var min = 0;
+data.getVisibleDataBounds = function(zeroBounded) {
+    
+    var min, max;
+    if (zeroBounded){
+        max = 0;
+        min = 0;
+    }
+    else {
+        max = Number.NEGATIVE_INFINITY;
+        min = Number.POSITIVE_INFINITY;
+    }
     
     for (var i = 0; i < data.sessions.length; i++) {
         for (var j = 0; j < data.fields.length; j++) {
@@ -383,14 +397,22 @@ data.getVisibleTimeBounds = function() {
  * 
  * @return an array of [min, max]
  */
-data.getVisibleFieldBounds = function(fields) {
-    var max = 0;
-    var min = 0;
+data.getFieldBounds = function(fields, zeroBounded) {
+    
+    var min, max;
+    if (zeroBounded){
+        max = 0;
+        min = 0;
+    }
+    else {
+        max = Number.NEGATIVE_INFINITY;
+        min = Number.POSITIVE_INFINITY;
+    }
     
     for (var i = 0; i < data.sessions.length; i++) {
         for (var j = 0; j < data.fields.length; j++) {
             for (f in fields) {
-                if (data.fields[j].visibility === 1 && data.sessions[i].visibility === 1 &&
+                if (data.sessions[i].visibility === 1 &&
                     data.fields[j].name.toLowerCase() === fields[f].toLowerCase()) {
                     max = Math.max(max, Math.max.apply(null, data.getDataFrom(i, j)));
                     min = Math.min(min, Math.min.apply(null, data.getDataFrom(i, j)));
