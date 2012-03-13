@@ -42,6 +42,15 @@ timeSizes.resolutions =
      [timeSizes.second * 2,  [5, 1]],
      [timeSizes.second * 1,  [5, 1]]];
 
+/*
+ * Generates a time incrment value for an axis.
+ * 
+ * @param minDiv Minimum number of divisions on the screen.
+ * @param maxDiv Maximum number of divisions on the screen.
+ * @param diff   Range of time (ms) on-screen.
+ * 
+ * @return The calculated incrment
+ */
 function getTimeIncrement(minDiv, maxDiv, timeDiff){
     
     if (timeDiff / timeSizes.year > minDiv){
@@ -62,6 +71,17 @@ function getTimeIncrement(minDiv, maxDiv, timeDiff){
     return [6, getDataIncrement(minDiv, maxDiv, timeDiff)];
 }
 
+/**
+ * Gets the next time increment after the current.
+ * If the current increment is null, then the first
+ * increment on screen in generated.
+ * 
+ * @param min The smallest time value visible.
+ * @param inc The increment level.
+ * @param cur The current time increment (ms).
+ * 
+ * @return The next time increment.
+ */
 function getNextTimeIncrement(min, inc, cur){
     var d;
     
@@ -144,6 +164,14 @@ function getNextTimeIncrement(min, inc, cur){
     return d.getTime();
 }
 
+/**
+ * Formats the given time, which is at the given incrment level.
+ * 
+ * @param time The time (Unix milis) to format.
+ * @param inc  The increment level.
+ * 
+ * @return A formatted string representing time.
+ */
 function formatTime(time, inc){
     var d = new Date(time);
     
@@ -165,17 +193,17 @@ function formatTime(time, inc){
 
 
 /*
- * Generates a data incrment value for an axis given a minimum.
+ * Generates a data incrment value for an axis.
  * 
- * @param minInc The minimum increment. This is a somwhat arbitrary value,
- * in timeline it is (valueRange) * (fontHeight / drawHeight) * 3/2.
+ * @param minDiv Minimum number of divisions on the screen.
+ * @param maxDiv Maximum number of divisions on the screen.
+ * @param diff   Range of data on-screen.
  * 
  * @return The calculated incrment
  */
 function getDataIncrement(minDiv, maxDiv, diff){
     
     var base = 1;
-    console.log('e');
     resolutions = [2,5,10]
     
     while (diff / base > maxDiv || diff / base < minDiv){
@@ -183,7 +211,6 @@ function getDataIncrement(minDiv, maxDiv, diff){
         if (diff / base > maxDiv){
             for (res in resolutions){
                 if (diff / (base * resolutions[res]) <= maxDiv){
-                    console.log('m');
                     return base * resolutions[res];
                 }
             }
@@ -193,7 +220,6 @@ function getDataIncrement(minDiv, maxDiv, diff){
             
             for (res in resolutions){
                 if (diff / (base / resolutions[res]) >= minDiv){
-                    console.log('d');
                     return base / resolutions[res];
                 }
             }
@@ -204,6 +230,17 @@ function getDataIncrement(minDiv, maxDiv, diff){
     return base;
 }
 
+/**
+ * Gets the next data increment after the current.
+ * If the current increment is null, then the first
+ * increment on screen in generated.
+ * 
+ * @param min The smallest data value visible.
+ * @param inc The increment level (number).
+ * @param cur The current data increment.
+ * 
+ * @return The next data increment.
+ */
 function getNextDataIncrement(min, inc, cur){
     if (cur === null){
         return Math.floor(min / inc) * inc + inc;
@@ -213,9 +250,17 @@ function getNextDataIncrement(min, inc, cur){
     }
 }
 
+/**
+ * Formats the given data, which is at the given incrment level.
+ * 
+ * @param data The data (number) to format.
+ * @param inc  The increment level (number).
+ * 
+ * @return A formatted string representing data.
+ */
 function formatData(data, inc){
     
-    if (Math.abs(data) < -1e-16){
+    if (Math.abs(data) < 1e-16){
         data = 0;
     }
     
@@ -243,7 +288,7 @@ function formatData(data, inc){
     }
     
     if (len > 8){
-        return data.toExponential(4);
+        return data.toExponential(3);
     }
     else{
         if (data >= 0){
@@ -253,4 +298,127 @@ function formatData(data, inc){
             return data.toPrecision(6).toString().substr(0, i + 1);
         }
     }
+}
+
+/**
+ * Draws an X axis (with grid marks) on the given visObject.
+ * 
+ * @param xmin Minimum value visible on screen.
+ * @param xmax Maximum value visible on screen.
+ * @param visObject The vis object itself (eg. timeline)
+ * @param type The type of data being displayed, if
+ *             type is === "time" then time data is shown, 
+ *             otherwise data is shown.
+ */
+function drawXAxis(xmin, xmax, visObject, type){
+    
+    var getIncrement, getNextIncrement, formatter;
+    
+    if (type === "time"){
+        getIncrement = getTimeIncrement;
+        getNextIncrement = getNextTimeIncrement;
+        formatter = formatTime;
+        
+        xmax *= 1000;
+        xmin *= 1000;
+    }
+    else{
+        getIncrement = getDataIncrement;
+        getNextIncrement = getNextDataIncrement;
+        formatter = formatData;
+    }
+    
+    var xdiff = xmax - xmin;
+    
+    inc = getIncrement(3, 7, xdiff);
+    
+    visObject.context.font = visObject.fontheight + "px sans-serif";
+    visObject.context.fillStyle = "rgb(0,0,0)";
+    
+    var labels = new Array();
+    
+    var xpos = 0;
+    var i = null;
+    
+    while ((i = getNextIncrement(xmin, inc, i)) <= xmax){
+        
+        if( (i-xmin)*visObject.drawwidth/xdiff >= xpos ){
+            
+            var label = formatter(i, inc);
+            
+            labels[label] = new Array();
+            labels[label]['label'] = label;
+            labels[label]['xpos'] = (i-xmin)*visObject.drawwidth/xdiff;
+            
+            xpos = ((i-xmin)*visObject.drawwidth/xdiff) + (visObject.context.measureText(label).width*4/3);
+            
+        }
+        
+    }
+    
+    for( i in labels ){
+        
+        if( visObject.context.measureText(labels[i]['label']).width + labels[i]['xpos'] < visObject.drawwidth ){
+            
+            visObject.context.fillText( labels[i]['label'], labels[i]['xpos'] + visObject.xoff, visObject.drawheight + visObject.yoff + visObject.fontheight );
+        }
+        
+        visObject.context.strokeStyle = visObject.gridcolor;
+        visObject.context.lineWidth = 0.25;
+        visObject.context.beginPath();
+        visObject.context.moveTo(labels[i]['xpos'] + visObject.xoff, 0 + visObject.yoff);
+        visObject.context.lineTo(labels[i]['xpos'] + visObject.xoff, visObject.drawheight + visObject.yoff);
+        
+        visObject.context.closePath();
+        visObject.context.stroke();
+        
+    }
+    
+    //bkmk
+    if (type === "time"){
+        visObject.context.fillText("Starting: " + (new Date((xmin+(xdiff*visObject.hRangeLower))*1000)).toString(), visObject.xoff, visObject.fontheight);
+    }
+        
+}
+
+/**
+ * Draws a Y axis (with grid marks) on the given visObject.
+ * 
+ * @param ymin Minimum value visible on screen.
+ * @param ymax Maximum value visible on screen.
+ * @param visObject The vis object itself (eg. timeline)
+ */
+function drawYAxis(ymin, ymax, visObject){
+    
+    visObject.context.font = visObject.fontheight + "px sans-serif";
+    visObject.context.fillStyle = "rgb(0,0,0)";
+    
+    // --- //
+    var ydiff = ymax - ymin;
+    var inc = getDataIncrement(3, (visObject.drawheight / visObject.fontheight) * 0.66, ydiff);
+    
+    var i = null;
+    while ((i = getNextDataIncrement(ymin, inc, i)) <= ymax){
+        var y = visObject.drawheight - ((i-ymin)*visObject.drawheight/ydiff-visObject.fontheight/3) + visObject.yoff;
+        
+        var gridy =  visObject.drawheight - ((i-ymin)*visObject.drawheight/ydiff) + visObject.yoff;
+        
+        label = (formatData(i, inc));//.toString();//(i.toFixed(n)).toString();
+        
+        //if( y > visObject.fontheight + visObject.yoff && y < visObject.yoff + visObject.drawheight - visObject.fontheight/2 )
+        
+        visObject.context.fillText( label.toString(), visObject.drawwidth + visObject.fontheight/2, y );
+        
+        visObject.context.strokeStyle = visObject.gridcolor;
+        visObject.context.lineWidth = 0.25;      
+        visObject.context.beginPath();
+        visObject.context.moveTo(0, gridy);
+        visObject.context.lineTo(visObject.drawwidth, gridy);
+        visObject.context.stroke();
+        visObject.context.closePath();
+        
+    }
+    
+    return 0;
+    
 }
