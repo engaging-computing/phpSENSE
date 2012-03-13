@@ -158,7 +158,7 @@
 											</select>
 										</td>
 										<td>
-											<select id="external_port_A" name="external_type_A">
+											<select id="external_port_A" name="external_port_A">
 												<option value="0">Any</option>
 												<option value="1">BTA1</option>
 												<option value="2">BTA2</option>
@@ -196,7 +196,7 @@
 											</select>
 										</td>
 										<td>
-											<select id="external_port_B" name="external_type_B">
+											<select id="external_port_B" name="external_port_B">
 												<option value="0">Any</option>
 												<option value="1">BTA1</option>
 												<option value="2">BTA2</option>
@@ -234,7 +234,7 @@
 											</select>
 										</td>
 										<td>
-											<select id="external_port_C" name="external_type_C">
+											<select id="external_port_C" name="external_port_C">
 												<option value="0">Any</option>
 												<option value="1">BTA1</option>
 												<option value="2">BTA2</option>
@@ -272,7 +272,7 @@
 											</select>
 										</td>
 										<td>
-											<select id="external_port_D" name="external_type_D">
+											<select id="external_port_D" name="external_port_D">
 												<option value="0">Any</option>
 												<option value="1">BTA1</option>
 												<option value="2">BTA2</option>

@@ -697,270 +697,64 @@ var createWizard = {
 	                createWizard.store_field('altitude', 3, 5);
 	            }
 	
-				//var ports = ['A','B','C','D'];
+				// - //
+	
+				var ports = ['A','B','C','D'];
+				
+				var sensortypes = {
+					
+					1:  {name: 'temperature probe', type_id: 1, unit_id: 2},
+					2:  {name: 'voltage', type_id: 11, unit_id: 34},
+					3:  {name: 'counts', type_id: 20, unit_id: 60},
+					4:  {name: 'counts', type_id: 20, unit_id: 60},
+					5:  {name: 'ph', type_id: 24, unit_id: 70},
+					6:  {name: 'salinity', type_id: 23, unit_id: 69},
+					7:  {name: 'co2 high', type_id: 22, unit_id: 67},
+					8:  {name: 'dissolved oxygen', type_id: 30, unit_id: 77},
+					9:  {name: 'anenometer', type_id: 31, unit_id: 45},
+					10: {name: 'turbidity', type_id: 32, unit_id: 78},
+					11: {name: 'flow rate', type_id: 33, unit_id: 45},
+					12: {name: 'motor monitor', type_id: 34, unit_id: 34},
+					13: {name: 'conductivity', type_id: 35, unit_id: 79}
+					
+				};
 
-	            /* Add External */
-	            if($('#external_A').attr('checked')) {
+				for( i in ports ){
 
-					var external_port = "";
+		            /* Add External */
+		            if($('#external_' + ports[i]).attr('checked')) {
 
-					switch(parseInt($('#external_port_A').val())){
-						case 0:
-						external_port = "";
-						break;
-						case 1:
-						external_port = "~BTA1";
-						break;
-						case 2:
-						external_port = "~BTA2";
-						break;
-						case 3:
-						external_port = "~MINI1";
-						break;
-						case 4:
-						external_port = "~MINI2";
-						break;
-					}
+						var external_port = "";
 
-	                /* Add PinPoint Temp Probe */
-	                if($('#external_type_A').val() == 1) {
-	                    createWizard.store_field('temperature probe'+external_port, 1, 2);
-	                }
-	                /* Add Generic Voltage Probe */
-	                else if($('#external_type_A').val() == 2) {
-	                    createWizard.store_field('voltage'+external_port, 11, 34);
-	                }
-	                /* Add Giger Counter Probe */
-	                else if($('#external_type_A').val() == 3 || $('#external_type_A').val() == 4){
-	                    createWizard.store_field('counts'+external_port, 20, 60);
-	                }
-	                /* Need to throw error, this is a bad value */
-	                else if($('#external_type_A').val() == 0) {
-	                    // Error
-	                }
-	                else if($('#external_type_A').val() == 5) {
-	                    createWizard.store_field('ph'+external_port, 24, 70);
-	                }
-	                else if($('#external_type_A').val() == 6) {
-	                    createWizard.store_field('salinity'+external_port, 23, 69);
-	                }
-	                else if($('#external_type_A').val() == 7) {
-	                    createWizard.store_field('co2 high'+external_port, 22, 67);
-	                }
-					else if($('#external_type_A').val() == 8) {
-	                    createWizard.store_field('dissolved oxygen'+external_port, 30, 77);
-	                }
-					else if($('#external_type_A').val() == 9) {
-	                    createWizard.store_field('anemometer'+external_port, 31, 45);
-	                }
-					else if($('#external_type_A').val() == 10) {
-	                    createWizard.store_field('turbidity'+external_port, 32, 78);
-	                }
-					else if($('#external_type_A').val() == 11) {
-	                    createWizard.store_field('flow rate'+external_port, 33, 45);
-	                }
-					else if($('#external_type_A').val() == 12) {
-	                    createWizard.store_field('motor monitor'+external_port, 34, 34);
-	                }
-					else if($('#external_type_A').val() == 13) {
-	                    createWizard.store_field('conductivity'+external_port, 35, 79);
-	                }
-	            }
-
-				switch(parseInt($('#external_port_B').val())){
-					case 0:
-					external_port = "";
-					break;
-					case 1:
-					external_port = "~BTA1";
-					break;
-					case 2:
-					external_port = "~BTA2";
-					break;
-					case 3:
-					external_port = "~MINI1";
-					break;
-					case 4:
-					external_port = "~MINI2";
-					break;
+						switch(parseInt($('#external_port_' + ports[i]).val())){
+							case 0:
+							external_port = "";
+							break;
+							case 1:
+							external_port = "~BTA1";
+							break;
+							case 2:
+							external_port = "~BTA2";
+							break;
+							case 3:
+							external_port = "~MINI1";
+							break;
+							case 4:
+							external_port = "~MINI2";
+							break;
+						}
+						
+						for( j in sensortypes ){
+							
+							var sensortype = $('#external_type_' + ports[i]).val();
+							
+							createWizard.store_field(sensortypes[j].name + external_port, sensortypes[j].type_id, sensortypes[j].unit_id);
+							
+						}
+		            }
 				}
-
-	            /* Add External 2 */
-	            if($('#external_B').attr('checked')) {
-	                /* Add PinPoint Temp Probe */
-	                if($('#external_type_B').val() == 1) {
-	                    createWizard.store_field('temperature probe'+external_port, 1, 2);
-	                }
-	                /* Add Generic Voltage Probe */
-	                else if($('#external_type_B').val() == 2) {
-	                    createWizard.store_field('voltage'+external_port, 11, 34);
-	                }
-	                /* Add Giger Counter Probe */
-	                else if($('#external_type_B').val() == 3 || $('#external_type_B').val() == 4){
-	                    createWizard.store_field('counts'+external_port, 20, 60);
-	                }
-	                /* Need to throw error, this is a bad value */
-	                else if($('#external_type_B').val() == 0) {
-	                    // Error
-	                }
-	                else if($('#external_type_B').val() == 5) {
-	                    createWizard.store_field('ph'+external_port, 24, 70);
-	                }
-	                else if($('#external_type_B').val() == 6) {
-	                    createWizard.store_field('salinity'+external_port, 23, 69);
-	                }
-	                else if($('#external_type_B').val() == 7) {
-	                    createWizard.store_field('co2 high'+external_port, 22, 67);
-	                }
-					else if($('#external_type_B').val() == 8) {
-	                    createWizard.store_field('dissolved oxygen'+external_port, 30, 77);
-	                }
-					else if($('#external_type_B').val() == 9) {
-	                    createWizard.store_field('anemometer'+external_port, 31, 45);
-	                }
-					else if($('#external_type_B').val() == 10) {
-	                    createWizard.store_field('turbidity'+external_port, 32, 78);
-	                }
-					else if($('#external_type_B').val() == 11) {
-	                    createWizard.store_field('flow rate'+external_port, 33, 45);
-	                }
-					else if($('#external_type_B').val() == 12) {
-	                    createWizard.store_field('motor monitor'+external_port, 34, 34);
-	                }
-					else if($('#external_type_B').val() == 13) {
-	                    createWizard.store_field('conductivity'+external_port, 35, 79);
-	                }
-	            }
-
-				switch(parseInt($('#external_port_C').val())){
-					case 0:
-					external_port = "";
-					break;
-					case 1:
-					external_port = "~BTA1";
-					break;
-					case 2:
-					external_port = "~BTA2";
-					break;
-					case 3:
-					external_port = "~MINI1";
-					break;
-					case 4:
-					external_port = "~MINI2";
-					break;
-				}
-
-	            /* Add External 2 */
-	            if($('#external_C').attr('checked')) {
-	                /* Add PinPoint Temp Probe */
-	                if($('#external_type_C').val() == 1) {
-	                    createWizard.store_field('temperature probe'+external_port, 1, 2);
-	                }
-	                /* Add Generic Voltage Probe */
-	                else if($('#external_type_C').val() == 2) {
-	                    createWizard.store_field('voltage'+external_port, 11, 34);
-	                }
-	                /* Add Giger Counter Probe */
-	                else if($('#external_type_C').val() == 3 || $('#external_type_C').val() == 4){
-	                    createWizard.store_field('counts'+external_port, 20, 60);
-	                }
-	                /* Need to throw error, this is a bad value */
-	                else if($('#external_type_C').val() == 0) {
-	                    // Error
-	                }
-	                else if($('#external_type_C').val() == 5) {
-	                    createWizard.store_field('ph'+external_port, 24, 70);
-	                }
-	                else if($('#external_type_C').val() == 6) {
-	                    createWizard.store_field('salinity'+external_port, 23, 69);
-	                }
-	                else if($('#external_type_C').val() == 7) {
-	                    createWizard.store_field('co2 high'+external_port, 22, 67);
-	                }
-					else if($('#external_type_C').val() == 8) {
-	                    createWizard.store_field('dissolved oxygen'+external_port, 30, 77);
-	                }
-					else if($('#external_type_C').val() == 9) {
-	                    createWizard.store_field('anemometer'+external_port, 31, 45);
-	                }
-					else if($('#external_type_C').val() == 10) {
-	                    createWizard.store_field('turbidity'+external_port, 32, 78);
-	                }
-					else if($('#external_type_C').val() == 11) {
-	                    createWizard.store_field('flow rate'+external_port, 33, 45);
-	                }
-					else if($('#external_type_C').val() == 12) {
-	                    createWizard.store_field('motor monitor'+external_port, 34, 34);
-	                }
-					else if($('#external_type_C').val() == 13) {
-	                    createWizard.store_field('conductivity'+external_port, 35, 79);
-	                }
-	            }
-
-				switch(parseInt($('#external_port_D').val())){
-					case 0:
-					external_port = "";
-					break;
-					case 1:
-					external_port = "~BTA1";
-					break;
-					case 2:
-					external_port = "~BTA2";
-					break;
-					case 3:
-					external_port = "~MINI1";
-					break;
-					case 4:
-					external_port = "~MINI2";
-					break;
-				}
-
-	            /* Add External 2 */
-	            if($('#external_D').attr('checked')) {
-	                /* Add PinPoint Temp Probe */
-	                if($('#external_type_D').val() == 1) {
-	                    createWizard.store_field('temperature probe'+external_port, 1, 2);
-	                }
-	                /* Add Generic Voltage Probe */
-	                else if($('#external_type_D').val() == 2) {
-	                    createWizard.store_field('voltage'+external_port, 11, 34);
-	                }
-	                /* Add Giger Counter Probe */
-	                else if($('#external_type_D').val() == 3 || $('#external_type_D').val() == 4){
-	                    createWizard.store_field('counts'+external_port, 20, 60);
-	                }
-	                /* Need to throw error, this is a bad value */
-	                else if($('#external_type_D').val() == 0) {
-	                    // Error
-	                }
-	                else if($('#external_type_D').val() == 5) {
-	                    createWizard.store_field('ph'+external_port, 24, 70);
-	                }
-	                else if($('#external_type_D').val() == 6) {
-	                    createWizard.store_field('salinity'+external_port, 23, 69);
-	                }
-	                else if($('#external_type_D').val() == 7) {
-	                    createWizard.store_field('co2 high'+external_port, 22, 67);
-	                }
-					else if($('#external_type_D').val() == 8) {
-	                    createWizard.store_field('dissolved oxygen'+external_port, 30, 77);
-	                }
-					else if($('#external_type_D').val() == 9) {
-	                    createWizard.store_field('anemometer'+external_port, 31, 45);
-	                }
-					else if($('#external_type_D').val() == 10) {
-	                    createWizard.store_field('turbidity'+external_port, 32, 78);
-	                }
-					else if($('#external_type_D').val() == 11) {
-	                    createWizard.store_field('flow rate'+external_port, 33, 45);
-	                }
-					else if($('#external_type_D').val() == 12) {
-	                    createWizard.store_field('motor monitor'+external_port, 34, 34);
-	                }
-					else if($('#external_type_D').val() == 13) {
-	                    createWizard.store_field('conductivity'+external_port, 35, 79);
-	                }
-	            }
+				
+				// - //
 				
 				createWizard.next = createWizard.step_post_process;
 
