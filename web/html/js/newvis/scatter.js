@@ -1,6 +1,6 @@
 
 // Function descriptions are all above the function they describe
-
+console.log(data);
 var scatter = new function Scatter(){
 	
 	/*
@@ -178,14 +178,14 @@ var scatter = new function Scatter(){
 		var xdiff = xmax - xmin;
 		var ydiff = ymax - ymin;
 		
-		var hrdiff = this.hRangeUpper - this.hRangeLower;
+		/*var hrdiff = this.hRangeUpper - this.hRangeLower;
 		var vrdiff = this.vRangeUpper - this.vRangeLower;
 		
 		xmax = xdiff * this.hRangeUpper + xmin;
 		xmin = xdiff * this.hRangeLower + xmin;
 		
 		ymax = ydiff * this.vRangeUpper + ymin;
-		ymin = ydiff * this.vRangeLower + ymin;
+		ymin = ydiff * this.vRangeLower + ymin;*/
 		
 		x = ( x - xmin ) / ( xmax - xmin );
 		y = ( y - ymin ) / ( ymax - ymin );
@@ -198,16 +198,18 @@ var scatter = new function Scatter(){
 				
 			this.context.beginPath();
 		
-			this.context.arc(	this.xoff+x*this.drawwidth,
-								this.drawheight - y*this.drawheight + this.yoff,
-								2.5,
-								0,
-								Math.PI*2, false	);
+			this.context.arc(this.xoff+x*this.drawwidth,
+							this.drawheight - y*this.drawheight + this.yoff,
+							2.0,
+							0,
+							Math.PI*2, false);
 		
 			this.context.stroke();
 			
 			this.context.closePath();
-		
+            
+            this.context.fillStyle = color;
+            this.context.fill();
 		}
 		
 	}
@@ -248,7 +250,6 @@ var scatter = new function Scatter(){
 	this.draw = function(){
 		
 		var numsessions = data.sessions.length;
-		
 		var numfields = data.fields.length;
 		
 		// --- //
@@ -267,11 +268,11 @@ var scatter = new function Scatter(){
 		
 		// --- //
 		var xbounds;
-		if (data.fields[this.xAxis].name.toLowerCase() === 'time'){
+		if (data.fields[this.xAxis].type_id == 7){
             xbounds = data.getVisibleTimeBounds();
         }
         else{
-            xbounds = data.getVisibleFieldBounds([data.fields[this.xAxis].name]);
+            xbounds = data.getFieldBounds([data.fields[this.xAxis].name], false);
         }
         var xmin = xbounds[0];
         var xmax = xbounds[1];
@@ -284,7 +285,7 @@ var scatter = new function Scatter(){
 		
 		// --- //
 		
-		var ybounds = data.getVisibleDataBounds();
+		var ybounds = data.getVisibleDataBounds(true);
         var ymin = ybounds[0];
         var ymax = ybounds[1];
         var ydiff = ymax - ymin;
@@ -303,23 +304,16 @@ var scatter = new function Scatter(){
 		
 		// --- //
 		
-		//xmin = data.getFieldMin("time");
-		//xmax = data.getFieldMax("time");
-		
-		//ymin = data.getMin();
-		//ymax = data.getMax();
-		
 		for( var i = 0; i < numsessions; i++ ){
 			
 			for( var j = 0; j < numfields; j++ ){
 		
-				if( data.sessions[i].visibility && data.fields[j].visibility && data.fields[j].type_id != 7 && data.fields[j].type_id != 19 ){
+				if( data.sessions[i].visibility && data.fields[j].visibility && data.fields[j].type_id != 7){
 			
 					var color = hslToRgb( ( 0.6 + ( 1.0*i/numsessions ) ) % 1.0, 1.0, 0.125 + (0.75*j/data.fields.length)  );
-			
 					var color = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
 		
-					this.plotData( data.getDataFrom(i,time), data.getDataFrom(i,j), xmin, xmax, ymin, ymax, color );
+					this.plotData( data.getDataFrom(i,this.xAxis), data.getDataFrom(i,j), xmin, xmax, ymin, ymax, color );
 	
 				}
 			

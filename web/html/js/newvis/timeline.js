@@ -544,7 +544,7 @@ var timeline = new function Timeline(){
 		xmax = xdiff * this.hRangeUpper + xmin;
 		xmin = xdiff * this.hRangeLower + xmin;
 		// --- //
-		var ybounds = data.getVisibleDataBounds();
+		var ybounds = data.getVisibleDataBounds(true);
 		var ymin = ybounds[0];
 		var ymax = ybounds[1];
 		var ydiff = ymax - ymin;
