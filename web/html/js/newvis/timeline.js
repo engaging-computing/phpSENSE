@@ -52,14 +52,18 @@ var timeline = new function Timeline(){
 		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Fields:</tr></td>';
 		
 		for( var i in data.fields ){
-			
-			if( data.fields[i].type_id != 7 && data.fields[i].type_id != 19 && data.fields[i].type_id != 37 ){ // Should properly check if field is time
+			//check if field is time or text
+			if( data.fields[i].type_id != 7 && data.fields[i].type_id != 37 ){ 
 				
 				controls += '<tr><td>';
 			
-				var color = Math.floor(((0.75*i/data.fields.length)) * 256);
+				var color = Math.floor(((0.75*i/data.fields.length)) * 256).toString(16);
+                if (color.length === 1){
+                    color = '0' + color;
+                }
+                color = color + color + color;
 			
-				controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color.toString(16) + color.toString(16) + color.toString(16) + ';float:left;">';
+				controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color + ';float:left;">';
 			
 				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
 
@@ -707,7 +711,7 @@ var timeline = new function Timeline(){
 		this.mouseY = 0;
 
 		this.bgcolor = "rgb(255,255,255)";
-		this.gridcolor = "rgb(128,128,128)";
+		this.gridcolor = "rgb(0,0,0)";
 		this.bordercolor = "rgb(0,0,0)";
 		this.textcolor = "rgb(0,0,0)";
 		

@@ -131,9 +131,15 @@ for( var ses in data.sessions ) {
 }
 
 for( var field in data.fields ) {
-	
+    
 	data.fields[field].is_visible = function() {
-		return this.visibility;
+        if (this.type_id === 37){
+            //Text is always hidden
+            return 0;
+        }
+        else{
+            return this.visibility;
+        }
 	}
 	
 	data.fields[field].set_visiblity = function( on ) {
