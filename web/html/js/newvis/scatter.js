@@ -73,15 +73,9 @@ var scatter = new function Scatter(){
 				
 				controls += '<tr><td>';
 			
-				var color = Math.floor(((0.75*i/data.fields.length)) * 256).toString(16);
-                if (color.length === 1){
-                    color = '0' + color;
-                }
-                color = color + color + color;
+				controls += '<div id="fieldvisiblediv' + i + '" style="font-size:14px;font-family:Arial;text-align:center;color:#000000;float:left;">';
 			
-				controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color + ';float:left;">';
-			
-				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
+				controls += '<input id="fieldvisible' + i + '" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
 
 				controls += data.fields[i].name + '&nbsp;';
 			
@@ -132,7 +126,7 @@ var scatter = new function Scatter(){
 			
 		});
 		
-		$('input.fieldvisible').click(function(e){
+		$('input[id^=fieldvisible]').click(function(e){
 			
 			var visible = data.fields[$(e.target).val()].visibility;
 			
@@ -248,15 +242,14 @@ var scatter = new function Scatter(){
 	*/
 	
 	this.draw = function(){
-		
-		var numsessions = data.sessions.length;
-		var numfields = data.fields.length;
-		
+        
+		fixFieldLabels();
+        
 		// --- //
 		
 		var time = null;
 		
-		for( var i = 0; i < numfields; i++ ){
+		for( var i = 0; i < data.fields.length; i++ ){
 			
 			if( data.fields[i].type_id == 7 ){
 				
@@ -304,13 +297,13 @@ var scatter = new function Scatter(){
 		
 		// --- //
 		
-		for( var i = 0; i < numsessions; i++ ){
+		for( var i = 0; i < data.sessions.length; i++ ){
 			
-			for( var j = 0; j < numfields; j++ ){
+			for( var j = 0; j < data.fields.length; j++ ){
 		
 				if( data.sessions[i].visibility && data.fields[j].visibility && data.fields[j].type_id != 7){
 			
-					var color = hslToRgb( ( 0.6 + ( 1.0*i/numsessions ) ) % 1.0, 1.0, 0.125 + (0.75*j/data.fields.length)  );
+					var color = getFieldColor(j, i);
 					var color = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
 		
 					this.plotData( data.getDataFrom(i,this.xAxis), data.getDataFrom(i,j), xmin, xmax, ymin, ymax, color );
@@ -395,9 +388,9 @@ var scatter = new function Scatter(){
 	
 	this.start = function(){
 			
+        this.drawControls();
+        
 		this.draw();
-		
-		this.drawControls();
 		
 		this.setListeners();
 		

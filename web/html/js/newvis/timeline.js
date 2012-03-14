@@ -63,9 +63,9 @@ var timeline = new function Timeline(){
                 }
                 color = color + color + color;
 			
-				controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color + ';float:left;">';
+				controls += '<div id="fieldvisiblediv' + i + '" style="font-size:14px;font-family:Arial;text-align:center;color:#' + color + ';float:left;">';
 			
-				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
+				controls += '<input id="fieldvisible' + i + '" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
 
 				controls += data.fields[i].name + '&nbsp;';
 			
@@ -140,7 +140,7 @@ var timeline = new function Timeline(){
 		
 		// Set listener for field visibility checkboxes
 		
-		$('input.fieldvisible').click(function(e){
+		$('input[id^=fieldvisible]').click(function(e){
 			
 			var visible = data.fields[$(e.target).val()].visibility;
 			
@@ -384,7 +384,7 @@ var timeline = new function Timeline(){
 					
 				}
 				
-				var color = hslToRgb( ( 0.6 + ( 1.0*i/data.sessions.length ) ) % 1.0, 1.0, 0.125 + (0.75*j/data.fields.length) );
+				var color = getFieldColor(j, i);
 
 				this.context.strokeStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ", 0.825)";
 
@@ -535,6 +535,8 @@ var timeline = new function Timeline(){
 	*/
 	
 	this.draw = function(){
+        
+        fixFieldLabels();
 		
         var xbounds = data.getVisibleTimeBounds();
 		var xmin = xbounds[0];
