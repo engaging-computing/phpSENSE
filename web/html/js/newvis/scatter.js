@@ -21,7 +21,7 @@ var scatter = new function Scatter(){
 		
 		for( var i in data.sessions ){
 			
-			var color = hslToRgb((0.6 + (1.0 * i/data.sessions.length)) % 1.0, 0.825, 0.425 );
+			var color = getSessionColor(i);
 			
 			controls += '<tr><td>';
 			

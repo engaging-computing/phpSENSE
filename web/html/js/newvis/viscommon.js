@@ -16,10 +16,20 @@
  * @return Returns a list of the three RGB values.
  */
 function getFieldColor(fIndex, sIndex) {
-    console.log([fIndex, sIndex, getFieldShade(fIndex)]);
     var shade = parseInt(getFieldShade(fIndex).slice(0, 2), 16);
     
     return hslToRgb(( 0.6 + ( 1.0 * sIndex / data.sessions.length )) % 1.0, 1.0, .2 + shade / 255);
+}
+
+/**
+ * Gets the color value for the given session index.
+ * 
+ * @param index The index of the session.
+ * 
+ * @return Returns the session color.
+ */
+function getSessionColor(index) {
+    return hslToRgb((0.6 + (1.0 * index / data.sessions.length)) % 1.0, 0.825, 0.425);
 }
 
 /**
