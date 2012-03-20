@@ -79,7 +79,7 @@
 			<h1>Resources</h1>
 			<div>
 				<p>
-					<a href="/blog/downloads">Duck!</a><br/>
+					<a href="/blog/downloads">Downloads</a><br/>
 					Get the software needed to use the PINPoint data logger.
 				</p>
 				<br/>				
