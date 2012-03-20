@@ -83,10 +83,22 @@ if(isset($_REQUEST['sessions'])) {
     
     $smarty->assign('head', $head);
 }
-        
-
  
-$smarty->assign('title', 'New Viz');
+// If there is only one session the title should include it.       
+if(count($sessions) == 1){
+   
+    $session_data = getSession($sessions[0]);
+    $session_name = $session_data['name'];
+    
+    $name = getExperimentNameFromSession($sessions[0]);
+    $link = '<a href="experiment.php?id='.$name['experiment_id'].'">'.$name['name'].'</a> > '. $session_name;
+} else {
+    $name = getExperimentNameFromSession($sessions[0]);
+    $link = '<a href="experiment.php?id='.$name['experiment_id'].'">'.$name['name'].'</a>';
+}    
+
+$smarty->assign('link', $link);
+$smarty->assign('title', $name['name']);
 $smarty->assign('errors', $errors);
 
 $smarty->assign('content', $smarty->fetch('newvis.tpl'));
