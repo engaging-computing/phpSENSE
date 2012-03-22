@@ -862,28 +862,28 @@ a.rating_browse {
 #vis_select li a { color: black;
 	 background-color: #eee;
 	 float: left;
-	 padding: 10px 45px;
-	 margin: 0px 10px;
+	 padding: 2px 10px 1px 10px;
+	 margin: 16px 0px 0px 5px;
 	 border: 1px solid;
 	 border-bottom: 0px;
 	 border-color: black;
-	 border-top-left-radius: 15px;
-	 border-top-right-radius: 15px;
-	-moz-border-radius-top-left: 15px;
-	-moz-border-radius-top-right: 15px;
+	 border-top-left-radius: 5px;
+	 border-top-right-radius: 5px;
+	-moz-border-radius-top-left: 5px;
+	-moz-border-radius-top-right: 5px;
 	 }
 #vis_select li a:hover { background: #ccc; }
 
 #viscontainer {
 	border: 1px solid;
-	 border-top-left-radius: 15px;
-	 border-top-right-radius: 15px;
-	-moz-border-radius-top-left: 15px;
-	-moz-border-radius-top-right: 15px;
-	 border-bottom-left-radius: 15px;
-	 border-bottom-right-radius: 15px;
-	-moz-border-radius-bottom-left: 15px;
-	-moz-border-radius-bottom-right: 15px;
+	 border-top-left-radius: 5px;
+	 border-top-right-radius: 5px;
+	-moz-border-radius-top-left: 5px;
+	-moz-border-radius-top-right: 5px;
+	 border-bottom-left-radius: 5px;
+	 border-bottom-right-radius: 5px;
+	-moz-border-radius-bottom-left: 5px;
+	-moz-border-radius-bottom-right: 5px;
 }
 
 #viscanvas {
