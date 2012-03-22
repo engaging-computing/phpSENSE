@@ -7,6 +7,95 @@
     
 */
 
+/**
+ * Gets the RGB colors of the given session and field.
+ * 
+ * @param fIndex The index of the field to color.
+ * @param sIndex The index of the session to color.
+ * 
+ * @return Returns a list of the three RGB values.
+ */
+function getFieldColor(fIndex, sIndex) {
+    var shade = parseInt(getFieldShade(fIndex).slice(0, 2), 16);
+    
+    return hslToRgb(( 0.6 + ( 1.0 * sIndex / data.sessions.length )) % 1.0, 1.0, .2 + shade / 255);
+}
+
+/**
+ * Gets the color value for the given session index.
+ * 
+ * @param index The index of the session.
+ * 
+ * @return Returns the session color.
+ */
+function getSessionColor(index) {
+    return hslToRgb((0.6 + (1.0 * index / data.sessions.length)) % 1.0, 0.825, 0.425);
+}
+
+/**
+ * Gets the hex color of a field's shade (greyscale).
+ * 
+ * @param index The index of the field.
+ * 
+ * @return Returns the hex string of the shade eg. 'ffffff'
+ */
+function getFieldShade(index) {
+    
+    var len = 0;
+    for( var i in data.fields ){
+        //check if field is time or text
+        if( data.fields[i].type_id != 7 && data.fields[i].type_id != 37 ){
+            if (data.fields[i].visibility == 1) {
+                len++;
+            }
+        }
+    }
+    
+    var visi = 1;
+    for( var i in data.fields ){
+        //check if field is time or text
+        if( data.fields[i].type_id != 7 && data.fields[i].type_id != 37 ){
+            
+            if (index == i) {
+                var color = Math.floor(((0.7 * visi / len)) * 255).toString(16);
+                
+                if (color.length === 1){
+                    color = '0' + color;
+                }
+                //xx -> xxxxxx
+                return color + color + color;
+            }
+            
+            if (data.fields[i].visibility == 1) {
+                visi++;
+            }
+        }
+    }
+    
+    return 'ffffff';
+}
+
+/**
+ * Fixes the colors of the field labels. Colors them
+ * red if not visible, otherwise the appropriate shade.
+ */
+function fixFieldLabels(){
+    
+    for( var i in data.fields ){
+        //check if field is time or text
+        if( data.fields[i].type_id != 7 && data.fields[i].type_id != 37 ){
+            var div = $('#fieldvisiblediv' + i);
+            var input = $('#fieldvisible' + i);
+            
+            if (input.attr('checked')) {
+                div.css('color', '#' + getFieldShade(i));
+            }
+            else {
+                div.css('color', '#770000');
+            }
+        }
+    }
+}
 
 function clip(input, lbound, ubound){
 		
