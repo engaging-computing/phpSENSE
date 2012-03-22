@@ -100,6 +100,7 @@ if(count($sessions) == 1){
 $smarty->assign('link', $link);
 $smarty->assign('title', $name['name']);
 $smarty->assign('errors', $errors);
+$smarty->assign('user', $session->getUser());
 
 $smarty->assign('content', $smarty->fetch('newvis.tpl'));
 $smarty->display('skeleton.tpl');
