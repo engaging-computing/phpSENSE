@@ -25,7 +25,7 @@ var timeline = new function Timeline(){
 		
 		for( var i in data.sessions ){
 			
-			var color = hslToRgb( ( 0.6 + ( 1.0*i/data.sessions.length ) ) % 1.0, 0.825, 0.425 );
+			var color = getSessionColor(i);
 			
 			controls += '<tr><td>';
 			
@@ -57,15 +57,9 @@ var timeline = new function Timeline(){
 				
 				controls += '<tr><td>';
 			
-				var color = Math.floor(((0.75*i/data.fields.length)) * 256).toString(16);
-                if (color.length === 1){
-                    color = '0' + color;
-                }
-                color = color + color + color;
+				controls += '<div id="fieldvisiblediv' + i + '" style="font-size:14px;font-family:Arial;text-align:center;color:#ffffff;float:left;">';
 			
-				controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color + ';float:left;">';
-			
-				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
+				controls += '<input id="fieldvisible' + i + '" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
 
 				controls += data.fields[i].name + '&nbsp;';
 			
@@ -140,7 +134,7 @@ var timeline = new function Timeline(){
 		
 		// Set listener for field visibility checkboxes
 		
-		$('input.fieldvisible').click(function(e){
+		$('input[id^=fieldvisible]').click(function(e){
 			
 			var visible = data.fields[$(e.target).val()].visibility;
 			
@@ -384,7 +378,7 @@ var timeline = new function Timeline(){
 					
 				}
 				
-				var color = hslToRgb( ( 0.6 + ( 1.0*i/data.sessions.length ) ) % 1.0, 1.0, 0.125 + (0.75*j/data.fields.length) );
+				var color = getFieldColor(j, i);
 
 				this.context.strokeStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ", 0.825)";
 
@@ -535,6 +529,8 @@ var timeline = new function Timeline(){
 	*/
 	
 	this.draw = function(){
+        
+        fixFieldLabels();
 		
         var xbounds = data.getVisibleTimeBounds();
 		var xmin = xbounds[0];
@@ -653,12 +649,12 @@ var timeline = new function Timeline(){
 	// Starts the vis back up after another vis has been active
 	
 	this.start = function(){
-			
+		
+        this.drawControls();
+        
 		this.draw();
 		
 		this.inited = 1;
-		
-		this.drawControls();
 		
 		this.setListeners();
 		

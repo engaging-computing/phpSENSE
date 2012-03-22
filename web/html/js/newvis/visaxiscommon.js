@@ -423,3 +423,15 @@ function drawYAxis(ymin, ymax, visObject){
     return 0;
     
 }
+
+/**
+ * Returns a JQuery-safe version of a given string 
+ * (escapes special characters)
+ * 
+ * @param str The string to make safe.
+ * 
+ * @return The safe string.
+ */
+function jqISC(str) {
+    return str.replace(/([;&,\.\ \+\*\~':"\!\^#$%@\[\]\(\)=>\|])/g, '\\$1');
+}
