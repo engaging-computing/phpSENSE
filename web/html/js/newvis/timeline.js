@@ -510,7 +510,7 @@ var timeline = new function Timeline(){
             this.hRangeUpper = hUp;
         }
         
-        var ybounds = data.getVisibleDataBounds();
+        var ybounds = data.getVisibleDataBounds(true);
         var ydiff = ybounds[1] - ybounds[0];
         var yMinRange = (1e-15) / xdiff;
         yMinRange = Math.max(yMinRange, 1e-14); //Clamp for FPEs

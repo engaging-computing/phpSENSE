@@ -229,10 +229,36 @@ var scatter = new function Scatter(){
      * to actually consider... anything.
      */
 	this.setBounds = function(hLow, hUp, vLow, vUp){
-        this.hRangeLower = hLow;
-        this.hRangeUpper = hUp;
-        this.vRangeLower = vLow;
-        this.vRangeUpper = vUp;
+        
+        var xbounds, xdiff, xMinRange;
+        if (data.fields[this.xAxis].type_id == 7){
+            xbounds = data.getVisibleTimeBounds();
+            xdiff = xbounds[1] - xbounds[0];
+            xMinRange = 10 / xdiff;
+        }
+        else{
+            xbounds = data.getFieldBounds([data.fields[this.xAxis].name], false);
+            xdiff = xbounds[1] - xbounds[0];
+            xMinRange = (1e-15) / xdiff;
+        }
+        xMinRange = Math.max(xMinRange, 1e-14); //Clamp for FPEs
+        
+        if (hUp - hLow >= xMinRange || 
+            (hUp >= this.hRangeUpper && hLow <= this.hRangeLower)) {
+            this.hRangeLower = hLow;
+            this.hRangeUpper = hUp;
+        }
+        
+        var ybounds = data.getVisibleDataBounds(true);
+        var ydiff = ybounds[1] - ybounds[0];
+        var yMinRange = (1e-15) / xdiff;
+        yMinRange = Math.max(yMinRange, 1e-14); //Clamp for FPEs
+        
+        if (vUp - vLow >= yMinRange ||
+            (vUp >= this.vRangeUpper && vLow <= this.vRangeLower)) {
+            this.vRangeLower = vLow;
+            this.vRangeUpper = vUp;
+        }
     }
 
 	/*
