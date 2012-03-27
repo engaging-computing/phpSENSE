@@ -17,17 +17,31 @@
 					<th align="left">&nbsp;</th>
 					<th colspan="2" align="left" width="169px">Sensor</th>
 				</tr>
-				{ foreach from=$defaultSensors item=sval}
 				<tr>
-					<td><input id="{$sval}" name="{$sval}" type="checkbox" /></td>
-					<td colspan="2">{$sval|capitalize}</td>
+					<td><input id="temperature" name="temperature" type="checkbox" /></td>
+					<td colspan="2">Air Temperature</td>
 				</tr>
-				{ /foreach }
 				<tr>
-					<td><input type="checkbox" id="external" name="external" {literal} onclick="if(this.checked){$('#external_type_wrapper').show(); }else{ $('#external_type_wrapper').hide(); }" {/literal} /></td>
-					<td>External</td>
-					<td style="display:none;"></td>
+					<td><input id="light" name="light" type="checkbox" /></td>
+					<td colspan="2">Light</td>
 				</tr>
+				<tr>
+					<td><input id="acceleration" name="acceleration" type="checkbox" /></td>
+					<td colspan="2">Acceleration</td>
+				</tr>
+				<tr>
+					<td><input id="altitude" name="altitude" type="checkbox" /></td>
+					<td colspan="2">Altitude</td>
+				</tr>
+				<tr>
+					<td><input id="pressure" name="pressure" type="checkbox" /></td>
+					<td colspan="2">Pressure</td>
+				</tr>
+				<tr>
+					<td><input id="humidity" name="humidity" type="checkbox" /></td>
+					<td colspan="2">Humidity</td>
+				</tr>
+
 				<!--
 				<tr id="external_label_wrapper" style="display:none;">
 					<td>&nbsp;</td>
@@ -36,12 +50,19 @@
 						<input id="external_label" name="external_label" type="text" disabled />
 					</td>
 				</tr>
-				-->		
-				<tr id="external_type_wrapper" style="display:none;">
+				-->
+				
+				<tr>
+					<td><input type="checkbox" id="external_A" name="external_A" {literal} onclick="if(this.checked){$('#external_type_wrapper_A').show(); }else{ $('#external_type_wrapper_A').hide(); }" {/literal} /></td>
+					<td>External</td>
+					<td style="display:none;"></td>
+				</tr>
+				
+				<tr id="external_type_wrapper_A" style="display:none;">
 					<td>&nbsp;</td>
 					<td>External Sensor Type:</td>
 					<td>
-						<select id="external_type" name="external_type">
+						<select id="external_type_A" name="external_type_A">
 							<option value="0">Select one</option>
 							<option value="1">Temperature</option>
 							<option value="3">Geiger Counter</option>
@@ -58,7 +79,131 @@
 							<option value="13">Conductivity</option>
 						</select>
 					</td>
+					<td>
+						<select id="external_port_A" name="external_port_A">
+							<option value="0">Any</option>
+							<option value="1">BTA1</option>
+							<option value="2">BTA2</option>
+							<option value="3">MINI1</option>
+							<option value="4">MINI2</option>
+						</select>
+					</td>
 				</tr>
+			
+				<tr>
+					<td><input type="checkbox" id="external_B" name="external_B" {literal} onclick="if(this.checked){$('#external_type_wrapper_B').show(); }else{ $('#external_type_wrapper_B').hide(); }" {/literal} /></td>
+					<td>External</td>
+					<td style="display:none;"></td>
+				</tr>
+				
+				<tr id="external_type_wrapper_B" style="display:none;">
+					<td>&nbsp;</td>
+					<td>External Sensor Type:</td>
+					<td>
+						<select id="external_type_B" name="external_type_B">
+							<option value="0">Select one</option>
+							<option value="1">Temperature</option>
+							<option value="3">Geiger Counter</option>
+							<option value="4">Heart Rate</option>
+							<option value="2">Voltage</option>
+							<option value="5">PH</option>
+							<option value="6">Salinity</option>
+							<option value="7">CO2</option>
+							<option value="8">Dissolved Oxygen</option>
+							<option value="9">Anemometer</option>
+							<option value="10">Turbidity</option>
+							<option value="11">Flow Rate</option>
+							<option value="12">Motor Monitor</option>
+							<option value="13">Conductivity</option>
+						</select>
+					</td>
+					<td>
+						<select id="external_port_B" name="external_port_B">
+							<option value="0">Any</option>
+							<option value="1">BTA1</option>
+							<option value="2">BTA2</option>
+							<option value="3">MINI1</option>
+							<option value="4">MINI2</option>
+						</select>
+					</td>
+				</tr>
+				
+				<tr>
+					<td><input type="checkbox" id="external_C" name="external_C" {literal} onclick="if(this.checked){$('#external_type_wrapper_C').show(); }else{ $('#external_type_wrapper_C').hide(); }" {/literal} /></td>
+					<td>External</td>
+					<td style="display:none;"></td>
+				</tr>
+				
+				<tr id="external_type_wrapper_C" style="display:none;">
+					<td>&nbsp;</td>
+					<td>External Sensor Type:</td>
+					<td>
+						<select id="external_type_C" name="external_type_C">
+							<option value="0">Select one</option>
+							<option value="1">Temperature</option>
+							<option value="3">Geiger Counter</option>
+							<option value="4">Heart Rate</option>
+							<option value="2">Voltage</option>
+							<option value="5">PH</option>
+							<option value="6">Salinity</option>
+							<option value="7">CO2</option>
+							<option value="8">Dissolved Oxygen</option>
+							<option value="9">Anemometer</option>
+							<option value="10">Turbidity</option>
+							<option value="11">Flow Rate</option>
+							<option value="12">Motor Monitor</option>
+							<option value="13">Conductivity</option>
+						</select>
+					</td>
+					<td>
+						<select id="external_port_C" name="external_port_C">
+							<option value="0">Any</option>
+							<option value="1">BTA1</option>
+							<option value="2">BTA2</option>
+							<option value="3">MINI1</option>
+							<option value="4">MINI2</option>
+						</select>
+					</td>
+				</tr>
+				
+				<tr>
+					<td><input type="checkbox" id="external_D" name="external_D" {literal} onclick="if(this.checked){$('#external_type_wrapper_D').show(); }else{ $('#external_type_wrapper_D').hide(); }" {/literal} /></td>
+					<td>External</td>
+					<td style="display:none;"></td>
+				</tr>
+
+				<tr id="external_type_wrapper_D" style="display:none;">
+					<td>&nbsp;</td>
+					<td>External Sensor Type:</td>
+					<td>
+						<select id="external_type_D" name="external_type_D">
+							<option value="0">Select one</option>
+							<option value="1">Temperature</option>
+							<option value="3">Geiger Counter</option>
+							<option value="4">Heart Rate</option>
+							<option value="2">Voltage</option>
+							<option value="5">PH</option>
+							<option value="6">Salinity</option>
+							<option value="7">CO2</option>
+							<option value="8">Dissolved Oxygen</option>
+							<option value="9">Anemometer</option>
+							<option value="10">Turbidity</option>
+							<option value="11">Flow Rate</option>
+							<option value="12">Motor Monitor</option>
+							<option value="13">Conductivity</option>
+						</select>
+					</td>
+					<td>
+						<select id="external_port_D" name="external_port_D">
+							<option value="0">Any</option>
+							<option value="1">BTA1</option>
+							<option value="2">BTA2</option>
+							<option value="3">MINI1</option>
+							<option value="4">MINI2</option>
+						</select>
+					</td>
+				</tr>
+				
 				<tr>
 					<td><input id="gps" name="gps" type="checkbox" onclick="$('#gps_label').attr('disabled', !($('#gsp_label').attr('disabled')))" /></td>
 					<td>GPS</td>
@@ -140,6 +285,8 @@
 			<div class="wizard_step_content">
 				<input type="submit" id="create_previous" name="create_previous" value="Back" onclick="createWizard.prev_step();" /> <input type="submit" id="create_advance" name="create_advance" value="Next" onclick="createWizard.next_step();" />
 			</div>
+			<br>
+			<div id="wizard_error" style="display:none;">Error test</div>
 		</div>
 	</div>
 </div>

@@ -50,9 +50,13 @@ var table = new function Table() {
                 
                 dec = Math.min(dec, 20);
                 
-                this.formatter[field] = function (data) {
-                    return Number(data).toFixed(dec);
+                function gen(prec) {
+                    return function(data) {
+                        return Number(data).toFixed(prec);
+                    };
                 }
+                
+                this.formatter[field] = gen(dec);
             }
         }
         
