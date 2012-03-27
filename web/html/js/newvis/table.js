@@ -154,7 +154,12 @@ var table = new function Table() {
         this.tabularize(sortOrder);
         
         var count = 0;
-        
+
+
+        /*Set up the data table and fill it*/
+        var wHeight= document.body.clientHeight
+        $('#table_canvas').css('height',wHeight);
+        console.log(document.body.clientHeight);
         $('#table_canvas').append('<table id="data_table" border="1px"><tr id="data_table_label"></tr></table>');
         $('#data_table_label').append('<td id="label_Data Point" class="data_table_label">Data Point</td>');
         $('#data_table_label').append('<td id="label_Session #" class="data_table_label">Session #</td>');
@@ -176,7 +181,11 @@ var table = new function Table() {
                 $('#table_' + idRoot).append('<td class="data_table_data">' + this.formatter[i](this.data[dp].data[i]) + '</td>');
             }
         }
-        
+
+        //--------------------------
+
+
+
         if( this.fieldOrder != "desc") {
             $('#' + jqISC('label_' + this.lastField)).append('<img src="/html/img/vis/up-tri.png" height="14px" />');
         }
