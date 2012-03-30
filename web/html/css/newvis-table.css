@@ -29,23 +29,7 @@
 #table_canvas {
     margin-top: 20px;
     margin-right: auto;
-    margin-left: auto;
+    margin-left: auto;  
+    overflow-x:hidden;
 }
 
-#data_table {
-    border-collapse: collapse;
-    text-align: right;
-}
-
-#data_table_label {
-    text-align: center;
-}
-
-#data_table td {
-    width: auto;
-    padding-right: 2px;
-    padding-left: 2px;
-    padding-top: 1px;
-    padding-bottom: 1px;
-}
-    
