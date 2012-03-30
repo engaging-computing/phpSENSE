@@ -37,7 +37,7 @@
 <div id="viscontainer">
     <canvas id="viscanvas" width="860px" height="400px"></canvas>
     <div id="map_canvas" style="width:860px;min-height:400px;"></div>
-    <div id="table_canvas" style="width: 860px;"></div>
+    <div id="table_canvas" style="width: 860px;"><table id="data_table"></table></div>
     <div id="controldiv" style="margin: 20px"></div>
 </div>
 
