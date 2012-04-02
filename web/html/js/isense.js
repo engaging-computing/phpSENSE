@@ -418,7 +418,7 @@ function addManualDataRow() {
        var id =  $(this).attr('id');
        var name = $(this).attr('name');
 
-       console.log(id);
+       //console.log(id);
 
 	if( id == 'Time_xxx' || id == 'time_xxx' )
 	    $(this).attr('class', 'time');
