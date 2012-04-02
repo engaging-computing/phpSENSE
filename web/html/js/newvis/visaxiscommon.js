@@ -318,10 +318,6 @@ function drawXAxis(xmin, xmax, visObject, type){
         getIncrement = getTimeIncrement;
         getNextIncrement = getNextTimeIncrement;
         formatter = formatTime;
-        
-        //Remove this once the database gets fixed!
-        xmax *= 1000;
-        xmin *= 1000;
     }
     else{
         getIncrement = getDataIncrement;
@@ -377,7 +373,7 @@ function drawXAxis(xmin, xmax, visObject, type){
     
     //bkmk
     if (type === "time"){
-        visObject.context.fillText("Starting: " + (new Date((xmin+(xdiff*visObject.hRangeLower))*1000)).toString(), visObject.xoff, visObject.fontheight);
+        visObject.context.fillText("Starting: " + (new Date((xmin+(xdiff*visObject.hRangeLower)))).toString(), visObject.xoff, visObject.fontheight);
     }
         
 }
