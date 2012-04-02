@@ -550,7 +550,7 @@ var timeline = new function Timeline(){
 		// --- //
 			
 		this.clear();
-		
+        
 		drawXAxis(xmin, xmax, this, "time");
 		drawYAxis(ymin, ymax, this);
 		
