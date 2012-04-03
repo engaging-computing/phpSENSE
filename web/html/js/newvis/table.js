@@ -17,11 +17,9 @@ var table = new function Table() {
 
     }
     
-   
-    
-    
-    
     this.draw = function () {
+
+        $('#table_canvas').append('<table id=data_table></table>');
 
         /*Set up the table headers*/
         $('#data_table').append('<thead><tr id=headers></tr></thead>');
@@ -32,7 +30,7 @@ var table = new function Table() {
             $('#headers').append('<td>' + title + '</td>');
         }
 
-        /*Add data to the table*/
+        /* Add data to the table */
         $('#data_table').append('<tbody id=data></tbody>');
         var dataPoint=0;
         for (var ses in data.sessions) {
@@ -42,20 +40,30 @@ var table = new function Table() {
                 $('#data').append('<tr id=table_' + row_id + '></tr>');
                 $('#table_'+row_id).append('<td>'+ dataPoint++ +'</td>');
                 $('#table_'+row_id).append('<td style"background-color:red;">'+ses+'</td>');
-                for (var field in data.fields) {  
-                        var s = data.sessions[ses].data[dp][field].toString();
-                        $('#table_'+row_id).append('<td>'+s+'</td>');
-                       
+                for (var field in data.fields) { 
+                    var s = data.sessions[ses].data[dp][field].toString();
+                    
+                    /* Format time correctly in UTC */
+                    if(data.fields[field].type_id==7){
+                        var d = new Date(data.sessions[ses].data[dp][field]);
+                        s = d.getUTCHours() + ':' + d.getUTCMinutes() + ':' + d.getUTCSeconds() + '.' + d.getUTCMilliseconds() + ' ' + (d.getUTCMonth() + 1) + '/' 
+                        + d.getUTCDate() + '/' + d.getUTCFullYear();
+                        $('#table_'+row_id).append('<td>'+s+'</td>');        
+
+                    /* Otherwize just throw it in the table */
+                    } else {
+                        $('#table_'+row_id).append('<td>'+s+'</td>');   
                         var index = s.indexOf('.', 0);
                         
                         if (index != -1) {
                             dec = Math.max(s.length - (index + 1), dec);
                         }
                     }
-                }
+               }
+            }
         }   
 
-        /*Call to DataTables to build the table*/
+        /* Call to DataTables to build the table */
         $('#data_table').dataTable( {
 					"sScrollY": 400,
 					"sScrollX": "100%",
