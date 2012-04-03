@@ -36,7 +36,7 @@
   </head>
   <body>
     <?php
-
+	require_once '../includes/config.php';
 //	if ($_REQUEST['From'] != "9783943795")
 //	{
 //		die("<br>Not from the right phone number!");
@@ -124,7 +124,9 @@
 
 
         $data = array(array($_SERVER['REQUEST_TIME'],$latitude, $longitude, $temperature, $pH, $flowRate,$exTemperature));
-        putData(392,3321, $data);
+
+        $response = putData(392,3321, $data);
+	
 //	fclose($fh);
     ?>
   </body>
