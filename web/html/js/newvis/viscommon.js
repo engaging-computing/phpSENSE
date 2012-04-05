@@ -45,9 +45,7 @@ function getFieldShade(index) {
     for( var i in data.fields ){
         //check if field is time or text
         if( data.fields[i].type_id != 7 && data.fields[i].type_id != 37 ){
-            if (data.fields[i].visibility == 1) {
-                len++;
-            }
+            len++;
         }
     }
     
@@ -57,7 +55,7 @@ function getFieldShade(index) {
         if( data.fields[i].type_id != 7 && data.fields[i].type_id != 37 ){
             
             if (index == i) {
-                var color = Math.floor(((0.7 * visi / len)) * 255).toString(16);
+                var color = Math.floor(((visi / (len + 3))) * 255).toString(16);
                 
                 if (color.length === 1){
                     color = '0' + color;
