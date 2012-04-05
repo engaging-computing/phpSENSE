@@ -277,7 +277,7 @@ var timeline = new function Timeline(){
         var hmax = hbounds[1];
         var hdif = hmax - hmin;
         
-        var vbounds = data.getVisibleDataBounds();
+        var vbounds = data.getVisibleDataBounds(true);
         var vmin = vbounds[0];
         var vmax = vbounds[1];
         var vdif = vmax - vmin;
