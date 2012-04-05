@@ -21,7 +21,7 @@ var bar = new function Bar(){
 		
 		for( var i in data.sessions ){
 			
-			var color = hslToRgb( ( 0.6 + ( 1.0*i/data.sessions.length ) ) % 1.0, 0.825, 0.425 );
+			var color = getSessionColor(i);
 			
 			controls += '<tr><td>';
 			
@@ -147,81 +147,6 @@ var bar = new function Bar(){
 	    this.context.stroke();
 		
 	}
-	
-	/*
-	// Use: mybar.drawGrid( xAxisDivisions, yAxisDivisions );
-	//
-	// This should be used after calling drawLabelsXAxis() and
-	// drawLabelsYAxis(), as they return the optimal number of X
-	// and Y axis divisions. The methods mentioned may be and
-	// should be used as arguments to drawGrid().
-	*/
-	
-	this.drawGrid = function(xdivs, ydivs){
-
-	    this.context.strokeStyle = this.gridcolor;
-	    this.context.lineWidth = 0.25;
-
-	    for( var i = 1; i < ydivs; i++ ){
-
-	        this.context.beginPath();
-	        this.context.moveTo(0, i*this.drawheight/ydivs + this.fontheight/2);
-	        this.context.lineTo(this.drawwidth, i*this.drawheight/ydivs + this.fontheight/2);
-	        this.context.stroke();
-
-	    }
-
-	}
-	
-	/*
-	// Use: Don't. Really. You shouldn't be using this directly.
-	//
-	// This method plots the line that corresponds to the point
-	// data. It takes into account X and Y axis zoom/range.
-	*/
-	
-	this.plot = function(points){
-		
-		if( points.length ){
-		
-		}
-		
-	}
-	
-	/*
-	// Use: mybar.plotData();
-	//
-	// This method plots the lines that correspond to the session
-	// data. It takes into account X and Y axis zoom/range.
-	*/
-	
-	this.plotDataNormal = function(){
-
-	}
-	
-	this.plotData = function(){
-		
-	}
-	
-	/*
-	// Use: mybar.drawLabelsXAxis();
-	//
-	// This draws the labels for the X axis of the graph.
-	*/
-	
-	this.drawLabelsXAxis = function(){
-		
-		var divs = 10;
-		
-		return divs;
-		
-	}
-	
-	/*
-	// Use: mybar.drawLabelsYAxis();
-	//
-	// This draws the labels for the Y axis of the graph.
-	*/	
 
 	this.getIncrement = function(mininc){
 		
@@ -272,102 +197,12 @@ var bar = new function Bar(){
 		return (Math.floor(min/inc)*inc) + inc;
 		
 	}
-	
-	this.drawLabelsYAxis = function(ymin, ymax, inc){
-
-		var ydiff = ymax - ymin;
-
-		this.context.font = this.fontheight + "px sans-serif";
-
-		this.context.fillStyle = "rgb(0,0,0)";
-		
-		// --- //
-		
-		var iinc = this.getIncrement(inc);
-		
-		var istart = this.getOffset(ymin, iinc);
-		
-		var n = Math.floor(Math.log(1/iinc)/Math.log(10));
-		
-		n = n > 0 ? n : 0;
-		
-		// --- //
-		
-		var label = ymin.toFixed(n);
-
-		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.drawheight + this.fontheight*1/3 + this.yoff );
-
-		var label = (ymin + ydiff).toFixed(n);
-
-		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.fontheight*1/3 + this.yoff );
-		
-		// --- //
-					
-		for( var i = istart; i < ymax; i += iinc ){
-			
-			var y = this.drawheight - ((i-ymin)*this.drawheight/ydiff-this.fontheight/3) + this.yoff;
-			
-			var gridy =  this.drawheight - ((i-ymin)*this.drawheight/ydiff) + this.yoff;
-			
-			var n = Math.floor(Math.log(1/iinc)/Math.log(10));
-			
-			n = n > 0 ? n : 0;
-			
-			label = (i.toFixed(n)).toString();
-			
-			if( y > this.fontheight + this.yoff && y < this.yoff + this.drawheight - this.fontheight/2 )
-		
-				this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, y );
-						
-			this.context.strokeStyle = this.gridcolor;
-			this.context.lineWidth = 0.25;		
-			this.context.beginPath();
-	        this.context.moveTo(0, gridy);
-	        this.context.lineTo(this.drawwidth, gridy);
-	        this.context.stroke();
-			this.context.closePath();
-			
-		}
-
-		return 0;
-
-	}
 
 	/*
 	// Use: mybar.draw();
 	//
 	// This draws the bar to the canvas.
 	*/
-	
-	this.getHue = function( index, numpoints ){
-		
-		var out = 0;
-		
-		switch( index % 3 ){
-			
-			case 0:
-			
-			out = index/(numpoints*3);
-			
-			break;
-			case 1:
-			
-			out = index/(numpoints*3) + (numpoints/3);
-			
-			break;
-			
-			case 2:
-			
-			out = index/(numpoints*3) + (numpoints*2/3);
-			
-			break;
-			
-		}
-		
-		return out;
-		
-	}
-
 	
 	this.draw = function(){
 		
@@ -381,10 +216,6 @@ var bar = new function Bar(){
 		var ydiff = ymax - ymin;
 
 		var yinc = ydiff/(this.drawheight/(this.fontheight*3/2));
-		
-		// -- //
-		
-		this.drawGrid( this.drawLabelsXAxis(), this.drawLabelsYAxis(ymin, ymax, yinc) );
 		
 		// --- //
 		
@@ -410,11 +241,11 @@ var bar = new function Bar(){
 			
 					if( data.sessions[i].visibility ){
 				
-						var color = hslToRgb( ( 0.6 + i/data.sessions.length ) % 1.0, 1.0, 0.125 + (0.75*j/data.fields.length) );
+						var color = getSessionColor(i);
 						
 						var val = 0;
 
-						barcolors[divs] = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ", 1.0)";
+						barcolors[divs] = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ", 0.85)";
 					
 						switch(data.fields[j].calc){
 				
@@ -459,6 +290,8 @@ var bar = new function Bar(){
 		
 		}
 		
+		drawYAxis(ymin,ymax,this);
+		
 		
 		for( var i = 0; i < divs; i++ ){
 			
@@ -466,7 +299,7 @@ var bar = new function Bar(){
 		
 			if( height != null ){
 		
-				var color = hslToRgb( ( 0.6 + i/divs ) % 1.0, 1.0, 0.4 );
+				var color = getSessionColor(i);
 		
 				this.context.fillStyle = barcolors[i];
 	
