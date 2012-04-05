@@ -264,7 +264,7 @@ function formatData(data, inc){
         data = 0;
     }
     
-    s = (Math.abs(data)).toPrecision(6).toString();
+    s = (Math.abs(data)).toPrecision(9).toString();
     
     var i;
     var len;
@@ -287,15 +287,15 @@ function formatData(data, inc){
         len = s.length - (s.length - i - 1);
     }
     
-    if (len > 8){
-        return data.toExponential(3);
+    if (len > 11){
+        return data.toExponential(6);
     }
     else{
         if (data >= 0){
             return s.substr(0, i)
         }
         else{
-            return data.toPrecision(6).toString().substr(0, i + 1);
+            return data.toPrecision(9).toString().substr(0, i + 1);
         }
     }
 }
@@ -318,10 +318,6 @@ function drawXAxis(xmin, xmax, visObject, type){
         getIncrement = getTimeIncrement;
         getNextIncrement = getNextTimeIncrement;
         formatter = formatTime;
-        
-        //Remove this once the database gets fixed!
-        xmax *= 1000;
-        xmin *= 1000;
     }
     else{
         getIncrement = getDataIncrement;
@@ -377,7 +373,7 @@ function drawXAxis(xmin, xmax, visObject, type){
     
     //bkmk
     if (type === "time"){
-        visObject.context.fillText("Starting: " + (new Date((xmin+(xdiff*visObject.hRangeLower))*1000)).toString(), visObject.xoff, visObject.fontheight);
+        visObject.context.fillText("Starting: " + (new Date((xmin+(xdiff*visObject.hRangeLower)))).toString(), visObject.xoff, visObject.fontheight);
     }
         
 }
