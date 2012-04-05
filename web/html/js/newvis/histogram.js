@@ -3,33 +3,44 @@
 
 var histogram = new function Histogram(){
 	
-	function ArrayMax( n ){
-		
-		var x = n[0];
-		
-		for( i in n ){
-			
-			if( n[i] > x ) x = n[i];
-			
-		}
-		
-		return x;
-		
-	}
-	
-	function ArrayMin( n ){
-		
-		var x = n[0];
-		
-		for( i in n ){
-			
-			if( n[i] < x ) x = n[i];
-			
-		}
-		
-		return x;
-		
-	}
+	this.makeBins = function() {
+        var bins = new Object();
+        for (var i = 0; i < this.numbins; i++) {
+            bins[i] = new Object();
+        }
+        
+        var bounds = data.getFieldBounds([data.fields[this.field].name], false);
+        this.binSize = (bounds[1] - bounds[0]) / this.numbins;
+        
+        for (var ses in data.sessions) {
+            if (data.sessions[ses].visibility) {
+                
+                for (var i in bins) {
+                    bins[i][ses] = 0;
+                }
+                
+                for (var dp in data.sessions[ses].data) {
+                    var bin = Math.floor((data.sessions[ses].data[dp][this.field] - bounds[0]) / this.binSize);
+                    if (bin == this.numbins) {
+                        bin = this.numbins - 1;
+                    }
+                    bins[bin][ses]++;
+                }
+            }
+        }
+        
+        function sum(val, i) {
+            var s = 0;
+            
+            for (var i in val) {
+                s += val[i];
+            }
+            
+            return s;
+        }
+        
+        return [bins, Math.max.apply(null, $.map(bins, sum))];
+    }
 	
 	/*
 	// Use: myhistogram.drawControls();
@@ -43,7 +54,8 @@ var histogram = new function Histogram(){
 		
 		controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div>';
 
-		controls += '<button id="set_bins" type="button">Set #Bins:</button><input type="text" id="num_bins" value="' + this.numbins + '"></input>';
+		controls += '<button id="set_bins" type="button">Set # of Bins:</button><input type="text" id="bin_num" value="' + this.numbins + '"></input>';
+        controls += '<div id="binSize"><br>Bin size: ' + this.binSize + '</div>';
 		
 		controls += '</div>';
 		
@@ -51,55 +63,54 @@ var histogram = new function Histogram(){
 		
 		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>';
 		
-		for( var i in data.sessions ){
-			
-			var color = hslToRgb( ( 0.6 + ( 1.0*i/data.sessions.length ) ) % 1.0, 0.825, 0.425 );
-			
-			controls += '<tr><td>';
-			
-			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
-			
-			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
-			
-			controls += data.sessions[i].meta.name;
-			
-			controls += '</div>';
-			
-			controls += '</td></tr>';
-			
-		}
-		
-		controls += '</table>'
-		
-		controls += '</div>';
-		
-		// --- //
-		
-		controls += '<div id="fieldcontrols" style="float:left;margin:10px;">';
-		
-		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Fields:</tr></td>';
-		
-		for( var i in data.fields ){
-			
-			if( data.fields[i].type_id != 7 && data.fields[i].type_id != 19 && data.fields[i].type_id != 37 ){ // Should properly check if field is time
-				
-				controls += '<tr><td>';
-			
-				var color = Math.floor(((0.75*i/data.fields.length)) * 256);
-			
-				controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color.toString(16) + color.toString(16) + color.toString(16) + ';float:left;">';
-			
-				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
-
-				controls += data.fields[i].name + '&nbsp;';
-			
-				controls += '</div>';
-				
-				controls += '</td></tr>';
-			
-			}
-			
-		}
+        for( var i in data.sessions ){
+            var color = getSessionColor(i);
+            
+            controls += '<tr><td>';
+            controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
+            
+            controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
+            
+            controls += data.sessions[i].meta.name;
+            
+            controls += '</div>';
+            controls += '</td></tr>';
+        }
+        
+        controls += '</table>'
+        
+        controls += '</div>';
+        
+        // --- //
+        
+        controls += '<div id="fieldcontrols" style="float:left;margin:10px;">';
+        
+        controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Fields:</tr></td>';
+        
+        var picked = true;
+        
+        for( var i in data.fields ){
+            
+            if (data.fields[i].type_id != 7 && data.fields[i].type_id != 19 && 
+                data.fields[i].type_id != 37 ) {
+                
+                controls += '<tr><td>';
+            
+                controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#000000;float:left;">';
+            
+                controls += '<input class="fieldselect" name="fieldselect" type="radio" value="' + i + '" ' + ( picked ? 'checked' : '' ) + '></input>&nbsp;';
+                if (picked) {
+                    picked = false;
+                    this.field = i;
+                }
+                controls += data.fields[i].name + '&nbsp;';
+                
+                controls += '</div>';
+                controls += '</td></tr>';
+                
+                }
+                
+        }
 		
 		controls += '</table>'
 		
@@ -131,13 +142,10 @@ var histogram = new function Histogram(){
 			
 		});
 		
-		$('input.fieldvisible').click(function(e){
+		$('input.fieldselect').click(function(e){
 			
-			var visible = data.fields[$(e.target).val()].visibility;
-			
-			visible = visible > 0 ? 0 : 1;
-			
-			data.fields[$(e.target).val()].visibility = visible;
+            histogram.field = $(e.target).val();
+			data.fields[$(e.target).val()].visibility = 1;
 			
 			histogram.draw();
 			
@@ -152,10 +160,10 @@ var histogram = new function Histogram(){
 		
 		$('button#set_bins').click(function(e){
 			
-			if($('input#num_bins').val() > 50) $('input#num_bins').val(50);
+			//if($('input#bin_size').val() > 50) $('input#bin_size').val(50);
 			
-			histogram.numbins = $('input#num_bins').val();
-			
+			histogram.numbins = Math.floor($('input#bin_num').val());
+            
 			histogram.draw();
 			
 		});
@@ -179,123 +187,6 @@ var histogram = new function Histogram(){
 		
 	}
 	
-	/*
-	// Use: Don't. Really. You shouldn't be using this directly.
-	//
-	// This method plots the line that corresponds to the point
-	// data. It takes into account X and Y axis zoom/range.
-	*/
-	
-	/*
-	// Use: myhistogram.drawLabelsYAxis();
-	//
-	// This draws the labels for the Y axis of the graph.
-	*/
-	
-	this.getIncrement = function(mininc){
-		
-		var out = 1;
-		
-		var minincint = mininc;
-		
-		var divtonormalize = 1;
-		
-		while( minincint != Math.floor(minincint) ){
-			
-			minincint *= 10;
-			
-			divtonormalize *= 10;
-			
-		}
-		
-		var i = 1;
-		
-		if( minincint >= 1 ){
-		
-			while( out < minincint ){
-			
-				out = Math.pow(10, i);
-			
-				i++;
-			
-			}
-		
-		} else {
-			
-			while( out/Math.pow(10, i) > minincint ){
-			
-				out = out/Math.pow(10, i);
-			
-				i++;
-			
-			}
-			
-		}
-
-		return out/divtonormalize;
-		
-	}
-	
-	this.getOffset = function(min, inc){
-		
-		return (Math.floor(min/inc)*inc) + inc;
-		
-	}
-	
-	this.drawLabelsYAxis = function(ymin, ymax){
-		
-		if( ymin > 0 ) ymin = 0;
-		
-		var ydiff = ymax - ymin;
-		
-		var inc = ydiff/(this.drawheight/(this.fontheight*3/2));
-
-		this.context.font = this.fontheight + "px sans-serif";
-
-		this.context.fillStyle = "rgb(0,0,0)";
-		
-		var label = Math.round( ymin );
-
-		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.drawheight + this.fontheight*1/3 + this.yoff );
-
-		var label = Math.round( ymin + ydiff );
-
-		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.fontheight*1/3 + this.yoff );
-		
-		// --- //
-		
-		var iinc = this.getIncrement(inc);
-		
-		var istart = this.getOffset(ymin, iinc);
-		
-		// --- //
-					
-		for( var i = istart; i < ymax; i += iinc ){
-			
-			var y = this.drawheight - ((i-ymin)*this.drawheight/ydiff-this.fontheight/3) + this.yoff;
-			
-			var gridy =  this.drawheight - ((i-ymin)*this.drawheight/ydiff) + this.yoff;
-			
-			label = Math.floor(i/iinc)*iinc;
-			
-			if( y > this.fontheight + this.yoff && y < this.yoff + this.drawheight - this.fontheight/2 )
-		
-					this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, y );
-					
-			this.context.strokeStyle = this.gridcolor;
-			this.context.lineWidth = 0.25;		
-			this.context.beginPath();
-	        this.context.moveTo(0, gridy);
-	        this.context.lineTo(this.drawwidth, gridy);
-	        this.context.stroke();
-			this.context.closePath();
-			
-		}
-
-		return 0;
-
-		
-	}
 
 	/*
 	// Use: myhistogram.draw();
@@ -304,263 +195,40 @@ var histogram = new function Histogram(){
 	*/
 	
 	this.draw = function(){
-		
+        
 		this.clear();
-		
+        
+        var bins_Max = this.makeBins();
+        var bins = bins_Max[0];
+        var yMax = bins_Max[1];
+        
+        var xBounds = data.getFieldBounds([data.fields[this.field].name], false);
+        
+        drawYAxis(0, yMax, this);
+        drawXAxis(xBounds[0], xBounds[1], this, data.fields[this.field].name);
 		// --- //
-		
-		var numfields = 0;
-		
-		var inc = 0;
-		
-		for( var i in data.fields ){
-			
-			if( data.fields[i].visibility && data.fields[i].type_id != 7 && data.fields[i].type_id != 19 ) numfields++;
-			
-		}
-		
-		var binmax = null;
-		
-		var binmin = 0;
-		
-		var numbins = this.numbins;
-		
-		// --- //
-		
-		for( var field in data.fields ){
-			
-			var max = data.getFieldMax(data.fields[field].name);
-
-			var min = data.getFieldMin(data.fields[field].name);
-			
-			// --- //
-			
-			if( data.fields[field].visibility && data.fields[field].type_id != 7 && data.fields[field].type_id != 19 /* && field == 3 */ ){
-		
-				var alldata = new Array();
-			
-				var bins = new Array();
-			
-				// --- //
-			
-				for( var i in data.sessions ){
-		
-					alldata = alldata.concat(data.getDataFrom(i,field));
-		
-				}
-			
-				// --- //
-			
-				for( var i in alldata ){
-		
-					var index = Math.floor( ((alldata[i]-min)/(max-min))*numbins );
-		
-					if( index != numbins ){
-		
-						if( bins[index] ){
-			
-							bins[index]++;
-			
-						} else {
-			
-							bins[index] = 1;
-			
-						}
-			
-					} else {
-			
-						if( bins[numbins-1] ){
-			
-							bins[numbins-1]++;
-			
-						} else {
-			
-							bins[numbins-1] = 1;
-			
-						}
-			
-					}
-		
-				}
-				
-				// --- //
-			
-				for( var session in data.sessions ){
-				
-					if( bimmax = null ){
-					
-						binmax = ArrayMax(bins);
-					
-					} else {
-					
-						if( ArrayMax(bins) > binmax ) binmax = ArrayMax(bins);
-					
-					}
-				
-				}
-				
-				// --- End --- //
-			
-			}
-			
-		}
-		
-		// --- //
-		
-		this.drawLabelsYAxis(binmin,binmax);
-		
-		// --- //
-		
-		for( var field in data.fields ){
-			
-			if( data.fields[field].visibility && data.fields[field].type_id != 7 && data.fields[field].type_id != 19 /* && field == 3 */ ){
-		
-				var alldata = new Array();
-		
-				var visibledata = new Array();
-		
-				var bins = new Array();
-		
-				var visiblebins = new Array();
-		
-				var max = data.getFieldMax(data.fields[field].name);
-				
-				if( isNaN(max) ) max = 0;
-		
-				var min = data.getFieldMin(data.fields[field].name);
-				
-				if( isNaN(min) ) min = 0;
-				
-				var diff = max - min;
-		
-				for( i in data.sessions ){
-			
-					if( data.sessions[i].visibility ) visibledata = visibledata.concat(data.getDataFrom(i,field));
-			
-					alldata = alldata.concat(data.getDataFrom(i,field));
-			
-				}
-		
-				for( var i in alldata ){
-			
-					var index = Math.floor( ((alldata[i]-min)/(max-min))*numbins );
-			
-					if( index != numbins ){
-			
-						if( bins[index] ){
-				
-							bins[index]++;
-				
-						} else {
-				
-							bins[index] = 1;
-				
-						}
-				
-					} else {
-				
-						if( bins[numbins-1] ){
-				
-							bins[numbins-1]++;
-				
-						} else {
-				
-							bins[numbins-1] = 1;
-				
-						}
-				
-					}
-			
-				}
-		
-				for( var i in visibledata ){
-			
-					var index = Math.floor( ((visibledata[i]-min)/(max-min))*numbins );
-			
-					if( index != numbins ){
-			
-						if( visiblebins[index] ){
-				
-							visiblebins[index]++;
-				
-						} else {
-				
-							visiblebins[index] = 1;
-				
-						}
-				
-					} else {
-				
-						if( visiblebins[numbins-1] ){
-				
-							visiblebins[numbins-1]++;
-				
-						} else {
-				
-							visiblebins[numbins-1] = 1;
-				
-						}
-				
-					}
-			
-				}
-				
-				if( bimmax = null ){
-					
-					binmax = ArrayMax(bins);
-					
-				} else {
-					
-					if( ArrayMax(bins) > binmax ) binmax = ArrayMax(bins);
-					
-				}
-		
-				for( var i = 0; i < numbins; i++ ){
-			
-					var hue = hslToRgb( 0.6, 0.75, 0.125 + (0.75*field/data.fields.length) );
-			
-					var color = "rgb("+hue[0]+","+hue[1]+","+hue[2]+")";
-			
-					this.context.fillStyle = color;
-			
-					this.context.fillRect( this.drawwidth*inc/(numbins*numfields+(numfields-1)) + this.xoff, this.drawheight + this.yoff, this.drawwidth/(numbins*numfields+(numfields-1)), (-this.drawheight)*visiblebins[i]/binmax );
-			
-					var linewidth = 0.5;
-		
-					this.context.lineWidth = linewidth;
-
-					this.context.strokeStyle = "rgba( 0,0,0,1.0)";
-
-					this.context.strokeRect( this.drawwidth*inc/(numbins*numfields+(numfields-1)) + this.xoff, this.drawheight + this.yoff, this.drawwidth/(numbins*numfields+(numfields-1)), (-this.drawheight)*visiblebins[i]/binmax );
-					
-					// Draw X axis stuff
-					
-					var textpos = ((this.drawwidth*inc/(numbins*numfields+(numfields-1))) + (this.drawwidth*(inc+1)/(numbins*numfields+(numfields-1))))/2;
-					
-					textpos = textpos - ((this.drawwidth/(numbins*numfields+(numfields-1))))*3/12;
-					
-					this.context.save();
-					this.context.translate( textpos + this.xoff, this.fontheight/2 + this.drawheight + this.yoff);
-					this.context.rotate(Math.PI*1/4);
-					this.context.textAlign = "left";
-					
-					this.context.fillStyle = "rgb(0,0,0)";
-					
-					this.context.font = this.fontheight*2/3 + "px sans-serif";
-					
-					this.context.fillText( parseFloat((diff*i/numbins+min)).toFixed(3) + " to " + parseFloat((diff*(i+1)/numbins+min)).toFixed(3), 0, 0 );
-					this.context.restore();
-		
-					inc++;
-			
-				}
-			
-				inc++;
-				
-			}
-			
-		}
-		
+        var barWidth = this.drawwidth / this.numbins;
+        var barUnitHeight = this.drawheight / yMax;
+		var xOff = 0;
+        
+        $('#binSize').html('Bin size: ' + this.binSize)
+        
+        for (var bin in bins) {
+            
+            var yOff = 0;
+            
+            for (var ses in bins[bin]) {
+                
+                yOff += bins[bin][ses] * barUnitHeight;
+                
+                var color = getSessionColor(ses);
+                this.context.fillStyle = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
+                this.context.fillRect( this.xoff + xOff + 0.5, this.drawheight + this.yoff - yOff, 
+                                       barWidth - 1.0, bins[bin][ses] * barUnitHeight);
+            }
+            
+            xOff += barWidth;
+        }
 	}
 	
 	/*
@@ -570,16 +238,16 @@ var histogram = new function Histogram(){
 	// the div that holds the histogram controls.
 	*/
 	
-	this.start = function(){
-			
-		this.clear();
-			
-		this.draw();
-		
-		this.drawControls();
-		
-		this.setListeners();
-		
+    this.start = function(){
+        
+        this.clear();
+        
+        this.drawControls();
+        
+        this.draw();
+        
+        this.setListeners();
+        
 	}
 	
 	this.init = function(){
@@ -620,14 +288,18 @@ var histogram = new function Histogram(){
 		this.mouseY = 0;
 
 		this.bgcolor = "rgb(255,255,255)";
-		this.gridcolor = "rgb(128,128,128)";
+		this.gridcolor = "rgb(0,0,0)";
 		this.bordercolor = "rgb(0,0,0)";
 		this.textcolor = "rgb(0,0,0)";
 		
+        this.field = 0;
+        this.numbins = 10;
+        var bounds = data.getFieldBounds([data.fields[this.field].name], false);
+        this.binSize = (bounds[1] - bounds[0]) / this.numbins;
+        
 		this.inited = true;
 
 		this.start();
-		
 	}
 	
 	this.end = function(){
