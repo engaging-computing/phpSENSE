@@ -4,13 +4,17 @@
 var histogram = new function Histogram(){
     
     this.makeBins = function() {
-        var bins = new Object();
-        for (var i = 0; i < this.numbins; i++) {
-            bins[i] = new Object();
-        }
         
         var bounds = data.getFieldBounds([data.fields[this.field].name], false);
-        this.binSize = (bounds[1] - bounds[0]) / this.numbins;
+        var bins = new Object();
+        var max = 0;
+        
+        for (var i = 0; i < this.numbins; i++) {
+            bins[i] = new Object();
+            bins[i].start = Math.max(bounds[0], (this.baseBin - this.binInc) + this.binInc * i);
+            bins[i].end = Math.min(bounds[1], (this.baseBin - this.binInc) + this.binInc * i + this.binInc);
+            bins[i].size = bins[i].end - bins[i].start;
+        }
         
         for (var ses in data.sessions) {
             if (data.sessions[ses].visibility) {
@@ -20,26 +24,29 @@ var histogram = new function Histogram(){
                 }
                 
                 for (var dp in data.sessions[ses].data) {
-                    var bin = Math.floor((data.sessions[ses].data[dp][this.field] - bounds[0]) / this.binSize);
-                    if (bin == this.numbins) {
-                        bin = this.numbins - 1;
-                    }
+                    var bin = Math.floor((data.sessions[ses].data[dp][this.field] - (this.baseBin - this.binInc)) / this.binInc);
+                    
+                    //Catch edge cases
+                    bin = Math.min(this.numbins - 1, Math.max(0, bin));
+                    
                     bins[bin][ses]++;
                 }
             }
         }
         
-        function sum(val, i) {
-            var s = 0;
+        for (bin in bins) {
+            var sum = 0;
             
-            for (var i in val) {
-                s += val[i];
+            for (ses in data.sessions) {
+                if (data.sessions[ses].visibility) {
+                    sum += bins[bin][ses];
+                }
             }
             
-            return s;
+            max = Math.max(max, sum);
         }
         
-        return [bins, Math.max.apply(null, $.map(bins, sum))];
+        return [bins, max];
     }
     
     /*
@@ -54,8 +61,11 @@ var histogram = new function Histogram(){
         
         controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div>';
 
-        controls += '<button id="set_bins" type="button">Set # of Bins:</button><input type="text" id="bin_num" value="' + this.numbins + '"></input>';
+        controls += '<button id="set_bins" type="button">Set # of Bins:</button><input type="text" id="bin_num" value="10"></input>';
+        controls += '<br>'
+        controls += '<input class="binselect" id="sug" name="binselect" type="checkbox" value="suggest_bins" checked></input>&nbsp;Automatic';
         controls += '<div id="binSize"><br>Bin size: ' + this.binSize + '</div>';
+        controls += '<div id="binNum"><br>Bin size: ' + this.numbins + '</div>';
         
         controls += '</div>';
         
@@ -138,6 +148,8 @@ var histogram = new function Histogram(){
             
             data.sessions[$(e.target).val()].visibility = visible;
             
+            histogram.calcBinSize();
+            
             histogram.draw();
             
         });
@@ -146,6 +158,8 @@ var histogram = new function Histogram(){
             
             histogram.field = $(e.target).val();
             data.fields[$(e.target).val()].visibility = 1;
+            
+            histogram.calcBinSize();
             
             histogram.draw();
             
@@ -160,14 +174,52 @@ var histogram = new function Histogram(){
         
         $('button#set_bins').click(function(e){
             
-            //if($('input#bin_size').val() > 50) $('input#bin_size').val(50);
-            
-            histogram.numbins = Math.floor($('input#bin_num').val());
+            histogram.calcBinSize();
             
             histogram.draw();
             
         });
         
+        $('input.binselect').click(function(e){
+            
+            histogram.calcBinSize();
+            
+            histogram.draw();
+        });
+        
+    }
+    
+    this.calcBinSize = function(){
+        
+        var entered = Math.floor($('input#bin_num').val());
+        
+        if (isNaN(entered) || entered < 1){
+            entered = 1;
+            
+            alert("Please only enter numbers greater than or equal to one.\r\n\r\nDefaulting to 1.");
+        }
+        
+        if ($('input#sug').attr('checked')){
+            //Suggest
+            var bounds = data.getFieldBounds([data.fields[this.field].name], false);
+            
+            this.binInc = getDataIncrement(entered, entered, bounds[1] - bounds[0]);
+            this.baseBin = getNextDataIncrement(bounds[0], this.binInc, null);
+            this.numbins = 1 + Math.ceil((bounds[1] - bounds[0] - this.binInc) / this.binInc);
+        }
+        else {
+            //Dictate
+            this.numbins = entered;
+            
+            var bounds = data.getFieldBounds([data.fields[this.field].name], false);
+            var binSize = (bounds[1] - bounds[0]) / this.numbins;
+            
+            this.baseBin = bounds[0] + binSize;
+            this.binInc = binSize;
+        }
+        
+        $('#binSize').html('Bin size: ' + this.binInc);
+        $('#binNum').html('Bin num: ' + this.numbins);
     }
     
     /*
@@ -207,25 +259,34 @@ var histogram = new function Histogram(){
         drawYAxis(0, yMax, this);
         drawXAxis(xBounds[0], xBounds[1], this, data.fields[this.field].name);
         // --- //
-        var barWidth = this.drawwidth / this.numbins;
+        
         var barUnitHeight = this.drawheight / yMax;
         var xOff = 0;
-        
-        $('#binSize').html('Bin size: ' + this.binSize)
         
         for (var bin in bins) {
             
             var yOff = 0;
+            var barWidth;
             
-            for (var ses in bins[bin]) {
+            for (var ses in data.sessions) {
                 
-                yOff += bins[bin][ses] * barUnitHeight;
-                
-                var color = getSessionColor(ses);
-                this.context.fillStyle = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
-                this.context.fillRect( this.xoff + xOff + 0.5, this.drawheight + this.yoff - yOff, 
-                                       barWidth - 1.0, bins[bin][ses] * barUnitHeight);
+                if (data.sessions[ses].visibility) {
+                    
+                    barWidth = (bins[bin].size / (xBounds[1] - xBounds[0])) * this.drawwidth;
+                    
+                    yOff += bins[bin][ses] * barUnitHeight;
+                    
+                    var color = getSessionColor(ses);
+                    this.context.fillStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',0.85)';
+                    this.context.fillRect( this.xoff + xOff, this.drawheight + this.yoff - yOff, 
+                                           barWidth, bins[bin][ses] * barUnitHeight);
+                }
             }
+            
+            this.context.strokeStyle = this.gridcolor;
+            this.context.lineWidth = 0.5;
+            this.context.strokeRect( this.xoff + xOff, this.drawheight + this.yoff - yOff, 
+                                       barWidth, yOff);
             
             xOff += barWidth;
         }
@@ -243,6 +304,8 @@ var histogram = new function Histogram(){
         this.clear();
         
         this.drawControls();
+        
+        this.calcBinSize();
         
         this.draw();
         
@@ -293,9 +356,6 @@ var histogram = new function Histogram(){
         this.textcolor = "rgb(0,0,0)";
         
         this.field = 0;
-        this.numbins = 10;
-        var bounds = data.getFieldBounds([data.fields[this.field].name], false);
-        this.binSize = (bounds[1] - bounds[0]) / this.numbins;
         
         this.inited = true;
 
