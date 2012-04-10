@@ -45,6 +45,17 @@ var scatter = new function Scatter(){
 		
 		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">X Axis:</tr></td>';
 		
+        controls += '<tr><td>';
+        
+        controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#000000;float:left;">';
+        
+        controls += '<input class="xaxis" type="radio" name="xaxisselect" value="-1" checked></input>&nbsp;';
+        
+        controls += 'Datapoint #&nbsp;';
+        
+        controls += '</div>';
+        controls += '</td></tr>';
+        
         for( var i in data.fields ){
             //check if field is text
             if (data.fields[i].type_id != 37){ 
@@ -52,7 +63,7 @@ var scatter = new function Scatter(){
                 
                 controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#000000;float:left;">';
                 
-                controls += '<input class="xaxis" type="radio" name="xaxisselect" value="' + i + '" ' + ( i === '0' ? 'checked' : '' ) + '></input>&nbsp;';
+                controls += '<input class="xaxis" type="radio" name="xaxisselect" value="' + i + '" ></input>&nbsp;';
                 
                 controls += data.fields[i].name + '&nbsp;';
                 
@@ -231,7 +242,18 @@ var scatter = new function Scatter(){
 	this.setBounds = function(hLow, hUp, vLow, vUp){
         
         var xbounds, xdiff, xMinRange;
-        if (data.fields[this.xAxis].type_id == 7){
+        
+        //Datapoint
+        if (this.xAxis == -1) {
+            xbounds = [-1,0];
+            
+            for (ses in data.sessions) {
+                xbounds[1] = Math.max(xbounds[1], data.sessions[ses].data.length);
+            }
+            xdiff = xbounds[1] - xbounds[0];
+            xMinRange = 4 / xdiff;
+        }
+        else if (data.fields[this.xAxis].type_id == 7){
             xbounds = data.getVisibleTimeBounds();
             xdiff = xbounds[1] - xbounds[0];
             xMinRange = 10 / xdiff;
@@ -287,7 +309,16 @@ var scatter = new function Scatter(){
 		
 		// --- //
 		var xbounds;
-		if (data.fields[this.xAxis].type_id == 7){
+        
+        //Datapoint
+        if (this.xAxis == -1) {
+            xbounds = [-1,0];
+            
+            for (ses in data.sessions) {
+                xbounds[1] = Math.max(xbounds[1], data.sessions[ses].data.length);
+            }
+        }
+		else if (data.fields[this.xAxis].type_id == 7){
             xbounds = data.getVisibleTimeBounds();
         }
         else{
@@ -318,28 +349,48 @@ var scatter = new function Scatter(){
 		
 		this.clear();
 		
-		drawXAxis(xmin, xmax, this, data.fields[this.xAxis].name.toLowerCase());
+        var xAxisName;
+        if (this.xAxis == -1) {
+            //Because it's not.
+            xAxisName = 'not time';
+        }
+        else {
+            xAxisName = data.fields[this.xAxis].name.toLowerCase();
+        }
+        
+		drawXAxis(xmin, xmax, this, xAxisName);
         drawYAxis(ymin, ymax, this);
 		
 		// --- //
 		
-		for( var i = 0; i < data.sessions.length; i++ ){
-			
-			for( var j = 0; j < data.fields.length; j++ ){
-		
-				if( data.sessions[i].visibility && data.fields[j].visibility && data.fields[j].type_id != 7){
-			
-					var color = getFieldColor(j, i);
-					var color = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
-		
-					this.plotData( data.getDataFrom(i,this.xAxis), data.getDataFrom(i,j), xmin, xmax, ymin, ymax, color );
-	
-				}
-			
-			}
-	
-		}
-		
+        var dpNum = 0;
+        
+        for( var i = 0; i < data.sessions.length; i++ ){
+            
+            for( var j = 0; j < data.fields.length; j++ ){
+                
+                if( data.sessions[i].visibility && data.fields[j].visibility && data.fields[j].type_id != 7){
+                    
+                    var color = getFieldColor(j, i);
+                    var color = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
+                    
+                    if (this.xAxis == -1) {
+                        var dpArr = [];
+                        
+                        for (dp in data.sessions[ses].data) {
+                            dpArr.push(Number(dpNum) + Number(dp));
+                        }
+                        
+                        this.plotData(dpArr, data.getDataFrom(i,j), xmin, xmax, ymin, ymax, color);
+                        //console.log([dpArr, data.getDataFrom(i,j), xmin, xmax, ymin, ymax]);
+                    }
+                    else {
+                        this.plotData( data.getDataFrom(i,this.xAxis), data.getDataFrom(i,j), xmin, xmax, ymin, ymax, color );
+                    }   
+                }
+            }
+        }
+        
 		// --- //
 		
 		var x = this.mouseX - $('canvas#viscanvas').offset().left - this.xoff;
@@ -450,7 +501,7 @@ var scatter = new function Scatter(){
 		this.vRangeLower = 0.0;
 		this.vRangeUpper = 1.0;
         
-        this.xAxis = 0;
+        this.xAxis = -1;
 
 		this.one2one = false;
 
