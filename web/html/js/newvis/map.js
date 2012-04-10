@@ -78,15 +78,15 @@ var map = new function Map() {
 
                             /* Draw regular points on the map */
 							if( this.measureField == "none" ) {
-								var tmp = new google.maps.LatLng(data.sessions[ses].data[dp][latField],
-													 	 	data.sessions[ses].data[dp][lonField]);
+								var tmp = new google.maps.LatLng(data.sessions[ses].data[dp][latField], data.sessions[ses].data[dp][lonField]);
 								markers[markers.length] = new google.maps.Marker({
 									position: tmp,
 									map: this.map,
                                     title: data.sessions[ses].meta["name"].toString(),									
-									icon: '/html/img/vis/v3icon.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )
+									icon: '/html/img/vis/v3icon.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 ),
+                                    clickable: true                        
 								});
-
+                                        
                             /* Draw bars on the map corresponding to the field selected */
 							} else {
 								var tmp = new google.maps.LatLng(data.sessions[ses].data[dp][latField],
@@ -110,6 +110,15 @@ var map = new function Map() {
 									icon: '/html/img/vis/measured.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )
 									 	+ '&value=' + Math.floor( ( val - min ) / ( max - min ) * 20 )
 								});
+
+                                markers[markers.length-1].info = new google.maps.InfoWindow({
+                                    content:'blue'
+                                });
+                                
+                                google.maps.event.addListener(markers[markers.length-1], 'click', function() {
+                                    markers[markers.length-1].info.open(map, marker);
+                                });
+
 							}
 						}
 					}
@@ -138,12 +147,15 @@ var map = new function Map() {
       
         /* Add the table of selectable sessions to the controls. */
         $('#controldiv').append('<div id="sessionControls" style="float:left;margin:10px;"></div>');
-        $('#sessionControls').append('<table id="sessionTable" style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;"></table>');        
-        $('#sessionTable').append('<tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>');
+        $('#sessionControls').append('<table id="sessionTable" style="border:1px solid grey;padding:5px;"></table>');        
+        $('#sessionTable').append('<thead><tr><td colspan="2" style="text-align:center;text-decoration:underline;padding-bottom:5px;display:block">Sessions:</td></tr></thead>');
 		for( var ses in data.sessions ) {
 				var session_name = data.sessions[ses].meta["name"];
-				$('#sessionTable').append('<div id="control_'+ ses +'"> '+ session_name +':  <input type="checkbox" id="visible_'+ses+ '"></div>');
-				$('#control_'+ses).css('color', '#' + rgbToHex(hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )));				
+				$('#sessionTable').append('<tr id="row_' + ses + '"></tr>'); 
+
+                $('#row_' + ses).append('<td style="width:15px"> <input type="checkbox" id="visible_'+ses+ '"/>'+ session_name +': </td>');
+                $('#row_' + ses).append('<td id="control_'+ ses +'"> </td>');
+				$('#row_'+ses).css('color', '#' + rgbToHex(hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )));				
 
 				if( data.sessions[ses].visibility ) 
 					$('#visible_'+ses).attr('checked','true');
@@ -152,23 +164,23 @@ var map = new function Map() {
                 /* percent of data */
 				switch (prcntVis[ses]) {
 					case '1':
-						$('#control_' + ses).append('<select id="prcnt_' + ses + '" style="float:right"><option value="1" selected >100%</option><option value="2">50%</option><option value="4">25%</option><option value="10">10%</option></select>');
+						$('#control_' + ses).append('<select id="prcnt_' + ses + '" ><option value="1" selected >100%</option><option value="2">50%</option><option value="4">25%</option><option value="10">10%</option></select>');
 						break;
 					case '2':
-						$('#control_' + ses).append('<select id="prcnt_' + ses + '" style="float:right"><option value="1">100%</option><option value="2" selected >50%</option><option value="4">25%</option><option value="10">10%</option></select>');
+						$('#control_' + ses).append('<select id="prcnt_' + ses + '" ><option value="1">100%</option><option value="2" selected >50%</option><option value="4">25%</option><option value="10">10%</option></select>');
 						break;
 					case '4':
-						$('#control_' + ses).append('<select id="prcnt_' + ses + '" style="float:right"><option value="1">100%</option><option value="2">50%</option><option value="4" selected >25%</option><option value="10">10%</option></select>');
+						$('#control_' + ses).append('<select id="prcnt_' + ses + '" ><option value="1">100%</option><option value="2">50%</option><option value="4" selected >25%</option><option value="10">10%</option></select>');
 						break;
 					case '10':
-						$('#control_' + ses).append('<select id="prcnt_' + ses + '" style="float:right"><option value="1">100%</option><option value="2">50%</option><option value="4">25%</option><option value="10" selected >10%</option></select>');
+						$('#control_' + ses).append('<select id="prcnt_' + ses + '" ><option value="1">100%</option><option value="2">50%</option><option value="4">25%</option><option value="10" selected >10%</option></select>');
 						break;
 					default:
-						$('#control_' + ses).append('<select id="prcnt_' + ses + '" style="float:right"><option value="1" selected >100%</option><option value="2">50%</option><option value="4">25%</option><option value="10">10%</option></select>');
+						$('#control_' + ses).append('<select id="prcnt_' + ses + '" ><option value="1" selected >100%</option><option value="2">50%</option><option value="4">25%</option><option value="10">10%</option></select>');
 						break;				
 			    }
+                
             
-
 		}
 
         /* Add the table of selectable fields to the controls */
