@@ -331,7 +331,7 @@ var histogram = new function Histogram(){
         this.ylabelsize = this.context.measureText( data.getMax() + "" ).width + this.fontheight/2;
 
         this.drawwidth  = Math.floor(this.canvaswidth   - (this.ylabelsize*1.5));
-        this.drawheight = Math.floor(this.canvasheight  - (this.xlabelsize*3));
+        this.drawheight = Math.floor(this.canvasheight  - (this.xlabelsize*2.5));
 
         this.xoff = 0;
         this.yoff = this.fontheight/2;
