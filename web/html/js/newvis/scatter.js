@@ -351,8 +351,7 @@ var scatter = new function Scatter(){
 		
         var xAxisName;
         if (this.xAxis == -1) {
-            //Because it's not.
-            xAxisName = 'not time';
+            xAxisName = 'Datapoint #';
         }
         else {
             xAxisName = data.fields[this.xAxis].name.toLowerCase();
@@ -398,40 +397,7 @@ var scatter = new function Scatter(){
 
         var hdiff = this.hRangeUpper - this.hRangeLower;
         var vdiff = this.vRangeUpper - this.vRangeLower;
-/*
-        if( x >= 0 && x < this.drawwidth && y >= 0 && y < this.drawheight ){
-
-			this.context.strokeStyle = "rgb(0,0,255)";
-
-			var localxoff = this.fontheight/4 + this.xoff;
-
-			for( var i = 0; i < data.sessions.length; i++ ){
-
-				var color = hslToRgb( ( 0.6 + ( 1.0*i/data.sessions.length ) ) % 1.0, 1.0, 0.4 );
-
-				this.context.strokeStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ", 1.0)";
-
-				for( var j = 0; j < data.fields.length; j++ ){
-
-					var displaydata = data.getDataFrom(i,j);
-
-					if( data.fields[j].type_id != 7 && data.fields[j].type_id != 19 ){
-
-						var label = displaydata[Math.floor(displaydata.length*this.mouseX/this.drawwidth)] + ( i != data.sessions.length-1 ? ", " : "" );
-
-						this.context.fillStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ", 1.0)";
-
-						this.context.fillText( label, localxoff, this.fontheight);
-
-						localxoff += this.context.measureText(label).width;
-						
-					}
-					
-				}
-				
-			}
-				
-		}*/
+        
 		
 		x = mouseClkX;
 		y = this.drawheight - mouseClkY;
@@ -491,7 +457,7 @@ var scatter = new function Scatter(){
 		this.ylabelsize = this.context.measureText( data.getMax() + "" ).width + this.fontheight/2;
 
 		this.drawwidth	= Math.floor(this.canvaswidth	- (this.ylabelsize*1.5));
-		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*1.5));
+		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*2.5));
 
 		this.xoff = 0;
 		this.yoff = this.fontheight*3/2;

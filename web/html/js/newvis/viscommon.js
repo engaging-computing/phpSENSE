@@ -8,6 +8,17 @@
 */
 
 /**
+ * Capitalizes a string (camel case)
+ * 
+ * Thanks to Marco Demaio on stack overflow:
+ * http://stackoverflow.com/questions/2332811/capitalize-words-in-string
+ */
+String.prototype.toCapitalize = function()
+{ 
+   return this.toLowerCase().replace(/^.|\s\S/g, function(a) { return a.toUpperCase(); });
+}
+
+/**
  * Gets the RGB colors of the given session and field.
  * 
  * @param fIndex The index of the field to color.
