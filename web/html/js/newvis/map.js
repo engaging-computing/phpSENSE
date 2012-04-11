@@ -79,13 +79,16 @@ var map = new function Map() {
                             /* Draw regular points on the map */
 							if( this.measureField == "none" ) {
 								var tmp = new google.maps.LatLng(data.sessions[ses].data[dp][latField], data.sessions[ses].data[dp][lonField]);
-								markers[markers.length] = new google.maps.Marker({
+								
+                                markers[markers.length]= new google.maps.Marker({
 									position: tmp,
 									map: this.map,
                                     title: data.sessions[ses].meta["name"].toString(),									
 									icon: '/html/img/vis/v3icon.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 ),
                                     clickable: true                        
 								});
+
+                                
                                         
                             /* Draw bars on the map corresponding to the field selected */
 							} else {
@@ -110,15 +113,6 @@ var map = new function Map() {
 									icon: '/html/img/vis/measured.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )
 									 	+ '&value=' + Math.floor( ( val - min ) / ( max - min ) * 20 )
 								});
-
-                                markers[markers.length-1].info = new google.maps.InfoWindow({
-                                    content:'blue'
-                                });
-                                
-                                google.maps.event.addListener(markers[markers.length-1], 'click', function() {
-                                    markers[markers.length-1].info.open(map, marker);
-                                });
-
 							}
 						}
 					}
@@ -148,12 +142,12 @@ var map = new function Map() {
         /* Add the table of selectable sessions to the controls. */
         $('#controldiv').append('<div id="sessionControls" style="float:left;margin:10px;"></div>');
         $('#sessionControls').append('<table id="sessionTable" style="border:1px solid grey;padding:5px;"></table>');        
-        $('#sessionTable').append('<thead><tr><td colspan="2" style="text-align:center;text-decoration:underline;padding-bottom:5px;display:block">Sessions:</td></tr></thead>');
+        $('#sessionTable').append('<thead><tr><td></td><td style="text-align:center;text-decoration:underline;padding-bottom:5px;display:block" colspan="3">Sessions:</td><td></td></tr></thead>');
 		for( var ses in data.sessions ) {
 				var session_name = data.sessions[ses].meta["name"];
 				$('#sessionTable').append('<tr id="row_' + ses + '"></tr>'); 
 
-                $('#row_' + ses).append('<td style="width:15px"> <input type="checkbox" id="visible_'+ses+ '"/>'+ session_name +': </td>');
+                $('#row_' + ses).append('<td style="width:20px"> <input type="checkbox" id="visible_'+ses+ '"/></td><td>'+ session_name +':&nbsp;&nbsp </td> ');
                 $('#row_' + ses).append('<td id="control_'+ ses +'"> </td>');
 				$('#row_'+ses).css('color', '#' + rgbToHex(hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )));				
 
@@ -179,8 +173,7 @@ var map = new function Map() {
 						$('#control_' + ses).append('<select id="prcnt_' + ses + '" ><option value="1" selected >100%</option><option value="2">50%</option><option value="4">25%</option><option value="10">10%</option></select>');
 						break;				
 			    }
-                
-            
+
 		}
 
         /* Add the table of selectable fields to the controls */
