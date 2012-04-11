@@ -67,7 +67,16 @@ var table = new function Table() {
         $('#data_table').dataTable( {
 					"sScrollY": 400,
 					"sScrollX": "100%",
-					"sScrollXInner": "110%"
+					"sScrollXInner": "110%",
+                    "oLanguage": {
+			          "sLengthMenu": 'Display <select>'   +
+			             '<option value="10">10</option>' +
+			             '<option value="25">25</option>' +
+			             '<option value="50">50</option>' +
+			             '<option value="100">100</option>' +
+			             '<option value="-1">All</option>'+
+			             '</select> records'
+			         }
 		} );
         
     }
