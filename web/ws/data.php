@@ -39,6 +39,7 @@ class Data {
     
     public $fields = array();
     public $sessions = array();
+   
 
 	// DO NOT USE UNIT_IDs FOR TYPE CHECKS
     
@@ -127,7 +128,8 @@ class Ses {
     
     public $meta = array();
     public $data = array();
-    
+    public $pictures = array();    
+
     public function is_visible() { return $this->visibility; }
     public function setVisibility($v) { $this->visibility = $v; }
     
@@ -208,6 +210,7 @@ if(isset($_REQUEST['sessions'])) {
         $data->sessions[$index]->sid = $ses;
         $data->sessions[$index]->meta = getSession($ses);
         $data->sessions[$index]->data = getData($data->eid, $ses);
+        $data->sessions[$index]->pictures = getSessionPictures($ses);
     }
     
     
