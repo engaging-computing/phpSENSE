@@ -331,6 +331,7 @@ function drawXAxis(xmin, xmax, visObject, type){
     
     visObject.context.font = visObject.fontheight + "px sans-serif";
     visObject.context.fillStyle = "rgb(0,0,0)";
+    visObject.context.textAlign = 'center';
     
     var labels = new Array();
     
@@ -355,9 +356,10 @@ function drawXAxis(xmin, xmax, visObject, type){
     
     for( i in labels ){
         
-        if( visObject.context.measureText(labels[i]['label']).width + labels[i]['xpos'] < visObject.drawwidth ){
+        if (labels[i]['xpos'] + visObject.context.measureText(labels[i]['label']).width / 2 < visObject.drawwidth &&
+            labels[i]['xpos'] - visObject.context.measureText(labels[i]['label']).width / 2 > 0) {
             
-            visObject.context.fillText( labels[i]['label'], labels[i]['xpos'] + visObject.xoff, visObject.drawheight + visObject.yoff + visObject.fontheight );
+            visObject.context.fillText(labels[i]['label'], labels[i]['xpos'] + visObject.xoff, visObject.drawheight + visObject.yoff + visObject.fontheight);
         }
         
         visObject.context.strokeStyle = visObject.gridcolor;
@@ -370,6 +372,10 @@ function drawXAxis(xmin, xmax, visObject, type){
         visObject.context.stroke();
         
     }
+    
+    visObject.context.fillText(String(type).toCapitalize(), visObject.drawwidth / 2.0, visObject.drawheight + visObject.yoff + visObject.fontheight * 3.0);
+    
+    visObject.context.textAlign = 'left';
     
     //bkmk
     if (type === "time"){
