@@ -65,6 +65,8 @@ for( var ses in data.sessions ) {
 		this.visibility = on;
 	}
 	
+	data.sessions[ses].ses = ses;
+	
 	data.sessions[ses].getMaxVal = function( field ) {
 		var max = this.data[0][field];
 		for( var dP in this.data ) {
@@ -92,39 +94,41 @@ for( var ses in data.sessions ) {
 			mean += this.data[dP][field];
 		}
 		
-		return (mean / this.data[dP].length);
+
+		
+		return (mean / this.data.length);
 	}
 	
 	data.sessions[ses].getMedianVal = function( field ) {
 		var sortedData = data;
-		sortedData.qSort(field);
-		
-		if( this.data.length % 2 )
-			return sortedData[this.data.length/2];
-		else
-			return ((sortedData[(this.data.length/2)-.5]+sortedData[(this.data.length/2)+.5])/2)
-		
+		sortedData.qSortFieldNum(field);
+				
+		if( this.data.length % 2 ){
+			return sortedData.sessions[this.ses].data[Math.floor(this.data.length/2)][field];
+		} else {
+			return (sortedData.session[this.ses].data[Math.floor(this.data.length/2)][field]+sortedData.sessions[this.ses][Math.ceil(this.data.length/2)][field])/2;
+		}
+
 	}
 	
 	data.sessions[ses].getModeVal = function( field ) {
 		var tmp = new Array();
 		var max_count = 0;
-		var max = 0;
 		
 		for( var dP in this.data ) {
-			tmp[''+this.data[dp][field]+''] = 0;
+			tmp[''+this.data[dP][field]+''] = 0;
 		}	
 		
 		for( var dP in this.data ) {
-			tmp[''+this.data[dp][field]+'']++;
+			tmp[''+this.data[dP][field]+'']++;
 		}
 		
 		for( var dP in tmp) {
 			if( tmp[dP] > max_count )
-				max = dP;
+				max_count = dP;
 		}
 		
-		return max;
+		return max_count;
 		
 	}
 	
@@ -301,6 +305,15 @@ data.qSort = function( fieldName ) {
 	
 	for( field in data.fields )
 		if( data.fields[field].name.toLowerCase() == fieldName.toLowerCase() )
+			for( ses in data.sessions )
+				data.sessions[ses].data = quickSort(data.sessions[ses].data, field);
+	
+}
+
+data.qSortFieldNum = function( fieldNum ) {
+	
+	for( field in data.fields )
+		if( field == fieldNum )
 			for( ses in data.sessions )
 				data.sessions[ses].data = quickSort(data.sessions[ses].data, field);
 	

@@ -59,7 +59,7 @@ var bar = new function Bar(){
 			
 				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
 			
-				controls += '<select id="' + i + '" class="fieldcalc"><option>Max</option><option>Min</option></select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				controls += '<select id="' + i + '" class="fieldcalc"><option>Max</option><option>Min</option><option>Mean</option><option>Median</option><option>Mode</option></select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 				
 				// <option>Mean</option><option>Median</option><option>Mode</option>
 			
@@ -147,57 +147,7 @@ var bar = new function Bar(){
 	    this.context.stroke();
 		
 	}
-
-	this.getIncrement = function(mininc){
-		
-		var out = 1;
-		
-		var minincint = mininc;
-		
-		var divtonormalize = 1;
-		/*
-		while( minincint != Math.floor(minincint) ){
-			
-			minincint *= 10;
-			
-			divtonormalize *= 10;
-			
-		}*/
-		
-		var i = 1;
-		
-		if( minincint >= 1 ){
-		
-			while( out < minincint ){
-			
-				out = Math.pow(10, i);
-			
-				i++;
-			
-			}
-		
-		} else {
-			
-			while( out/Math.pow(10, i) > minincint ){
-			
-				out = out/Math.pow(10, i);
-			
-				i++;
-			
-			}
-			
-		}
-
-		return out/divtonormalize;
-		
-	}
-
-	this.getOffset = function(min, inc){
-		
-		return (Math.floor(min/inc)*inc) + inc;
-		
-	}
-
+	
 	/*
 	// Use: mybar.draw();
 	//
@@ -235,7 +185,7 @@ var bar = new function Bar(){
 		
 		for( var j = 0; j < data.fields.length; j++ ){
 		
-			if( data.fields[j].visibility && data.fields[j].type_id != 7 && data.fields[j].type_id != 19 ){
+			if( data.fields[j].visibility && data.fields[j].type_id != 7 && data.fields[j].type_id != 19 && data.fields[j].type_id != 37 ){
 		
 				for( var i = 0; i < data.sessions.length; i++ ){
 			
@@ -259,13 +209,13 @@ var bar = new function Bar(){
 							val = data.sessions[i].getMinVal(j);
 							break;
 							case 'Mean':
-							val = data.sessions[i].getMeanVal(data.fields[j].name);
+							val = data.sessions[i].getMeanVal(j);
 							break;
 							case 'Median':
-							val = data.sessions[i].getMedianVal(data.fields[j].name);
+							val = data.sessions[i].getMedianVal(j);
 							break;
 							case 'Mode':
-							val = data.sessions[i].getModeVal(data.fields[j].name);
+							val = data.sessions[i].getModeVal(j);
 							break;
 		
 						}
@@ -292,7 +242,6 @@ var bar = new function Bar(){
 		
 		drawYAxis(ymin,ymax,this);
 		
-		
 		for( var i = 0; i < divs; i++ ){
 			
 			var height = barvals[i];
@@ -313,10 +262,27 @@ var bar = new function Bar(){
 	
 				this.context.strokeRect( this.drawwidth*i/divs, this.drawheight - (this.drawheight*(-ymin)/ydif) + this.yoff, this.drawwidth/divs, -height*this.drawheight );
 			
+				this.context.textAlign = 'center';
+			
 			}
 			
 		}
 		
+		// bkmk
+		
+		/*
+		if(i%(data.sessions.length+1) == 0){
+			
+			var inc = i/(data.sessions.length+1);
+			
+			console.log(inc);
+		
+			this.context.fillText(data.fields[inc].name, (this.drawwidth*inc/divs*(data.sessions.length+1)) + (this.drawwidth/divs/2*(data.sessions.length+1)), this.drawheight + this.yoff + this.fontheight, this.drawwidth/divs*(data.sessions.length+1));
+	
+			this.context.textAlign = 'left';
+		
+		}
+		*/
 	}
 	
 
