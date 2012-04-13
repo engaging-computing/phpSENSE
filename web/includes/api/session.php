@@ -118,19 +118,6 @@ function getSession($sid) {
 	return false;
 }
 
-function getSessionPictures($sid){
-    global $db;
-
-    $output = $db->query("Select pictures.provider_url FROM pictures where pictures.session_id = {$sid}");
-
-    if($db->numOfRows) {
-		return $output[0];
-	}
-	
-	return false;
-}
-
-
 function updateSession($sid, $values) {
     global $db;
     
