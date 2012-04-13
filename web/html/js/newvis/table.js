@@ -25,6 +25,7 @@ var table = new function Table() {
         $('#data_table').append('<thead><tr id=headers></tr></thead>');
         $('#headers').append('<td>Data Point</td>');
         $('#headers').append('<td>Session #</td>');
+        $('#headers').append('<td>Session</td>');
         for( var field in data.fields ) {
             var title = data.fields[field].name;
             $('#headers').append('<td>' + title + '</td>');
@@ -32,15 +33,16 @@ var table = new function Table() {
 
         /* Add data to the table */
         $('#data_table').append('<tbody id=data></tbody>');
-        var dataPoint=0;
+        
         for (var ses in data.sessions) {
+            var dataPoint=0;
             if(data.sessions[ses].visibility) {
                 var dec = 0;
                 for (var dp in data.sessions[ses].data) {
                     var row_id = dp + '_'+ses;
                     $('#data').append('<tr id=table_' + row_id + '></tr>');
                     $('#table_'+row_id).append('<td>'+ dataPoint++ +'</td>');
-
+                     $('#table_'+row_id).append('<td>'+ data.sessions[ses].sid +'</td>');
                     /* If there is a picture associated with the session, link to it */
                     var link = data.sessions[ses].pictures['provider_url'];
                     if(link != null){
@@ -78,6 +80,7 @@ var table = new function Table() {
 		    "sScrollY": 400,
 			"sScrollX": "100%",
             "iDisplayLength": -1,
+            "aaSorting": [[1,'asc'] ,[0,'asc']],
             "oLanguage": {
 			    "sLengthMenu": 'Display <select>'   +
 			             '<option value="10">10</option>' +
