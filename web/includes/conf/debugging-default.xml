@@ -2,7 +2,7 @@
 	<timezone>America/New_York</timezone>
 	<database>
 		<user>root</user>
-		<pass></pass>
+		<pass>Redsox*101188</pass>
 		<host>127.0.0.1</host>
 		<name>vulture</name>
 		<port>3306</port>	
