@@ -26,10 +26,15 @@
  * DAMAGE.
  */
 
+/* Make all links underlined in any of the visualizations */
+#sessionControls a {
+    text-decoration: underline;
+}
+
+/* Set up the padding for the table */
 #table_canvas {
     margin-top: 20px;
     margin-right: auto;
     margin-left: auto;  
     overflow-x:hidden;
 }
-
