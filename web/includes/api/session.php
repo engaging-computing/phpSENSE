@@ -129,7 +129,7 @@ function getSessionPictures($sid){
    
 
     if($db->numOfRows) {
-		return $output[0];
+		return $output;
 	}
 	
 	return false;

@@ -17,6 +17,8 @@ var table = new function Table() {
 
     }
     
+
+
     this.draw = function () {
         $('#table_canvas').append('<table id=data_table></table>');
 
@@ -42,13 +44,20 @@ var table = new function Table() {
                     $('#data').append('<tr id=table_' + row_id + '></tr>');
                     $('#table_'+row_id).append('<td>'+ dataPoint++ +'</td>');
                      $('#table_'+row_id).append('<td>'+ data.sessions[ses].sid +'</td>');
-                    /* If there is a picture associated with the session, link to it */
-                                        
-                    var link = data.sessions[ses].pictures['provider_url'];
-                    var description = data.sessions[ses].pictures['description'];
-                    if(link != null){
-                         $('#table_'+row_id).append('<td><a rel="prettyPhoto[gallery'+ses+']" href="'+ link + '" title="'+description+'"> ' + data.sessions[ses].meta['name']+'</a></td>');          
-                    }else {
+                    
+                    /* If there are pictures associated with the session, link to them in a light box */  
+                    if(data.sessions[ses].pictures[0] != null){                  
+                        for(var i in data.sessions[ses].pictures){                
+                            var link = data.sessions[ses].pictures[i]['provider_url'];
+                            var description = data.sessions[ses].pictures[i]['description'];
+                            if(i==0){                          
+                                $('#table_'+row_id).append('<td><a rel="prettyPhoto[gallery'+ses+']" href="'+ link + '" title="'+description+'"> ' + data.sessions[ses].meta['name']+'</a></td>'); 
+                            } else {
+                                $('#table_'+row_id).append('<a rel="prettyPhoto[gallery'+ses+']" href="'+ link + '" title="'+description+'"></a>'); 
+                            }
+                        }
+                                 
+                    } else {
                         $('#table_'+row_id).append('<td>'+data.sessions[ses].meta['name']+'</td>');
                     }
                 
