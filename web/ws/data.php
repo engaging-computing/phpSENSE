@@ -164,7 +164,7 @@ class Field {
     
     public $field_id = 0;
     public $name;
-    public $visibility = 1;
+    public $visibility = 0;
     public $type_id = 0;
     public $unit_id = 0;
     public $type_name = 0;
@@ -179,11 +179,12 @@ class Field {
         $this->type_name = func_get_arg(4);
         $this->unit_name = func_get_arg(5);
         $this->unit_abb = func_get_arg(6);
+        $this->visibility = func_get_arg(7);
         
         //set default of geolocation and text to not visible
-        if ($this->type_id == 37 || $this->type_id == 19) {
+        /*if ($this->type_id == 37 || $this->type_id == 19) {
             $this->visibility = 0;
-        }
+        }*/
     }
     
     public function is_visible() { return $this->visibility; }
@@ -207,9 +208,22 @@ if(isset($_REQUEST['sessions'])) {
     $fields = getFields($data->eid);
     
     //print_r($fields);
+    $pick = true;
+    $visible = 1;
             
     foreach( $fields as $index=>$field ) { 
-        $data->fields[$index] = new Field($field['field_id'], $field['field_name'], $field['type_id'], $field['unit_id'], $field['type_name'], $field['unit_name'], $field['unit_abbreviation']);
+        if ($pick && $field['type_id'] != 37 && $field['type_id'] != 19 && $field['type_id'] != 7) {
+            $visible = 1;
+            $pick = false;
+        }
+        else if ($field['type_id'] == 7) {
+            $visible = 1;
+        }
+        else {
+            $visible = 0;
+        }
+        
+        $data->fields[$index] = new Field($field['field_id'], $field['field_name'], $field['type_id'], $field['unit_id'], $field['type_name'], $field['unit_name'], $field['unit_abbreviation'], $visible);
     }
         
     //Load sessions into Data object
