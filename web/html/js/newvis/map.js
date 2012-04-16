@@ -35,6 +35,21 @@ var map = new function Map() {
 
 	}
 	
+    this.addInfoWindow = function(marker){
+        var infoWindow = new google.maps.InfoWindow({
+            content: 'im an info windows'
+        });
+        
+        google.maps.event.addListener(marker, 'click', function () {
+                
+            infoWindow.open(map, this);
+          currentMark = this;
+        });
+
+
+    }
+
+
     /* Draw function */
 	this.draw = function(data, f) {
 		
@@ -74,12 +89,12 @@ var map = new function Map() {
 			for(var ses in data.sessions) {
 				if(data.sessions[ses].visibility) {
 					for(var dp in data.sessions[ses].data) {
+                        
 						if( !(dp % prcntVis[ses]) ) {
-
+                          
                             /* Draw regular points on the map */
 							if( this.measureField == "none" ) {
 								var tmp = new google.maps.LatLng(data.sessions[ses].data[dp][latField], data.sessions[ses].data[dp][lonField]);
-								
                                 markers[markers.length]= new google.maps.Marker({
 									position: tmp,
 									map: this.map,
@@ -87,6 +102,8 @@ var map = new function Map() {
 									icon: '/html/img/vis/v3icon.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 ),
                                     clickable: true                        
 								});
+
+                            map.addInfoWindow(markers[markers.length-1]);
 
                                 
                                         
@@ -121,17 +138,17 @@ var map = new function Map() {
 
         /* If there is no lat/lon in the experiment start drawing the session map */
 		} else {
-			for(var ses in data.sessions) {
-
-				var tmp = new google.maps.LatLng(data.sessions[ses].meta['latitude'],
-													 data.sessions[ses].meta['longitude']);
-				markers[markers.length] = new google.maps.Marker({
-					position: tmp,
-					map: this.map,
-					title: 'Session #: ' + eval(ses + 1) ,
-					icon: '/html/img/vis/v3icon.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )
-				});
-			
+		    for(var ses in data.sessions) {
+                if(data.sessions[ses].visibility) {
+			        var tmp = new google.maps.LatLng(data.sessions[ses].meta['latitude'],
+					    data.sessions[ses].meta['longitude']);
+				    markers[markers.length] = new google.maps.Marker({
+					    position: tmp,
+					    map: this.map,
+					    title: 'Session #: ' + eval(ses + 1) ,
+					    icon: '/html/img/vis/v3icon.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )
+				    });
+			    }
 			}
 		}			
 	}

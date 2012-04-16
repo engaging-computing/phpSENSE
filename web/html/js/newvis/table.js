@@ -11,21 +11,20 @@ var table = new function Table() {
         this.inited = 1;
             
         this.formatter = {}
-
         
         this.start();
+        $("a[rel^='prettyPhoto']").prettyPhoto();
 
     }
     
     this.draw = function () {
-
         $('#table_canvas').append('<table id=data_table></table>');
 
         /*Set up the table headers*/
         $('#data_table').append('<thead><tr id=headers></tr></thead>');
         $('#headers').append('<td>Data Point</td>');
         $('#headers').append('<td>Session #</td>');
-        $('#headers').append('<td>Session</td>');
+        $('#headers').append('<td >Session</td>');
         for( var field in data.fields ) {
             var title = data.fields[field].name;
             $('#headers').append('<td>' + title + '</td>');
@@ -44,9 +43,11 @@ var table = new function Table() {
                     $('#table_'+row_id).append('<td>'+ dataPoint++ +'</td>');
                      $('#table_'+row_id).append('<td>'+ data.sessions[ses].sid +'</td>');
                     /* If there is a picture associated with the session, link to it */
+                                        
                     var link = data.sessions[ses].pictures['provider_url'];
+                    var description = data.sessions[ses].pictures['description'];
                     if(link != null){
-                        $('#table_'+row_id).append('<td><a href="'+ link + '" target="_blank"> ' + data.sessions[ses].meta['name']+'</a></td>');
+                         $('#table_'+row_id).append('<td><a rel="prettyPhoto[gallery'+ses+']" href="'+ link + '" title="'+description+'"> ' + data.sessions[ses].meta['name']+'</a></td>');          
                     }else {
                         $('#table_'+row_id).append('<td>'+data.sessions[ses].meta['name']+'</td>');
                     }
@@ -76,10 +77,11 @@ var table = new function Table() {
         }   
 
         /* Call to DataTables to build the table */
-        $('#data_table').dataTable( {
+        var atable = $('#data_table').dataTable( {
 		    "sScrollY": 400,
 			"sScrollX": "100%",
             "iDisplayLength": -1,
+            "bDeferRender":true,
             "aaSorting": [[1,'asc'] ,[0,'asc']],
             "oLanguage": {
 			    "sLengthMenu": 'Display <select>'   +
@@ -89,9 +91,18 @@ var table = new function Table() {
 			             '<option value="100">100</option>' +
 			             '<option value="-1">All</option>'+
 			             '</select> records'
-			         }
+			},
+            "aoColumnDefs": [ {
+		           "aTargets": [1],
+		           "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+		               var color = getSessionColor(sData); 
+                       var paint = '#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16);                  
+		               $(nTd).css('color', paint);	             
+		           }
+		         } ]
 		} );
         
+
     }
     
 
