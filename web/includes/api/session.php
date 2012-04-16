@@ -121,7 +121,12 @@ function getSession($sid) {
 function getSessionPictures($sid){
     global $db;
 
-    $output = $db->query("Select pictures.provider_url FROM pictures where pictures.session_id = {$sid}");
+    $output = $db->query("SELECT pictures.provider_url,
+                                 pictures.description
+                                 FROM pictures 
+                                 WHERE pictures.session_id = {$sid}");
+
+   
 
     if($db->numOfRows) {
 		return $output[0];
