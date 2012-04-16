@@ -32,6 +32,7 @@ var map = new function Map() {
 
 
 		this.start(data);
+        $("a[rel^='prettyPhoto']").prettyPhoto();
 
 	}
 	
@@ -164,9 +165,29 @@ var map = new function Map() {
 				var session_name = data.sessions[ses].meta["name"];
 				$('#sessionTable').append('<tr id="row_' + ses + '"></tr>'); 
 
-                $('#row_' + ses).append('<td style="width:20px"> <input type="checkbox" id="visible_'+ses+ '"/></td><td>'+ session_name +':&nbsp;&nbsp </td> ');
+
+                if(data.sessions[ses].pictures[0] != null){
+                    for(var i in data.sessions[ses].pictures){                
+                            var link = data.sessions[ses].pictures[i]['provider_url'];
+                            var description = data.sessions[ses].pictures[i]['description'];
+                            if(i==0){ 
+                                $('#row_' + ses).append('<td style="width:20px"> <input type="checkbox" id="visible_'+ses+ '"/></td>'+
+                                    '<td id="pic_'+ses+'"><a id="link_'+ses+'"rel="prettyPhoto[gallery'+ses+']" href="'+ link + '" title="'+description+'"> ' + session_name +'</a>'+':&nbsp;&nbsp;</td> ');
+                            } else {
+                               $('#pic_'+ses).append('<a rel="prettyPhoto[gallery'+ses+']" href="'+ link + '" title="'+description+'"></a>');
+                            }
+                            $('#link_'+ses).css('color', '#' + rgbToHex(hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )));
+                    }
+				   				
+                } else {
+                    $('#row_' + ses).append('<td style="width:20px"> <input type="checkbox" id="visible_'+ses+ '"/></td><td>'+ session_name +':&nbsp;&nbsp;</td> ');
+                    $('#row_'+ses).css('color', '#' + rgbToHex(hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )));
+                }
+
+                
+				                
                 $('#row_' + ses).append('<td id="control_'+ ses +'"> </td>');
-				$('#row_'+ses).css('color', '#' + rgbToHex(hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )));				
+						
 
 				if( data.sessions[ses].visibility ) 
 					$('#visible_'+ses).attr('checked','true');
