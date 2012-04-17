@@ -69,30 +69,9 @@ var histogram = new function Histogram(){
         
         controls += '</div>';
         
-        controls += '<div id="sessioncontrols" style="float:left;margin:10px;">';
-        
-        controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>';
-        
-        for( var i in data.sessions ){
-            var color = getSessionColor(i);
-            
-            controls += '<tr><td>';
-            controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
-            
-            controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
-            
-            controls += data.sessions[i].meta.name;
-            
-            controls += '</div>';
-            controls += '</td></tr>';
-        }
-        
-        controls += '</table>'
-        
-        controls += '</div>';
-        
-        // --- //
-        
+        /* Add the session controls*/
+        controls += buildSessionControls('histogram');
+                
         controls += '<div id="fieldcontrols" style="float:left;margin:10px;">';
         
         controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Fields:</tr></td>';
@@ -249,7 +228,7 @@ var histogram = new function Histogram(){
     this.draw = function(){
         
         this.clear();
-        
+        $("a[rel^='prettyPhoto']").prettyPhoto();
         var bins_Max = this.makeBins();
         var bins = bins_Max[0];
         var yMax = bins_Max[1];

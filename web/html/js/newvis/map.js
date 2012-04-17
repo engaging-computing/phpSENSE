@@ -32,7 +32,7 @@ var map = new function Map() {
 
 
 		this.start(data);
-        $("a[rel^='prettyPhoto']").prettyPhoto();
+      
 
 	}
 	
@@ -53,7 +53,7 @@ var map = new function Map() {
 
     /* Draw function */
 	this.draw = function(data, f) {
-		
+		$("a[rel^='prettyPhoto']").prettyPhoto();
 		var latField = null;
 		var lonField = null;
 		var markers = Array();
@@ -278,7 +278,7 @@ var map = new function Map() {
 		this.draw(data);
 		this.drawControls();
 		this.setListeners();
-		
+		         $("a[rel^='prettyPhoto']").prettyPhoto();
 	}
 
 
