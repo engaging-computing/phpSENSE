@@ -13,20 +13,23 @@ var table = new function Table() {
         this.formatter = {}
         
         this.start();
-        $("a[rel^='prettyPhoto']").prettyPhoto();
+     
 
     }
     
 
 
     this.draw = function () {
+        $("a[rel^='prettyPhoto']").prettyPhoto();
+
         $('#table_canvas').append('<table id=data_table></table>');
 
         /*Set up the table headers*/
-        $('#data_table').append('<thead><tr id=headers></tr></thead>');
+        $('#data_table').append('<thead><tr id=headers></tr></thead>'); 
+        $('#headers').append('<td >Session</td>');
         $('#headers').append('<td>Data Point</td>');
         $('#headers').append('<td>Session #</td>');
-        $('#headers').append('<td >Session</td>');
+       
         for( var field in data.fields ) {
             var title = data.fields[field].name;
             $('#headers').append('<td>' + title + '</td>');
@@ -42,9 +45,10 @@ var table = new function Table() {
                 for (var dp in data.sessions[ses].data) {
                     var row_id = dp + '_'+ses;
                     $('#data').append('<tr id=table_' + row_id + '></tr>');
+                    $('#table_'+row_id).append('<td> ' + data.sessions[ses].meta['name']+'</td>');
                     $('#table_'+row_id).append('<td>'+ dataPoint++ +'</td>');
                     $('#table_'+row_id).append('<td>'+ data.sessions[ses].sid +'</td>');
-                    $('#table_'+row_id).append('<td> ' + data.sessions[ses].meta['name']+'</td>'); 
+                     
                 
                     for (var field in data.fields) { 
                         var s = data.sessions[ses].data[dp][field].toString();
@@ -76,7 +80,7 @@ var table = new function Table() {
 			"sScrollX": "100%",
             "iDisplayLength": -1,
             "bDeferRender":true,
-            "aaSorting": [[1,'asc'] ,[0,'asc']],
+            "aaSorting": [[2,'asc'] ,[1,'asc']],
             "oLanguage": {
 			    "sLengthMenu": 'Display <select>'   +
 			             '<option value="10">10</option>' +
@@ -87,9 +91,10 @@ var table = new function Table() {
 			             '</select> records'
 			},
             "aoColumnDefs": [ {
-		           "aTargets": [1],
+		           "aTargets": [0],
 		           "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
-		               var color = getSessionColor(sData); 
+		               var color = getSessionColor(oData[2]);
+                        
                        var paint = '#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16);                  
 		               $(nTd).css('color', paint);	             
 		           }
