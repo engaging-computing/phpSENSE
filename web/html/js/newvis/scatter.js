@@ -15,29 +15,7 @@ var scatter = new function Scatter(){
 		
 		controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div><button id="resetview" type="button">Reset View</button></div>';
 		
-		controls += '<div id="sessioncontrols" style="float:left;margin:10px;">';
-		
-		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>';
-		
-		for( var i in data.sessions ){
-			
-			var color = getSessionColor(i);
-			
-			controls += '<tr><td>';
-			
-			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
-			
-			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
-			
-			controls += data.sessions[i].meta.name;
-			
-			controls += '</div>';
-			controls += '</td></tr>';
-			
-		}
-		
-		controls += '</table>'
-		controls += '</div>';
+		controls += buildSessionControls('scatter');
 		
 		// --- //
 		
@@ -490,6 +468,7 @@ var scatter = new function Scatter(){
 		this.dragflag = false;
 
 		this.start();
+         $("a[rel^='prettyPhoto']").prettyPhoto();
 		
 	}
 	
