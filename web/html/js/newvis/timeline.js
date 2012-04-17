@@ -508,6 +508,8 @@ var timeline = new function Timeline(){
 	
 	this.draw = function(){
         
+        $("a[rel^='prettyPhoto']").prettyPhoto();
+
         fixFieldLabels();
 		
         var xbounds = data.getVisibleTimeBounds();
@@ -694,7 +696,6 @@ var timeline = new function Timeline(){
 		this.drawflag = false;
 
 		this.start();
-        $("a[rel^='prettyPhoto']").prettyPhoto();
 		
 	}
 	

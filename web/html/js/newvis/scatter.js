@@ -12,7 +12,7 @@ var scatter = new function Scatter(){
 	this.drawControls = function(){
 		
 		var controls = '';
-		
+		         
 		controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div><button id="resetview" type="button">Reset View</button></div>';
 		
 		controls += buildSessionControls('scatter');
@@ -268,7 +268,8 @@ var scatter = new function Scatter(){
 	*/
 	
 	this.draw = function(){
-        
+
+        $("a[rel^='prettyPhoto']").prettyPhoto();
 		fixFieldLabels();
         
 		// --- //
@@ -468,7 +469,6 @@ var scatter = new function Scatter(){
 		this.dragflag = false;
 
 		this.start();
-         $("a[rel^='prettyPhoto']").prettyPhoto();
 		
 	}
 	

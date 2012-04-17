@@ -228,7 +228,7 @@ var histogram = new function Histogram(){
     this.draw = function(){
         
         this.clear();
-        
+        $("a[rel^='prettyPhoto']").prettyPhoto();
         var bins_Max = this.makeBins();
         var bins = bins_Max[0];
         var yMax = bins_Max[1];
@@ -339,8 +339,6 @@ var histogram = new function Histogram(){
         this.inited = true;
 
         this.start();
-
-         $("a[rel^='prettyPhoto']").prettyPhoto();
     }
     
     this.end = function(){

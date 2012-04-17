@@ -348,7 +348,7 @@ var bar = new function Bar(){
 	this.draw = function(){
 		
 		this.clear();
-		
+		$("a[rel^='prettyPhoto']").prettyPhoto();
 		// -- //
 		
 		var ymin = data.getMin();
@@ -521,7 +521,6 @@ var bar = new function Bar(){
 
 		this.start();
 	
-         $("a[rel^='prettyPhoto']").prettyPhoto();	
 	}
 	
 	this.end = function(){
