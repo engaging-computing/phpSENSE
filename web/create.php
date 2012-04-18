@@ -34,9 +34,6 @@ $errors = array();
 $created = false;
 $values = array();
 $eid = -1;
-$reqs = array();
-
-$reqs[] = 
 
 $smarty->assign('created', false);
 
@@ -52,15 +49,8 @@ if(isset($_POST['experiment_create'])) {
 	if($desc == "") { array_push($errors, 'Experiment description can not be blank.'); }
 	$values['description'] = $desc;
 	
-	if(isset($_POST['req_procedure'])) { $req_procedure=$_POST['req_procedure']; }
-	if(isset($_POST['req_location'])) { $req_location=$_POST['req_location']; }
-	if(isset($_POST['name_prefix'])) { $name_prefix=$_POST['name_prefix']; }
-    if(isset($_POST['req_name'])) { $req_name=safeString($_POST['req_name']); }
-	if(isset($_POST['location'])) { $location=safeString($_POST['location']); }
-
-	
 	if(count($errors) == 0) {
-		if($exp = createExperiment($session->generateSessionToken(), $name, $desc, "", $req_name, $req_procedure, $req_location, $name_prefix, $location)) {
+		if($exp = createExperiment($session->generateSessionToken(), $name, $desc, "")) {
 
 			$tag_list = array();
 
@@ -139,8 +129,7 @@ $defaultSensors = array( 0 => "temperature", 1 => "light", 2 => "acceleration", 
 $smarty->assign('defaultSensors', $defaultSensors);
 
 $smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>' . 
-						'<script src="/html/js/lib/validate.js"></script>'.
-						'<script src="/html/js/create.js"></script>');
+						'<script src="/html/js/lib/validate.js"></script>');
 
 $smarty->assign('values', $values);
 $smarty->assign('marker', 'create');
