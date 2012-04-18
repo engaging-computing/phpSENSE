@@ -129,7 +129,7 @@ function getSessionPictures($sid){
    
 
     if($db->numOfRows) {
-		return $output;
+		return $output[0];
 	}
 	
 	return false;
@@ -330,78 +330,62 @@ function updateTimeModifiedForSession($sid) {
 }
 
 function putData($eid, $sid, $data) {
-	    global $mdb;
+	global $db, $mdb;
+	
+	$fields = getFields($eid);
+	$field_names = array();
+	$row_count = 0;
+	
+	foreach($fields as $field) {
+		$field_names[] = $field['field_name'];
+	}
+			
+	if(($count = count($data)) > 0) {
+	    foreach($data as $datum) {
 
-    $excluded = array("session", "experiment", "_id");
-    $fields = getFields($eid);
-    $data = array();
-    
-    // Get the data from MongoDB
-	$results = $mdb->find("e{$eid}", array("session" => (int)$sid));
+    		$row = array();
 
-	if(count($results) > 0) {
-	    if($get_header) {
-    	    $header = array();
-    	    $headers = array_keys($results[0]);
-    	    
-    	    foreach($headers as $h) {
-    	        if(!in_array($h, $excluded)) $header[] = $h;
-    	    }
-    	    
-        	$data[] = $header;
-    	}
+    		for($i = 0; $i < count($field_names); $i++) {
+    			$value = $datum[$i];
 
-        //print_r($results);
+    			if(is_numeric($value) && (strcasecmp($field_names[$i], "time") != 0)) {
+    				$value = $value + 0;
+    			}
 
-    	foreach($results as $i => $r) {
-    	    foreach($fields as $f) {
-    	        $data[$i][$f['field_name']] = $r[$f['field_name']];
-    	    }
-    	}
-    	    	
-    	$results = $data;
-    	unset($data);
+    			$row[str_replace(".", "", $field_names[$i])] = $value;
+    		}
 
-    	if($strip_keys) {
-    	    // Package the data so it makes sense
-        	foreach($results as $result) {
-        		$row = array();
+    		$row['experiment'] = (int) $eid;
+    		$row['session'] = (int) $sid;
 
-        		foreach($result as $k => $v) {
-        			if(!in_array($k, $excluded)) $row[] = $v;
-        		}
+    		$mdb->insert("e{$eid}", $row);
 
-        		$data[] = $row;
-        	}        	
-    	}
-    	else {
-    	    foreach($results as $result) { 
-    	        $row = array();
-    	        
-    	        foreach($result as $k => $v) {
-        			if(!in_array($k, $excluded)) $row[$k] = $v;
-        		}
-        		
-        		$data[] = $row;
-        	}
+    		$row_count++;	
     	}
 	}
 
+	
+	if($row_count > 0) {
+	    $dbname = MDB_DATABASE;
+    	$filename = "mongodb://localhost/{$dbname}/{$eid}/session:{$sid}";
 
-	return $data;
+
+    	$db->query("INSERT INTO data (`session_id`, `format`, `uri`) VALUES({$sid}, 'local_csv', '{$filename}')");
+    	updateTimeModifiedForSession($sid);
+	}
+	
+	return $row_count;
 }
-
 
 function getData($eid, $sid, $get_header = false, $strip_keys = true) {
     global $mdb;
 
     $excluded = array("session", "experiment", "_id");
-    $fields = getFields($eid);
     $data = array();
     
     // Get the data from MongoDB
 	$results = $mdb->find("e{$eid}", array("session" => (int)$sid));
-
+	
 	if(count($results) > 0) {
 	    if($get_header) {
     	    $header = array();
@@ -414,17 +398,6 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
         	$data[] = $header;
     	}
 
-        //print_r($results);
-
-    	foreach($results as $i => $r) {
-    	    foreach($fields as $f) {
-    	        $data[$i][$f['field_name']] = $r[$f['field_name']];
-    	    }
-    	}
-    	    	
-    	$results = $data;
-    	unset($data);
-
     	if($strip_keys) {
     	    // Package the data so it makes sense
         	foreach($results as $result) {
@@ -435,7 +408,7 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
         		}
 
         		$data[] = $row;
-        	}        	
+        	}
     	}
     	else {
     	    foreach($results as $result) { 
@@ -449,8 +422,7 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
         	}
     	}
 	}
-
-
+	
 	return $data;
 }
 
