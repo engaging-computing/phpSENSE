@@ -32,20 +32,12 @@ var map = new function Map() {
 
 
 		this.start(data);
-      
+        $("a[rel^='prettyPhoto']").prettyPhoto();
 
 	}
 	
     this.addInfoWindow = function(marker){
-        var infoWindow = new google.maps.InfoWindow({
-            content: 'im an info windows'
-        });
-        
-        google.maps.event.addListener(marker, 'click', function () {
-                
-            infoWindow.open(map, this);
-          currentMark = this;
-        });
+
 
 
     }
@@ -278,7 +270,7 @@ var map = new function Map() {
 		this.draw(data);
 		this.drawControls();
 		this.setListeners();
-		         $("a[rel^='prettyPhoto']").prettyPhoto();
+		
 	}
 
 
