@@ -264,7 +264,7 @@ function formatData(data, inc){
         data = 0;
     }
     
-    s = (Math.abs(data)).toPrecision(6).toString();
+    s = (Math.abs(data)).toPrecision(9).toString();
     
     var i;
     var len;
@@ -287,15 +287,15 @@ function formatData(data, inc){
         len = s.length - (s.length - i - 1);
     }
     
-    if (len > 8){
-        return data.toExponential(3);
+    if (len > 11){
+        return data.toExponential(6);
     }
     else{
         if (data >= 0){
             return s.substr(0, i)
         }
         else{
-            return data.toPrecision(6).toString().substr(0, i + 1);
+            return data.toPrecision(9).toString().substr(0, i + 1);
         }
     }
 }
@@ -318,10 +318,6 @@ function drawXAxis(xmin, xmax, visObject, type){
         getIncrement = getTimeIncrement;
         getNextIncrement = getNextTimeIncrement;
         formatter = formatTime;
-        
-        //Remove this once the database gets fixed!
-        xmax *= 1000;
-        xmin *= 1000;
     }
     else{
         getIncrement = getDataIncrement;
@@ -335,6 +331,7 @@ function drawXAxis(xmin, xmax, visObject, type){
     
     visObject.context.font = visObject.fontheight + "px sans-serif";
     visObject.context.fillStyle = "rgb(0,0,0)";
+    visObject.context.textAlign = 'center';
     
     var labels = new Array();
     
@@ -359,9 +356,10 @@ function drawXAxis(xmin, xmax, visObject, type){
     
     for( i in labels ){
         
-        if( visObject.context.measureText(labels[i]['label']).width + labels[i]['xpos'] < visObject.drawwidth ){
+        if (labels[i]['xpos'] + visObject.context.measureText(labels[i]['label']).width / 2 < visObject.drawwidth &&
+            labels[i]['xpos'] - visObject.context.measureText(labels[i]['label']).width / 2 > 0) {
             
-            visObject.context.fillText( labels[i]['label'], labels[i]['xpos'] + visObject.xoff, visObject.drawheight + visObject.yoff + visObject.fontheight );
+            visObject.context.fillText(labels[i]['label'], labels[i]['xpos'] + visObject.xoff, visObject.drawheight + visObject.yoff + visObject.fontheight);
         }
         
         visObject.context.strokeStyle = visObject.gridcolor;
@@ -375,9 +373,13 @@ function drawXAxis(xmin, xmax, visObject, type){
         
     }
     
+    visObject.context.fillText(String(type).toCapitalize(), visObject.drawwidth / 2.0, visObject.drawheight + visObject.yoff + visObject.fontheight * 3.0);
+    
+    visObject.context.textAlign = 'left';
+    
     //bkmk
     if (type === "time"){
-        visObject.context.fillText("Starting: " + (new Date((xmin+(xdiff*visObject.hRangeLower))*1000)).toString(), visObject.xoff, visObject.fontheight);
+        visObject.context.fillText("Starting: " + (new Date((xmin+(xdiff*visObject.hRangeLower)))).toString(), visObject.xoff, visObject.fontheight);
     }
         
 }

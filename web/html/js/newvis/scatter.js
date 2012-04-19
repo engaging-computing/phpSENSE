@@ -12,32 +12,10 @@ var scatter = new function Scatter(){
 	this.drawControls = function(){
 		
 		var controls = '';
-		
+		         
 		controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div><button id="resetview" type="button">Reset View</button></div>';
 		
-		controls += '<div id="sessioncontrols" style="float:left;margin:10px;">';
-		
-		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>';
-		
-		for( var i in data.sessions ){
-			
-			var color = getSessionColor(i);
-			
-			controls += '<tr><td>';
-			
-			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
-			
-			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
-			
-			controls += data.sessions[i].meta.name;
-			
-			controls += '</div>';
-			controls += '</td></tr>';
-			
-		}
-		
-		controls += '</table>'
-		controls += '</div>';
+		controls += buildSessionControls('scatter');
 		
 		// --- //
 		
@@ -45,6 +23,17 @@ var scatter = new function Scatter(){
 		
 		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">X Axis:</tr></td>';
 		
+        controls += '<tr><td>';
+        
+        controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#000000;float:left;">';
+        
+        controls += '<input class="xaxis" type="radio" name="xaxisselect" value="-1" checked></input>&nbsp;';
+        
+        controls += 'Datapoint #&nbsp;';
+        
+        controls += '</div>';
+        controls += '</td></tr>';
+        
         for( var i in data.fields ){
             //check if field is text
             if (data.fields[i].type_id != 37){ 
@@ -52,7 +41,7 @@ var scatter = new function Scatter(){
                 
                 controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#000000;float:left;">';
                 
-                controls += '<input class="xaxis" type="radio" name="xaxisselect" value="' + i + '" ' + ( i === '0' ? 'checked' : '' ) + '></input>&nbsp;';
+                controls += '<input class="xaxis" type="radio" name="xaxisselect" value="' + i + '" ></input>&nbsp;';
                 
                 controls += data.fields[i].name + '&nbsp;';
                 
@@ -229,10 +218,47 @@ var scatter = new function Scatter(){
      * to actually consider... anything.
      */
 	this.setBounds = function(hLow, hUp, vLow, vUp){
-        this.hRangeLower = hLow;
-        this.hRangeUpper = hUp;
-        this.vRangeLower = vLow;
-        this.vRangeUpper = vUp;
+        
+        var xbounds, xdiff, xMinRange;
+        
+        //Datapoint
+        if (this.xAxis == -1) {
+            xbounds = [-1,0];
+            
+            for (ses in data.sessions) {
+                xbounds[1] = Math.max(xbounds[1], data.sessions[ses].data.length);
+            }
+            xdiff = xbounds[1] - xbounds[0];
+            xMinRange = 4 / xdiff;
+        }
+        else if (data.fields[this.xAxis].type_id == 7){
+            xbounds = data.getVisibleTimeBounds();
+            xdiff = xbounds[1] - xbounds[0];
+            xMinRange = 10 / xdiff;
+        }
+        else{
+            xbounds = data.getFieldBounds([data.fields[this.xAxis].name], false);
+            xdiff = xbounds[1] - xbounds[0];
+            xMinRange = (1e-15) / xdiff;
+        }
+        xMinRange = Math.max(xMinRange, 1e-14); //Clamp for FPEs
+        
+        if (hUp - hLow >= xMinRange || 
+            (hUp >= this.hRangeUpper && hLow <= this.hRangeLower)) {
+            this.hRangeLower = hLow;
+            this.hRangeUpper = hUp;
+        }
+        
+        var ybounds = data.getVisibleDataBounds(true);
+        var ydiff = ybounds[1] - ybounds[0];
+        var yMinRange = (1e-15) / xdiff;
+        yMinRange = Math.max(yMinRange, 1e-14); //Clamp for FPEs
+        
+        if (vUp - vLow >= yMinRange ||
+            (vUp >= this.vRangeUpper && vLow <= this.vRangeLower)) {
+            this.vRangeLower = vLow;
+            this.vRangeUpper = vUp;
+        }
     }
 
 	/*
@@ -242,7 +268,8 @@ var scatter = new function Scatter(){
 	*/
 	
 	this.draw = function(){
-        
+
+        $("a[rel^='prettyPhoto']").prettyPhoto();
 		fixFieldLabels();
         
 		// --- //
@@ -261,7 +288,16 @@ var scatter = new function Scatter(){
 		
 		// --- //
 		var xbounds;
-		if (data.fields[this.xAxis].type_id == 7){
+        
+        //Datapoint
+        if (this.xAxis == -1) {
+            xbounds = [-1,0];
+            
+            for (ses in data.sessions) {
+                xbounds[1] = Math.max(xbounds[1], data.sessions[ses].data.length);
+            }
+        }
+		else if (data.fields[this.xAxis].type_id == 7){
             xbounds = data.getVisibleTimeBounds();
         }
         else{
@@ -292,28 +328,47 @@ var scatter = new function Scatter(){
 		
 		this.clear();
 		
-		drawXAxis(xmin, xmax, this, data.fields[this.xAxis].name.toLowerCase());
+        var xAxisName;
+        if (this.xAxis == -1) {
+            xAxisName = 'Datapoint #';
+        }
+        else {
+            xAxisName = data.fields[this.xAxis].name.toLowerCase();
+        }
+        
+		drawXAxis(xmin, xmax, this, xAxisName);
         drawYAxis(ymin, ymax, this);
 		
 		// --- //
 		
-		for( var i = 0; i < data.sessions.length; i++ ){
-			
-			for( var j = 0; j < data.fields.length; j++ ){
-		
-				if( data.sessions[i].visibility && data.fields[j].visibility && data.fields[j].type_id != 7){
-			
-					var color = getFieldColor(j, i);
-					var color = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
-		
-					this.plotData( data.getDataFrom(i,this.xAxis), data.getDataFrom(i,j), xmin, xmax, ymin, ymax, color );
-	
-				}
-			
-			}
-	
-		}
-		
+        var dpNum = 0;
+        
+        for( var i = 0; i < data.sessions.length; i++ ){
+            
+            for( var j = 0; j < data.fields.length; j++ ){
+                
+                if( data.sessions[i].visibility && data.fields[j].visibility && data.fields[j].type_id != 7){
+                    
+                    var color = getFieldColor(j, i);
+                    var color = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
+                    
+                    if (this.xAxis == -1) {
+                        var dpArr = [];
+                        
+                        for (dp in data.sessions[ses].data) {
+                            dpArr.push(Number(dpNum) + Number(dp));
+                        }
+                        
+                        this.plotData(dpArr, data.getDataFrom(i,j), xmin, xmax, ymin, ymax, color);
+                        //console.log([dpArr, data.getDataFrom(i,j), xmin, xmax, ymin, ymax]);
+                    }
+                    else {
+                        this.plotData( data.getDataFrom(i,this.xAxis), data.getDataFrom(i,j), xmin, xmax, ymin, ymax, color );
+                    }   
+                }
+            }
+        }
+        
 		// --- //
 		
 		var x = this.mouseX - $('canvas#viscanvas').offset().left - this.xoff;
@@ -321,40 +376,7 @@ var scatter = new function Scatter(){
 
         var hdiff = this.hRangeUpper - this.hRangeLower;
         var vdiff = this.vRangeUpper - this.vRangeLower;
-/*
-        if( x >= 0 && x < this.drawwidth && y >= 0 && y < this.drawheight ){
-
-			this.context.strokeStyle = "rgb(0,0,255)";
-
-			var localxoff = this.fontheight/4 + this.xoff;
-
-			for( var i = 0; i < data.sessions.length; i++ ){
-
-				var color = hslToRgb( ( 0.6 + ( 1.0*i/data.sessions.length ) ) % 1.0, 1.0, 0.4 );
-
-				this.context.strokeStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ", 1.0)";
-
-				for( var j = 0; j < data.fields.length; j++ ){
-
-					var displaydata = data.getDataFrom(i,j);
-
-					if( data.fields[j].type_id != 7 && data.fields[j].type_id != 19 ){
-
-						var label = displaydata[Math.floor(displaydata.length*this.mouseX/this.drawwidth)] + ( i != data.sessions.length-1 ? ", " : "" );
-
-						this.context.fillStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ", 1.0)";
-
-						this.context.fillText( label, localxoff, this.fontheight);
-
-						localxoff += this.context.measureText(label).width;
-						
-					}
-					
-				}
-				
-			}
-				
-		}*/
+        
 		
 		x = mouseClkX;
 		y = this.drawheight - mouseClkY;
@@ -414,7 +436,7 @@ var scatter = new function Scatter(){
 		this.ylabelsize = this.context.measureText( data.getMax() + "" ).width + this.fontheight/2;
 
 		this.drawwidth	= Math.floor(this.canvaswidth	- (this.ylabelsize*1.5));
-		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*1.5));
+		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*2.5));
 
 		this.xoff = 0;
 		this.yoff = this.fontheight*3/2;
@@ -424,7 +446,7 @@ var scatter = new function Scatter(){
 		this.vRangeLower = 0.0;
 		this.vRangeUpper = 1.0;
         
-        this.xAxis = 0;
+        this.xAxis = -1;
 
 		this.one2one = false;
 
