@@ -60,7 +60,7 @@ Minify::serve('Groups', array(
                             BASE_DIR . '/html/css/tsor.css',
 							BASE_DIR . '/html/css/jclock.css',
 							BASE_DIR . '/html/css/jss.css',
-							BASE_DIR . '/html/css/newvis-table.css'
+                            BASE_DIR . '/html/css/newvis.css'
                         ),
         
         'vis'     => array(     

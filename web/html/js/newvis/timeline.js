@@ -19,31 +19,9 @@ var timeline = new function Timeline(){
 		
 		controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div><button id="resetview" type="button">Reset View</button></div>';
 		
-		controls += '<div id="sessioncontrols" style="float:left;margin:10px;">';
-		
-		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>';
-		
-		for( var i in data.sessions ){
-			
-			var color = getSessionColor(i);
-			
-			controls += '<tr><td>';
-			
-			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
-			
-			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
-			
-			controls += data.sessions[i].meta.name;
-			
-			controls += '</div>';
-			
-			controls += '</td></tr>';
-			
-		}
-		
-		controls += '</table>'
-		
-		controls += '</div>';
+
+        //console.log( buildSessionControls('timeline'));
+        controls += buildSessionControls('timeline');
 		
 		// --- //
 		
@@ -530,6 +508,8 @@ var timeline = new function Timeline(){
 	
 	this.draw = function(){
         
+        $("a[rel^='prettyPhoto']").prettyPhoto();
+
         fixFieldLabels();
 		
         var xbounds = data.getVisibleTimeBounds();

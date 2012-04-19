@@ -15,31 +15,7 @@ var bar = new function Bar(){
 		
 		controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div></div>';
 		
-		controls += '<div id="sessioncontrols" style="float:left;margin:10px;">';
-		
-		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>';
-		
-		for( var i in data.sessions ){
-			
-			var color = getSessionColor(i);
-			
-			controls += '<tr><td>';
-			
-			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
-			
-			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
-			
-			controls += data.sessions[i].meta.name;
-			
-			controls += '</div>';
-			
-			controls += '</td></tr>';
-			
-		}
-		
-		controls += '</table>'
-		
-		controls += '</div>';
+		controls += buildSessionControls('bar');
 		
 		// --- //
 		
@@ -154,10 +130,40 @@ var bar = new function Bar(){
 	// This draws the bar to the canvas.
 	*/
 	
+	this.getHue = function( index, numpoints ){
+		
+		var out = 0;
+		
+		switch( index % 3 ){
+			
+			case 0:
+			
+			out = index/(numpoints*3);
+			
+			break;
+			case 1:
+			
+			out = index/(numpoints*3) + (numpoints/3);
+			
+			break;
+			
+			case 2:
+			
+			out = index/(numpoints*3) + (numpoints*2/3);
+			
+			break;
+			
+		}
+		
+		return out;
+		
+	}
+
+	
 	this.draw = function(){
 		
 		this.clear();
-		
+		$("a[rel^='prettyPhoto']").prettyPhoto();
 		// -- //
 		
 		var ymin = data.getMin();
@@ -240,7 +246,6 @@ var bar = new function Bar(){
 		
 		}
 		
-		drawYAxis(ymin,ymax,this);
 		
 		for( var i = 0; i < divs; i++ ){
 			
@@ -343,7 +348,7 @@ var bar = new function Bar(){
 		this.inited = true;
 
 		this.start();
-		
+	
 	}
 	
 	this.end = function(){

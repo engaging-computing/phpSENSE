@@ -32,12 +32,20 @@ var map = new function Map() {
 
 
 		this.start(data);
+        $("a[rel^='prettyPhoto']").prettyPhoto();
 
 	}
 	
+    this.addInfoWindow = function(marker){
+
+
+
+    }
+
+
     /* Draw function */
 	this.draw = function(data, f) {
-		
+		$("a[rel^='prettyPhoto']").prettyPhoto();
 		var latField = null;
 		var lonField = null;
 		var markers = Array();
@@ -74,12 +82,12 @@ var map = new function Map() {
 			for(var ses in data.sessions) {
 				if(data.sessions[ses].visibility) {
 					for(var dp in data.sessions[ses].data) {
+                        
 						if( !(dp % prcntVis[ses]) ) {
-
+                          
                             /* Draw regular points on the map */
 							if( this.measureField == "none" ) {
 								var tmp = new google.maps.LatLng(data.sessions[ses].data[dp][latField], data.sessions[ses].data[dp][lonField]);
-								
                                 markers[markers.length]= new google.maps.Marker({
 									position: tmp,
 									map: this.map,
@@ -87,6 +95,8 @@ var map = new function Map() {
 									icon: '/html/img/vis/v3icon.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 ),
                                     clickable: true                        
 								});
+
+                            map.addInfoWindow(markers[markers.length-1]);
 
                                 
                                         
@@ -121,17 +131,17 @@ var map = new function Map() {
 
         /* If there is no lat/lon in the experiment start drawing the session map */
 		} else {
-			for(var ses in data.sessions) {
-
-				var tmp = new google.maps.LatLng(data.sessions[ses].meta['latitude'],
-													 data.sessions[ses].meta['longitude']);
-				markers[markers.length] = new google.maps.Marker({
-					position: tmp,
-					map: this.map,
-					title: 'Session #: ' + eval(ses + 1) ,
-					icon: '/html/img/vis/v3icon.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )
-				});
-			
+		    for(var ses in data.sessions) {
+                if(data.sessions[ses].visibility) {
+			        var tmp = new google.maps.LatLng(data.sessions[ses].meta['latitude'],
+					    data.sessions[ses].meta['longitude']);
+				    markers[markers.length] = new google.maps.Marker({
+					    position: tmp,
+					    map: this.map,
+					    title: 'Session #: ' + eval(ses + 1) ,
+					    icon: '/html/img/vis/v3icon.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )
+				    });
+			    }
 			}
 		}			
 	}
@@ -147,9 +157,29 @@ var map = new function Map() {
 				var session_name = data.sessions[ses].meta["name"];
 				$('#sessionTable').append('<tr id="row_' + ses + '"></tr>'); 
 
-                $('#row_' + ses).append('<td style="width:20px"> <input type="checkbox" id="visible_'+ses+ '"/></td><td>'+ session_name +':&nbsp;&nbsp </td> ');
+
+                if(data.sessions[ses].pictures[0] != null){
+                    for(var i in data.sessions[ses].pictures){                
+                            var link = data.sessions[ses].pictures[i]['provider_url'];
+                            var description = data.sessions[ses].pictures[i]['description'];
+                            if(i==0){ 
+                                $('#row_' + ses).append('<td style="width:20px"> <input type="checkbox" id="visible_'+ses+ '"/></td>'+
+                                    '<td id="pic_'+ses+'"><a id="link_'+ses+'"rel="prettyPhoto[gallery'+ses+']" href="'+ link + '" title="'+description+'"> ' + session_name +'</a>'+':&nbsp;&nbsp;</td> ');
+                            } else {
+                               $('#pic_'+ses).append('<a rel="prettyPhoto[gallery'+ses+']" href="'+ link + '" title="'+description+'"></a>');
+                            }
+                            $('#link_'+ses).css('color', '#' + rgbToHex(hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )));
+                    }
+				   				
+                } else {
+                    $('#row_' + ses).append('<td style="width:20px"> <input type="checkbox" id="visible_'+ses+ '"/></td><td>'+ session_name +':&nbsp;&nbsp;</td> ');
+                    $('#row_'+ses).css('color', '#' + rgbToHex(hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )));
+                }
+
+                
+				                
                 $('#row_' + ses).append('<td id="control_'+ ses +'"> </td>');
-				$('#row_'+ses).css('color', '#' + rgbToHex(hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )));				
+						
 
 				if( data.sessions[ses].visibility ) 
 					$('#visible_'+ses).attr('checked','true');

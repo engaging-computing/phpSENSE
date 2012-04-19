@@ -123,9 +123,9 @@
         echo $writeStr;
 
 
-        $data = array(array($_SERVER['REQUEST_TIME'],$latitude, $longitude, $temperature, $pH, $flowRate,$exTemperature));
+        $data = array(array($_SERVER['REQUEST_TIME'],42.64037, -71.352156, $light, $temperature, $altitude, $exTemperature, $pH, $flowRate));
 
-        $response = putData(392,3321, $data);
+        $response = putData(410,3324, $data);
 	
 //	fclose($fh);
     ?>
