@@ -232,6 +232,13 @@
 	
 	<div id="sidebar">
 		
+        <div class="module">
+            <h1>Experiment Procedure:</h1>
+            <div id="e_proc">
+                <p>{$e_proc}</p>
+            </div>
+        </div>    
+
 		<div class="module">
 			<h1>First Time Uploading?</h1>
 			<div>
