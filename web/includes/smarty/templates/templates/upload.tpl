@@ -56,7 +56,7 @@
 						<input type="file" name="session_file"/><br/>
 						<span class="hint">Click browse and select your CSV data file.</span><br/>
 					</div>
-					<div id="type_manual">
+					<div id="type_manual" style="width:480px">
 						<table width="480px" cellpadding="3" id="manual_table">
 							<tr>
 								{ foreach from=$fields item=field }
@@ -214,7 +214,7 @@
 						
 					{ /if }
 				</div>
-				{ if $state == 1 }<span id="requiredfields">* <span id="requiredfieldstext">Denotes a required field.</span></span> { /if }
+				{ if $state == 1 }<span id="requiredfields"><span id="requiredfieldstext">*Denotes a required field.</span></span> { /if }
 			</fieldset>
 			{ if $state != 4 }
 				<fieldset>
@@ -232,6 +232,13 @@
 	
 	<div id="sidebar">
 		
+        <div class="module">
+            <h1>Experiment Procedure:</h1>
+            <div id="e_proc">
+                <p>{$e_proc}</p>
+            </div>
+        </div>    
+
 		<div class="module">
 			<h1>First Time Uploading?</h1>
 			<div>
