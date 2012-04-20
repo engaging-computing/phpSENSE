@@ -84,6 +84,7 @@ if(isset($_REQUEST['id'])) {
 	$smarty->assign('title', 		$title);
 	$smarty->assign('fields', 		$fields);
 	$smarty->assign('field_count', 	count($fields));
+    $smarty->assign('e_proc', $meta['description']);
 }
 else {
 	array_push($errors, 'Could not find your experiment.');
@@ -753,8 +754,7 @@ $smarty->assign('column_fix',	$columnfix);
 
 $smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>' . 
 						'<script src="/html/js/lib/validate.js"></script>'.
-						'<script src="/html/js/lib/MillisecondClock.js"></script>'.
-						'<script src="/html/js/test.js"></script>');
+						'<script src="/html/js/lib/MillisecondClock.js"></script>');
 
 // Assign values required for all views
 $smarty->assign('user', 	    $session->getUser());

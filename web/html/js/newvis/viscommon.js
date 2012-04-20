@@ -8,6 +8,17 @@
 */
 
 /**
+ * Capitalizes a string (camel case)
+ * 
+ * Thanks to Marco Demaio on stack overflow:
+ * http://stackoverflow.com/questions/2332811/capitalize-words-in-string
+ */
+String.prototype.toCapitalize = function()
+{ 
+   return this.toLowerCase().replace(/^.|\s\S/g, function(a) { return a.toUpperCase(); });
+}
+
+/**
  * Gets the RGB colors of the given session and field.
  * 
  * @param fIndex The index of the field to color.
@@ -309,4 +320,51 @@ function bindMouseZoom(visObject) {
 		
 	}, 1000/15 );
 
+}
+
+/* Build the session controls div for the vis. visType is there incase there are special cases.*/
+function buildSessionControls(visType){
+    var controls = '';
+    controls += '<div id="sessioncontrols" style="float:left;margin:10px;">';
+		
+		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>';
+		
+		for( var i in data.sessions ){
+			
+			var color = getSessionColor(i);
+			
+			controls += '<tr><td>';
+			
+			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
+			
+			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
+			
+            /* If there are pictures they should be linked here. */			
+            if(data.sessions[i].pictures[0] != null){
+                for(var j in data.sessions[i].pictures){  
+
+                    var link = data.sessions[i].pictures[j]['provider_url'];
+                    var description = data.sessions[i].pictures[j]['description'];
+                    
+                    if(j==0){
+                        controls += '<a style="color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + '" rel="prettyPhoto[gallery'+i+']" href="'+ link + '" title="'+description+'">' + data.sessions[i].meta.name +'</a>';
+                    } else {
+                        controls += '<a rel="prettyPhoto[gallery'+i+']" href="'+ link + '" title="'+description+ '"/a>';
+                    }                       
+                }              
+            } else {
+                controls += data.sessions[i].meta.name;
+            }
+          
+			controls += '</div>';
+			
+			controls += '</td></tr>';
+			
+		}
+		
+		controls += '</table>'
+		
+		controls += '</div>';
+    return controls;
+   
 }
