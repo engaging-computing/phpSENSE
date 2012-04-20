@@ -151,6 +151,24 @@ for( var field in data.fields ) {
 	}
 }
 
+data.getMedianVal = function( field, session ) {
+	
+	var sorteddata = data.sessions[session].data.sort(function(a,b){
+		
+		a[field]>b[field];
+		
+	});
+	
+	if( sorteddata.length % 2 ){
+		return sorteddata[Math.floor(sorteddata.length/2)][field];
+	} else {
+		return (sorteddata[Math.floor(sorteddata.length/2)][field]+sorteddata[Math.ceil(sorteddata.length/2)][field])/2;
+	}
+	
+	return null;
+
+}
+
 data.getSesMax = function ( field ) {
 
 	var maxs = Array();

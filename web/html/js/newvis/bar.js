@@ -29,17 +29,17 @@ var bar = new function Bar(){
 			
 				var color = Math.floor(((0.75*i/data.fields.length)) * 256);
 			
-				controls += '<td><div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color.toString(16) + color.toString(16) + color.toString(16) + ';float:left;">';
+				controls += '<tr><td><div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color.toString(16) + color.toString(16) + color.toString(16) + ';float:left;">';
 			
-				controls += data.fields[i].name + '&nbsp;';
+				controls += data.fields[i].name + '&nbsp;</div></td>';
 			
-				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
+				controls += '<td><input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;</td>';
 			
-				controls += '<select id="' + i + '" class="fieldcalc"><option>Max</option><option>Min</option><option>Mean</option><option>Median</option><option>Mode</option></select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				controls += '<td><select id="mode_' + i + '" class="fieldmode"><option>Max</option><option>Min</option><option>Mean</option><option>Median</option><option>Mode</option></select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 				
 				// <option>Mean</option><option>Median</option><option>Mode</option>
 			
-				controls += '</div></td>';
+				controls += '</td></tr>';
 			
 			}
 			
@@ -63,11 +63,11 @@ var bar = new function Bar(){
 	
 	this.setListeners = function(){
 		
-		$('select.fieldcalc').change(function(){
+		$('select.fieldmode').change(function(){
 			
-			var i = $(this).attr('id');
+			var i = parseInt($(this).attr('id').replace(/mode_/,''));
 			
-			data.fields[i].calc = $(this).val();
+			data.fields[i].mode = $(this).val(); // disabling this line removes side effects that randomly delete data. :<
 			
 			bar.draw();
 			
@@ -119,8 +119,7 @@ var bar = new function Bar(){
 	
 		this.context.strokeStyle = this.gridcolor;
 	    this.context.lineWidth = 0.25;
-		this.context.rect(0, 0 + this.fontheight/2, this.drawwidth, this.drawheight);
-	    this.context.stroke();
+		this.context.strokeRect(0, 0 + this.fontheight/2, this.drawwidth, this.drawheight);
 		
 	}
 	
@@ -166,8 +165,13 @@ var bar = new function Bar(){
 		$("a[rel^='prettyPhoto']").prettyPhoto();
 		// -- //
 		
+		/*
 		var ymin = data.getMin();
-		var ymax = data.getMax();
+		var ymax = data.getMax();*/
+		
+		var ybounds = data.getVisibleDataBounds(true);
+		var ymin = ybounds[0];
+		var ymax = ybounds[1];
 		
 		var ydiff = ymax - ymin;
 
@@ -181,13 +185,29 @@ var bar = new function Bar(){
 		
 		var barvals = new Array();
 		
-		ymax = data.getMax();
+		var visiblesessions = 0;
 		
-		ymin = data.getMin();
+		var visiblefields = 0;
 		
-		if( ymin > 0 ) ymin = 0;
+		// --- //
 		
-		ydif = ymax - ymin;
+		drawYAxis(ymin, ymax, this);
+		
+		for( var session in data.sessions ){
+			
+			if(data.sessions[session].visibility) visiblesessions++;
+			
+		}
+		
+		for( var field in data.fields ){
+			
+			if( data.fields[field].visibility && data.fields[field].type_id != 7 && data.fields[field].type_id != 19 && data.fields[field].type_id != 37 ){
+			
+				if(data.fields[field].visibility) visiblefields++;
+				
+			}
+			
+		}
 		
 		for( var j = 0; j < data.fields.length; j++ ){
 		
@@ -203,7 +223,7 @@ var bar = new function Bar(){
 
 						barcolors[divs] = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ", 0.85)";
 					
-						switch(data.fields[j].calc){
+						switch(data.fields[j].mode){
 				
 							default:
 							val = data.sessions[i].getMaxVal(j);
@@ -218,7 +238,7 @@ var bar = new function Bar(){
 							val = data.sessions[i].getMeanVal(j);
 							break;
 							case 'Median':
-							val = data.sessions[i].getMedianVal(j);
+							val = data.getMedianVal(j,i);
 							break;
 							case 'Mode':
 							val = data.sessions[i].getModeVal(j);
@@ -226,26 +246,23 @@ var bar = new function Bar(){
 		
 						}
 						
-						barvals[divs] = (parseFloat(val))/ydif;
+						barvals[divs] = (parseFloat(val))/ydiff;
 						
 						divs++;
 				
 					}
 			
 				}
-				
-				if( j < data.fields.length - 1 ){
 
-					barvals[divs] = null;
+				barvals[divs] = null;
 
-					divs++;
-
-				}
+				divs++;
 			
 			}
 		
 		}
 		
+		divs--;
 		
 		for( var i = 0; i < divs; i++ ){
 			
@@ -257,7 +274,7 @@ var bar = new function Bar(){
 		
 				this.context.fillStyle = barcolors[i];
 	
-				this.context.fillRect( this.drawwidth*i/divs, this.drawheight - (this.drawheight*(-ymin)/ydif) + this.yoff, this.drawwidth/divs, -height*this.drawheight );
+				this.context.fillRect( this.drawwidth*i/divs, this.drawheight - (this.drawheight*(-ymin)/ydiff) + this.yoff, this.drawwidth/divs, -height*this.drawheight );
 
 				var linewidth = 0.5;
 			
@@ -265,10 +282,52 @@ var bar = new function Bar(){
 	
 				this.context.strokeStyle = "rgba( 0,0,0,1.0)";
 	
-				this.context.strokeRect( this.drawwidth*i/divs, this.drawheight - (this.drawheight*(-ymin)/ydif) + this.yoff, this.drawwidth/divs, -height*this.drawheight );
+				this.context.strokeRect( this.drawwidth*i/divs, this.drawheight - (this.drawheight*(-ymin)/ydiff) + this.yoff, this.drawwidth/divs, -height*this.drawheight );
 			
-				this.context.textAlign = 'center';
+			}
 			
+		}
+		
+		var fieldinc = 0;
+		
+		for(var i = 0; i < data.fields.length; i++){
+			
+			if( data.fields[i].visibility && data.fields[i].type_id != 7 && data.fields[i].type_id != 19 && data.fields[i].type_id != 37 ){
+				
+				var shade = Math.floor(((0.75*i/data.fields.length)) * 256);
+			
+				this.context.fillStyle = "rgb("+shade+","+shade+","+shade+")";
+				
+				this.context.textAlign = "center";
+				
+				this.context.fillText(	data.fields[i].name,
+										((fieldinc*(visiblesessions+1))*(this.drawwidth/divs)) + ((visiblesessions)*(this.drawwidth/divs)/2),
+										this.drawheight+this.fontheight+this.yoff,
+										(visiblesessions)*(this.drawwidth/divs), 
+										this.fontheight);
+				
+				if(data.fields[i].mode){
+				
+					this.context.fillText(	"("+data.fields[i].mode+")",
+											((fieldinc*(visiblesessions+1))*(this.drawwidth/divs)) + ((visiblesessions)*(this.drawwidth/divs)/2),
+											this.drawheight+(this.fontheight*2)+this.yoff,
+											(visiblesessions)*(this.drawwidth/divs), 
+											this.fontheight);
+										
+				} else {
+					
+					this.context.fillText(	"(Max)",
+											((fieldinc*(visiblesessions+1))*(this.drawwidth/divs)) + ((visiblesessions)*(this.drawwidth/divs)/2),
+											this.drawheight+(this.fontheight*2)+this.yoff,
+											(visiblesessions)*(this.drawwidth/divs), 
+											this.fontheight);
+					
+				}
+				
+				this.context.textAlign = "left";
+				
+				fieldinc++;
+				
 			}
 			
 		}
