@@ -754,8 +754,7 @@ $smarty->assign('column_fix',	$columnfix);
 
 $smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>' . 
 						'<script src="/html/js/lib/validate.js"></script>'.
-						'<script src="/html/js/lib/MillisecondClock.js"></script>'.
-						'<script src="/html/js/test.js"></script>');
+						'<script src="/html/js/lib/MillisecondClock.js"></script>');
 
 // Assign values required for all views
 $smarty->assign('user', 	    $session->getUser());
