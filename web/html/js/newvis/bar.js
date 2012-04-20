@@ -29,17 +29,17 @@ var bar = new function Bar(){
 			
 				var color = Math.floor(((0.75*i/data.fields.length)) * 256);
 			
-				controls += '<td><div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color.toString(16) + color.toString(16) + color.toString(16) + ';float:left;">';
+				controls += '<tr><td><div style="font-size:14px;font-family:Arial;text-align:center;color:#' + color.toString(16) + color.toString(16) + color.toString(16) + ';float:left;">';
 			
-				controls += data.fields[i].name + '&nbsp;';
+				controls += data.fields[i].name + '&nbsp;</div></td>';
 			
-				controls += '<input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;';
+				controls += '<td><input class="fieldvisible" type="checkbox" value="' + i + '" ' + ( data.fields[i].visibility ? 'checked' : '' ) + '></input>&nbsp;</td>';
 			
-				controls += '<select id="' + i + '" class="fieldcalc"><option>Max</option><option>Min</option></select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				controls += '<td><select id="mode_' + i + '" class="fieldmode"><option>Max</option><option>Min</option><option>Mean</option><option>Median</option><option>Mode</option></select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 				
 				// <option>Mean</option><option>Median</option><option>Mode</option>
 			
-				controls += '</div></td>';
+				controls += '</td></tr>';
 			
 			}
 			
@@ -63,11 +63,11 @@ var bar = new function Bar(){
 	
 	this.setListeners = function(){
 		
-		$('select.fieldcalc').change(function(){
+		$('select.fieldmode').change(function(){
 			
-			var i = $(this).attr('id');
+			var i = parseInt($(this).attr('id').replace(/mode_/,''));
 			
-			data.fields[i].calc = $(this).val();
+			data.fields[i].mode = $(this).val(); // disabling this line removes side effects that randomly delete data. :<
 			
 			bar.draw();
 			
@@ -119,196 +119,10 @@ var bar = new function Bar(){
 	
 		this.context.strokeStyle = this.gridcolor;
 	    this.context.lineWidth = 0.25;
-		this.context.rect(0, 0 + this.fontheight/2, this.drawwidth, this.drawheight);
-	    this.context.stroke();
+		this.context.strokeRect(0, 0 + this.fontheight/2, this.drawwidth, this.drawheight);
 		
 	}
 	
-	/*
-	// Use: mybar.drawGrid( xAxisDivisions, yAxisDivisions );
-	//
-	// This should be used after calling drawLabelsXAxis() and
-	// drawLabelsYAxis(), as they return the optimal number of X
-	// and Y axis divisions. The methods mentioned may be and
-	// should be used as arguments to drawGrid().
-	*/
-	
-	this.drawGrid = function(xdivs, ydivs){
-
-	    this.context.strokeStyle = this.gridcolor;
-	    this.context.lineWidth = 0.25;
-
-	    for( var i = 1; i < ydivs; i++ ){
-
-	        this.context.beginPath();
-	        this.context.moveTo(0, i*this.drawheight/ydivs + this.fontheight/2);
-	        this.context.lineTo(this.drawwidth, i*this.drawheight/ydivs + this.fontheight/2);
-	        this.context.stroke();
-
-	    }
-
-	}
-	
-	/*
-	// Use: Don't. Really. You shouldn't be using this directly.
-	//
-	// This method plots the line that corresponds to the point
-	// data. It takes into account X and Y axis zoom/range.
-	*/
-	
-	this.plot = function(points){
-		
-		if( points.length ){
-		
-		}
-		
-	}
-	
-	/*
-	// Use: mybar.plotData();
-	//
-	// This method plots the lines that correspond to the session
-	// data. It takes into account X and Y axis zoom/range.
-	*/
-	
-	this.plotDataNormal = function(){
-
-	}
-	
-	this.plotData = function(){
-		
-	}
-	
-	/*
-	// Use: mybar.drawLabelsXAxis();
-	//
-	// This draws the labels for the X axis of the graph.
-	*/
-	
-	this.drawLabelsXAxis = function(){
-		
-		var divs = 10;
-		
-		return divs;
-		
-	}
-	
-	/*
-	// Use: mybar.drawLabelsYAxis();
-	//
-	// This draws the labels for the Y axis of the graph.
-	*/	
-
-	this.getIncrement = function(mininc){
-		
-		var out = 1;
-		
-		var minincint = mininc;
-		
-		var divtonormalize = 1;
-		/*
-		while( minincint != Math.floor(minincint) ){
-			
-			minincint *= 10;
-			
-			divtonormalize *= 10;
-			
-		}*/
-		
-		var i = 1;
-		
-		if( minincint >= 1 ){
-		
-			while( out < minincint ){
-			
-				out = Math.pow(10, i);
-			
-				i++;
-			
-			}
-		
-		} else {
-			
-			while( out/Math.pow(10, i) > minincint ){
-			
-				out = out/Math.pow(10, i);
-			
-				i++;
-			
-			}
-			
-		}
-
-		return out/divtonormalize;
-		
-	}
-
-	this.getOffset = function(min, inc){
-		
-		return (Math.floor(min/inc)*inc) + inc;
-		
-	}
-	
-	this.drawLabelsYAxis = function(ymin, ymax, inc){
-
-		var ydiff = ymax - ymin;
-
-		this.context.font = this.fontheight + "px sans-serif";
-
-		this.context.fillStyle = "rgb(0,0,0)";
-		
-		// --- //
-		
-		var iinc = this.getIncrement(inc);
-		
-		var istart = this.getOffset(ymin, iinc);
-		
-		var n = Math.floor(Math.log(1/iinc)/Math.log(10));
-		
-		n = n > 0 ? n : 0;
-		
-		// --- //
-		
-		var label = ymin.toFixed(n);
-
-		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.drawheight + this.fontheight*1/3 + this.yoff );
-
-		var label = (ymin + ydiff).toFixed(n);
-
-		this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, this.fontheight*1/3 + this.yoff );
-		
-		// --- //
-					
-		for( var i = istart; i < ymax; i += iinc ){
-			
-			var y = this.drawheight - ((i-ymin)*this.drawheight/ydiff-this.fontheight/3) + this.yoff;
-			
-			var gridy =  this.drawheight - ((i-ymin)*this.drawheight/ydiff) + this.yoff;
-			
-			var n = Math.floor(Math.log(1/iinc)/Math.log(10));
-			
-			n = n > 0 ? n : 0;
-			
-			label = (i.toFixed(n)).toString();
-			
-			if( y > this.fontheight + this.yoff && y < this.yoff + this.drawheight - this.fontheight/2 )
-		
-				this.context.fillText( label.toString(), this.drawwidth + this.fontheight/2, y );
-						
-			this.context.strokeStyle = this.gridcolor;
-			this.context.lineWidth = 0.25;		
-			this.context.beginPath();
-	        this.context.moveTo(0, gridy);
-	        this.context.lineTo(this.drawwidth, gridy);
-	        this.context.stroke();
-			this.context.closePath();
-			
-		}
-
-		return 0;
-
-	}
-
 	/*
 	// Use: mybar.draw();
 	//
@@ -351,16 +165,17 @@ var bar = new function Bar(){
 		$("a[rel^='prettyPhoto']").prettyPhoto();
 		// -- //
 		
+		/*
 		var ymin = data.getMin();
-		var ymax = data.getMax();
+		var ymax = data.getMax();*/
+		
+		var ybounds = data.getVisibleDataBounds(true);
+		var ymin = ybounds[0];
+		var ymax = ybounds[1];
 		
 		var ydiff = ymax - ymin;
 
 		var yinc = ydiff/(this.drawheight/(this.fontheight*3/2));
-		
-		// -- //
-		
-		this.drawGrid( this.drawLabelsXAxis(), this.drawLabelsYAxis(ymin, ymax, yinc) );
 		
 		// --- //
 		
@@ -370,29 +185,45 @@ var bar = new function Bar(){
 		
 		var barvals = new Array();
 		
-		ymax = data.getMax();
+		var visiblesessions = 0;
 		
-		ymin = data.getMin();
+		var visiblefields = 0;
 		
-		if( ymin > 0 ) ymin = 0;
+		// --- //
 		
-		ydif = ymax - ymin;
+		drawYAxis(ymin, ymax, this);
+		
+		for( var session in data.sessions ){
+			
+			if(data.sessions[session].visibility) visiblesessions++;
+			
+		}
+		
+		for( var field in data.fields ){
+			
+			if( data.fields[field].visibility && data.fields[field].type_id != 7 && data.fields[field].type_id != 19 && data.fields[field].type_id != 37 ){
+			
+				if(data.fields[field].visibility) visiblefields++;
+				
+			}
+			
+		}
 		
 		for( var j = 0; j < data.fields.length; j++ ){
 		
-			if( data.fields[j].visibility && data.fields[j].type_id != 7 && data.fields[j].type_id != 19 ){
+			if( data.fields[j].visibility && data.fields[j].type_id != 7 && data.fields[j].type_id != 19 && data.fields[j].type_id != 37 ){
 		
 				for( var i = 0; i < data.sessions.length; i++ ){
 			
 					if( data.sessions[i].visibility ){
 				
-						var color = hslToRgb( ( 0.6 + i/data.sessions.length ) % 1.0, 1.0, 0.125 + (0.75*j/data.fields.length) );
+						var color = getSessionColor(i);
 						
 						var val = 0;
 
-						barcolors[divs] = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ", 1.0)";
+						barcolors[divs] = "rgba(" + color[0] + "," + color[1] + "," + color[2] + ", 0.85)";
 					
-						switch(data.fields[j].calc){
+						switch(data.fields[j].mode){
 				
 							default:
 							val = data.sessions[i].getMaxVal(j);
@@ -404,37 +235,34 @@ var bar = new function Bar(){
 							val = data.sessions[i].getMinVal(j);
 							break;
 							case 'Mean':
-							val = data.sessions[i].getMeanVal(data.fields[j].name);
+							val = data.sessions[i].getMeanVal(j);
 							break;
 							case 'Median':
-							val = data.sessions[i].getMedianVal(data.fields[j].name);
+							val = data.getMedianVal(j,i);
 							break;
 							case 'Mode':
-							val = data.sessions[i].getModeVal(data.fields[j].name);
+							val = data.sessions[i].getModeVal(j);
 							break;
 		
 						}
 						
-						barvals[divs] = (parseFloat(val))/ydif;
+						barvals[divs] = (parseFloat(val))/ydiff;
 						
 						divs++;
 				
 					}
 			
 				}
-				
-				if( j < data.fields.length - 1 ){
 
-					barvals[divs] = null;
+				barvals[divs] = null;
 
-					divs++;
-
-				}
+				divs++;
 			
 			}
 		
 		}
 		
+		divs--;
 		
 		for( var i = 0; i < divs; i++ ){
 			
@@ -442,11 +270,11 @@ var bar = new function Bar(){
 		
 			if( height != null ){
 		
-				var color = hslToRgb( ( 0.6 + i/divs ) % 1.0, 1.0, 0.4 );
+				var color = getSessionColor(i);
 		
 				this.context.fillStyle = barcolors[i];
 	
-				this.context.fillRect( this.drawwidth*i/divs, this.drawheight - (this.drawheight*(-ymin)/ydif) + this.yoff, this.drawwidth/divs, -height*this.drawheight );
+				this.context.fillRect( this.drawwidth*i/divs, this.drawheight - (this.drawheight*(-ymin)/ydiff) + this.yoff, this.drawwidth/divs, -height*this.drawheight );
 
 				var linewidth = 0.5;
 			
@@ -454,12 +282,71 @@ var bar = new function Bar(){
 	
 				this.context.strokeStyle = "rgba( 0,0,0,1.0)";
 	
-				this.context.strokeRect( this.drawwidth*i/divs, this.drawheight - (this.drawheight*(-ymin)/ydif) + this.yoff, this.drawwidth/divs, -height*this.drawheight );
+				this.context.strokeRect( this.drawwidth*i/divs, this.drawheight - (this.drawheight*(-ymin)/ydiff) + this.yoff, this.drawwidth/divs, -height*this.drawheight );
 			
 			}
 			
 		}
 		
+		var fieldinc = 0;
+		
+		for(var i = 0; i < data.fields.length; i++){
+			
+			if( data.fields[i].visibility && data.fields[i].type_id != 7 && data.fields[i].type_id != 19 && data.fields[i].type_id != 37 ){
+				
+				var shade = Math.floor(((0.75*i/data.fields.length)) * 256);
+			
+				this.context.fillStyle = "rgb("+shade+","+shade+","+shade+")";
+				
+				this.context.textAlign = "center";
+				
+				this.context.fillText(	data.fields[i].name,
+										((fieldinc*(visiblesessions+1))*(this.drawwidth/divs)) + ((visiblesessions)*(this.drawwidth/divs)/2),
+										this.drawheight+this.fontheight+this.yoff,
+										(visiblesessions)*(this.drawwidth/divs), 
+										this.fontheight);
+				
+				if(data.fields[i].mode){
+				
+					this.context.fillText(	"("+data.fields[i].mode+")",
+											((fieldinc*(visiblesessions+1))*(this.drawwidth/divs)) + ((visiblesessions)*(this.drawwidth/divs)/2),
+											this.drawheight+(this.fontheight*2)+this.yoff,
+											(visiblesessions)*(this.drawwidth/divs), 
+											this.fontheight);
+										
+				} else {
+					
+					this.context.fillText(	"(Max)",
+											((fieldinc*(visiblesessions+1))*(this.drawwidth/divs)) + ((visiblesessions)*(this.drawwidth/divs)/2),
+											this.drawheight+(this.fontheight*2)+this.yoff,
+											(visiblesessions)*(this.drawwidth/divs), 
+											this.fontheight);
+					
+				}
+				
+				this.context.textAlign = "left";
+				
+				fieldinc++;
+				
+			}
+			
+		}
+		
+		// bkmk
+		
+		/*
+		if(i%(data.sessions.length+1) == 0){
+			
+			var inc = i/(data.sessions.length+1);
+			
+			console.log(inc);
+		
+			this.context.fillText(data.fields[inc].name, (this.drawwidth*inc/divs*(data.sessions.length+1)) + (this.drawwidth/divs/2*(data.sessions.length+1)), this.drawheight + this.yoff + this.fontheight, this.drawwidth/divs*(data.sessions.length+1));
+	
+			this.context.textAlign = 'left';
+		
+		}
+		*/
 	}
 	
 
