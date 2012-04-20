@@ -20,7 +20,6 @@ var table = new function Table() {
 
 
     this.draw = function () {
-        $("a[rel^='prettyPhoto']").prettyPhoto();
 
         $('#table_canvas').append('<table id=data_table></table>');
 
@@ -32,7 +31,16 @@ var table = new function Table() {
        
         for( var field in data.fields ) {
             var title = data.fields[field].name;
-            $('#headers').append('<td>' + title + '</td>');
+            var type_id = data.fields[field].type_id;
+            
+            /* Do not display units for geospacial/text/numeric/custom */
+            if(type_id == 19 || type_id == 37 || type_id == 21 || type_id == 22){
+                $('#headers').append('<td><b>' + title  + '</b></td>');
+            } else {
+                var unit = data.fields[field].unit_abb;
+                $('#headers').append('<td><b>' + title + '</b> (' + unit + ')</td>');
+            }
+            
         }
 
         /* Add data to the table */
@@ -164,6 +172,7 @@ var table = new function Table() {
         
         this.drawControls();
         this.setListeners();
+        $("a[rel^='prettyPhoto']").prettyPhoto();
 
 
     }    
