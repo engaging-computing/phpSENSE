@@ -18,6 +18,24 @@ var table = new function Table() {
     }
     
 
+    this.fmtTime = function(rawTime){
+        
+        //Pull out the millis to append
+        var millis = rawTime % 1000;   
+
+        //Even though the date object takes millis it cant handle anything but 000 at the end.     
+        var seconds = Math.floor(rawTime/1000)*1000;
+
+        //Create a new date from the seconds (with 000 at the end instead of the actual millis)
+        var d = new Date(seconds);
+
+        //Build up the time string.
+        var s = d.getUTCHours() + ':' + d.getUTCMinutes() + ':' + d.getUTCSeconds() + '.' + millis + ' ' + (d.getUTCMonth() + 1) + '/' 
+            + d.getUTCDate() + '/' + d.getUTCFullYear();
+
+        return s;
+    }
+
 
     this.draw = function () {
 
@@ -63,10 +81,9 @@ var table = new function Table() {
                     
                         /* Format time correctly in UTC */
                         if(data.fields[field].type_id==7){
-                            var d = new Date(data.sessions[ses].data[dp][field]);
-                            s = d.getUTCHours() + ':' + d.getUTCMinutes() + ':' + d.getUTCSeconds() + '.' + d.getUTCMilliseconds() + ' ' + (d.getUTCMonth() + 1) + '/' 
-                            + d.getUTCDate() + '/' + d.getUTCFullYear();
-                            $('#table_'+row_id).append('<td>'+s+'</td>');        
+                            var rawTime = data.sessions[ses].data[dp][field];
+                            var formattedTime = table.fmtTime(rawTime);
+                            $('#table_'+row_id).append('<td>'+formattedTime+'</td>');        
 
                         /* Otherwize just throw it in the table */
                         } else {
