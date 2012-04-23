@@ -81,9 +81,6 @@ var timeline = new function Timeline(){
 			timeline.drawflag = true;
 			
 		});
-		ymin -= ydiff * 0.05;
-        ymax += ydiff * 0.05;
-        var ydiff = ymax - ymin;
 		// Set listener for sessions visibility checkboxes
 		
 		$('input.sessionvisible').click(function(e){
