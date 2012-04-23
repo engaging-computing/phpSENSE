@@ -208,7 +208,7 @@ function formatTime(time, inc){
         case 5:
             return d.getUTCHours() + ':' + minStr + ':' + secStr;
         case 6:
-            return d.getUTCSeconds() + '.' + d.getUTCMilliseconds().toFixed(3) + 's';
+            return d.getUTCSeconds() + '.' + msStr + 's';
     }
 }
 
