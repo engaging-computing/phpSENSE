@@ -84,6 +84,7 @@ if(isset($_REQUEST['id'])) {
 	$smarty->assign('title', 		$title);
 	$smarty->assign('fields', 		$fields);
 	$smarty->assign('field_count', 	count($fields));
+    $smarty->assign('e_proc', $meta['description']);
 }
 else {
 	array_push($errors, 'Could not find your experiment.');
