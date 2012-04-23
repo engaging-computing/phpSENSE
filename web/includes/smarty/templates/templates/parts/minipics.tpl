@@ -34,7 +34,7 @@
 				<tr>
 					{ foreach from=$pictures item=picture }
 						<td>
-							<a href="{$picture.set_url}"><img src="picture.php?url={$picture.source}&amp;h=160&w=230" /></a>
+							<a rel="prettyPhoto" href="{$picture.set_url}"><img src="picture.php?url={$picture.source}&amp;h=160&w=230" /></a>
 						</td>
 					{ /foreach }
 				</tr>

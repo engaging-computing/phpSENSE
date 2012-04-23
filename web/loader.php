@@ -127,8 +127,8 @@ Minify::serve('Groups', array(
             BASE_DIR . '/html/js/vis2/vis2.js',
         ),
 	'WYSIWYG' => array(
-	    BASE_DIR . '/html/js/nicEdit/nicEdit.js',
-	    BASE_DIR . '/html/js/nicEdit/nicStart.js'
+	    BASE_DIR . '/html/js/nicEdit/nicEdit.js'
+	    
 	)
     )
 ));

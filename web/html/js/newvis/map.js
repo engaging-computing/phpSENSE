@@ -42,10 +42,9 @@ var map = new function Map() {
 
     }
 
-
     /* Draw function */
 	this.draw = function(data, f) {
-		$("a[rel^='prettyPhoto']").prettyPhoto();
+		
 		var latField = null;
 		var lonField = null;
 		var markers = Array();
@@ -70,13 +69,11 @@ var map = new function Map() {
 			this.Options['center'] = new google.maps.LatLng(data.sessions[0].meta['latitude'], data.sessions[0].meta['longitude']);
 		}    
        
-        /* Create the new map */
-        //this.Options['zoom'] = 15;
+        /* Create the new map */    
 		this.map = new google.maps.Map(document.getElementById("map_canvas"), this.Options);
 
 		var color = hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 );
 		
-
         /* If there is lat/lon in the experiment start adding those points */
 		if( latField != null && lonField != null ) {
 			for(var ses in data.sessions) {
@@ -104,7 +101,7 @@ var map = new function Map() {
 							} else {
 								var tmp = new google.maps.LatLng(data.sessions[ses].data[dp][latField],
 													 	 	data.sessions[ses].data[dp][lonField]);
-								var max, min, val;
+								var max, min, val, unit, name, ses_name;
 
    								for( var field in data.fields ){
 									if( data.fields[field].name.toLowerCase() == this.measureField.toLowerCase() ){
@@ -115,11 +112,13 @@ var map = new function Map() {
 								max = data.getFieldMax(map.measureField);
 								min = data.getFieldMin(map.measureField);
 								val = data.sessions[ses].data[dp][field];
-								
+								unit = data.fields[field].unit_abb;
+                                name = data.fields[field].name + ': ';
+                                ses_name = data.sessions[ses].meta['name'] + '\n';
 								markers[markers.length] = new google.maps.Marker({
 									position: tmp,
 									map: this.map,
-									title: data.sessions[ses].data[dp][0].toString(),
+									title: ses_name + name + val.toString() + ' ' + unit.toString(),
 									icon: '/html/img/vis/measured.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )
 									 	+ '&value=' + Math.floor( ( val - min ) / ( max - min ) * 20 )
 								});
@@ -270,6 +269,7 @@ var map = new function Map() {
 		this.draw(data);
 		this.drawControls();
 		this.setListeners();
+        $("a[rel^='prettyPhoto']").prettyPhoto();
 		
 	}
 
