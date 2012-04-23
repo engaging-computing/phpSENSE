@@ -31,8 +31,10 @@ function createEvent($token, $title, $description, $location, $start, $end) {
 	
 	$uid = $token['uid'];
 	$session = $token['session'];
-	
-	$db->query("INSERT INTO events (`author_id`, `title`, `description`, `location`, `start`, `end`) VALUES({$uid}, '{$title}', '{$description}', '{$location}', '$start', '$end')");
+
+	$db->query("INSERT INTO events 
+                (`author_id`, `title`, `description`, `location`, `start`, `end`) 
+                VALUES({$uid}, '{$title}', '{$description}', '{$location}', '$start', '$end')");
 	
 	if($db->numOfRows)  {
 		$id = $db->lastInsertId();
