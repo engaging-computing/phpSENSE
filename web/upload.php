@@ -321,7 +321,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 				}
 			}
 		}
-		// Does the feild align
+		// Does the field align
 		else if($state == CORRECT_FIELDS) {
 
 			$unmatched_count = -1;
@@ -365,7 +365,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 				$mapping[$f] = $h;
 			}
 
-			// This looks fimilar doesn't it?
+			// This looks familiar doesn't it?
 			for($i = 0; $i < count($mapping); $i++) {
 
 				$field_name = strtolower($fields[$i]['field_name']);
@@ -682,15 +682,13 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 		    
 		    // Iterate through each feild, or each column in the row of data
 		    foreach($fields as $key => $field) {
-		        
-		        if( $key == 0 && ($val == 0 || $val = 0.0 || $val == 1.0 || $val == 1 ) )
-		            $man_off = 1;
-		        
-		        // Get the name of the feild
-		        $name = str_replace(" ", "_", $field['field_name']) . "_" . $i;
+          	        
+ 		      // Get the name of the feild
+          $name = str_replace(" ", "_", $field['field_name']) . "_" . $i;
 			    $val = safeString($_POST[$name]);
 			    
-			    // Check to see if this is a time value
+
+          // Check to see if this is a time value
 			    if($field['type_id'] == TIME_TYPE_ID) {
 			            
 			        // Check to see if there are words in the val
@@ -701,8 +699,9 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 			                $x[] = intval($new_time * 1000);
 			            }
 			        }
-			        else if ( $man_off ) {
-		                // If not assume incremental seconds from upload
+            //If first data point is one of these values, assume incremental time.
+              else if( ($val == 0 || $val = 0.0 || $val == 1.0 || $val == 1 ) ) {
+		                // If so assume incremental seconds from upload
 		                $x[] = $now + ($val * 1000) . "";
 
 		                // Don't trust the time format from now on
@@ -712,19 +711,22 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 			        else if(strpos($val, ".") !== FALSE) {
 			            echo "Got to decimal case!<br/>";
 			            $x[] = (string) ( ( (double) $val ) * 1000 );
-			        }
+              }
+
+              // Assume anything greater than 2 billion is actually already in miliseconds
+              // Bug will be here in 2033. You found me if you are looking.
 			        else {
 			            if( $val > 2000000000)
 			                $x[] = intval($val);
 			            else
-			                $x[] = intval($val) * 1000;
+			                $x[] = intval($val) ;
 			        } 
-                } 
+           } 
                 
-                else {
-                    // This value is not a time type, so we directly insert into the row
-			        $x[] = $val;
-			    }
+           else {
+             // This value is not a time type, so we directly insert into the row
+			       $x[] = $val;
+			     }
 		    }
 		    
 		    // Append this row to the greater data set
