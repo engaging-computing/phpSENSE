@@ -348,7 +348,7 @@ function putData($eid, $sid, $data) {
     		for($i = 0; $i < count($field_names); $i++) {
     			$value = $datum[$i];
 
-    			if(is_numeric($value) && (strcasecmp($field_names[$i], "time") != 0)) {
+    			if(is_numeric($value) ) {
     				$value = $value + 0;
     			}
 
