@@ -700,10 +700,10 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 			            }
 			        }
             //If first data point is one of these values, assume incremental time.
-              else if( ($val == "0" || $val == "0.0" || $val == "1.0" || $val == "1" ) ) {
+              else if( $man_off || ($val == "0" || $val == "0.0" || $val == "1.0" || $val == "1" ) ) {
 		                // If so assume incremental seconds from upload
 		                $x[] = $now + ($val * 1000) . "";
-
+				$man_off = 1;
 		                // Don't trust the time format from now on
 		                // force the seconds from upload
 		                $time_fail = true;
