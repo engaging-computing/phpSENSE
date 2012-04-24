@@ -366,6 +366,8 @@ var bar = new function Bar(){
 		this.drawControls();
 		
 		this.setListeners();
+
+         $("a[rel^='prettyPhoto']").prettyPhoto();
 		
 	}
 	
