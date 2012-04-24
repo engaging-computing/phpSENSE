@@ -18,6 +18,26 @@ var table = new function Table() {
     }
     
 
+    this.fmtTime = function(rawTime){
+       
+        var d = new Date(Number(rawTime));
+
+        var minutes = d.getUTCMinutes();
+        if ( minutes <= 9 ){
+            minutes = "0" + minutes;        
+        }
+
+        var seconds = d.getUTCSeconds();
+        if ( seconds <= 9 ){
+            seconds = "0" + seconds;        
+        }
+
+        var s = d.getUTCHours() + ':' + minutes + ':' + seconds + '.' + d.getUTCMilliseconds() + ' ' + (d.getUTCMonth() + 1) + '/' 
+            + d.getUTCDate() + '/' + d.getUTCFullYear();
+
+        return s;
+    }
+
 
     this.draw = function () {
 
@@ -63,10 +83,9 @@ var table = new function Table() {
                     
                         /* Format time correctly in UTC */
                         if(data.fields[field].type_id==7){
-                            var d = new Date(data.sessions[ses].data[dp][field]);
-                            s = d.getUTCHours() + ':' + d.getUTCMinutes() + ':' + d.getUTCSeconds() + '.' + d.getUTCMilliseconds() + ' ' + (d.getUTCMonth() + 1) + '/' 
-                            + d.getUTCDate() + '/' + d.getUTCFullYear();
-                            $('#table_'+row_id).append('<td>'+s+'</td>');        
+                            var rawTime = data.sessions[ses].data[dp][field];
+                            var formattedTime = table.fmtTime(rawTime);
+                            $('#table_'+row_id).append('<td>'+formattedTime+'</td>');        
 
                         /* Otherwize just throw it in the table */
                         } else {

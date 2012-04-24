@@ -30,7 +30,6 @@
 <ul id="vis_select">
 </ul>
 
-
 <div id="select_vis" style="padding: 14px 0px 0px 0px; text-align:right">
 
 </div>

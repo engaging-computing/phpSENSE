@@ -63,7 +63,12 @@ function createExperiment($token, $name, $description, $fields, $req_name, $req_
 function getExperiment($eid) {
 	global $db;
 										
-	$output = $db->query("SELECT experiments.*, users.firstname, users.lastname FROM experiments, users WHERE experiments.owner_id = users.user_id AND experiments.experiment_id = {$eid}");
+	$output = $db->query("SELECT experiments.*, 
+                                 users.firstname, 
+                                 users.lastname 
+                                 FROM experiments, 
+                                 users 
+                                 WHERE experiments.owner_id = users.user_id AND experiments.experiment_id = {$eid}");
 	
 	if($db->numOfRows) {
 		return $output[0];

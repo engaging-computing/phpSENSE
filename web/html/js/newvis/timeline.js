@@ -81,7 +81,6 @@ var timeline = new function Timeline(){
 			timeline.drawflag = true;
 			
 		});
-		
 		// Set listener for sessions visibility checkboxes
 		
 		$('input.sessionvisible').click(function(e){
@@ -259,6 +258,10 @@ var timeline = new function Timeline(){
         var vmin = vbounds[0];
         var vmax = vbounds[1];
         var vdif = vmax - vmin;
+        
+        vmin -= vdif * 0.05;
+        vmax += vdif * 0.05;
+        vdif = vmax - vmin;
         
 	
 		// --- Display point-by-point --- //
@@ -524,6 +527,10 @@ var timeline = new function Timeline(){
 		var ymin = ybounds[0];
 		var ymax = ybounds[1];
 		var ydiff = ymax - ymin;
+                
+                ymin -= ydiff * 0.05;
+                ymax += ydiff * 0.05;
+                ydiff = ymax - ymin;
 		
 		ymax = ydiff * this.vRangeUpper + ymin;
 		ymin = ydiff * this.vRangeLower + ymin;

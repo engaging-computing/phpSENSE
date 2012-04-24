@@ -318,15 +318,19 @@ var scatter = new function Scatter(){
         var ymin = ybounds[0];
         var ymax = ybounds[1];
         var ydiff = ymax - ymin;
-		
-		ymax = ydiff * this.vRangeUpper + ymin;
-		ymin = ydiff * this.vRangeLower + ymin;
-
-		ydiff = ymax - ymin;
-		
-		// --- //
-		
-		this.clear();
+        
+        ymin -= ydiff * 0.05;
+        ymax += ydiff * 0.05;
+        var ydiff = ymax - ymin;
+        
+        ymax = ydiff * this.vRangeUpper + ymin;
+        ymin = ydiff * this.vRangeLower + ymin;
+        
+        ydiff = ymax - ymin;
+        
+        // --- //
+        
+        this.clear();
 		
         var xAxisName;
         if (this.xAxis == -1) {

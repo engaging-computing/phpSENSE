@@ -129,7 +129,7 @@ function getSessionPictures($sid){
    
 
     if($db->numOfRows) {
-		return $output[0];
+		return $output;
 	}
 	
 	return false;
@@ -348,7 +348,7 @@ function putData($eid, $sid, $data) {
     		for($i = 0; $i < count($field_names); $i++) {
     			$value = $datum[$i];
 
-    			if(is_numeric($value) && (strcasecmp($field_names[$i], "time") != 0)) {
+    			if(is_numeric($value) ) {
     				$value = $value + 0;
     			}
 
@@ -381,11 +381,12 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
     global $mdb;
 
     $excluded = array("session", "experiment", "_id");
+    $fields = getFields($eid);
     $data = array();
     
     // Get the data from MongoDB
 	$results = $mdb->find("e{$eid}", array("session" => (int)$sid));
-	
+
 	if(count($results) > 0) {
 	    if($get_header) {
     	    $header = array();
@@ -398,6 +399,17 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
         	$data[] = $header;
     	}
 
+        //print_r($results);
+
+    	foreach($results as $i => $r) {
+    	    foreach($fields as $f) {
+    	        $data[$i][$f['field_name']] = $r[$f['field_name']];
+    	    }
+    	}
+    	    	
+    	$results = $data;
+    	unset($data);
+
     	if($strip_keys) {
     	    // Package the data so it makes sense
         	foreach($results as $result) {
@@ -408,7 +420,7 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
         		}
 
         		$data[] = $row;
-        	}
+        	}        	
     	}
     	else {
     	    foreach($results as $result) { 
@@ -422,7 +434,8 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
         	}
     	}
 	}
-	
+
+
 	return $data;
 }
 

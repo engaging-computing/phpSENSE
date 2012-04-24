@@ -7686,7 +7686,7 @@
 		 *      } );
 		 *    } )
 		 */
-		"asStripeClasses": [ 'odd', 'even' ],
+		"asStripeClasses": [ 'odd','even' ],
 	
 	
 		/**
