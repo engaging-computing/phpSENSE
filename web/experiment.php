@@ -94,7 +94,7 @@ if(isset($_GET['id'])) {
 		$votes = ($meta['rating_votes'] == 0) ? 1 : $meta['rating_votes'];
 		$rating = $meta['rating'] / $votes;
 		$smarty->assign('rating', round($rating, 0));
-		
+		$smarty->assign('newvis',1);
 		
 		
 	}
