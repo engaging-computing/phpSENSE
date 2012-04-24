@@ -121,7 +121,7 @@
     	            { /if }
     	            <div><input type="submit" style="width:73px;" value="{if not $activity}Visualize{else}Complete{/if}" onclick="loadVis({$meta.experiment_id}, {if $activity}true{else}false{/if});"/> - {if $activity}View data for this experiment and solve for the prompt.{else}Select sessions below to visualize data{/if}</div>
     	            { if not $activity and $user.administrator == $user.administrator }
-            	        <div><input type="submit" style="margin:6px 0px 6px 0px; width:73px;" value="{if not $activity}Vis Beta{else}Complete{/if}" onclick="loadVis2({$meta.experiment_id}, {if $activity}true{else}false{/if});"/> - Use our visualizations beta to examine your data. </div>
+            	        <div><input type="submit" style="margin:6px 0px 0px 0px; width:73px;" value="{if not $activity}Vis Beta{else}Complete{/if}" onclick="loadVis2({$meta.experiment_id}, {if $activity}true{else}false{/if});"/> - Use our visualizations beta to examine your data. </div>
             	    { /if }
     	        </div>
     	    </div>
