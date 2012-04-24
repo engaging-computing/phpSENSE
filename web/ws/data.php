@@ -58,12 +58,16 @@ class Data {
                 $max = count($session->data);    
             }
         }
- 
+  
         if($max > 1){
-            $this->relVis = array_merge(array('Histogram'), $this->relVis); 
-             $this->relVis = array_merge(array('Bar'), $this->relVis); 
+           $this->relVis = array_merge(array('Histogram'), $this->relVis);          
         }
 
+        if($max > 0){
+            
+             $this->relVis = array_merge(array('Bar'), $this->relVis); 
+        }
+      
         /* If there is more than one data point add the following vizes */
         if( $max > 2 ) {
            

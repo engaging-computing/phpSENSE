@@ -175,7 +175,7 @@
 					-->
 				{ elseif $state == 4 }
 					<legend>Successfully { if $sessiontype == "file" }Uploaded CSV File{ else }Added Session Data{ /if }</legend>
-					<p>You've successfully { if $sessiontype == "file" }uploaded csv file{ else }added session data{ /if }. You can <a href="upload.php?id={ $meta.experiment_id }">{ if $sessiontype == "file" }upload another csv file{ else }add more session data here{ /if }</a>.</p><form><input id='viewdatabtn' type='button' value="Examine Your Data" onclick='window.location.href="vis.php?sessions={ $session }"'/></form>
+					<p>You've successfully { if $sessiontype == "file" }uploaded csv file{ else }added session data{ /if }. You can <a href="upload.php?id={ $meta.experiment_id }">{ if $sessiontype == "file" }upload another csv file{ else }add more session data here{ /if }</a>.</p><form><input id='viewdatabtn' type='button' value="Examine Your Data" onclick='window.location.href="newvis.php?sessions={ $session }"'/></form>
 				{ /if }
 				
 				<div id="state_wrapper" style="display:none;">
