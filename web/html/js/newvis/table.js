@@ -19,18 +19,20 @@ var table = new function Table() {
     
 
     this.fmtTime = function(rawTime){
-        
-        //Pull out the millis to append
-        var millis = rawTime % 1000;   
+       
+        var d = new Date(Number(rawTime));
 
-        //Even though the date object takes millis it cant handle anything but 000 at the end.     
-        var seconds = Math.floor(rawTime/1000)*1000;
+        var minutes = d.getUTCMinutes();
+        if ( minutes <= 9 ){
+            minutes = "0" + minutes;        
+        }
 
-        //Create a new date from the seconds (with 000 at the end instead of the actual millis)
-        var d = new Date(seconds);
+        var seconds = d.getUTCSeconds();
+        if ( seconds <= 9 ){
+            seconds = "0" + seconds;        
+        }
 
-        //Build up the time string.
-        var s = d.getUTCHours() + ':' + d.getUTCMinutes() + ':' + d.getUTCSeconds() + '.' + millis + ' ' + (d.getUTCMonth() + 1) + '/' 
+        var s = d.getUTCHours() + ':' + minutes + ':' + seconds + '.' + d.getUTCMilliseconds() + ' ' + (d.getUTCMonth() + 1) + '/' 
             + d.getUTCDate() + '/' + d.getUTCFullYear();
 
         return s;
