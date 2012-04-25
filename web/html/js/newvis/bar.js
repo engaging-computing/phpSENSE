@@ -384,9 +384,9 @@ var bar = new function Bar(){
 		this.context.font = this.fontheight + "px sans-serif";
 
 		this.xlabelsize = Math.floor(this.fontheight*2);
-		this.ylabelsize = this.context.measureText( data.getMax() + "" ).width + this.fontheight/2;
-
-		this.drawwidth	= Math.floor(this.canvaswidth	- (this.ylabelsize*1.5));
+		this.ylabelsize = this.context.measureText(getLargestLabel()).width;
+                
+                this.drawwidth  = Math.floor(this.canvaswidth   - (this.ylabelsize*1.2));
 		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*1.5));
 
 		this.xoff = 0;

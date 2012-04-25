@@ -321,6 +321,14 @@ function formatData(data, inc){
     }
 }
 
+/*
+ * Returns a label that represents the largest possible
+ * (physically) label string.
+ */
+function getLargestLabel() {
+    return formatData(-88000000000, 1);
+}
+
 /**
  * Draws an X axis (with grid marks) on the given visObject.
  * 
