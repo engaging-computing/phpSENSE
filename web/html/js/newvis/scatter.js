@@ -332,15 +332,17 @@ var scatter = new function Scatter(){
         
         this.clear();
 		
-        var xAxisName;
+        var xAxisName, xAxisType;
         if (this.xAxis == -1) {
             xAxisName = 'Datapoint #';
+            xAxisType = 1;
         }
         else {
-            xAxisName = data.fields[this.xAxis].name.toLowerCase();
+            xAxisName = data.fields[this.xAxis].name;
+            xAxisType = data.fields[this.xAxis].type_id
         }
         
-		drawXAxis(xmin, xmax, this, xAxisName);
+	drawXAxis(xmin, xmax, this, xAxisName, xAxisType);
         drawYAxis(ymin, ymax, this);
 		
 		// --- //
