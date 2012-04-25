@@ -263,6 +263,15 @@ var timeline = new function Timeline(){
         vmax += vdif * 0.05;
         vdif = vmax - vmin;
         
+        var timeField = 0;
+        
+        for (var f in data.fields) {
+            if (data.fields[f].type_id == 7) {
+                timeField = f;
+                break;
+            }
+        }
+        
 	
 		// --- Display point-by-point --- //
 	
@@ -272,7 +281,7 @@ var timeline = new function Timeline(){
 				
 				var displaydata = data.getDataFrom(i,j);
 				
-				var timedata = data.getDataFrom(i,0); // time
+				var timedata = data.getDataFrom(i,timeField); // time
 				
 				var datalen = displaydata.length;
 			
