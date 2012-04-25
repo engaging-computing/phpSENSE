@@ -37,7 +37,6 @@ var map = new function Map() {
 	}
 	
     this.addInfoWindowSession = function(marker, gmap, ses){
-        console.log("in session window");
         var contentString = '<div><table width="260px">';
 
         for(var field in data.fields) {
@@ -46,13 +45,17 @@ var map = new function Map() {
             var type_id = data.fields[field].type_id;
             var val = data.avgField(title);
            
-            if(type_id != 7){
-            if(type_id == 19 || type_id == 37 || type_id == 21 || type_id == 22){
-               contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + "</td></tr>";
-            } else {
-                var unit = data.fields[field].unit_abb;
-               contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + " (" + unit +")</td></tr>";
-            }}
+            /* Do not display time or custom*/
+            if(type_id != 7 && type_id != 22){
+
+                /* Do not display units for for geospacial/text/numeric/custom*/
+                if(type_id == 19 || type_id == 37 || type_id == 21 || type_id == 22){
+                    contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + "</td></tr>";
+                } else {
+                    var unit = data.fields[field].unit_abb;
+                    contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + " (" + unit +")</td></tr>";
+                }
+            }
             
 
             
@@ -70,7 +73,6 @@ var map = new function Map() {
 
 
     this.addInfoWindow = function(marker, gmap, ses, dp){
-        console.log("in add window");
         var contentString = '<div><table width="260px">';
 
         for(var field in data.fields) {
@@ -79,12 +81,16 @@ var map = new function Map() {
             var type_id = data.fields[field].type_id;
             var val = data.sessions[ses].data[dp][field];
            
-            
-            if(type_id == 19 || type_id == 37 || type_id == 21 || type_id == 22){
-               contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + "</td></tr>";
-            } else {
-                var unit = data.fields[field].unit_abb;
-               contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + " (" + unit +")</td></tr>";
+            /* Do not display time or custom*/
+            if(type_id != 7 && type_id != 22){
+
+                /* Do not display units for for geospacial/text/numeric/custom*/
+                if(type_id == 19 || type_id == 37 || type_id == 21 || type_id == 22){
+                   contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + "</td></tr>";
+                } else {
+                    var unit = data.fields[field].unit_abb;
+                   contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + " (" + unit +")</td></tr>";
+                }
             }
             
 
