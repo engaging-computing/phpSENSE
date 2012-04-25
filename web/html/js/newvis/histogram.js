@@ -236,7 +236,7 @@ var histogram = new function Histogram(){
         var xBounds = data.getFieldBounds([data.fields[this.field].name], false);
         
         drawYAxis(0, yMax, this);
-        drawXAxis(xBounds[0], xBounds[1], this, data.fields[this.field].name);
+        drawXAxis(xBounds[0], xBounds[1], this, data.fields[this.field].name, data.fields[this.field].type_id);
         // --- //
         
         var barUnitHeight = this.drawheight / yMax;

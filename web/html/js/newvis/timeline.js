@@ -546,8 +546,17 @@ var timeline = new function Timeline(){
 		// --- //
 			
 		this.clear();
+                
+                var timeField = 0;
+                
+                for (var f in data.fields) {
+                    if (data.fields[f].type_id == 7) {
+                        timeField = f;
+                        break;
+                    }
+                }
         
-		drawXAxis(xmin, xmax, this, "time");
+		drawXAxis(xmin, xmax, this, data.fields[timeField].name, data.fields[timeField].type_id);
 		drawYAxis(ymin, ymax, this);
 		
 		this.plotData();
