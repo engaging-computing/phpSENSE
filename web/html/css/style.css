@@ -893,3 +893,7 @@ a.rating_browse {
 #map_canvas {
 	margin: 20px;
 }
+
+textarea {
+    resize:none;
+}
