@@ -32,7 +32,14 @@ var table = new function Table() {
             seconds = "0" + seconds;        
         }
 
-        var s = d.getUTCHours() + ':' + minutes + ':' + seconds + '.' + d.getUTCMilliseconds() + ' ' + (d.getUTCMonth() + 1) + '/' 
+        var millis = d.getUTCMilliseconds();
+        if (millis <= 9 ){
+            millis = "00" + millis;
+        } else if ( millis <=99 && millis >=10 ){
+            millis = "0" + millis;
+        }
+
+        var s = d.getUTCHours() + ':' + minutes + ':' + seconds + '.' + millis + ' ' + (d.getUTCMonth() + 1) + '/' 
             + d.getUTCDate() + '/' + d.getUTCFullYear();
 
         return s;
