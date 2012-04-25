@@ -58,28 +58,28 @@ class Data {
                 $max = count($session->data);    
             }
         }
-  
-        if($max > 1){
-           $this->relVis = array_merge(array('Histogram'), $this->relVis);          
-        }
 
-        if($max > 0){
-            
-             $this->relVis = array_merge(array('Bar'), $this->relVis); 
+        $total = 0;
+        foreach( $this->sessions as $session ) {
+            $total += count($session->data);
+        }
+  
+        /* If there is more than one data point total add the following vizes */
+        if($total > 1){
+           $this->relVis = array_merge(array('Bar', 'Histogram'), $this->relVis);          
         }
       
-        /* If there is more than one data point add the following vizes */
-        if( $max > 2 ) {
-           
+        /* If there is more than one data point in a session add the following vizes */
+        if( $max > 1 ) {
             $this->relVis = array_merge(array('Scatter'), $this->relVis); 
-        }
 
-        /* If the experiment contains time and there is more than one datapoint */
-        foreach( $this->fields as $field ){
-            if( ($field->type_id == 7)  && ($max > 1)){
-                $this->relVis = array_merge(array('Timeline'), $this->relVis); 
-            } 
-        }    
+            /* if a time field exists, add timeline */
+            foreach( $this->fields as $field ){
+                if ($field->type_id == 7) {
+                    $this->relVis = array_merge(array('Timeline'), $this->relVis); 
+                }
+            }
+        }
 
         /* Add the map last because it should always be first. */
         $this->relVis = array_merge(array('Map'), $this->relVis);   
