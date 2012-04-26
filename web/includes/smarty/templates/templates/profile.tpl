@@ -56,7 +56,7 @@
 					
 						<div class="result experiment" style="margin:0px 0px 10px 0px;">
 							<div class="icon_column" style="float:left; width:40px; height:55px;"> 
-							 <img src="../../../html/img/icons/archive.png"/>						
+							 <img style="width:40px;height:40px;" src="../../../html/img/icons/archive.svg"/>						
 							</div>
 							<div class="info_column" style="float;right; "> 
 								<div class="name" style="font-size:18px;"> <a href="experiment.php?id={ $result.experiment_id }">{ $result.name }</a></div>
@@ -76,7 +76,7 @@
 					
 						<div class="result session" style="margin:0px 0px 10px 0px;">
                                                 	<div class="icon_column" style="float:left; width:40px;"> 
-								<img src="../../../html/img/icons/folder.png"/>						
+								<img style="width:40px;height:40px;" src="../../../html/img/icons/folder.svg"/>						
 							</div>
 							<div class="info_column" style="float;right;"> 
 								<div class="name" style="font-size:16px;"><a href="vis.php?sessions={ $result.session_id }">{ $result.name }</a></div>
@@ -94,7 +94,7 @@
 
 						<div class="result vis" style="margin:0px 0px 10px 0px;">
 							<div class="icon_column" style="float:left; width:40px; height:55px;"> 
-								<img src="../../../html/img/icons/chart_bar.png"/>					
+								<img style="width:40px;height:40px" src="../../../html/img/icons/chart_bar.svg"/>					
 							</div>
 							<div class="info_column" style="float;right;"> 							
 								<div class="name" style="font-size:16px;"><a href="vis.php?sessions={ $result.sessions }&state={ $result.url_params }">{ $result.name }</a></div>
