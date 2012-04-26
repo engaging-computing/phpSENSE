@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 15.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="200px"
+	 height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
+<g id="Layer_1" display="none">
+	
+		<image display="inline" overflow="visible" width="16" height="16" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAFiAAABYgFfJ9BTAAAA
+GXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAmZJREFUeNp0U8tLVFEY/51zH6Og
+46gYFGOuchFBhZvKv6CFLYdq0f/Q0o2I2KI20c5FIFgYSIs2bRICCwOhqCBTy2pqZlQGHzPOnce9
+9zz6zh1ncJq8cB73e/y+3/c4DEff5MLCGB2ncfJXoLU8mUrljgvtxkUJeWY8lZoJpEKoFAIlIZWG
+0hq+X8PvbObb27X1iYn5Z8tTt29lG368cQmljIyFFBAiRK1aRblShlfxUPJK6Hbd4bs3xqbIbnT8
+ydNkG4AQgjEjoN2xLHS4Llw6LcaNDpvpNF4uLQ0Pxtx7i4uvrralICmqcbYiGETOIBAEAXriPbg8
+MgLOuUlLbhaL/vu5uVaAQEhmfPkRAFnDjZDqIIGkO+m01szYtjEIfJ/UdQZNrQE5+udhCKmJKVRk
+2wYQhiHjJFa0cQXoll7VzYTpDqVKtvgfA5hYJgVFpeXKQDQDoYYQfyoZ7Hj7bsbO9LYzCPx6DTSr
++zHTINUE2ark8Gj1IXb9Yt96onaFRLOtDIIgKp9B4RRcRyw4qqKCdCmDL4cbKMhDnOtMuKtsZ3Bg
+9volrbDXUkTUCx1FNSAmlUw5i+mP97EndhG3bBo0jw84uEhNeZyv6BdNgGqtxtEgbFIxG4GYkT70
+SzgbA3VImGSt893oK4WabRd0v23HYjQxsPYPDppTeRxkoCOB0VPX8HUvjZz3AwlXhu825HdtsTdU
+8RXDoJNWIr+9pX9lsz//fYKmF3eSN/HZWXWmVx70Fhwl2U51rTzzaZpURUYM4nTpd4aGLthdXV0n
+vWUrrhJOUo0wi8XsvPch/zr7nMT7fwUYAMQGGZ7lhtHXAAAAAElFTkSuQmCC" transform="matrix(7.8459 0 0 7.8459 38.2324 38.2324)">
+	</image>
+</g>
+<g id="Layer_2">
+	<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="128.2344" y1="59.8174" x2="64.2344" y2="156.4844">
+		<stop  offset="0" style="stop-color:#D4E5E5"/>
+		<stop  offset="0.1123" style="stop-color:#DEEAEA"/>
+		<stop  offset="0.3687" style="stop-color:#EFF4F4"/>
+		<stop  offset="0.6499" style="stop-color:#FAFCFC"/>
+		<stop  offset="1" style="stop-color:#FFFFFF"/>
+	</linearGradient>
+	<polygon fill="url(#SVGID_1_)" stroke="#A4B5B6" stroke-width="7" stroke-miterlimit="10" points="57.786,42.742 57.786,160.038 
+		143.635,160.038 143.635,66.327 120.051,42.743 	"/>
+	<polyline fill="#F2F2F2" stroke="#A4B5B6" stroke-width="7" stroke-miterlimit="10" points="142.635,67.384 119.051,67.384 
+		119.051,44.743 	"/>
+	<polygon fill="#5FBB46" stroke="#31A349" stroke-width="7" stroke-miterlimit="10" points="127.875,112.868 143.635,112.868 
+		143.635,128.905 159.987,128.905 159.987,144 143.635,144 143.635,160.038 128.227,160.038 128.227,144.629 112.188,144.629 
+		112.188,129.22 127.912,129.22 	"/>
+</g>
+</svg>
