@@ -123,7 +123,7 @@
         echo $writeStr;
 
 
-        $data = array(array($_SERVER['REQUEST_TIME'],42.64037, -71.352156, $temperature, $exTemperature, $pH, $flowRate));
+        $data = array(array($_SERVER['REQUEST_TIME'] * 1000,42.64037, -71.352156, $temperature, $exTemperature, $pH, $flowRate));
 
         $response = putData(408,3341, $data);
 	
