@@ -25,7 +25,7 @@ var bar = new function Bar(){
 		
 		for( var i in data.fields ){
 			
-			if( data.fields[i].type_id != 7 && data.fields[i].type_id != 19 ){ // Should properly check if field is time
+			if( data.fields[i].type_id != 7 && data.fields[i].type_id != 19 && data.fields[i].type_id != 37){ // Should properly check if field is time
 			
 				var color = Math.floor(((0.75*i/data.fields.length)) * 256);
 			
@@ -366,6 +366,8 @@ var bar = new function Bar(){
 		this.drawControls();
 		
 		this.setListeners();
+
+         $("a[rel^='prettyPhoto']").prettyPhoto();
 		
 	}
 	
@@ -384,9 +386,9 @@ var bar = new function Bar(){
 		this.context.font = this.fontheight + "px sans-serif";
 
 		this.xlabelsize = Math.floor(this.fontheight*2);
-		this.ylabelsize = this.context.measureText( data.getMax() + "" ).width + this.fontheight/2;
-
-		this.drawwidth	= Math.floor(this.canvaswidth	- (this.ylabelsize*1.5));
+		this.ylabelsize = this.context.measureText(getLargestLabel()).width;
+                
+                this.drawwidth  = Math.floor(this.canvaswidth   - (this.ylabelsize*1.2));
 		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*1.5));
 
 		this.xoff = 0;

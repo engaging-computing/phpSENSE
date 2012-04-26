@@ -332,15 +332,17 @@ var scatter = new function Scatter(){
         
         this.clear();
 		
-        var xAxisName;
+        var xAxisName, xAxisType;
         if (this.xAxis == -1) {
             xAxisName = 'Datapoint #';
+            xAxisType = 1;
         }
         else {
-            xAxisName = data.fields[this.xAxis].name.toLowerCase();
+            xAxisName = data.fields[this.xAxis].name;
+            xAxisType = data.fields[this.xAxis].type_id
         }
         
-		drawXAxis(xmin, xmax, this, xAxisName);
+	drawXAxis(xmin, xmax, this, xAxisName, xAxisType);
         drawYAxis(ymin, ymax, this);
 		
 		// --- //
@@ -437,9 +439,9 @@ var scatter = new function Scatter(){
 		this.context.font = this.fontheight + "px sans-serif";
 
 		this.xlabelsize = Math.floor(this.fontheight*2);
-		this.ylabelsize = this.context.measureText( data.getMax() + "" ).width + this.fontheight/2;
+		this.ylabelsize = this.context.measureText(getLargestLabel()).width;
 
-		this.drawwidth	= Math.floor(this.canvaswidth	- (this.ylabelsize*1.5));
+                this.drawwidth  = Math.floor(this.canvaswidth   - (this.ylabelsize*1.2));
 		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*2.5));
 
 		this.xoff = 0;

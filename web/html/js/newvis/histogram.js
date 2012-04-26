@@ -236,7 +236,7 @@ var histogram = new function Histogram(){
         var xBounds = data.getFieldBounds([data.fields[this.field].name], false);
         
         drawYAxis(0, yMax, this);
-        drawXAxis(xBounds[0], xBounds[1], this, data.fields[this.field].name);
+        drawXAxis(xBounds[0], xBounds[1], this, data.fields[this.field].name, data.fields[this.field].type_id);
         // --- //
         
         var barUnitHeight = this.drawheight / yMax;
@@ -307,9 +307,9 @@ var histogram = new function Histogram(){
         this.context.font = this.fontheight + "px sans-serif";
 
         this.xlabelsize = Math.floor(this.fontheight*2);
-        this.ylabelsize = this.context.measureText( data.getMax() + "" ).width + this.fontheight/2;
+        this.ylabelsize = this.context.measureText(getLargestLabel()).width;
 
-        this.drawwidth  = Math.floor(this.canvaswidth   - (this.ylabelsize*1.5));
+                this.drawwidth  = Math.floor(this.canvaswidth   - (this.ylabelsize*1.2));
         this.drawheight = Math.floor(this.canvasheight  - (this.xlabelsize*2.5));
 
         this.xoff = 0;

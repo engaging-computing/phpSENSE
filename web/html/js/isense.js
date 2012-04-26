@@ -812,49 +812,55 @@ var createWizard = {
         
         $('#customFields').find('tr').each(function(i) {
            if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
-                
+              
                var counter = 1;
                $('#customFields').find('tr').each(function(i) {
-                 if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
-                   var label = $(this).find("input[name='custom_field_label_"+counter+"']").val();
-		   counter++;
-                   if(label == "") {
-                     if(filled) {
-                       filled = false;
-                       if(!$('#error_custom').is(':visible')) { $('#error_custom').show(); }
-                         $('#error_msg_custom').append('<p>Error: You did not label one of your fields. Please label it and try again.</p>');
+                    if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
+                        var label = $(this).find("input[name='custom_field_label_"+counter+"']").val();
+		                counter++;
+                        if(label == "") {
+                            if(filled) {
+                                filled = false;
+                                if(!$('#error_custom').is(':visible')) { 
+                                    $('#error_custom').show(); 
+                                }
+                                $('#error_msg_custom').append('<p>Error: You did not label one of your fields. Please label it and try again.</p>');
+                            }
+                        }
                     }
-                  }
-                }
                });
 
               var counter = 1;
               $('#customFields').find('tr').each(function(i) {
-                if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
-                  var type = $(this).find('#custom_field_type_'+counter).val();
-		  counter++;
-                  if(type == "-1"){
-                    if(typed) {
-                      typed = false;
-                      if(!$('#error_custom').is(':visible')) { $('#error_custom').show(); }
-                      $('#error_msg_custom').append('<p>Error: You did not select a type for one of your fields.</p>');
-                    }
-                  }
-                }
+                   if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
+                        var type = $(this).find('#custom_field_type_'+counter).val();
+		                counter++;
+                        if(type == "-1"){
+                            if(typed) {
+                                typed = false;
+                                if(!$('#error_custom').is(':visible')) { 
+                                    $('#error_custom').show(); 
+                                }    
+                                $('#error_msg_custom').append('<p>Error: You did not select a type for one of your fields.</p>');
+                            }
+                        }
+                   }
               });
                
-               var counter = 1;
-               $('#customFields').find('tr').each(function(i) {
-                 if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
-                   var unit = $(this).find('#custom_field_unit_'+counter).val();
-		   counter++;
-                    if(unit == "-1") {
-                        if(united) {
-                            united = false;
-                            if(!$('#error_custom').is(':visible')) { $('#error_custom').show(); }
-                            $('#error_msg_custom').append('<p>Error: You did not select a unit for one of your fields.</p>');
-                        }
-                    }
+              var counter = 1;
+              $('#customFields').find('tr').each(function(i) {
+                   if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
+                        var unit = $(this).find('#custom_field_unit_'+counter).val();
+		                counter++;
+                        if(unit == "-1") {
+                            if(united) {
+                                united = false;
+                                if(!$('#error_custom').is(':visible')) { 
+                                    $('#error_custom').show(); 
+                                }
+                                $('#error_msg_custom').append('<p>Error: You did not select a unit for one of your fields.</p>');
+                            }
+                      }
                   }
                });
                
@@ -869,7 +875,11 @@ var createWizard = {
                    var label  = $("#custom_field_label_"+counter).val();
                    var type   = $("#custom_field_type_"+counter).val();
                    var unit   = $("#custom_field_unit_"+counter).val();
-                   createWizard.store_field(label, type, unit);
+                   if(type == 7){
+                        createWizard.store_field("time", type, unit);
+                   } else {    
+                        createWizard.store_field(label, type, unit);
+                   }
                    counter++;
                }
             });
