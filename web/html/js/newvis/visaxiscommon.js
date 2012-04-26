@@ -321,6 +321,14 @@ function formatData(data, inc){
     }
 }
 
+/*
+ * Returns a label that represents the largest possible
+ * (physically) label string.
+ */
+function getLargestLabel() {
+    return formatData(-88000000000, 1);
+}
+
 /**
  * Draws an X axis (with grid marks) on the given visObject.
  * 
@@ -331,11 +339,11 @@ function formatData(data, inc){
  *             type is === "time" then time data is shown, 
  *             otherwise data is shown.
  */
-function drawXAxis(xmin, xmax, visObject, type){
+function drawXAxis(xmin, xmax, visObject, type, type_id){
     
     var getIncrement, getNextIncrement, formatter;
     
-    if (type.toLowerCase() === "time"){
+    if (type_id == 7){
         getIncrement = getTimeIncrement;
         getNextIncrement = getNextTimeIncrement;
         formatter = formatTime;
@@ -399,7 +407,7 @@ function drawXAxis(xmin, xmax, visObject, type){
     visObject.context.textAlign = 'left';
     
     //bkmk
-    if (type === "time"){
+    if (type_id === 7){
         visObject.context.fillText("Starting: " + (new Date((xmin+(xdiff*visObject.hRangeLower)))).toUTCString(), visObject.xoff, visObject.fontheight);
     }
         
