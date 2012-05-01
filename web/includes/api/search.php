@@ -26,21 +26,26 @@
  * DAMAGE.
  */
 
+
+//SEARCH EXPERIMENTS
 function searchExperiments($terms, $page = 1, $limit = 10, $sort = "relevancy") {
     global $session;
-    
+
     $is_admin = ($session->type == 1);
     
 	$tags = explode(" ", $terms);
 	$results = array();
 	
-	// Build array of search results
+    $results[0] = getExperimentsByName($tags);
+
+ 
+	/* Build array of search results */
 	foreach($tags as $tag) {
 		$search_results = getExperimentsByTag($tag);
 		if($search_results !== false) {
 			$results[$tag] = $search_results;
 		}
-	}
+	} 
 	
 	$experiments = array();
 	
@@ -86,6 +91,7 @@ function searchExperiments($terms, $page = 1, $limit = 10, $sort = "relevancy") 
 	}
 }
 
+//SEARCH VISUALIZATIONS
 function searchVisualizations($terms, $page = 1, $limit = 10, $sort = "relevancy") {
 	$tags = explode(" ", $terms);
 	$results = array();
@@ -127,6 +133,7 @@ function searchVisualizations($terms, $page = 1, $limit = 10, $sort = "relevancy
 	}
 }
 
+//SEARCH PEOPLE
 function searchPeople($terms, $page = 1, $limit = 10, $sort = "relevancy") {
 	global $db;
 	
@@ -157,6 +164,7 @@ function searchPeople($terms, $page = 1, $limit = 10, $sort = "relevancy") {
 	return false;
 }
 
+//BROWSE PEOPLE
 function browsePeople($page = 1, $limit = 10, $sort = "") {
 	global $db;
 	

@@ -242,11 +242,14 @@ function getExperimentsByTag($tag) {
 					users.lastname AS owner_lastname
 	                FROM tagIndex, tagExperimentMap, experiments
 	                LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-	                WHERE tagIndex.value = '{$tag}' 
+	                WHERE tagIndex.value LIKE '%{$tag}%' 
 	                AND tagIndex.tag_id = tagExperimentMap.tag_id 
 	                AND experiments.experiment_id = tagExperimentMap.experiment_id 
-	                AND tagIndex.weight = 1";
-	                
+	                AND tagIndex.weight = 1
+                    ORDER BY experiments.timemodified DESC";           
+	          
+
+      
 	$output = $db->query($sql);
 	
 	if($db->numOfRows) {
@@ -254,6 +257,27 @@ function getExperimentsByTag($tag) {
 	}
 	
 	return false;
+}
+
+function getExperimentsByName($tags){
+	global $db;
+	
+    $sql = "SELECT DISTINCT experiments.* FROM experiments where experiments.name LIKE '{$tags}'";
+    for($i=0; $i<count($tags);$i++){
+            $sql .= "OR experiments.name LIKE '{$tags[$i]}%'";       
+    }
+
+    
+    
+   	$output = $db->query($sql);
+  
+	if($db->numOfRows) {
+		return $output;
+	}
+	 
+	return false;
+          
+
 }
 
 function getFields($eid) {
