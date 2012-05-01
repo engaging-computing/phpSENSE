@@ -38,13 +38,15 @@ var map = new function Map() {
 	
     this.addInfoWindowSession = function(marker, gmap, ses){
         var contentString = '<div><table width="260px">';
+        var sessionName = data.sessions[ses].meta['name'];
 
+        contentString += "<tr><td><b>Name: </b>"+ sessionName+"</td></tr>";
         for(var field in data.fields) {
             
             var title = data.fields[field].name;
             var type_id = data.fields[field].type_id;
-            var val = data.avgField(title);
-           
+            var val = data.avgField(title,ses);
+            
             /* Do not display time or custom*/
             if(type_id != 7 && type_id != 22){
 
