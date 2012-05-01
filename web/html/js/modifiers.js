@@ -355,6 +355,26 @@ data.avgField = function( fieldName ) {
 	
 }
 
+data.avgField = function (fieldName,ses){
+    var avg = 0;
+	var count = 0;
+	
+	for(var field in this.fields ){
+		if( this.fields[field].name.toLowerCase() == fieldName.toLowerCase() ){
+            for(var dp in this.sessions[ses].data) {
+                var curval = this.sessions[ses].data[dp][field]
+                if(curval != "" || isNaN(curval) == false){
+                     avg += curval;
+			            count++;
+                }			    
+              
+			}
+        }
+    }  
+    return avg/count;    
+
+}
+
 data.fullSort = function( fieldName ) {
 
 	var returnData = Array();
