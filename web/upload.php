@@ -568,7 +568,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 									safeString(stripslashes($post_data['session_description'])), 
 									safeString(stripslashes($post_data['session_street'])), 
 									safeString(stripslashes($post_data['session_citystate'])), 
-									"United States", // Default country
+									"", // Default country
 									1, // Default permissions bit
 									1, // Default permissions bit
 									1, // Default permissions bit
@@ -657,7 +657,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
         						safeString($post_data['session_description']), 
         						safeString($post_data['session_street']), 
         						safeString($post_data['session_citystate']), 
-        						"United States", // Default country
+        						"", // Default country
 								1, // Default permission bits
 								1, // Default permission bits
 								1, // Default permission bits

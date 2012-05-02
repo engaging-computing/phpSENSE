@@ -25,7 +25,7 @@ var bar = new function Bar(){
 		
 		for( var i in data.fields ){
 			
-			if( data.fields[i].type_id != 7 && data.fields[i].type_id != 19 ){ // Should properly check if field is time
+			if( data.fields[i].type_id != 7 && data.fields[i].type_id != 19 && data.fields[i].type_id != 37){ // Should properly check if field is time
 			
 				var color = Math.floor(((0.75*i/data.fields.length)) * 256);
 			

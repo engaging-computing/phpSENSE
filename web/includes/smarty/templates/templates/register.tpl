@@ -29,39 +29,39 @@
 	{ if $user.guest }
 		{include file="parts/errors.tpl"}
 	  	{ if !$registered }
-	    	<div><img src="html/img/information.png" style="vertical-align: middle; position: relative; top: -2px; margin-right: 5px;"/>All fields are required.</div>
+	    	
 	    	<form method="post" action="register.php">
 	    		<table>
 	    			<tr>
-	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="email">Email:</label></td>
+	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="email">Username or Email: *</label></td>
 	      				<td><input type="text" name="email" value="{ $email }" style="width: 200px;"></input></td>
 	    			</tr>
 	    			<tr>
-	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="password">Password:</label></td>
+	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="password">Password: *</label></td>
 	      				<td><input type="password" name="password" style="width: 200px;"></input></td>
 	    			</tr>
 	    			<tr>
-	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="confirmpassword">Confirm Password:</label></td>
+	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="confirmpassword">Confirm Password: *</label></td>
 	      				<td><input type="password" name="confirmpassword" style="width: 200px;"></input></td>
 	    			</tr>
 	    			<tr>
-	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="fname">First Name:</label></td>
+	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="fname">First Name: *</label></td>
 	      				<td><input type="text" name="fname" value="{ $fname }" style="width: 200px;"></input></td>
 	    			</tr>
 	    			<tr>
-	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="lname">Last Name:</label></td>
+	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="lname">Last Name: *</label></td>
 	      				<td><input type="text" name="lname" value="{ $lname }" style="width: 200px;"></input></td>
 	    			</tr>
 	    			<tr>
-	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="street">Street:</label></td>
+	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="street">Street:  </label></td>
 	      				<td><input type="text" name="street" value="{ $street }" style="width: 200px;"></input></td>
 	    			</tr>
 	    			<tr>
-	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="citystate">City, State:</label></td>
+	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="citystate">City, State: *</label></td>
 	      				<td><input type="text" name="citystate" value="{ $citystate }" style="width: 200px;"></input></td>
 	    			</tr>
 	    			<tr>
-	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="country">Country:</label></td>
+	      				<td style="text-align: right; width: 130px; padding-right: 10px;"><label for="country">Country: </label></td>
 	      				<td>
 							<select name="country" style="width: 200px;">
 								<option value="US">United States</option>
