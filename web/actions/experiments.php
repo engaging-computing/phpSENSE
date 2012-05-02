@@ -46,23 +46,39 @@ if(isset($_GET['action'])) {
 			echo "worked!";
 			break;
 		
-		case "hide";
-			$user  = $session->getUser();
-			echo $user['administrator'];
-			if($user['administrator']) {
-				hideExperiment($_GET['id']);
-			}
-			echo "worked!";
-			break;
-		
-		case "unhide":
-			$user  = $session->getUser();
-			echo $user['administrator'];
-			if($user['administrator']) {
-				unhideExperiment($_GET['id']);
-			}
-			echo "worked!";
-			break;
+    	case "hide":
+    		$user = $session->getUser();
+    		if($user['administrator'] || $user['user_id'] == $owner) {
+    			hideExperiment($_GET['id']);
+    		}
+    		echo "worked!";
+    		break;
+
+    	case "unhide":
+    		$user  = $session->getUser();
+    		if($user['administrator'] || $user['user_id'] == $owner) {
+    			unhideExperiment($_GET['id']);
+    		}
+    		echo "worked!";
+    		break;
+    			
+    	case "hideSes":
+        	$user = $session->getUser();
+        	$owner = getSessionOwner($_GET['id']);
+        	if($user['administrator'] || $user['user_id'] == $owner) {
+        		hideSession($_GET['id']);
+        	}
+        	echo "worked!";
+        	break;
+
+        case "unhideSes":
+        	$user  = $session->getUser();
+        	$owner = getSessionOwner($_GET['id']);
+        	if($user['administrator'] || $user['user_id'] == $owner) {
+        		unhideSession($_GET['id']);
+        	}
+        	echo "worked!";
+        	break;
 	}
 }
 
