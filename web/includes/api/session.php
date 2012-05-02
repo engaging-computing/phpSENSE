@@ -282,8 +282,9 @@ function browseMySessions($uid) {
 									sessions.timecreated, 
 									sessions.timemodified,
 									sessions.timemodified AS `timeobj`,
+									sessions.owner_id,
 									experiments.experiment_id,
-									experiments.name AS `experiment_name` 
+									experiments.name AS `experiment_name`
 									FROM sessions, experimentSessionMap, experiments 
 									WHERE sessions.owner_id = {$uid} 
 									AND experimentSessionMap.session_id = sessions.session_id
@@ -474,6 +475,32 @@ function getDataSince($eid, $sid, $since) {
 	}
 	
 	return $output;
+}
+
+function hideSession($sid) {
+	global $db;
+	
+	$output = $db->query("UPDATE sessions SET sessions.finalized = 0 WHERE sessions.session_id = {$sid}");
+	
+	if($db->numOfRows) {
+	    //updateTimeModifiedForExperiment($eid);
+		return true;
+	}
+	
+	return false;
+}
+
+function unhideSession($sid) {
+	global $db;
+	
+	$output = $db->query("UPDATE sessions SET sessions.finalized = 1 WHERE sessions.session_id = {$sid}");
+	
+	if($db->numOfRows) {
+	    //updateTimeModifiedForExperiment($eid);
+		return true;
+	}
+	
+	return false;
 }
 
 /*
