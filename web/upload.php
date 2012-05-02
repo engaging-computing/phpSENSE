@@ -85,6 +85,24 @@ if(isset($_REQUEST['id'])) {
 	$smarty->assign('fields', 		$fields);
 	$smarty->assign('field_count', 	count($fields));
     $smarty->assign('e_proc', $meta['description']);
+    
+    if(!isNameRequired($eid)){ 
+	    $req_name = 0;
+	} else { 
+	    $req_name = 1; 
+	}
+	
+	if(!isLocationRequired($eid)) {
+	    $req_loc = 0;
+	} else {
+	    $req_loc = 1;
+	}
+	
+	if(!isProcedureRequired($eid)) {
+	    $req_procedure = 0;
+	} else {
+	    $req_procedure = 1;
+	}
 }
 else {
 	array_push($errors, 'Could not find your experiment.');
@@ -116,6 +134,14 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 				array_push($errors, ucwords($split[0]) . ' '. $split[1] . ' can not be blank.');
 			}
 		}
+		
+		if(!$req_name) { $post_data['session_name'] = getSessionPrefix($eid) . getSessionOffset($eid); }
+		if(!$req_procedure) { $post_data['session_description'] = ''; }
+		if(!$req_loc) { 
+		    $post_data['session_citystate'] = getExperimentLocation($eid);
+	        $post_data['session_street'] = ''; 
+	    }
+
 	}
 	
 	if($type == "file") {
@@ -753,6 +779,11 @@ $smarty->assign('state', 		$state);
 $smarty->assign('errors', 		$errors);
 $smarty->assign('time_fix',		$timefix);
 $smarty->assign('column_fix',	$columnfix);
+
+// Hide Name, Procedure and Location
+$smarty->assign('hideName', $req_name);
+$smarty->assign('hideProcedure', $req_procedure);
+$smarty->assign('hideLocation', $req_loc);
 
 $smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>' . 
 						'<script src="/html/js/lib/validate.js"></script>'.
