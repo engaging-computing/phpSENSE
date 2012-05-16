@@ -82,18 +82,33 @@ else if(isset($_GET['vsessions'])) {
     
 }
 
-
+//Check the first session the index of a time field
 for( $i = 0; $i < count($data[0]['fields']); $i++ ) {
     if( $data[0]['fields'][$i]['type_id'] == 7 )
         $tf = $i;
 }
 
+//if the index was found
 if( isset( $tf ) ) {
-    if( is_numeric($data[0]['data'][0][$tf]) ) {
-        for( $x = 0; $x < count($data[0]['data']); $x++ ) {    
-            $data[0]['data'][$x][$tf] = $data[0]['data'][$x][$tf] / 1000;
-        }
+
+    //check each session
+    for( $i = 0; $i < count($data); $i++ ) {
+
+        //if the first datapoint of the session cointains a number
+        if( is_numeric($data[$i]['data'][0][$tf]) ) {
+	    
+	    //go through each datapoint in the session
+    	    for( $x = 0; $x < count($data[$i]['data']); $x++ ) {    
+
+	    	 //and convert the time from ms to sec
+                $data[$i]['data'][$x][$tf] = $data[$i]['data'][$x][$tf] / 1000;
+
+       		 }
+
+   	 }
+
     }
+
 }
 
 
