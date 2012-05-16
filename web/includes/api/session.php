@@ -333,44 +333,52 @@ function updateTimeModifiedForSession($sid) {
 function putData($eid, $sid, $data) {
 	global $db, $mdb;
 	
+    //pull meta from experiment
 	$fields = getFields($eid);
 	$field_names = array();
 	$row_count = 0;
 	
+    //fill field_names[] from experiment meta data
 	foreach($fields as $field) {
 		$field_names[] = $field['field_name'];
 	}
 			
+    //i think this is a nasty version of if( isset($data) )
 	if(($count = count($data)) > 0) {
+        //for each data point (datum)
 	    foreach($data as $datum) {
 
+            //associatiave array that holds data to be entered
     		$row = array();
 
     		for($i = 0; $i < count($field_names); $i++) {
     			$value = $datum[$i];
 
+                //hackey mongo wierdness
     			if(is_numeric($value) ) {
     				$value = $value + 0;
     			}
 
+                //fill row with values to enter into mongo
     			$row[str_replace(".", "", $field_names[$i])] = $value;
     		}
 
     		$row['experiment'] = (int) $eid;
     		$row['session'] = (int) $sid;
 
+            //insert row of data into mongo
     		$mdb->insert("e{$eid}", $row);
 
     		$row_count++;	
     	}
 	}
 
-	
+	//if successful
 	if($row_count > 0) {
 	    $dbname = MDB_DATABASE;
     	$filename = "mongodb://localhost/{$dbname}/{$eid}/session:{$sid}";
 
-
+        //post meta data
     	$db->query("INSERT INTO data (`session_id`, `format`, `uri`) VALUES({$sid}, 'local_csv', '{$filename}')");
     	updateTimeModifiedForSession($sid);
 	}
