@@ -49,12 +49,15 @@ $(document).ready( function() {
 			            dataString += 'team=' + $('#team').val() + '&';
 			            dataString += 'testType=' + $('#testType').val() + '&';
 			            dataString += 'sessionLoc=' + $('#sessionLoc').val();
-			            
+			            dataString += '&submit=1'
+
+
 			            $.ajax({
 			                type: 'POST',
 			                url: '/tsor.php',
 			                data: dataString,
 			                success: function(msg) {
+					    console.log(dataString);
 			                    alert('Successfully added data');
 			                }
 			            });

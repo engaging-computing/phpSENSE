@@ -28,7 +28,7 @@
 
 require_once 'includes/config.php' ;
 
-if (isset($_POST['submit'])) {
+if (isset($_REQUEST['submit'])) {
 
   //This is for all the money. We are submitting the data. Tell the user the outcome
   $smarty->assign('submission', 'true');
@@ -77,6 +77,8 @@ if (isset($_POST['submit'])) {
   $data = array(array($_SERVER['REQUEST_TIME'],$school . " " .  $team, $testType, $lat, $long, 
                       $temp, $pH, $vernierClarity, $secchiClarity, $disox, $copper, $phosphorus, $airTemp));
       
+  //print_r($data);
+
   putData($eid, $sid, $data);
   echo "<html><head><script type=\"text/javascript\">window.location=\"../vis.php?sessions=" . $sid . "\"</script></head></html>";
 
