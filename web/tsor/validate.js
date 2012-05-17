@@ -1,4 +1,5 @@
 /******************************************************************************
+w
  * Validate.js                                                                *
  *****************************************************************************/
 
@@ -57,8 +58,9 @@ $(document).ready( function() {
 			                url: '/tsor.php',
 			                data: dataString,
 			                success: function(msg) {
-					    console.log(dataString);
-			                    alert('Successfully added data');
+					    /*console.log(dataString);*/
+					    /*console.log(msg);*/
+					  window.location = msg;
 			                }
 			            });
 			            

@@ -74,14 +74,14 @@ if (isset($_REQUEST['submit'])) {
       break;
   }
 
-  $data = array(array($_SERVER['REQUEST_TIME'],$school . " " .  $team, $testType, $lat, $long, 
+  $data = array(array($_SERVER['REQUEST_TIME'] * 1000,$school . " " .  $team, $testType, $lat, $long, 
                       $temp, $pH, $vernierClarity, $secchiClarity, $disox, $copper, $phosphorus, $airTemp));
       
   //print_r($data);
 
   putData($eid, $sid, $data);
-  echo "<html><head><script type=\"text/javascript\">window.location=\"../vis.php?sessions=" . $sid . "\"</script></head></html>";
-
+  //echo "<html><head><script type=\"text/javascript\">window.location=\"../vis.php?sessions=" . $sid . "\"</script></head></html>";
+  echo "../vis.php?sessions=" . $sid;	
 } else {
 	
 	$smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>' . 
