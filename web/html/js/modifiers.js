@@ -337,22 +337,16 @@ data.qSortFieldNum = function( fieldNum ) {
 	
 }
 
-data.avgField = function( fieldName ) {
-	
-	var avg = 0;
-	var count = 0;
-	
-	for(var field in this.fields )
-		if( this.fields[field].name.toLowerCase() == fieldName.toLowerCase() )
-			for(var ses in this.sessions ) {
-				for(var dp in this.sessions[ses].data) {
-					avg += this.sessions[ses].data[dp][field];
-					count++;
-				}
-			}
-	
-	return (avg/count);
-	
+data.avgFieldHelper = function (ses) {
+  var avg = 0;
+  var count = 0;
+
+  for(var dp in this.sessions[ses].data) {
+		avg += this.sessions[ses].data[dp][field];
+		count++;
+	}
+
+  return (avg/count);
 }
 
 data.avgField = function (fieldName,ses){
@@ -361,17 +355,18 @@ data.avgField = function (fieldName,ses){
 	
 	for(var field in this.fields ){
 		if( this.fields[field].name.toLowerCase() == fieldName.toLowerCase() ){
-            for(var dp in this.sessions[ses].data) {
-                var curval = this.sessions[ses].data[dp][field]
-                if(curval != "" || isNaN(curval) == false){
-                     avg += curval;
-			            count++;
-                }			    
-              
-			}
+      if(!ses) {
+        for(var ses in this.sessions) {
+          avg += this.avgFieldHelper(ses);
+          count++;
         }
-    }  
-    return avg/count;    
+      }
+      else {
+        return this.avgFieldHelper(ses);
+      }
+    }
+  }  
+  return avg/count;    
 
 }
 
