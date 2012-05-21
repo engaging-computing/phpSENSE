@@ -130,12 +130,13 @@ var map = new function Map() {
 
         /* If there is data in the session use it, else display the session map */
 		if( latField != null && lonField != null ){
-			this.Options['center'] = new google.maps.LatLng(data.avgField('latitude'), data.avgField('longitude'));      
+			this.Options['center'] = new google.maps.LatLng(data.sessions[0].data[0][latField], data.sessions[0].data[0][lonField]);      
         }
 		else {
 			this.Options['center'] = new google.maps.LatLng(data.sessions[0].meta['latitude'], data.sessions[0].meta['longitude']);
 		}    
-       
+           
+           
         /* Create the new map */    
 		this.gmap = new google.maps.Map(document.getElementById("map_canvas"), this.Options);
 
@@ -212,6 +213,7 @@ var map = new function Map() {
 			    }
 			}
 		}			
+
 	}
 
     /* Draw the controls under the map. */
