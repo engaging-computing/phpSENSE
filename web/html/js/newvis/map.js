@@ -60,6 +60,18 @@ var map = new function Map() {
 
             
         }
+
+	for(var i in data.sessions[ses].pictures){                
+        	var link = data.sessions[ses].pictures[i]['provider_url'];
+                var description = data.sessions[ses].pictures[i]['description'];
+                if(i==0){ 
+                	
+                        contentString+='<td id="pic_'+ses+'"><a id="link_'+ses+'"rel="prettyPhoto[gallery'+ses+']" href="'+ link + '" title="'+description+'"> ' + session_name +'</a>'+'</td> ');
+                } else {
+                	contentString += '<a rel="prettyPhoto[gallery'+ses+']" href="'+ link + '" title="'+description+'"></a>';
+           	}
+
+	}
         contentString += "</table></div>";
 
         var infowindow = new google.maps.InfoWindow({
