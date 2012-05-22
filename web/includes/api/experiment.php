@@ -26,7 +26,7 @@
  * DAMAGE.
  */
  
-function createExperiment($token, $name, $description, $fields, $req_name, $req_procedure, $req_location, $name_prefix, $location, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
+function createExperiment($token, $name, $description, $fields, $req_name=1, $req_procedure=1, $req_location=1, $name_prefix=null, $location=null, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
 	global $db;
 	
 	$uid = $token['uid'];
@@ -647,21 +647,28 @@ function isProcedureRequired($eid){
     global $db;
     $sql = "SELECT req_procedure FROM experiments WHERE experiments.experiment_id={$eid}";
     $query = $db->query($sql);
-    return $query[0]["req_procedure"];
+    return $query[0]['req_procedure'];
 }
 
 function getSessionPrefix($eid){
     global $db;
     $sql = "SELECT name_prefix FROM experiments WHERE experiments.experiment_id={$eid}";
     $query = $db->query($sql);
-    return $query[0]["name_prefix"];
+    return $query[0]['name_prefix'];
 }
 
 function getExperimentLocation($eid){
     global $db;
     $sql = "SELECT location FROM experiments WHERE experiments.experiment_id={$eid}";
     $query = $db->query($sql);
-    return $query[0]["location"];
+    return $query[0]['location'];
+}
+
+function getSessionOffset($eid) {
+    global $db;
+    $sql = "SELECT DISTINCT COUNT(*) FROM experimentSessionMap WHERE experiment_id={$eid};";
+    $query = $db->query($sql);
+    return $query[0]['COUNT(*)'];
 }
 
 function getExpOwner($sid) {

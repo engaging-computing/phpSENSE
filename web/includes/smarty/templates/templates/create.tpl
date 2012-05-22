@@ -27,13 +27,13 @@
  *}
 { if $user.guest }
 	<div id="main-full">
-		<div>Guests do not have profile. If you already have an account, click <a href="login.php">here</a> to login. If not, click <a href="register.php">here</a> to register for an account.</div>
+		<div>You must be logged in to create and experiment. </br> If you already have an account, click <a href="login.php">here</a> to login. If not, click <a href="register.php">here</a> to register for an account.</div>
 	</div>
 { else }
 	<div id="main">
 		{include file="parts/errors.tpl"}
 		<form name="create_form" id="create_form" method="post">
-		    
+		   
 	 		{ if !$created }
 				<fieldset id="basic-info">
 				    
@@ -67,46 +67,55 @@
                         
                         
     					<span style="float:none" class="hint">Select the subject area or areas that best describe your experiment.</span><br /><br />
-                  {if $user.administrator == 1}      
-                        <label>Options:</label><br />
+                    
+                        <legend>Step 2: Session Options</legend><br />
+                 
                         <div class="options">
-                        <p>Should collaborators enter session names:</p>
-                            <select class="sel" name="req_name" id="req_name">
-                                <option value="1">yes</option>
-                                <option value="0">no</option>
-                            </select><br /><br />
-                            
-                        <p id="name_pref">Enter name prefix:</p>
-                            <input type="text" name="name_prefix" id="name_input" style="position:absolute;left:30%;width:35%"/><br />
-                            <br />
-                            <span style="float:none" id="name_hint" class="hint">e.g., Session #: 1 (numbers will be appended automatically)</span><br />
-                            
-                        <p>Should collaborators enter a location:</p>
-                            <select name="req_location" id="req_location">
-                                <option value="1">yes</option>
-                                <option value="0">no</option>
-                            </select><br /><br />
-                            
-                        <p id="loc_label">Enter static location:</p>
-                            <input type="text" name="location" id="loc_input" style="position:absolute;left:30%;width:35%" /><br />
-                            <br />
-                            <span style="float:none" id="loc_hint" class="hint">i.e., All sessions will have the same location</span><br />
+                        
+                            <div>
+                                <div style="float:left;width:50%">Should collaborators enter a procedure?</div>
+                                    <div><select name="req_procedure" id="req_procedure">
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+                                    </select><br /><br /></div>
+                            </div>
 
-                        <p>Should collaborators enter a procedure:</p>
-                            <select name="req_procedure" id="req_procedure">
-                                <option value="1">yes</option>
-                                <option value="0">no</option>
-                            </select><br /><br />
+                            <div>
+                                <div style="float:left;width:50%">Should collaborators enter session names?</div>
+                                    <div><select class="sel" name="req_name" id="req_name">
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+                                    </select><br /><br /></div>
+                                    
+                                <div id="name_pref">&nbsp;&nbsp;<b>Enter name prefix:</b></div>
+                                    <input type="text" name="name_prefix" id="name_input" style="position:absolute;left:31%;width:27%"/><br />
+                                    <br />
+                                    <span style="float:none;left:5%" id="name_hint" class="hint">e.g., Session #: 1 (numbers will be appended automatically)</span><br />                          
+                           </div>
+
+                           <div>
+                                <div style="float:left;width:50%">Should collaborators enter a location?</div>
+                                    <div><select name="req_location" id="req_location">
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+                                    </select><br /><br /></div>
+                                    
+                                <div id="loc_label">&nbsp;&nbsp;<b>Enter location:</b></div>
+                                    <input type="text" name="location" id="loc_input" style="position:absolute;left:31%;width:27%" /><br />
+                                    <br />
+                                    <span style="float:none;left:5%" id="loc_hint" class="hint">i.e., All sessions will have the same location</span><br />
+
+                           </div>
                                 
                         </div>
-                      {/if}
-					<span id="requiredfields">* <span id="requiredfieldstext">Denotes a required field.</span></span>
+                     
+					
 					
 				</fieldset>
 				
 				<fieldset id="fields">
 				    
-		    		<legend>Step 2: Data Fields</legend>
+		    		<legend>Step 3: Data Fields</legend>
 					    <div id="setup_button">
 		    			    <p style="padding:6px 0px;">Click the 'Setup Data Fields' button to start the process of setting up your data fields.</p>
 						    <a href="#TB_inline?height=400&width=600&inlineId=hiddenModalContent" class="thickbox" style="text-decoration:none;"><button type="button">Setup Data Fields</button></a>
@@ -126,7 +135,7 @@
 		  		</fieldset>
 
 				<fieldset>
-			    	<legend>Step 3: Review and Finish</legend>
+			    	<legend>Step 4: Review and Finish</legend>
 			    	    <p style="padding:6px 0px;">When you are finished reviewing your experiment, click the Create Experiment button to continue.</p>
 					    <button id="experiment_create" name="experiment_create" type="submit" disabled="disabled">Create Experiment</button>
 				</fieldset>

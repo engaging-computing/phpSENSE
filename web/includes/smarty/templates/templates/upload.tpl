@@ -30,28 +30,37 @@
 	<div>Guests do not have access to contribute to experiments. If you already have an account, click <a href="login.php">here</a> to login. If not, click <a href="register.php">here</a> to register for an account.</div>
 </div>
 { else }
+
 	<div id="main">
 		{ include file="parts/errors.tpl" }
 		<form method="POST" id="upload_form" name="upload_form" enctype="multipart/form-data">
 			<fieldset id="basic-info">
 				{ if $state == 1 }
-					<legend>Create a new session</legend>
+                    { if $hideName || $hideProcedure || $hideLocation}
+					<legend>Step 1: Session Information</legend>
 			    	<p>Your session will be created with the following information.</p>
-					<label for="session_name">* Name:</label><input type="text" name="session_name" id="session_name" class="required urlSafe" value="{ $session_name }"/><img height="10px" width="10px" id="session_name_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_name_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
-			    	<span id="session_name_hint" class="hint">Example: "Northern River Afternoon Test"</span><br/>
-			    	<label for="session_description">* Procedure:</label><textarea name="session_description" id="session_description" class="required">{ $session_description }</textarea><img height="10px" width="10px" id="session_description_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;top:-15px;" /><img height="10px" width="10px" id="session_description_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;top:-15px;" /><br/>
+					{ if $hideName }<label for="session_name">* Name:</label><input type="text" name="session_name" id="session_name" class="required urlSafe" value="{ $session_name }"/><img height="10px" width="10px" id="session_name_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_name_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
+			    	<span id="session_name_hint" class="hint">Example: "My Super Awesome Test"</span><br/>
+			    	{/if}{ if $hideProcedure }<label for="session_description">* Procedure:</label><textarea name="session_description" id="session_description" class="required">{ $session_description }</textarea><img height="10px" width="10px" id="session_description_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;top:-15px;" /><img height="10px" width="10px" id="session_description_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;top:-15px;" /><br/>
 			    	<span id="session_description_hint" class="hint">Describe the session procedure and other details.</span><br/>
-					<label for="session_street">&nbsp;&nbsp;Street:</label><input type="text" name="session_street" id="session_street" value=" " /><img height="10px" width="10px" id="session_street_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_street_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
-					<span id="session_street_hint" class="hint">Example: "4 Yawkey Way"</span><br/>
-					<label for="session_citystate">* City, State:</label><input type="text" name="session_citystate" id="session_citystate" value="{ $session_citystate }" class="required"/><img height="10px" width="10px" id="session_citystate_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_citystate_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
-					<span id="session_citystate_hint" class="hint">Example: "Boston, Ma"</span><br/>
+					{/if}{ if $hideLocation }
+					    <label for="session_citystate">* Location:</label><input type="text" name="session_citystate" id="session_citystate" value="{ $session_citystate }" class="required"/><img height="10px" width="10px" id="session_citystate_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_citystate_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
+					<span id="session_citystate_hint" class="hint">Example: "4 Yawkey Way, Boston, MA" or "Boston, Ma" </span><br/>
+                        {/if}
+                        <legend>Step 2: Add Session Data</legend></br>
+                        {else} 
+                            <legend>Step 1: Add Session Data</legend></br>                 
+                    {/if}
+                                       
 					<label for="session_type">Session Type:</label>
-					<div style="width:480px;">
+                    			
+    
+                    <div style="width:480px;">
 					    <input type="radio" id="manual_upload" name="session_type" group="session_type" value="manual" style="width:20px;" CHECKED /><span>Manual Entry</span>
 						<input type="radio" id="file_upload" name="session_type" group="session_type" value="file" style="width:20px;"/><span>Data File</span>
 					</div>
 					<div id="error_rows" style="display:none;text-align:center"></div><br/>
-					<label for="session_file" >* Session Data:</label>
+					
 					<div id="type_file" style="display:none;">
 						<input type="file" name="session_file"/><br/>
 						<span class="hint">Click browse and select your CSV data file.</span><br/>

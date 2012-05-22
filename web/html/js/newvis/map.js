@@ -38,13 +38,15 @@ var map = new function Map() {
 	
     this.addInfoWindowSession = function(marker, gmap, ses){
         var contentString = '<div><table width="260px">';
+        var sessionName = data.sessions[ses].meta['name'];
 
+        contentString += "<tr><td><b>Name: </b>"+ sessionName+"</td></tr>";
         for(var field in data.fields) {
             
             var title = data.fields[field].name;
             var type_id = data.fields[field].type_id;
-            var val = data.avgField(title);
-           
+            var val = data.avgField(title,ses);
+            
             /* Do not display time or custom*/
             if(type_id != 7 && type_id != 22){
 
@@ -140,12 +142,13 @@ var map = new function Map() {
 
         /* If there is data in the session use it, else display the session map */
 		if( latField != null && lonField != null ){
-			this.Options['center'] = new google.maps.LatLng(data.avgField('latitude'), data.avgField('longitude'));      
+			this.Options['center'] = new google.maps.LatLng(data.sessions[0].data[0][latField], data.sessions[0].data[0][lonField]);      
         }
 		else {
 			this.Options['center'] = new google.maps.LatLng(data.sessions[0].meta['latitude'], data.sessions[0].meta['longitude']);
 		}    
-       
+           
+           
         /* Create the new map */    
 		this.gmap = new google.maps.Map(document.getElementById("map_canvas"), this.Options);
 
@@ -222,6 +225,7 @@ var map = new function Map() {
 			    }
 			}
 		}			
+
 	}
 
     /* Draw the controls under the map. */
