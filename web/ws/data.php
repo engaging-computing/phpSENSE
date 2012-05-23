@@ -35,24 +35,54 @@ class Data {
 
     public $eid;
     
-    public $relVis = array('Scatter', 'Histogram', 'Bar', 'Table');
+    public $relVis = array('Table');
     
     public $fields = array();
     public $sessions = array();
+   
 
 	// DO NOT USE UNIT_IDs FOR TYPE CHECKS
-    
     public function getTimeField() {
         foreach( $this->fields as $index=>$field )
             if( $field->type_id == 7 )
                 return $index;
     }
 
+    /* Turn on the relevant vizes */
     public function setRelVis() {
-        foreach( $this->fields as $field )
-            if( $field->type_id == 7 )
-                $this->relVis = array_merge(array('Timeline'), $this->relVis);
-        $this->relVis = array_merge(array('Map'), $this->relVis);    
+        
+        /* See how much data the experiment has */
+        $max = 0;
+        foreach( $this->sessions as $session ) {
+            if(count($session->data) > $max){
+                $max = count($session->data);    
+            }
+        }
+
+        $total = 0;
+        foreach( $this->sessions as $session ) {
+            $total += count($session->data);
+        }
+  
+        /* If there is more than one data point total add the following vizes */
+        if($total > 1){
+           $this->relVis = array_merge(array('Bar', 'Histogram'), $this->relVis);          
+        }
+      
+        /* If there is more than one data point in a session add the following vizes */
+        if( $max > 1 ) {
+            $this->relVis = array_merge(array('Scatter'), $this->relVis); 
+
+            /* if a time field exists, add timeline */
+            foreach( $this->fields as $field ){
+                if ($field->type_id == 7) {
+                    $this->relVis = array_merge(array('Timeline'), $this->relVis); 
+                }
+            }
+        }
+
+        /* Add the map last because it should always be first. */
+        $this->relVis = array_merge(array('Map'), $this->relVis);   
     }  
     
     public function setTime() {
@@ -127,7 +157,8 @@ class Ses {
     
     public $meta = array();
     public $data = array();
-    
+    public $pictures = array();    
+
     public function is_visible() { return $this->visibility; }
     public function setVisibility($v) { $this->visibility = $v; }
     
@@ -137,7 +168,7 @@ class Field {
     
     public $field_id = 0;
     public $name;
-    public $visibility = 1;
+    public $visibility = 0;
     public $type_id = 0;
     public $unit_id = 0;
     public $type_name = 0;
@@ -152,11 +183,12 @@ class Field {
         $this->type_name = func_get_arg(4);
         $this->unit_name = func_get_arg(5);
         $this->unit_abb = func_get_arg(6);
+        $this->visibility = func_get_arg(7);
         
         //set default of geolocation and text to not visible
-        if ($this->type_id == 37 || $this->type_id == 19) {
+        /*if ($this->type_id == 37 || $this->type_id == 19) {
             $this->visibility = 0;
-        }
+        }*/
     }
     
     public function is_visible() { return $this->visibility; }
@@ -180,13 +212,23 @@ if(isset($_REQUEST['sessions'])) {
     $fields = getFields($data->eid);
     
     //print_r($fields);
+    $pick = true;
+    $visible = 1;
             
     foreach( $fields as $index=>$field ) { 
-        $data->fields[$index] = new Field($field['field_id'], $field['field_name'], $field['type_id'], $field['unit_id'], $field['type_name'], $field['unit_name'], $field['unit_abbreviation']);
+        if ($pick && $field['type_id'] != 37 && $field['type_id'] != 19 && $field['type_id'] != 7) {
+            $visible = 1;
+            $pick = false;
+        }
+        else if ($field['type_id'] == 7) {
+            $visible = 1;
+        }
+        else {
+            $visible = 0;
+        }
+        
+        $data->fields[$index] = new Field($field['field_id'], $field['field_name'], $field['type_id'], $field['unit_id'], $field['type_name'], $field['unit_name'], $field['unit_abbreviation'], $visible);
     }
-    
-    //Determine witch vises are relevant
-    $data->setRelVis();
         
     //Load sessions into Data object
     foreach( $sessions as $index=>$ses ) {        
@@ -194,6 +236,7 @@ if(isset($_REQUEST['sessions'])) {
         $data->sessions[$index]->sid = $ses;
         $data->sessions[$index]->meta = getSession($ses);
         $data->sessions[$index]->data = getData($data->eid, $ses);
+        $data->sessions[$index]->pictures = getSessionPictures($ses);
     }
     
     
@@ -236,6 +279,9 @@ if(isset($_REQUEST['sessions'])) {
         
     //echo 'data["session"][0].is_visible = function() {alert("hi");};';
     //echo 'console.log(data["session"][0].is_visible());';
+    
+    //Determine witch vises are relevant
+    $data->setRelVis();
 
     echo 'var data =' . json_encode($data) .';';    
 }

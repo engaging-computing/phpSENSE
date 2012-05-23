@@ -120,6 +120,22 @@ $(document).ready(function(){
             }
         });
     }
+    
+    if($('#session_hidden').length > 0) {
+        $('#session_hidden').click(function(){
+            if($(this).attr("checked")) {
+                // Make Featured
+                $.get('actions/experiments.php', { action:"hideSes", id:$(this).attr('name') }, function(data){
+                    alert(data);
+                });
+            } else {
+                // Remove Feature
+                $.get('actions/experiments.php', { action:"unhideSes", id:$(this).attr('name') }, function(data){
+                    alert(data);
+                });
+            }
+        });
+    }
 
 	if($('.star').length > 0) {
 	    for(var i = 1; i < 6; i++) {
@@ -418,7 +434,7 @@ function addManualDataRow() {
        var id =  $(this).attr('id');
        var name = $(this).attr('name');
 
-       console.log(id);
+       //console.log(id);
 
 	if( id == 'Time_xxx' || id == 'time_xxx' )
 	    $(this).attr('class', 'time');
@@ -614,11 +630,10 @@ var createWizard = {
     },
 
     step_pinpoint_advance:function() {
-	        var filled = true;
-	        var labels = Array("#external_label");
-	        var boxes = Array("#external");
-
-	        $('#error_msg_custom').children().remove();
+	
+			/*
+			var labels = Array("#external_label_A");
+			var boxes = Array("#external_A");
 
 	        for(i = 0; i < labels.length; i++) {
 	            if(($(labels[i]).val() == "") && $(boxes[i]).attr('checked')) {
@@ -629,11 +644,80 @@ var createWizard = {
 	                }
 	            }
 	        }
+			*/
 
-	        if(filled) {
-	            createWizard.next = createWizard.step_post_process;
+    		$('#error_msg_custom').children().remove();
+	
+			// - Check to see if there are duplicate sensors - //
+				
+			var errors		= false;
+			var errormessage = "";
+			
+			var portselectarray = [];
+			var porttestarray = [false,false,false,false];
+			
+			var ports = ['A','B','C','D'];
+			
+			var sensortypes = {
+				
+				1:  {name: 'temperature probe', type_id: 1, unit_id: 2},
+				2:  {name: 'voltage', type_id: 11, unit_id: 34},
+				3:  {name: 'counts', type_id: 20, unit_id: 60},
+				4:  {name: 'counts', type_id: 20, unit_id: 60},
+				5:  {name: 'ph', type_id: 24, unit_id: 70},
+				6:  {name: 'salinity', type_id: 23, unit_id: 69},
+				7:  {name: 'co2 high', type_id: 22, unit_id: 67},
+				8:  {name: 'dissolved oxygen', type_id: 30, unit_id: 77},
+				9:  {name: 'anenometer', type_id: 31, unit_id: 45},
+				10: {name: 'turbidity', type_id: 32, unit_id: 78},
+				11: {name: 'flow rate', type_id: 33, unit_id: 45},
+				12: {name: 'motor monitor', type_id: 34, unit_id: 34},
+				13: {name: 'conductivity', type_id: 35, unit_id: 79}
+				
+			};
+			
+			portselectarray[portselectarray.length] = $('#external_port_A').val();
+			portselectarray[portselectarray.length] = $('#external_port_B').val();
+			portselectarray[portselectarray.length] = $('#external_port_C').val();
+			portselectarray[portselectarray.length] = $('#external_port_D').val();
+			
+			for(i in portselectarray){
+				
+				var port = parseInt(portselectarray[i])-1;
+				
+				if(port>=0){
+				
+					var used = porttestarray[port];
+				
+					if(used){
+						
+						errors = true;
+						
+						errormessage += "Error: Multiple sensors cannot use the same port.<br>";
+						
+					}
+				
+					porttestarray[port] = true;
+				
+				}
+				
+			};
+			
+			for( i in ports ) if($('#external_type_' + ports[i]).val() == 0 && $('#external_' + ports[i]).attr('checked')){
+				
+				errors = true;
+				
+				errormessage += "Error: Please select a sensor type.<br>";
 
-	            /* Add Temperature to fields */
+			}
+			
+			// - end - //
+
+            /* Clean Up Form */
+				
+			if(!errors){
+			
+				/* Add Time to fields */
 	            createWizard.store_field('time', 7, 22);
 
 	            /* Add gps to fields */
@@ -653,83 +737,85 @@ var createWizard = {
 	            }
 
 	            if($('#temperature').attr('checked')) {
-	                createWizard.store_field('temperature', 1, 2);
+	                createWizard.store_field('air temperature', 1, 2);
 	            }
-	
+
 				if($('#pressure').attr('checked')) {
 	                createWizard.store_field('pressure', 27, 75);
 	            }
-	
+
 				if($('#humidity').attr('checked')) {
 	                createWizard.store_field('humidity', 28, 77);
 	            }
 
-	            /* Add External */
-	            if($('#external').attr('checked')) {
-	                /* Add PinPoint Temp Probe */
-	                if($('#external_type').val() == 1) {
-	                    createWizard.store_field('temperature probe', 1, 2);
-	                }
-	                /* Add Generic Voltage Probe */
-	                else if($('#external_type').val() == 2) {
-	                    createWizard.store_field('voltage', 11, 34);
-	                }
-	                /* Add Giger Counter Probe */
-	                else if($('#external_type').val() == 3 || $('#external_type').val() == 4){
-	                    createWizard.store_field('counts', 20, 60);
-	                }
-	                /* Need to throw error, this is a bad value */
-	                else if($('#external_type').val() == 0) {
-	                    // Error
-	                }
-	                else if($('#external_type').val() == 5) {
-	                    createWizard.store_field('ph', 24, 70);
-	                }
-	                else if($('#external_type').val() == 6) {
-	                    createWizard.store_field('salinity', 23, 69);
-	                }
-	                else if($('#external_type').val() == 7) {
-	                    createWizard.store_field('co2 high', 22, 67);
-	                }
-					else if($('#external_type').val() == 8) {
-	                    createWizard.store_field('dissolved oxygen', 30, 77);
-	                }
-					else if($('#external_type').val() == 9) {
-	                    createWizard.store_field('anemometer', 31, 45);
-	                }
-					else if($('#external_type').val() == 10) {
-	                    createWizard.store_field('turbidity', 32, 78);
-	                }
-					else if($('#external_type').val() == 11) {
-	                    createWizard.store_field('flow rate', 33, 45);
-	                }
-					else if($('#external_type').val() == 12) {
-	                    createWizard.store_field('motor monitor', 34, 34);
-	                }
-					else if($('#external_type').val() == 13) {
-	                    createWizard.store_field('conductivity', 35, 79);
-	                }
-	            }
-
-	            /* Add Altitude to fields */
+				/* Add Altitude to fields */
 	            if($('#altitude').attr('checked')) {
 	                createWizard.store_field('altitude', 3, 5);
 	            }
 
-	            /* Clean Up Form */
-	            $('#step_pinpoint').hide();
+				// - //
 
-	            $('#step_done').show();
-	            $('#create_advance').val('Done');
-	            $('#create_previous').hide();
-	        }
+				for( i in ports ){
+
+		            /* Add External */
+		            if($('#external_' + ports[i]).attr('checked')) {
+
+						var external_port = "";
+
+						switch(parseInt($('#external_port_' + ports[i]).val())){
+							case 0:
+							external_port = "";
+							break;
+							case 1:
+							external_port = "~BTA1";
+							break;
+							case 2:
+							external_port = "~BTA2";
+							break;
+							case 3:
+							external_port = "~MINI1";
+							break;
+							case 4:
+							external_port = "~MINI2";
+							break;
+						}
+						
+						var sensortype = $('#external_type_' + ports[i]).val();
+					
+						createWizard.store_field(sensortypes[sensortype].name + external_port, sensortypes[sensortype].type_id, sensortypes[sensortype].unit_id);
+
+		            }
+				}
+			
+				// - //
+			
+				if(!errors){
+			
+					createWizard.next = createWizard.step_post_process;
+
+		            $('#step_pinpoint').hide();
+		            $('#step_done').show();
+		            $('#create_advance').val('Done');
+		            $('#create_previous').hide();
+					$('div#wizard_error').hide();
+				
+				}
+				
+			} else {
+				
+				$('div#wizard_error').html(errormessage);
+
+				$('div#wizard_error').show();
+				
+			}
+				
 	    },
         
     step_custom:function() {
         createWizard.next = createWizard.step_custom_advance;
         createWizard.prev = createWizard.step_restart;
         $('#step_custom').show();
-	$('#create_advance').val('Done');
+		$('#create_advance').val('Done');
     },
     
     step_custom_advance:function() {
@@ -742,49 +828,55 @@ var createWizard = {
         
         $('#customFields').find('tr').each(function(i) {
            if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
-                
+              
                var counter = 1;
                $('#customFields').find('tr').each(function(i) {
-                 if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
-                   var label = $(this).find("input[name='custom_field_label_"+counter+"']").val();
-		   counter++;
-                   if(label == "") {
-                     if(filled) {
-                       filled = false;
-                       if(!$('#error_custom').is(':visible')) { $('#error_custom').show(); }
-                         $('#error_msg_custom').append('<p>Error: You did not label one of your fields. Please label it and try again.</p>');
+                    if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
+                        var label = $(this).find("input[name='custom_field_label_"+counter+"']").val();
+		                counter++;
+                        if(label == "") {
+                            if(filled) {
+                                filled = false;
+                                if(!$('#error_custom').is(':visible')) { 
+                                    $('#error_custom').show(); 
+                                }
+                                $('#error_msg_custom').append('<p>Error: You did not label one of your fields. Please label it and try again.</p>');
+                            }
+                        }
                     }
-                  }
-                }
                });
 
               var counter = 1;
               $('#customFields').find('tr').each(function(i) {
-                if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
-                  var type = $(this).find('#custom_field_type_'+counter).val();
-		  counter++;
-                  if(type == "-1"){
-                    if(typed) {
-                      typed = false;
-                      if(!$('#error_custom').is(':visible')) { $('#error_custom').show(); }
-                      $('#error_msg_custom').append('<p>Error: You did not select a type for one of your fields.</p>');
-                    }
-                  }
-                }
+                   if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
+                        var type = $(this).find('#custom_field_type_'+counter).val();
+		                counter++;
+                        if(type == "-1"){
+                            if(typed) {
+                                typed = false;
+                                if(!$('#error_custom').is(':visible')) { 
+                                    $('#error_custom').show(); 
+                                }    
+                                $('#error_msg_custom').append('<p>Error: You did not select a type for one of your fields.</p>');
+                            }
+                        }
+                   }
               });
                
-               var counter = 1;
-               $('#customFields').find('tr').each(function(i) {
-                 if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
-                   var unit = $(this).find('#custom_field_unit_'+counter).val();
-		   counter++;
-                    if(unit == "-1") {
-                        if(united) {
-                            united = false;
-                            if(!$('#error_custom').is(':visible')) { $('#error_custom').show(); }
-                            $('#error_msg_custom').append('<p>Error: You did not select a unit for one of your fields.</p>');
-                        }
-                    }
+              var counter = 1;
+              $('#customFields').find('tr').each(function(i) {
+                   if($(this).attr('id') != 'template' && $(this).attr('id') != 'theader' && $(this).attr('id') != 'error_custom') {
+                        var unit = $(this).find('#custom_field_unit_'+counter).val();
+		                counter++;
+                        if(unit == "-1") {
+                            if(united) {
+                                united = false;
+                                if(!$('#error_custom').is(':visible')) { 
+                                    $('#error_custom').show(); 
+                                }
+                                $('#error_msg_custom').append('<p>Error: You did not select a unit for one of your fields.</p>');
+                            }
+                      }
                   }
                });
                
@@ -799,7 +891,11 @@ var createWizard = {
                    var label  = $("#custom_field_label_"+counter).val();
                    var type   = $("#custom_field_type_"+counter).val();
                    var unit   = $("#custom_field_unit_"+counter).val();
-                   createWizard.store_field(label, type, unit);
+                   if(type == 7){
+                        createWizard.store_field("time", type, unit);
+                   } else {    
+                        createWizard.store_field(label, type, unit);
+                   }
                    counter++;
                }
             });

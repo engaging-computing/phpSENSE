@@ -9,261 +9,182 @@ var table = new function Table() {
     this.init = function () {
         
         this.inited = 1;
-        
-        this.lastClicked = 'Data Point';
-        this.lastField = 'Data Point';
-        this.fieldOrder = 'asc';
-        this.sessionOrder = 'asc';
-        
+            
         this.formatter = {}
         
-        for (var field in data.fields) {
-            if (data.fields[field].type_id == 7) {
-                //time
-                this.formatter[field] = function (time) {
-                    var d = new Date(time)
-                    
-                    var s = d.getUTCHours() + ':' + d.getUTCMinutes() + ':' + d.getUTCSeconds() + '.' + d.getUTCMilliseconds()
-                    return s + ' ' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear();
-                };
+        this.start();
+     
+
+    }
+    
+
+    this.fmtTime = function(rawTime){
+       
+        var d = new Date(Number(rawTime));
+
+        var minutes = d.getUTCMinutes();
+        if ( minutes <= 9 ){
+            minutes = "0" + minutes;        
+        }
+
+        var seconds = d.getUTCSeconds();
+        if ( seconds <= 9 ){
+            seconds = "0" + seconds;        
+        }
+
+        var millis = d.getUTCMilliseconds();
+        if (millis <= 9 ){
+            millis = "00" + millis;
+        } else if ( millis <=99 && millis >=10 ){
+            millis = "0" + millis;
+        }
+
+        var s = d.getUTCHours() + ':' + minutes + ':' + seconds + '.' + millis + ' ' + (d.getUTCMonth() + 1) + '/' 
+            + d.getUTCDate() + '/' + d.getUTCFullYear();
+
+        return s;
+    }
+
+
+    this.draw = function () {
+
+        $('#table_canvas').append('<table id=data_table></table>');
+
+        /*Set up the table headers*/
+        $('#data_table').append('<thead><tr id=headers></tr></thead>'); 
+        $('#headers').append('<td >Session</td>');
+        $('#headers').append('<td>Data Point</td>');
+        $('#headers').append('<td>Session #</td>');
+       
+        for( var field in data.fields ) {
+            var title = data.fields[field].name;
+            var type_id = data.fields[field].type_id;
+            
+            /* Do not display units for geospacial/text/numeric/custom/time */
+            if(type_id == 19 || type_id == 37 || type_id == 21 || type_id == 22 || type_id == 7){
+                $('#headers').append('<td><b>' + title  + '</b></td>');
+            } else {
+                var unit = data.fields[field].unit_abb;
+                $('#headers').append('<td><b>' + title + '</b> (' + unit + ')</td>');
             }
-            else if (data.fields[field].type_id == 37) {
-                //text
-                this.formatter[field] = function (text) {
-                    return text;
-                };
-            }
-            else {
-                //data
+            
+        }
+
+        /* Add data to the table */
+        $('#data_table').append('<tbody id=data></tbody>');
+        
+        for (var ses in data.sessions) {
+            var dataPoint=0;
+            if(data.sessions[ses].visibility) {
                 var dec = 0;
+                for (var dp in data.sessions[ses].data) {
+                    var row_id = dp + '_'+ses;
+                    $('#data').append('<tr id=table_' + row_id + '></tr>');
+                    $('#table_'+row_id).append('<td> ' + data.sessions[ses].meta['name']+'</td>');
+                    $('#table_'+row_id).append('<td>'+ dataPoint++ +'</td>');
+                    $('#table_'+row_id).append('<td>'+ data.sessions[ses].sid +'</td>');
+                     
                 
-                for (var ses in data.sessions) {
-                    for (var dp in data.sessions[ses].data) {
+                    for (var field in data.fields) { 
                         var s = data.sessions[ses].data[dp][field].toString();
-                        var index = s.indexOf('.', 0);
+                    
+                        /* Format time correctly in UTC */
+                        if(data.fields[field].type_id==7){
+                            var rawTime = data.sessions[ses].data[dp][field];
+                            var formattedTime = table.fmtTime(rawTime);
+                            $('#table_'+row_id).append('<td>'+formattedTime+'</td>');        
+
+                        /* Otherwize just throw it in the table */
+                        } else {
+                            $('#table_'+row_id).append('<td>'+s+'</td>');   
+                            var index = s.indexOf('.', 0);
                         
-                        if (index != -1) {
-                            dec = Math.max(s.length - (index + 1), dec);
+                            if (index != -1) {
+                                dec = Math.max(s.length - (index + 1), dec);
+                            }
                         }
                     }
                 }
-                
-                dec = Math.min(dec, 20);
-                
-                this.formatter[field] = function (data) {
-                    return Number(data).toFixed(dec);
-                }
             }
-        }
+        }   
+
+        /* Call to DataTables to build the table */
+        var atable = $('#data_table').dataTable( {
+		    "sScrollY": 400,
+			"sScrollX": "100%",
+            "iDisplayLength": -1,
+            "bDeferRender":true,
+            "aaSorting": [[2,'asc'] ,[1,'asc']],
+            "oLanguage": {
+			    "sLengthMenu": 'Display <select>'   +
+			             '<option value="10">10</option>' +
+			             '<option value="25">25</option>' +
+			             '<option value="50">50</option>' +
+			             '<option value="100">100</option>' +
+			             '<option value="-1">All</option>'+
+			             '</select> records'
+			},
+            "aoColumnDefs": [ {
+		           "aTargets": [0],
+		           "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+		               var color = getSessionColor(oData[2]);
+                        
+                       var paint = '#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16);                  
+		               $(nTd).css('color', paint);	             
+		           }
+		         } ]
+		} );
         
-        this.start();
+
     }
     
-    this.tabularize = function (sortOrder) {
-        
-        var count = 0;
-        var meta;
-        
-        if( this.data.length ) {
-            this.data.length = 0;
-        }
-        
-        
-        for( var i in sortOrder ){
-            meta = {count:sortOrder[i].count, 
-                    sid:data.sessions[sortOrder[i].session].sid, 
-                    visibility:data.sessions[sortOrder[i].session].visibility,
-                    session:sortOrder[i].session,
-                    data:data.sessions[sortOrder[i].session].data[sortOrder[i].dataPoint]};
-                    
-            this.data.push(meta);
-        }
-    }
-    
-    this.sortField = function (field) {
-        
-        var tmpSort = Array();
-        var cnt = 0;
-        
-        if (field == 'Data Point') {            
-            for(var ses in data.sessions) {
-                for(var dp in data.sessions[ses].data) {
-                    tmpSort.push({session:ses, count:cnt, dataPoint:dp, data:dp});
-                    cnt++;
-                }
-            }
-        }
-        else {
-            for(var ses in data.sessions) {
-                for(var dp in data.sessions[ses].data) {
-                    tmpSort.push({session:ses, count:cnt, dataPoint:dp, data:data.sessions[ses].data[dp][field]});
-                    cnt++;
-                }
-            }
-        }
-            
-        
-        var fieldCmp;
-        if (this.fieldOrder === 'asc') {
-            fieldCmp = function(a, b) {return a.data - b.data};
-        }
-        else {
-            fieldCmp = function(a, b) {return b.data - a.data};
-        }
-        
-        var sessionCmp;
-        if (this.sessionOrder === 'asc') {
-            sessionCmp = function(a, b) {return a.session - b.session};
-        }
-        else {
-            sessionCmp = function(a, b) {return b.session - a.session};
-        }
-        
-        
-        tmpSort.sort((function(a, b) {
-            if (!sessionCmp(a, b)) {
-                return fieldCmp(a, b);
-            }
-            
-            return sessionCmp(a, b);
-        }));
-        
-        return tmpSort;
-        
-    }
-    
-    this.draw = function () {
-        
-        //var sortName = sort.substr(6, sort.length).replace('~', ' ');
-        var sortOrder;
-        
-        if(this.lastField != null) {
-            
-            if (this.lastField == 'Data Point') {
-                sortOrder = this.sortField('Data Point');
-            }
-            else {
-                for( var field in data.fields ) {
-                    if( data.fields[field].name.toLowerCase() == this.lastField.toLowerCase() ) {
-                        sortOrder = this.sortField(parseInt(field));
-                    }
-                }
-            }
-        }
-        
-        this.tabularize(sortOrder);
-        
-        var count = 0;
-        
-        $('#table_canvas').append('<table id="data_table" border="1px"><tr id="data_table_label"></tr></table>');
-        $('#data_table_label').append('<td id="label_Data Point" class="data_table_label">Data Point</td>');
-        $('#data_table_label').append('<td id="label_Session #" class="data_table_label">Session #</td>');
-        
-        for( var field in data.fields ) {
-            var id = 'label_' + data.fields[field].name;
-            $('#data_table_label').append('<td id="' + id + '" class="data_table_label">' + data.fields[field].name + '</td>');
-        }
-        
-        for( var dp in this.data ) {
-            
-            var idRoot = this.data[dp].count + '_' + this.data[dp].count
-            
-            $('#data_table').append('<tr id="table_' + idRoot +'" class="data_table_data"></tr>');
-            $('#table_' + idRoot).append('<td class="data_table_data">' + this.data[dp].count + '</td>');
-            $('#table_' + idRoot).append('<td class="data_table_data" style="background-color:#' + rgbToHex(getSessionColor(this.data[dp].session)) + '">'+this.data[dp].sid + '</td>');
-            
-            for( var i = 0; i < this.data[dp].data.length; i++ ) {
-                $('#table_' + idRoot).append('<td class="data_table_data">' + this.formatter[i](this.data[dp].data[i]) + '</td>');
-            }
-        }
-        
-        if( this.fieldOrder != "desc") {
-            $('#' + jqISC('label_' + this.lastField)).append('<img src="/html/img/vis/up-tri.png" height="14px" />');
-        }
-        else {
-            $('#' + jqISC('label_' + this.lastField)).append('<img src="/html/img/vis/down-tri.png" height="14px" />');
-        }
-        
-        if( this.sessionOrder != "desc") {
-            $('#'+jqISC('label_Session #')).append('<img src="/html/img/vis/up-tri.png" height="14px" />');
-        }
-        else {
-            $('#'+jqISC('label_Session #')).append('<img src="/html/img/vis/down-tri.png" height="14px" />');
-        }
-        
-        
-    }
-    
-    this.end = function () {
-        
-        $('#table_canvas').children().unbind();
-        $('#table_canvas').empty();
-        $('#table_canvas').hide();
-        $('#viscanvas').show();
-    }
+
     
     this.drawControls = function () {
-        
+
+        /* Add the table of selectable sessions to the controls. */
+        $('#controldiv').append('<div id="sessionControls" style="float:left;margin:10px;"></div>');
+        $('#sessionControls').append('<table id="sessionTable" style="border:1px solid grey;padding:5px;"></table>');        
+        $('#sessionTable').append('<thead><tr><td></td><td style="text-align:center;text-decoration:underline;padding-bottom:5px;display:block" colspan="3">Sessions:</td><td></td></tr></thead>');
+
+		for( var ses in data.sessions ) {
+				var session_name = data.sessions[ses].meta["name"];
+				$('#sessionTable').append('<tr id="row_' + ses + '"></tr>'); 
+
+                if(data.sessions[ses].pictures[0] != null){
+                    for(var i in data.sessions[ses].pictures){                
+                            var link = data.sessions[ses].pictures[i]['provider_url'];
+                            var description = data.sessions[ses].pictures[i]['description'];
+                            if(i==0){ 
+                                $('#row_' + ses).append('<td style="width:20px"> <input type="checkbox" id="visible_'+ses+ '"/></td>'+
+                                    '<td id="pic_'+ses+'"><a id="link_'+ses+'"rel="prettyPhoto[gallery'+ses+']" href="'+ link + '" title="'+description+'"> ' + session_name +'</a>'+'</td> ');
+                            } else {
+                               $('#pic_'+ses).append('<a rel="prettyPhoto[gallery'+ses+']" href="'+ link + '" title="'+description+'"></a>');
+                            }
+                    }
+				   	 $('#link_'+ses).css('color', '#' + rgbToHex(hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )));			
+                } else {
+                    $('#row_' + ses).append('<td style="width:20px"> <input type="checkbox" id="visible_'+ses+ '"/></td><td>'+ session_name +'</td> ');
+                    $('#row_'+ses).css('color', '#' + rgbToHex(hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )));	
+                }
+
+               
+				
+                if( data.sessions[ses].visibility ){ 
+					$('#visible_'+ses).attr('checked','true');
+                }
+		}
     }
     
     this.setListeners = function () {
-        
-        var labelField =  Array();
-        
-        for( var field in data.fields ) {
-            
-            $('#' + jqISC('label_' + data.fields[field].name)).bind('click', function(evt) {
-                
-                if( table.lastClicked == $(this).text() ) {
-                    if(table.fieldOrder == "asc")
-                        table.fieldOrder = "desc";
-                    else
-                        table.fieldOrder = "asc";
-                } else {
-                    table.lastField = evt['target']['id'].substr(6, evt['target']['id'].length);
-                    table.fieldOrder = "asc";
-                }
-                
-                table.lastClicked = $(this).text();				
-                $('#table_canvas').find('*').unbind();
+        for( var ses in data.sessions ) {
+			$('#visible_'+ses).bind('change', function () {
+				var $ses = $(this).attr('id').split('_');
+				$('#visible_'+$ses[1]).attr('checked') ? data.sessions[$ses[1]].visibility = 1 : data.sessions[$ses[1]].visibility = 0 ;
                 $('#table_canvas').empty();
-                table.start();
-            });}
-            
-            $('#' + jqISC('label_Data Point')).bind('click', function() {
-                
-                if( table.lastClicked == $(this).text() ) {
-                    if(table.fieldOrder == "asc")
-                        table.fieldOrder = "desc";
-                    else
-                        table.fieldOrder = "asc";
-                } else {
-                    table.lastField = 'Data Point';
-                    table.fieldOrder = "asc";
-                }
-                
-                table.lastClicked = $(this).text();
-                $('#table_canvas').find('*').unbind();
-                $('#table_canvas').empty();
-                table.start();
-            });
-            
-            $('#' + jqISC('label_Session #')).bind('click', function() {    
-                
-                if(table.sessionOrder == "asc") {
-                    table.sessionOrder = "desc";
-                }
-                else {
-                    table.sessionOrder = "asc";
-                }
-                
-                table.lastClicked = $(this).text();				
-                $('#table_canvas').find('*').unbind();
-                $('#table_canvas').empty();
-                table.start();
-            });
-            
-            
+				table.draw(data);
+			});
+		}
     }
     
     this.start = function () {
@@ -277,5 +198,17 @@ var table = new function Table() {
         
         this.drawControls();
         this.setListeners();
+        $("a[rel^='prettyPhoto']").prettyPhoto();
+
+
+    }    
+
+    this.end = function () {
+        $('#controldiv').children().unbind();
+		$('#controldiv').empty();        
+        $('#table_canvas').children().unbind();
+        $('#table_canvas').empty();
+        $('#table_canvas').hide();
+        $('#viscanvas').show();
     }
 }

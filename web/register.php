@@ -65,7 +65,7 @@ if(isset($_POST['submit'])) {
 	if($last_name == "") { array_push($errors, 'Last name can not be blank.'); }
 
 	if(isset($_POST['street'])) { $street = safeString($_POST['street']); }
-	if($street == "") { array_push($errors, 'Street can not be blank.'); }
+	//if($street == "") { array_push($errors, 'Street can not be blank.'); }
 
 	if(isset($_POST['citystate'])) { $city_state = safeString($_POST['citystate']); }
 	if($city_state == "") { array_push($errors, 'City and state can not be blank.'); }
@@ -99,6 +99,8 @@ if(!$registered) {
 }
 else {
 	$session->login($email, $password);
+    echo '<META HTTP-EQUIV="Refresh" Content="0; URL=index.php">';    
+    exit;   
 }
 
 $smarty->assign('errors', $errors);

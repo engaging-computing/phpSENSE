@@ -19,31 +19,9 @@ var timeline = new function Timeline(){
 		
 		controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div><button id="resetview" type="button">Reset View</button></div>';
 		
-		controls += '<div id="sessioncontrols" style="float:left;margin:10px;">';
-		
-		controls += '<table style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Sessions:</tr></td>';
-		
-		for( var i in data.sessions ){
-			
-			var color = getSessionColor(i);
-			
-			controls += '<tr><td>';
-			
-			controls += '<div style="font-size:14px;font-family:Arial;text-align:center;color:#' + (color[0]>>4).toString(16) + (color[1]>>4).toString(16) + (color[2]>>4).toString(16) + ';float:left;">';
-			
-			controls += '<input class="sessionvisible" type="checkbox" value="' + i + '" ' + ( data.sessions[i].visibility ? 'checked' : '' ) + '></input>' + '&nbsp;';
-			
-			controls += data.sessions[i].meta.name;
-			
-			controls += '</div>';
-			
-			controls += '</td></tr>';
-			
-		}
-		
-		controls += '</table>'
-		
-		controls += '</div>';
+
+        //console.log( buildSessionControls('timeline'));
+        controls += buildSessionControls('timeline');
 		
 		// --- //
 		
@@ -103,7 +81,6 @@ var timeline = new function Timeline(){
 			timeline.drawflag = true;
 			
 		});
-		
 		// Set listener for sessions visibility checkboxes
 		
 		$('input.sessionvisible').click(function(e){
@@ -277,10 +254,23 @@ var timeline = new function Timeline(){
         var hmax = hbounds[1];
         var hdif = hmax - hmin;
         
-        var vbounds = data.getVisibleDataBounds();
+        var vbounds = data.getVisibleDataBounds(true);
         var vmin = vbounds[0];
         var vmax = vbounds[1];
         var vdif = vmax - vmin;
+        
+        vmin -= vdif * 0.05;
+        vmax += vdif * 0.05;
+        vdif = vmax - vmin;
+        
+        var timeField = 0;
+        
+        for (var f in data.fields) {
+            if (data.fields[f].type_id == 7) {
+                timeField = f;
+                break;
+            }
+        }
         
 	
 		// --- Display point-by-point --- //
@@ -291,7 +281,7 @@ var timeline = new function Timeline(){
 				
 				var displaydata = data.getDataFrom(i,j);
 				
-				var timedata = data.getDataFrom(i,0); // time
+				var timedata = data.getDataFrom(i,timeField); // time
 				
 				var datalen = displaydata.length;
 			
@@ -510,7 +500,7 @@ var timeline = new function Timeline(){
             this.hRangeUpper = hUp;
         }
         
-        var ybounds = data.getVisibleDataBounds();
+        var ybounds = data.getVisibleDataBounds(true);
         var ydiff = ybounds[1] - ybounds[0];
         var yMinRange = (1e-15) / xdiff;
         yMinRange = Math.max(yMinRange, 1e-14); //Clamp for FPEs
@@ -530,6 +520,8 @@ var timeline = new function Timeline(){
 	
 	this.draw = function(){
         
+        $("a[rel^='prettyPhoto']").prettyPhoto();
+
         fixFieldLabels();
 		
         var xbounds = data.getVisibleTimeBounds();
@@ -544,14 +536,27 @@ var timeline = new function Timeline(){
 		var ymin = ybounds[0];
 		var ymax = ybounds[1];
 		var ydiff = ymax - ymin;
+                
+                ymin -= ydiff * 0.05;
+                ymax += ydiff * 0.05;
+                ydiff = ymax - ymin;
 		
 		ymax = ydiff * this.vRangeUpper + ymin;
 		ymin = ydiff * this.vRangeLower + ymin;
 		// --- //
 			
 		this.clear();
-		
-		drawXAxis(xmin, xmax, this, "time");
+                
+                var timeField = 0;
+                
+                for (var f in data.fields) {
+                    if (data.fields[f].type_id == 7) {
+                        timeField = f;
+                        break;
+                    }
+                }
+        
+		drawXAxis(xmin, xmax, this, data.fields[timeField].name, data.fields[timeField].type_id);
 		drawYAxis(ymin, ymax, this);
 		
 		this.plotData();
@@ -682,10 +687,10 @@ var timeline = new function Timeline(){
 		this.context.font = this.fontheight + "px sans-serif";
 
 		this.xlabelsize = Math.floor(this.fontheight*2);
-		this.ylabelsize = this.context.measureText( data.getMax() + "" ).width + this.fontheight/2;
+		this.ylabelsize = this.context.measureText(getLargestLabel()).width;
 
-		this.drawwidth	= Math.floor(this.canvaswidth	- (this.ylabelsize*1.5));
-		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*1.5));
+		this.drawwidth	= Math.floor(this.canvaswidth	- (this.ylabelsize*1.2));
+		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*2.5));
 		
 		this.minpoints = this.drawwidth*2;
 

@@ -60,7 +60,7 @@ Minify::serve('Groups', array(
                             BASE_DIR . '/html/css/tsor.css',
 							BASE_DIR . '/html/css/jclock.css',
 							BASE_DIR . '/html/css/jss.css',
-							BASE_DIR . '/html/css/newvis-table.css'
+                            BASE_DIR . '/html/css/newvis.css'
                         ),
         
         'vis'     => array(     
@@ -127,8 +127,8 @@ Minify::serve('Groups', array(
             BASE_DIR . '/html/js/vis2/vis2.js',
         ),
 	'WYSIWYG' => array(
-	    BASE_DIR . '/html/js/nicEdit/nicEdit.js',
-	    BASE_DIR . '/html/js/nicEdit/nicStart.js'
+	    BASE_DIR . '/html/js/nicEdit/nicEdit.js'
+	    
 	)
     )
 ));

@@ -76,12 +76,13 @@ if($action == "search") {
 	*/
 	else {
 		$results = searchExperiments($query, $page, $limit, $sort);
-		$count = searchExperiments($query, -1, $limit, $sort);
+		$count = count($results);
+        
 	}
 	
 }
 else if($action == "browse") {
-
+   
 	if($type == "visualizations") {
 		$results = browseVisualizationsByTimeCreated($page, $limit);
 		$count = browseVisualizationsByTimeCreated(-1, $limit);

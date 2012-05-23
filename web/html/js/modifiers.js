@@ -65,6 +65,8 @@ for( var ses in data.sessions ) {
 		this.visibility = on;
 	}
 	
+	data.sessions[ses].ses = ses;
+	
 	data.sessions[ses].getMaxVal = function( field ) {
 		var max = this.data[0][field];
 		for( var dP in this.data ) {
@@ -92,39 +94,41 @@ for( var ses in data.sessions ) {
 			mean += this.data[dP][field];
 		}
 		
-		return (mean / this.data[dP].length);
+
+		
+		return (mean / this.data.length);
 	}
 	
 	data.sessions[ses].getMedianVal = function( field ) {
 		var sortedData = data;
-		sortedData.qSort(field);
-		
-		if( this.data.length % 2 )
-			return sortedData[this.data.length/2];
-		else
-			return ((sortedData[(this.data.length/2)-.5]+sortedData[(this.data.length/2)+.5])/2)
-		
+		sortedData.qSortFieldNum(field);
+				
+		if( this.data.length % 2 ){
+			return sortedData.sessions[this.ses].data[Math.floor(this.data.length/2)][field];
+		} else {
+			return (sortedData.session[this.ses].data[Math.floor(this.data.length/2)][field]+sortedData.sessions[this.ses][Math.ceil(this.data.length/2)][field])/2;
+		}
+
 	}
 	
 	data.sessions[ses].getModeVal = function( field ) {
 		var tmp = new Array();
 		var max_count = 0;
-		var max = 0;
 		
 		for( var dP in this.data ) {
-			tmp[''+this.data[dp][field]+''] = 0;
+			tmp[''+this.data[dP][field]+''] = 0;
 		}	
 		
 		for( var dP in this.data ) {
-			tmp[''+this.data[dp][field]+'']++;
+			tmp[''+this.data[dP][field]+'']++;
 		}
 		
 		for( var dP in tmp) {
 			if( tmp[dP] > max_count )
-				max = dP;
+				max_count = dP;
 		}
 		
-		return max;
+		return max_count;
 		
 	}
 	
@@ -145,6 +149,24 @@ for( var field in data.fields ) {
 	data.fields[field].set_visiblity = function( on ) {
 		this.visibility = on;
 	}
+}
+
+data.getMedianVal = function( field, session ) {
+	
+	var sorteddata = data.sessions[session].data.sort(function(a,b){
+		
+		a[field]>b[field];
+		
+	});
+	
+	if( sorteddata.length % 2 ){
+		return sorteddata[Math.floor(sorteddata.length/2)][field];
+	} else {
+		return (sorteddata[Math.floor(sorteddata.length/2)][field]+sorteddata[Math.ceil(sorteddata.length/2)][field])/2;
+	}
+	
+	return null;
+
 }
 
 data.getSesMax = function ( field ) {
@@ -306,22 +328,46 @@ data.qSort = function( fieldName ) {
 	
 }
 
-data.avgField = function( fieldName ) {
+data.qSortFieldNum = function( fieldNum ) {
 	
-	var avg = 0;
+	for( field in data.fields )
+		if( field == fieldNum )
+			for( ses in data.sessions )
+				data.sessions[ses].data = quickSort(data.sessions[ses].data, field);
+	
+}
+
+data.avgFieldHelper = function (ses) {
+  var avg = 0;
+  var count = 0;
+
+  for(var dp in this.sessions[ses].data) {
+		avg += this.sessions[ses].data[dp][field];
+		count++;
+	}
+
+  return (avg/count);
+}
+
+data.avgField = function (fieldName,ses){
+    var avg = 0;
 	var count = 0;
 	
-	for(var field in this.fields )
-		if( this.fields[field].name.toLowerCase() == fieldName.toLowerCase() )
-			for(var ses in this.sessions ) {
-				for(var dp in this.sessions[ses].data) {
-					avg += this.sessions[ses].data[dp][field];
-					count++;
-				}
-			}
-	
-	return (avg/count);
-	
+	for(var field in this.fields ){
+		if( this.fields[field].name.toLowerCase() == fieldName.toLowerCase() ){
+      if(!ses) {
+        for(var ses in this.sessions) {
+          avg += this.avgFieldHelper(ses);
+          count++;
+        }
+      }
+      else {
+        return this.avgFieldHelper(ses);
+      }
+    }
+  }  
+  return avg/count;    
+
 }
 
 data.fullSort = function( fieldName ) {
@@ -358,7 +404,7 @@ data.getVisibleDataBounds = function(zeroBounded) {
     for (var i = 0; i < data.sessions.length; i++) {
         for (var j = 0; j < data.fields.length; j++) {
             if (data.fields[j].visibility === 1 && data.sessions[i].visibility === 1 &&
-                data.fields[j].name.toLowerCase() != "time") {
+                data.fields[j].type_id != 7) {
                 max = Math.max(max, Math.max.apply(null, data.getDataFrom(i, j)));
                 min = Math.min(min, Math.min.apply(null, data.getDataFrom(i, j)));
             }
@@ -380,7 +426,7 @@ data.getVisibleTimeBounds = function() {
     for (var i = 0; i < data.sessions.length; i++) {
         for (var j = 0; j < data.fields.length; j++) {
             if (data.fields[j].visibility === 1 && data.sessions[i].visibility === 1 &&
-                data.fields[j].name.toLowerCase() === 'time') {
+                data.fields[j].type_id == 7) {
                 max = Math.max(max, Math.max.apply(null, data.getDataFrom(i, j)));
                 min = Math.min(min, Math.min.apply(null, data.getDataFrom(i, j)));
             }
