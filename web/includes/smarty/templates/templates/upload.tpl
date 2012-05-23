@@ -32,7 +32,7 @@
 { else }
 	<div id="main">
 		{ include file="parts/errors.tpl" }
-		<form method="POST" id="upload_form" name="upload_form" enctype="multipart/form-data">
+		<form method="POST" id="upload_form" name="upload_form" onsubmit="function submit_handler(){return(false);}" enctype="multipart/form-data">
 			<fieldset id="basic-info">
 				{ if $state == 1 }
 					<legend>Create a new session</legend>
