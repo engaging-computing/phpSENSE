@@ -133,7 +133,7 @@ function deleteImageItem() {
 function getImagesForExperiment($eid) {
 	global $db;
 	
-	$output = $db->query("SELECT * FROM pictures WHERE pictures.experiment_id = {$eid}");
+	$output = $db->query("SELECT * FROM pictures WHERE pictures.experiment_id = {$eid} ORDER BY created DESC LIMIT 15");
 	
 	if($db->numOfRows) {
 		return $output;
