@@ -252,7 +252,7 @@ if(isset($_REQUEST['sessions'])) {
         foreach ($data->sessions[$index]->data as $datum) {
             $count = 0;
             foreach ($data->fields as $j=>$curField) {
-                if ($datum[$j] != "" && $curField->field_id != 7) {
+                if ($datum[$j] != "" && $curField->type_id != 7) {
                     $count = $count + 1;
                 }
             }
