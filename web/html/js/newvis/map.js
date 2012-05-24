@@ -40,7 +40,7 @@ var map = new function Map() {
         var contentString = '<div><table width="260px">';
         var sessionName = data.sessions[ses].meta['name'];
 
-        contentString += "<tr><td><b>Name: </b>"+ sessionName+"</td></tr>";
+        contentString += "<tr><td><b>Name: </b></td><td>"+ sessionName+"</td></tr>";
         for(var field in data.fields) {
             
             var title = data.fields[field].name;
@@ -76,7 +76,9 @@ var map = new function Map() {
 
     this.addInfoWindow = function(marker, gmap, ses, dp){
         var contentString = '<div><table width="260px">';
-
+        var sessionName = data.sessions[ses].meta['name'];
+            
+        contentString += "<tr><td><b>Name: </b></td><td>"+ sessionName+"</td></tr>";
         for(var field in data.fields) {
            
             var title = data.fields[field].name;
