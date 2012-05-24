@@ -94,52 +94,54 @@ class Data {
     
     public function sortTime() {
         $time = $this->getTimeField();
-
+        
         for( $ses = 0; $ses < count($this->sessions); $ses++ ) {
             
             $cur = 1;
             $stack[1]['l'] = 0;
             $stack[1]['r'] = count($this->sessions[$ses]->data) - 1;
             
-            
-            do{
-                $l = $stack[$cur]['l'];
-                $r = $stack[$cur]['r'];
-                $cur--;
-                                
+            if (count($this->sessions[$ses]->data) > 0) {
                 do{
-                    $i = $l;
-                    $j = $r;
-                    $tmp = $this->sessions[$ses]->data[(int) ($l+$r)/2][$time];
+                    $l = $stack[$cur]['l'];
+                    $r = $stack[$cur]['r'];
+                    $cur--;
                     
-                    do {
-                        while( $this->sessions[$ses]->data[$i][$time] < $tmp )
-                            $i++;
+                    do{
+                        $i = $l;
+                        $j = $r;
+                        $tmp = $this->sessions[$ses]->data[(int) ($l+$r)/2][$time];
                         
-                        while( $tmp < $this->sessions[$ses]->data[$j][$time])
-                            $j--;
-                        
-                        if( $i <= $j ) {
-                            $w = $this->sessions[$ses]->data[$i];
-                            $this->sessions[$ses]->data[$i] = $this->sessions[$ses]->data[$j];
-                            $this->sessions[$ses]->data[$j] = $w;
+                        do {
+                            while( $this->sessions[$ses]->data[$i][$time] < $tmp )
+                                $i++;
                             
-                            $i++;
-                            $j--;
+                            while( $tmp < $this->sessions[$ses]->data[$j][$time])
+                                $j--;
+                            
+                            if( $i <= $j ) {
+                                $w = $this->sessions[$ses]->data[$i];
+                                $this->sessions[$ses]->data[$i] = $this->sessions[$ses]->data[$j];
+                                $this->sessions[$ses]->data[$j] = $w;
+                                
+                                $i++;
+                                $j--;
+                            }
+                            
+                        } while( $i <= $j );
+                        
+                        if( $i < $r ) {
+                            $cur++;
+                            $stack[$cur]['l'] = $i;
+                            $stack[$cur]['r'] = $r;
                         }
                         
-                    } while( $i <= $j );
-                    
-                    if( $i < $r ) {
-                        $cur++;
-                        $stack[$cur]['l'] = $i;
-                        $stack[$cur]['r'] = $r;
-                    }
-                    
-                    $r = $j;
-                    
-                } while( $l < $r );
-            } while( $cur != 0 );
+                        $r = $j;
+                        
+                    } while( $l < $r );
+                } while( $cur != 0 );
+                
+            }
         }
     }
     
@@ -244,7 +246,22 @@ if(isset($_REQUEST['sessions'])) {
                 }
             }
         }
-                        
+        
+        
+        $fixed = array();
+        foreach ($data->sessions[$index]->data as $datum) {
+            $count = 0;
+            foreach ($data->fields as $j=>$curField) {
+                if ($datum[$j] != "" && $curField->field_id != 7) {
+                    $count = $count + 1;
+                }
+            }
+            
+            if ($count > 0) {
+                $fixed[] = $datum;
+            }
+        }
+        $data->sessions[$index]->data = $fixed;
     }
     
     
