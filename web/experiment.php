@@ -39,7 +39,7 @@ if(isset($_GET['id'])) {
 	$is_activity = ($meta['activity'] == 1);
 
 	if(count($meta) > 0) {
-		
+		$random = getPossibleConversions(1);
 		// Grab some meta data
 		$title = $meta['name'];
 		$ownerid = $meta['owner_id'];
