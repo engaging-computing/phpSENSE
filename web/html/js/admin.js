@@ -18,6 +18,10 @@ function findItems(tableId, columnAttr, attrState) {
     });
 }
 
+function checkAllHiddenSessions(){
+    findItems('management_table','hidden','Yes');
+}
+
 function checkAllFeaturedExperiments() {
     findItems('management_table', 'featured', 'Yes');
 }
