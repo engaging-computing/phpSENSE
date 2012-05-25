@@ -232,7 +232,7 @@ if(isset($_REQUEST['sessions'])) {
             
             //Remove alpha data from non-alpha fields
             foreach ($data->fields as $k=>$curField) {
-                if ($curField->field_id != 37) {
+                if ($curField->type_id != intval(37)) {
                     if (!is_numeric($datum[$k])) {
                         $data->sessions[$index]->data[$j][$k] = "";
                     }
