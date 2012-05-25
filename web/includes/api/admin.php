@@ -63,6 +63,27 @@ function adminGetExperiments() {
 	return false;
 }
 
+function adminGetSessions($eid) {
+	global $db;
+	
+	$output = $db->query("SELECT sessions.*, 
+                                 users.firstname, 
+                                 users.lastname,
+                                 experimentSessionMap.*
+                        FROM sessions, 
+                             users,
+                             experimentSessionMap         
+                        WHERE sessions.owner_id = users.user_id AND experimentSessionMap.session_id = sessions.session_id AND experimentSessionMap.experiment_id = '$eid'
+                             
+                        ORDER BY experimentSessionMap.experiment_id DESC");
+	//print_r ($output);
+	if($db->numOfRows) {
+		return $output;
+	}
+	
+	return false;
+}
+
 function adminGetUsers() {
 	global $db;
 	
