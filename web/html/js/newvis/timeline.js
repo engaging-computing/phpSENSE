@@ -81,7 +81,6 @@ var timeline = new function Timeline(){
 			timeline.drawflag = true;
 			
 		});
-		
 		// Set listener for sessions visibility checkboxes
 		
 		$('input.sessionvisible').click(function(e){
@@ -260,6 +259,19 @@ var timeline = new function Timeline(){
         var vmax = vbounds[1];
         var vdif = vmax - vmin;
         
+        vmin -= vdif * 0.05;
+        vmax += vdif * 0.05;
+        vdif = vmax - vmin;
+        
+        var timeField = 0;
+        
+        for (var f in data.fields) {
+            if (data.fields[f].type_id == 7) {
+                timeField = f;
+                break;
+            }
+        }
+        
 	
 		// --- Display point-by-point --- //
 	
@@ -269,7 +281,7 @@ var timeline = new function Timeline(){
 				
 				var displaydata = data.getDataFrom(i,j);
 				
-				var timedata = data.getDataFrom(i,0); // time
+				var timedata = data.getDataFrom(i,timeField); // time
 				
 				var datalen = displaydata.length;
 			
@@ -524,14 +536,27 @@ var timeline = new function Timeline(){
 		var ymin = ybounds[0];
 		var ymax = ybounds[1];
 		var ydiff = ymax - ymin;
+                
+                ymin -= ydiff * 0.05;
+                ymax += ydiff * 0.05;
+                ydiff = ymax - ymin;
 		
 		ymax = ydiff * this.vRangeUpper + ymin;
 		ymin = ydiff * this.vRangeLower + ymin;
 		// --- //
 			
 		this.clear();
+                
+                var timeField = 0;
+                
+                for (var f in data.fields) {
+                    if (data.fields[f].type_id == 7) {
+                        timeField = f;
+                        break;
+                    }
+                }
         
-		drawXAxis(xmin, xmax, this, "time");
+		drawXAxis(xmin, xmax, this, data.fields[timeField].name, data.fields[timeField].type_id);
 		drawYAxis(ymin, ymax, this);
 		
 		this.plotData();
@@ -662,9 +687,9 @@ var timeline = new function Timeline(){
 		this.context.font = this.fontheight + "px sans-serif";
 
 		this.xlabelsize = Math.floor(this.fontheight*2);
-		this.ylabelsize = this.context.measureText( data.getMax() + "" ).width + this.fontheight/2;
+		this.ylabelsize = this.context.measureText(getLargestLabel()).width;
 
-		this.drawwidth	= Math.floor(this.canvaswidth	- (this.ylabelsize*1.5));
+		this.drawwidth	= Math.floor(this.canvaswidth	- (this.ylabelsize*1.2));
 		this.drawheight	= Math.floor(this.canvasheight	- (this.xlabelsize*2.5));
 		
 		this.minpoints = this.drawwidth*2;

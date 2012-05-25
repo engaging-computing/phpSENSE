@@ -175,6 +175,27 @@ function getNextTimeIncrement(min, inc, cur){
 function formatTime(time, inc){
     var d = new Date(time);
     
+    var minStr = d.getUTCMinutes().toString()
+    
+    if (minStr.length < 2) {
+        minStr = '0' + minStr;
+    }
+    
+    var secStr = d.getUTCSeconds().toString()
+    
+    if (secStr.length < 2) {
+        secStr = '0' + secStr;
+    }
+    
+    var msStr = d.getUTCMilliseconds().toString();
+    
+    if (msStr.length == 1) {
+        msStr = '00' + msStr;
+    }
+    else if (msStr.length == 2) {
+        msStr = '0' + msStr;
+    }
+    
     switch (inc[0]){
         case 0:
             return d.getUTCFullYear();
@@ -183,11 +204,11 @@ function formatTime(time, inc){
             return (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear();
         case 3:
         case 4:
-            return d.getUTCHours() + ':' + d.getUTCMinutes() + ' ' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate();
+            return d.getUTCHours() + ':' + minStr + ' ' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate();
         case 5:
-            return d.getUTCHours() + ':' + d.getUTCMinutes() + ':' + d.getUTCSeconds();
+            return d.getUTCHours() + ':' + minStr + ':' + secStr;
         case 6:
-            return d.getUTCSeconds() + ':' + d.getUTCMilliseconds() + 'ms';
+            return d.getUTCSeconds() + '.' + msStr + 's';
     }
 }
 
@@ -264,7 +285,7 @@ function formatData(data, inc){
         data = 0;
     }
     
-    s = (Math.abs(data)).toPrecision(6).toString();
+    s = (Math.abs(data)).toPrecision(8).toString();
     
     var i;
     var len;
@@ -287,17 +308,25 @@ function formatData(data, inc){
         len = s.length - (s.length - i - 1);
     }
     
-    if (len > 8){
-        return data.toExponential(3);
+    if (len > 10){
+        return data.toExponential(5);
     }
     else{
         if (data >= 0){
             return s.substr(0, i)
         }
         else{
-            return data.toPrecision(6).toString().substr(0, i + 1);
+            return data.toPrecision(8).toString().substr(0, i + 1);
         }
     }
+}
+
+/*
+ * Returns a label that represents the largest possible
+ * (physically) label string.
+ */
+function getLargestLabel() {
+    return formatData(-88000000000, 1);
 }
 
 /**
@@ -310,18 +339,14 @@ function formatData(data, inc){
  *             type is === "time" then time data is shown, 
  *             otherwise data is shown.
  */
-function drawXAxis(xmin, xmax, visObject, type){
+function drawXAxis(xmin, xmax, visObject, type, type_id){
     
     var getIncrement, getNextIncrement, formatter;
     
-    if (type.toLowerCase() === "time"){
+    if (type_id == 7){
         getIncrement = getTimeIncrement;
         getNextIncrement = getNextTimeIncrement;
         formatter = formatTime;
-        
-        //Remove this once the database gets fixed!
-        xmax *= 1000;
-        xmin *= 1000;
     }
     else{
         getIncrement = getDataIncrement;
@@ -382,8 +407,8 @@ function drawXAxis(xmin, xmax, visObject, type){
     visObject.context.textAlign = 'left';
     
     //bkmk
-    if (type === "time"){
-        visObject.context.fillText("Starting: " + (new Date((xmin+(xdiff*visObject.hRangeLower))*1000)).toString(), visObject.xoff, visObject.fontheight);
+    if (type_id === 7){
+        visObject.context.fillText("Starting: " + (new Date((xmin+(xdiff*visObject.hRangeLower)))).toUTCString(), visObject.xoff, visObject.fontheight);
     }
         
 }

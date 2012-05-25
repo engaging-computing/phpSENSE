@@ -58,24 +58,23 @@ class Data {
                 $max = count($session->data);    
             }
         }
- 
-        if($max > 1){
-            $this->relVis = array_merge(array('Histogram'), $this->relVis); 
-             $this->relVis = array_merge(array('Bar'), $this->relVis); 
-        }
 
-        /* If there is more than one data point add the following vizes */
-        if( $max > 2 ) {
-           
-            $this->relVis = array_merge(array('Scatter'), $this->relVis); 
+        $total = 0;
+        foreach( $this->sessions as $session ) {
+            $total += count($session->data);
         }
+      
+        /* If there is more than one data point in a session add the following vizes */
+        if( $max > 1 ) {
+            $this->relVis = array_merge(array('Scatter', 'Bar', 'Histogram'), $this->relVis); 
 
-        /* If the experiment contains time and there is more than one datapoint */
-        foreach( $this->fields as $field ){
-            if( ($field->type_id == 7)  && ($max > 1)){
-                $this->relVis = array_merge(array('Timeline'), $this->relVis); 
-            } 
-        }    
+            /* if a time field exists, add timeline */
+            foreach( $this->fields as $field ){
+                if ($field->type_id == 7) {
+                    $this->relVis = array_merge(array('Timeline'), $this->relVis); 
+                }
+            }
+        }
 
         /* Add the map last because it should always be first. */
         $this->relVis = array_merge(array('Map'), $this->relVis);   
@@ -95,52 +94,54 @@ class Data {
     
     public function sortTime() {
         $time = $this->getTimeField();
-
+        
         for( $ses = 0; $ses < count($this->sessions); $ses++ ) {
             
             $cur = 1;
             $stack[1]['l'] = 0;
             $stack[1]['r'] = count($this->sessions[$ses]->data) - 1;
             
-            
-            do{
-                $l = $stack[$cur]['l'];
-                $r = $stack[$cur]['r'];
-                $cur--;
-                                
+            if (count($this->sessions[$ses]->data) > 0) {
                 do{
-                    $i = $l;
-                    $j = $r;
-                    $tmp = $this->sessions[$ses]->data[(int) ($l+$r)/2][$time];
+                    $l = $stack[$cur]['l'];
+                    $r = $stack[$cur]['r'];
+                    $cur--;
                     
-                    do {
-                        while( $this->sessions[$ses]->data[$i][$time] < $tmp )
-                            $i++;
+                    do{
+                        $i = $l;
+                        $j = $r;
+                        $tmp = $this->sessions[$ses]->data[(int) ($l+$r)/2][$time];
                         
-                        while( $tmp < $this->sessions[$ses]->data[$j][$time])
-                            $j--;
-                        
-                        if( $i <= $j ) {
-                            $w = $this->sessions[$ses]->data[$i];
-                            $this->sessions[$ses]->data[$i] = $this->sessions[$ses]->data[$j];
-                            $this->sessions[$ses]->data[$j] = $w;
+                        do {
+                            while( $this->sessions[$ses]->data[$i][$time] < $tmp )
+                                $i++;
                             
-                            $i++;
-                            $j--;
+                            while( $tmp < $this->sessions[$ses]->data[$j][$time])
+                                $j--;
+                            
+                            if( $i <= $j ) {
+                                $w = $this->sessions[$ses]->data[$i];
+                                $this->sessions[$ses]->data[$i] = $this->sessions[$ses]->data[$j];
+                                $this->sessions[$ses]->data[$j] = $w;
+                                
+                                $i++;
+                                $j--;
+                            }
+                            
+                        } while( $i <= $j );
+                        
+                        if( $i < $r ) {
+                            $cur++;
+                            $stack[$cur]['l'] = $i;
+                            $stack[$cur]['r'] = $r;
                         }
                         
-                    } while( $i <= $j );
-                    
-                    if( $i < $r ) {
-                        $cur++;
-                        $stack[$cur]['l'] = $i;
-                        $stack[$cur]['r'] = $r;
-                    }
-                    
-                    $r = $j;
-                    
-                } while( $l < $r );
-            } while( $cur != 0 );
+                        $r = $j;
+                        
+                    } while( $l < $r );
+                } while( $cur != 0 );
+                
+            }
         }
     }
     
@@ -233,6 +234,34 @@ if(isset($_REQUEST['sessions'])) {
         $data->sessions[$index]->meta = getSession($ses);
         $data->sessions[$index]->data = getData($data->eid, $ses);
         $data->sessions[$index]->pictures = getSessionPictures($ses);
+        
+        foreach ($data->sessions[$index]->data as $j=>$datum) {
+            
+            //Remove alpha data from non-alpha fields
+            foreach ($data->fields as $k=>$curField) {
+                if ($curField->field_id != 37) {
+                    if (!is_numeric($datum[$k])) {
+                        $data->sessions[$index]->data[$j][$k] = "";
+                    }
+                }
+            }
+        }
+        
+        
+        $fixed = array();
+        foreach ($data->sessions[$index]->data as $datum) {
+            $count = 0;
+            foreach ($data->fields as $j=>$curField) {
+                if ($datum[$j] != "" && $curField->type_id != 7) {
+                    $count = $count + 1;
+                }
+            }
+            
+            if ($count > 0) {
+                $fixed[] = $datum;
+            }
+        }
+        $data->sessions[$index]->data = $fixed;
     }
     
     
@@ -241,40 +270,6 @@ if(isset($_REQUEST['sessions'])) {
     
     //Sorts each session by time if time is a field
     $data->sortTime();
-        
-    
-    //print_r($data);
-   /* 
-    //foreach( $data->sessions as $ses ) {
-        $dcount = count($data->sessions[0]->data[0]);
-     
-        if( $fcount != $dcount )
-            $data->fields = array_slice($data->fields, 1);
-        else {
-            foreach($data->fields as $key=>$field) {
-                if( $field->type_id == 7 && $field->unit_id != 1234)
-                    $old_time = $key;
-            }
-                        
-            foreach( $data->sessions as $skey=>$ses ) {
-                foreach( $ses->data as $dkey=>$dP) {
-                        $data->sessions[$skey]->data[$dkey] = array_merge(array_slice($dP, 0, $old_time), array_slice($dP, $old_time+1)); 
-                }
-            }
-    
-            if( isset($old_time) && $old_time == 0) {
-                $data->fields = array_slice($data->fields, 1);
-            } else if( $old_time == count($data->fields)-1 ) {
-                $data->fields = array_slice($data->fields, 0, count($data->fields)-1);
-            } else {
-                $data->fields = array_merge(array_slice($data->fields, 0, $old_time), array_slice($data->fields, $old_time+1));
-            }
-            
-	    }*/             
-    //}
-        
-    //echo 'data["session"][0].is_visible = function() {alert("hi");};';
-    //echo 'console.log(data["session"][0].is_visible());';
     
     //Determine witch vises are relevant
     $data->setRelVis();

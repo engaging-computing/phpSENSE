@@ -26,7 +26,7 @@
  * DAMAGE.
  */
  
-function createExperiment($token, $name, $description, $fields, $req_name, $req_procedure, $req_location, $name_prefix, $location, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
+function createExperiment($token, $name, $description, $fields, $req_name=1, $req_procedure=1, $req_location=1, $name_prefix=null, $location=null, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
 	global $db;
 	
 	$uid = $token['uid'];
@@ -63,7 +63,12 @@ function createExperiment($token, $name, $description, $fields, $req_name, $req_
 function getExperiment($eid) {
 	global $db;
 										
-	$output = $db->query("SELECT experiments.*, users.firstname, users.lastname FROM experiments, users WHERE experiments.owner_id = users.user_id AND experiments.experiment_id = {$eid}");
+	$output = $db->query("SELECT experiments.*, 
+                                 users.firstname, 
+                                 users.lastname 
+                                 FROM experiments, 
+                                 users 
+                                 WHERE experiments.owner_id = users.user_id AND experiments.experiment_id = {$eid}");
 	
 	if($db->numOfRows) {
 		return $output[0];
@@ -237,11 +242,14 @@ function getExperimentsByTag($tag) {
 					users.lastname AS owner_lastname
 	                FROM tagIndex, tagExperimentMap, experiments
 	                LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-	                WHERE tagIndex.value = '{$tag}' 
+	                WHERE tagIndex.value LIKE '%{$tag}%' 
 	                AND tagIndex.tag_id = tagExperimentMap.tag_id 
 	                AND experiments.experiment_id = tagExperimentMap.experiment_id 
-	                AND tagIndex.weight = 1";
-	                
+	                AND tagIndex.weight = 1
+                    ORDER BY experiments.timemodified DESC";           
+	          
+
+      
 	$output = $db->query($sql);
 	
 	if($db->numOfRows) {
@@ -249,6 +257,27 @@ function getExperimentsByTag($tag) {
 	}
 	
 	return false;
+}
+
+function getExperimentsByName($tags){
+	global $db;
+	
+    $sql = "SELECT DISTINCT experiments.* FROM experiments where experiments.name LIKE '{$tags}'";
+    for($i=0; $i<count($tags);$i++){
+            $sql .= "OR experiments.name LIKE '{$tags[$i]}%'";       
+    }
+
+    
+    
+   	$output = $db->query($sql);
+  
+	if($db->numOfRows) {
+		return $output;
+	}
+	 
+	return false;
+          
+
 }
 
 function getFields($eid) {
@@ -618,21 +647,28 @@ function isProcedureRequired($eid){
     global $db;
     $sql = "SELECT req_procedure FROM experiments WHERE experiments.experiment_id={$eid}";
     $query = $db->query($sql);
-    return $query[0]["req_procedure"];
+    return $query[0]['req_procedure'];
 }
 
 function getSessionPrefix($eid){
     global $db;
     $sql = "SELECT name_prefix FROM experiments WHERE experiments.experiment_id={$eid}";
     $query = $db->query($sql);
-    return $query[0]["name_prefix"];
+    return $query[0]['name_prefix'];
 }
 
 function getExperimentLocation($eid){
     global $db;
     $sql = "SELECT location FROM experiments WHERE experiments.experiment_id={$eid}";
     $query = $db->query($sql);
-    return $query[0]["location"];
+    return $query[0]['location'];
+}
+
+function getSessionOffset($eid) {
+    global $db;
+    $sql = "SELECT DISTINCT COUNT(*) FROM experimentSessionMap WHERE experiment_id={$eid};";
+    $query = $db->query($sql);
+    return $query[0]['COUNT(*)'];
 }
 
 function getExpOwner($sid) {

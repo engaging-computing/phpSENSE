@@ -16,7 +16,7 @@ var map = new function Map() {
 		mapTypeId: google.maps.MapTypeId.HYBRID
 	};
 	
-	this.map = null;
+	this.gmap = null;
 	
 
     /* Initialization Function */
@@ -36,16 +36,84 @@ var map = new function Map() {
 
 	}
 	
-    this.addInfoWindow = function(marker){
+    this.addInfoWindowSession = function(marker, gmap, ses){
+        var contentString = '<div><table width="260px">';
+        var sessionName = data.sessions[ses].meta['name'];
 
+        contentString += "<tr><td><b>Name: </b></td><td>"+ sessionName+"</td></tr>";
+        for(var field in data.fields) {
+            
+            var title = data.fields[field].name;
+            var type_id = data.fields[field].type_id;
+            var val = data.avgField(title,ses);
+            
+            /* Do not display time or custom*/
+            if(type_id != 7 && type_id != 22){
 
+                /* Do not display units for for geospacial/text/numeric/custom*/
+                if(type_id == 19 || type_id == 37 || type_id == 21 || type_id == 22){
+                    contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + "</td></tr>";
+                } else {
+                    var unit = data.fields[field].unit_abb;
+                    contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + " (" + unit +")</td></tr>";
+                }
+            }
+            
 
+            
+        }
+        contentString += "</table></div>";
+
+        var infowindow = new google.maps.InfoWindow({
+            content: contentString
+        });
+
+        google.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(gmap,marker);
+        });
     }
 
 
+    this.addInfoWindow = function(marker, gmap, ses, dp){
+        var contentString = '<div><table width="260px">';
+        var sessionName = data.sessions[ses].meta['name'];
+            
+        contentString += "<tr><td><b>Name: </b></td><td>"+ sessionName+"</td></tr>";
+        for(var field in data.fields) {
+           
+            var title = data.fields[field].name;
+            var type_id = data.fields[field].type_id;
+            var val = data.sessions[ses].data[dp][field];
+           
+            /* Do not display time or custom*/
+            if(type_id != 7 && type_id != 22){
+
+                /* Do not display units for for geospacial/text/numeric/custom*/
+                if(type_id == 19 || type_id == 37 || type_id == 21 || type_id == 22){
+                   contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + "</td></tr>";
+                } else {
+                    var unit = data.fields[field].unit_abb;
+                   contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + " (" + unit +")</td></tr>";
+                }
+            }
+            
+
+            
+        }
+        contentString += "</table></div>";
+
+        var infowindow = new google.maps.InfoWindow({
+            content: contentString
+        });
+
+        google.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(gmap,marker);
+        });
+    }
+
     /* Draw function */
 	this.draw = function(data, f) {
-		$("a[rel^='prettyPhoto']").prettyPhoto();
+		
 		var latField = null;
 		var lonField = null;
 		var markers = Array();
@@ -64,19 +132,18 @@ var map = new function Map() {
 
         /* If there is data in the session use it, else display the session map */
 		if( latField != null && lonField != null ){
-			this.Options['center'] = new google.maps.LatLng(data.avgField('latitude'), data.avgField('longitude'));      
+			this.Options['center'] = new google.maps.LatLng(data.sessions[0].data[0][latField], data.sessions[0].data[0][lonField]);      
         }
 		else {
 			this.Options['center'] = new google.maps.LatLng(data.sessions[0].meta['latitude'], data.sessions[0].meta['longitude']);
 		}    
-       
-        /* Create the new map */
-        //this.Options['zoom'] = 15;
-		this.map = new google.maps.Map(document.getElementById("map_canvas"), this.Options);
+           
+           
+        /* Create the new map */    
+		this.gmap = new google.maps.Map(document.getElementById("map_canvas"), this.Options);
 
 		var color = hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 );
 		
-
         /* If there is lat/lon in the experiment start adding those points */
 		if( latField != null && lonField != null ) {
 			for(var ses in data.sessions) {
@@ -90,13 +157,13 @@ var map = new function Map() {
 								var tmp = new google.maps.LatLng(data.sessions[ses].data[dp][latField], data.sessions[ses].data[dp][lonField]);
                                 markers[markers.length]= new google.maps.Marker({
 									position: tmp,
-									map: this.map,
+									map: this.gmap,
                                     title: data.sessions[ses].meta["name"].toString(),									
 									icon: '/html/img/vis/v3icon.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 ),
                                     clickable: true                        
 								});
 
-                            map.addInfoWindow(markers[markers.length-1]);
+                                map.addInfoWindow(markers[markers.length-1],this.gmap,ses,dp);
 
                                 
                                         
@@ -104,7 +171,7 @@ var map = new function Map() {
 							} else {
 								var tmp = new google.maps.LatLng(data.sessions[ses].data[dp][latField],
 													 	 	data.sessions[ses].data[dp][lonField]);
-								var max, min, val;
+								var max, min, val, unit, name, ses_name;
 
    								for( var field in data.fields ){
 									if( data.fields[field].name.toLowerCase() == this.measureField.toLowerCase() ){
@@ -115,14 +182,17 @@ var map = new function Map() {
 								max = data.getFieldMax(map.measureField);
 								min = data.getFieldMin(map.measureField);
 								val = data.sessions[ses].data[dp][field];
-								
+								unit = data.fields[field].unit_abb;
+                                name = data.fields[field].name + ': ';
+                                ses_name = data.sessions[ses].meta['name'] + '\n';
 								markers[markers.length] = new google.maps.Marker({
 									position: tmp,
-									map: this.map,
-									title: data.sessions[ses].data[dp][0].toString(),
+									map: this.gmap,
+									title: ses_name + name + val.toString() + ' ' + unit.toString(),
 									icon: '/html/img/vis/measured.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )
 									 	+ '&value=' + Math.floor( ( val - min ) / ( max - min ) * 20 )
 								});
+                                map.addInfoWindow(markers[markers.length-1],this.gmap,ses,dp);
 							}
 						}
 					}
@@ -135,15 +205,17 @@ var map = new function Map() {
                 if(data.sessions[ses].visibility) {
 			        var tmp = new google.maps.LatLng(data.sessions[ses].meta['latitude'],
 					    data.sessions[ses].meta['longitude']);
-				    markers[markers.length] = new google.maps.Marker({
+				        markers[markers.length] = new google.maps.Marker({
 					    position: tmp,
-					    map: this.map,
+					    map: this.gmap,
 					    title: 'Session #: ' + eval(ses + 1) ,
 					    icon: '/html/img/vis/v3icon.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )
 				    });
+                    map.addInfoWindowSession(markers[markers.length-1],this.gmap,ses);
 			    }
 			}
 		}			
+
 	}
 
     /* Draw the controls under the map. */
@@ -222,8 +294,8 @@ var map = new function Map() {
 	this.setListeners = function() {
 		
         /* Not sure this actually effects anything */
-		google.maps.event.addListener( this.map, 'zoom_changed', function() {
-			map.Options['zoom'] = map.map.getZoom();
+		google.maps.event.addListener( this.gmap, 'zoom_changed', function() {
+			map.Options['zoom'] = map.gmap.getZoom();
 		});
 		
         
@@ -270,13 +342,14 @@ var map = new function Map() {
 		this.draw(data);
 		this.drawControls();
 		this.setListeners();
+        $("a[rel^='prettyPhoto']").prettyPhoto();
 		
 	}
 
 
     /* Stop the map */
 	this.end = function() {		
-		google.maps.event.clearInstanceListeners(this.map);
+		google.maps.event.clearInstanceListeners(this.gmap);
 		$('#controldiv').children().unbind();
 		$('#controldiv').empty();
 		$('#map_canvas').hide();

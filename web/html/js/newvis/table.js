@@ -18,6 +18,33 @@ var table = new function Table() {
     }
     
 
+    this.fmtTime = function(rawTime){
+       
+        var d = new Date(Number(rawTime));
+
+        var minutes = d.getUTCMinutes();
+        if ( minutes <= 9 ){
+            minutes = "0" + minutes;        
+        }
+
+        var seconds = d.getUTCSeconds();
+        if ( seconds <= 9 ){
+            seconds = "0" + seconds;        
+        }
+
+        var millis = d.getUTCMilliseconds();
+        if (millis <= 9 ){
+            millis = "00" + millis;
+        } else if ( millis <=99 && millis >=10 ){
+            millis = "0" + millis;
+        }
+
+        var s = d.getUTCHours() + ':' + minutes + ':' + seconds + '.' + millis + ' ' + (d.getUTCMonth() + 1) + '/' 
+            + d.getUTCDate() + '/' + d.getUTCFullYear();
+
+        return s;
+    }
+
 
     this.draw = function () {
 
@@ -33,8 +60,8 @@ var table = new function Table() {
             var title = data.fields[field].name;
             var type_id = data.fields[field].type_id;
             
-            /* Do not display units for geospacial/text/numeric/custom */
-            if(type_id == 19 || type_id == 37 || type_id == 21 || type_id == 22){
+            /* Do not display units for geospacial/text/numeric/custom/time */
+            if(type_id == 19 || type_id == 37 || type_id == 21 || type_id == 22 || type_id == 7){
                 $('#headers').append('<td><b>' + title  + '</b></td>');
             } else {
                 var unit = data.fields[field].unit_abb;
@@ -63,10 +90,9 @@ var table = new function Table() {
                     
                         /* Format time correctly in UTC */
                         if(data.fields[field].type_id==7){
-                            var d = new Date(data.sessions[ses].data[dp][field]);
-                            s = d.getUTCHours() + ':' + d.getUTCMinutes() + ':' + d.getUTCSeconds() + '.' + d.getUTCMilliseconds() + ' ' + (d.getUTCMonth() + 1) + '/' 
-                            + d.getUTCDate() + '/' + d.getUTCFullYear();
-                            $('#table_'+row_id).append('<td>'+s+'</td>');        
+                            var rawTime = data.sessions[ses].data[dp][field];
+                            var formattedTime = table.fmtTime(rawTime);
+                            $('#table_'+row_id).append('<td>'+formattedTime+'</td>');        
 
                         /* Otherwize just throw it in the table */
                         } else {

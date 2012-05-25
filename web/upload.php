@@ -85,6 +85,24 @@ if(isset($_REQUEST['id'])) {
 	$smarty->assign('fields', 		$fields);
 	$smarty->assign('field_count', 	count($fields));
     $smarty->assign('e_proc', $meta['description']);
+    
+    if(!isNameRequired($eid)){ 
+	    $req_name = 0;
+	} else { 
+	    $req_name = 1; 
+	}
+	
+	if(!isLocationRequired($eid)) {
+	    $req_loc = 0;
+	} else {
+	    $req_loc = 1;
+	}
+	
+	if(!isProcedureRequired($eid)) {
+	    $req_procedure = 0;
+	} else {
+	    $req_procedure = 1;
+	}
 }
 else {
 	array_push($errors, 'Could not find your experiment.');
@@ -116,6 +134,14 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 				array_push($errors, ucwords($split[0]) . ' '. $split[1] . ' can not be blank.');
 			}
 		}
+		
+		if(!$req_name) { $post_data['session_name'] = getSessionPrefix($eid) . getSessionOffset($eid); }
+		if(!$req_procedure) { $post_data['session_description'] = ''; }
+		if(!$req_loc) { 
+		    $post_data['session_citystate'] = getExperimentLocation($eid);
+	        $post_data['session_street'] = ''; 
+	    }
+
 	}
 	
 	if($type == "file") {
@@ -321,7 +347,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 				}
 			}
 		}
-		// Does the feild align
+		// Does the field align
 		else if($state == CORRECT_FIELDS) {
 
 			$unmatched_count = -1;
@@ -365,7 +391,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 				$mapping[$f] = $h;
 			}
 
-			// This looks fimilar doesn't it?
+			// This looks familiar doesn't it?
 			for($i = 0; $i < count($mapping); $i++) {
 
 				$field_name = strtolower($fields[$i]['field_name']);
@@ -568,7 +594,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 									safeString(stripslashes($post_data['session_description'])), 
 									safeString(stripslashes($post_data['session_street'])), 
 									safeString(stripslashes($post_data['session_citystate'])), 
-									"United States", // Default country
+									"", // Default country
 									1, // Default permissions bit
 									1, // Default permissions bit
 									1, // Default permissions bit
@@ -657,7 +683,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
         						safeString($post_data['session_description']), 
         						safeString($post_data['session_street']), 
         						safeString($post_data['session_citystate']), 
-        						"United States", // Default country
+        						"", // Default country
 								1, // Default permission bits
 								1, // Default permission bits
 								1, // Default permission bits
@@ -682,15 +708,13 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 		    
 		    // Iterate through each feild, or each column in the row of data
 		    foreach($fields as $key => $field) {
-		        
-		        if( $key == 0 && ($val == 0 || $val = 0.0 || $val == 1.0 || $val == 1 ) )
-		            $man_off = 1;
-		        
-		        // Get the name of the feild
-		        $name = str_replace(" ", "_", $field['field_name']) . "_" . $i;
+          	        
+ 		      // Get the name of the feild
+          $name = str_replace(" ", "_", $field['field_name']) . "_" . $i;
 			    $val = safeString($_POST[$name]);
 			    
-			    // Check to see if this is a time value
+
+          // Check to see if this is a time value
 			    if($field['type_id'] == TIME_TYPE_ID) {
 			            
 			        // Check to see if there are words in the val
@@ -701,10 +725,11 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 			                $x[] = intval($new_time * 1000);
 			            }
 			        }
-			        else if ( $man_off ) {
-		                // If not assume incremental seconds from upload
+            //If first data point is one of these values, assume incremental time.
+              else if( $man_off || ($val == "0" || $val == "0.0" || $val == "1.0" || $val == "1" ) ) {
+		                // If so assume incremental seconds from upload
 		                $x[] = $now + ($val * 1000) . "";
-
+				$man_off = 1;
 		                // Don't trust the time format from now on
 		                // force the seconds from upload
 		                $time_fail = true;
@@ -712,19 +737,22 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 			        else if(strpos($val, ".") !== FALSE) {
 			            echo "Got to decimal case!<br/>";
 			            $x[] = (string) ( ( (double) $val ) * 1000 );
-			        }
+              }
+
+              // Assume anything greater than 2 billion is actually already in miliseconds
+              // Bug will be here in 2033. You found me if you are looking.
 			        else {
 			            if( $val > 2000000000)
 			                $x[] = intval($val);
 			            else
-			                $x[] = intval($val) * 1000;
+			                $x[] = intval($val) * 1000 ;
 			        } 
-                } 
+           } 
                 
-                else {
-                    // This value is not a time type, so we directly insert into the row
-			        $x[] = $val;
-			    }
+           else {
+             // This value is not a time type, so we directly insert into the row
+			       $x[] = $val;
+			     }
 		    }
 		    
 		    // Append this row to the greater data set
@@ -751,6 +779,11 @@ $smarty->assign('state', 		$state);
 $smarty->assign('errors', 		$errors);
 $smarty->assign('time_fix',		$timefix);
 $smarty->assign('column_fix',	$columnfix);
+
+// Hide Name, Procedure and Location
+$smarty->assign('hideName', $req_name);
+$smarty->assign('hideProcedure', $req_procedure);
+$smarty->assign('hideLocation', $req_loc);
 
 $smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>' . 
 						'<script src="/html/js/lib/validate.js"></script>'.

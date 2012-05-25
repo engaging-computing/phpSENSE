@@ -49,7 +49,7 @@
     				<span class="hint">Example: "4 Yawkey Way"</span><br/>
     				<label for="session_citystate">City, State:</label><input type="text" name="session_citystate" value="{ $values.city }"/><br/>
     				<span class="hint">Example: "Boston, Ma"</span><br/>
-    				    <label for="session_hidden">Hidden:</label><input type="checkbox" name="session_hidden" { if $values.finalized == 0 } checked="checked" { /if } ><br/>
+    				    <label for="session_hidden">Hidden:</label><input type="checkbox" id="session_hidden" name='{$values.session_id}' { if $values.finalized == 0 } checked="checked" { /if } ><br/>
     			</fieldset>
     			<fieldset>
 			    	<legend>Step 2: Review and Finish</legend>
