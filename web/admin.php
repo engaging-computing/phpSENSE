@@ -312,6 +312,36 @@ switch($action) {
 		
 		break;
 	
+    /* Session Actions */
+    case "sessionunhide":
+        $sids = explode(":", $_GET['sid']);
+		foreach( $sids as $sid )
+			unhideSession( $sid );
+
+		break;
+
+    case "sessionmanage":  
+        $title = 'Manage Sessions';
+        $data = adminGetSessions($_GET['id']);
+        $action_template = 'admin/session-manage.tpl';
+		break;
+
+    case "sessionhide":
+        
+		$sids = explode(":", $_GET['sid']);
+		foreach( $sids as $sid )
+			hideSession( $sid );
+
+		break;
+
+    case "sessiondelete":
+		$sids = explode(":", $_GET['sid']);
+		foreach( $sids as $sid )
+			deleteSession( $sid );
+
+		break;
+
+
 	/* Experiment Actions */
 	case "experimentsmanage":
 		$title = 'Manage Experiments';
