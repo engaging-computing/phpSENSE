@@ -28,49 +28,46 @@
 <div id="main-full">
 	<div id="management_toolbar">
 		<div>
-			<input type="submit" id="experimentnew" value="New Experiment" onclick="window.location.href='create.php';" /> 
-			<input type="submit" id="experimentdelete" value="Delete Experiment" onclick="deleteExperiment();" /> 
-			<input type="submit" id="experimentfeature" value="Feature Experiment" onclick="featureExperiment();" />
+			
+			<input type="submit" id="sessiondelete" value="Delete Session" onclick="deleteSession();" /> 
+			<input type="submit" id="sessionhide" value="Hide Session" onclick="hideSession();" /> 
+            <input type="submit" id="sessionunhide" value="Unhide Session" onclick="unhideSession();" /> 
 		</div>
 		<div>
 			Select: 
 			<a href="javascript:void(0);" onclick="checkAll();">All</a>, 
 			<a href="javascript:void(0);" onclick="uncheckAll();">None</a>, 
-			<a href="javascript:void(0);" onclick="checkAllFeaturedExperiments();">Featured</a>, 
-			<a href="javascript:void(0);" onclick="checkAllNonFeaturedExperiments();">Non-Featured</a>, 
-			<a href="javascript:void(0);" onclick="checkAllVisibleExperiments();">Visible</a>,
-			<a href="javascript:void(0);" onclick="checkAllHiddenExperiments();">Hidden</a> 
+			<a href="javascript:void(0);" onclick="checkAllHiddenSessions();">Hidden</a> 
 		</div>
 	</div>
 	<table width="100%" id="management_table" class="mangement_table" cellspacing="0" cellpadding="6">
 		<tr class="header" style="background:#EAEAEA; font-weight:bold;">
 			<td>&nbsp;</td>
-			<td>Experiment Title</td>
+			<td>Session Name</td>
 			<td>Creator</td>
-			<td>Created On</td>
-			<td>Last Modified</td>
+            <td>Created</td>
 			<td>Hidden?</td>
-			<td>Featured?</td>
-            <td>Manage Sessions</td>
 		</tr>
 		{ if $data|@count > 0 }
-			{ foreach from=$data item=experiment }
+			{ foreach from=$data item=session }
 				<tr>
-					<td align="center"><input type="checkbox" name="news_{ $experiment.experiment_id }" id="news_{ $experiment.experiment_id }" value="{ $experiment.experiment_id }" /></td>
-					<td><a href="experiment.php?id={ $experiment.experiment_id }">{ $experiment.name|capitalize }</a></td>
-					<td><a href="profile.php?id={ $experiment.owner_id }">{ $experiment.firstname|capitalize } { $experiment.lastname|capitalize }</a></td>
-					<td>{ $experiment.timecreated }</td>
-					<td>{ $experiment.timemodified }</td>
-					<td class="hidden">{ if $experiment.hidden == 1 }Yes{ else }No{ /if }</td>
-					<td class="featured">{ if $experiment.featured == 1 }Yes{ else }No{ /if }</td>
-                    <td><a href="admin.php?action=sessionmanage&id={$experiment.experiment_id}"><input type="button"  value="Manage"/></a></td>
+					<td align="center"><input type="checkbox" name="news_{ $session.session_id }" id="news_{ $session.session_id }" value="{ $session.session_id }" /></td>
+                    <td><a href="newvis.php?sessions={$session.session_id}">{$session.name|substr:0:15|capitalize}</a></td>        
+					<td>{$session.firstname|capitalize}</td>
+                    <td>{$session.timecreated}</td>
+					<td class="hidden">{ if $session.finalized == 0 }Yes{ else }No{ /if }</td>
 				</tr>
 			{ /foreach }
 		{ else }
 			<tr>
 				<td>&nbsp;</td>
-				<td colspan="4">Sorry, we could not find any experiments.</td>
+				<td colspan="4">Sorry, we could not find any sessions.</td>
 			</tr>
 		{ /if }
 	</table>
 </div>
+
+
+
+
+

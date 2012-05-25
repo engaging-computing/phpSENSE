@@ -485,13 +485,23 @@ function getDataSince($eid, $sid, $since) {
 	return $output;
 }
 
+function deleteSession($sid){
+    global $db;
+    $output = $db->query("DELETE FROM sessions where session_id={$sid}");
+    $output = $db->query("DELETE FROM experimentSessionMap where session_id={$sid}");
+	if($db->numOfRows) {
+		return true;
+	}
+	
+	return false;
+}
+
 function hideSession($sid) {
 	global $db;
 	
 	$output = $db->query("UPDATE sessions SET sessions.finalized = 0 WHERE sessions.session_id = {$sid}");
 	
 	if($db->numOfRows) {
-	    //updateTimeModifiedForExperiment($eid);
 		return true;
 	}
 	
@@ -504,7 +514,6 @@ function unhideSession($sid) {
 	$output = $db->query("UPDATE sessions SET sessions.finalized = 1 WHERE sessions.session_id = {$sid}");
 	
 	if($db->numOfRows) {
-	    //updateTimeModifiedForExperiment($eid);
 		return true;
 	}
 	
