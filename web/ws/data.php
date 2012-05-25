@@ -52,20 +52,13 @@ class Data {
     public function setRelVis() {
         
         /* See how much data the experiment has */
-        $max = 0;
-        foreach( $this->sessions as $session ) {
-            if(count($session->data) > $max){
-                $max = count($session->data);    
-            }
-        }
-
         $total = 0;
         foreach( $this->sessions as $session ) {
             $total += count($session->data);
         }
       
         /* If there is more than one data point in a session add the following vizes */
-        if( $max > 1 ) {
+        if( $total > 1 ) {
             $this->relVis = array_merge(array('Scatter', 'Bar', 'Histogram'), $this->relVis); 
 
             /* if a time field exists, add timeline */
@@ -246,22 +239,6 @@ if(isset($_REQUEST['sessions'])) {
                 }
             }
         }
-        
-        
-        $fixed = array();
-        foreach ($data->sessions[$index]->data as $datum) {
-            $count = 0;
-            foreach ($data->fields as $j=>$curField) {
-                if ($datum[$j] != "" && $curField->type_id != 7) {
-                    $count = $count + 1;
-                }
-            }
-            
-            if ($count > 0) {
-                $fixed[] = $datum;
-            }
-        }
-        $data->sessions[$index]->data = $fixed;
     }
     
     
