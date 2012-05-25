@@ -75,7 +75,7 @@ function adminGetSessions($eid) {
                              experimentSessionMap         
                         WHERE sessions.owner_id = users.user_id AND experimentSessionMap.session_id = sessions.session_id AND experimentSessionMap.experiment_id = '$eid'
                              
-                        ORDER BY experimentSessionMap.experiment_id DESC");
+                        ORDER BY sessions.timecreated DESC");
 	//print_r ($output);
 	if($db->numOfRows) {
 		return $output;
