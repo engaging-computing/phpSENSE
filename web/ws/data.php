@@ -35,11 +35,11 @@ class Data {
 
     public $eid;
     
-    public $relVis = array('Table');
+    public $relVis = array();
     
     public $fields = array();
     public $sessions = array();
-   
+    public $showImageViz = false;
 
 	// DO NOT USE UNIT_IDs FOR TYPE CHECKS
     public function getTimeField() {
@@ -50,14 +50,25 @@ class Data {
 
     /* Turn on the relevant vizes */
     public function setRelVis() {
-        
+           
         /* See how much data the experiment has */
+        /* If there are pictures associated with the sessions display them*/
         $max = 0;
         foreach( $this->sessions as $session ) {
+            if((count($session->pictures) > 0) && $showImageViz == false){
+                 $showImageViz=true;
+                 $this->relVis = array_merge(array('Images'), $this->relVis);  
+            }
+           
             if(count($session->data) > $max){
                 $max = count($session->data);    
             }
+        
+         
         }
+
+        /* Always have a table, and have it be last or second to last if there are pictures */
+        $this->relVis = array_merge(array('Table'), $this->relVis);
 
         $total = 0;
         foreach( $this->sessions as $session ) {
