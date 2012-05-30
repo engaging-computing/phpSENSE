@@ -123,6 +123,7 @@ require_once API_DIR . 'util.php';
 require_once API_DIR . 'vis.php';
 require_once API_DIR . 'graph.php';
 require_once API_DIR . 'activity.php';
+require_once API_DIR . 'conversions.php';
 
 /* Initalizes Smarty Templates */
 require_once 'smarty/lib/Smarty.class.php';
