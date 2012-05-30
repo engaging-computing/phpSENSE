@@ -35,13 +35,13 @@ class Data {
 
     public $eid;
     
-    public $relVis = array();
+    public $relVis = array('Table');
     
     public $fields = array();
     public $sessions = array();
-    public $showImageViz = false;
+   
 
-	// DO NOT USE UNIT_IDs FOR TYPE CHECKS
+    // DO NOT USE UNIT_IDs FOR TYPE CHECKS
     public function getTimeField() {
         foreach( $this->fields as $index=>$field )
             if( $field->type_id == 7 )
@@ -50,25 +50,14 @@ class Data {
 
     /* Turn on the relevant vizes */
     public function setRelVis() {
-           
+        
         /* See how much data the experiment has */
-        /* If there are pictures associated with the sessions display them*/
         $max = 0;
         foreach( $this->sessions as $session ) {
-            if((count($session->pictures) > 0) && $showImageViz == false){
-                 $showImageViz=true;
-                 $this->relVis = array_merge(array('Images'), $this->relVis);  
-            }
-           
             if(count($session->data) > $max){
                 $max = count($session->data);    
             }
-        
-         
         }
-
-        /* Always have a table, and have it be last or second to last if there are pictures */
-        $this->relVis = array_merge(array('Table'), $this->relVis);
 
         $total = 0;
         foreach( $this->sessions as $session ) {
@@ -285,7 +274,7 @@ if(isset($_REQUEST['sessions'])) {
                 $data->fields = array_merge(array_slice($data->fields, 0, $old_time), array_slice($data->fields, $old_time+1));
             }
             
-	    }*/             
+        }*/             
     //}
         
     //echo 'data["session"][0].is_visible = function() {alert("hi");};';
