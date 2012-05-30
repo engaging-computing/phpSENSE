@@ -402,7 +402,7 @@ var bar = new function Bar(){
 		this.mouseY = 0;
 
 		this.bgcolor = "rgb(255,255,255)";
-		this.gridcolor = "rgb(128,128,128)";
+		this.gridcolor = "rgb(0,0,0)";
 		this.bordercolor = "rgb(0,0,0)";
 		this.textcolor = "rgb(0,0,0)";
 		
