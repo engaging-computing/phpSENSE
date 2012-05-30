@@ -37,7 +37,6 @@
     <canvas id="viscanvas" width="860px" height="400px"><div id="session_image" style="display: none;"></div></canvas>
     <div id="map_canvas" style="width:860px;min-height:450px;"></div>
     <div id="table_canvas" style="width: 860px;"></div>
-    <div id="image_canvas" style="width: 860px;"></div
     <div id="controldiv" style="margin: 20px; overflow:hidden;"></div>
 </div>
 
