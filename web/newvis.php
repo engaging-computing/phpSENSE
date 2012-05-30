@@ -78,7 +78,6 @@ if(isset($_REQUEST['sessions'])) {
     $head .= '<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>';
     $head .= '<script type="text/javascript" src="/html/js/newvis/map.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/newvis/table.js"></script>';
-    $head .= '<script type="text/javascript" src="/html/js/newvis/images.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/newvis/runtime.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/newvis/jquery.dataTables.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.prettyPhoto.js"></script>';
