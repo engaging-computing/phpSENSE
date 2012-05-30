@@ -18,6 +18,10 @@ function findItems(tableId, columnAttr, attrState) {
     });
 }
 
+function checkAllHiddenSessions(){
+    findItems('management_table','hidden','Yes');
+}
+
 function checkAllFeaturedExperiments() {
     findItems('management_table', 'featured', 'Yes');
 }
@@ -171,6 +175,69 @@ function adminUser() {
 
 }
 
+
+function unhideSession(){
+    var del = new Array();
+    var loc = '../admin.php?action=sessionunhide&sid=';
+
+    $('#management_table').find('td > input:checkbox').each( function() {
+	if( $(this).attr('checked') ) 
+	    del[del.length] = $(this).parent().siblings(1).eq(0).children().attr('href').split("=")[1];
+    });
+
+    
+	for( var i = 0; i < del.length; i++ ) {
+       if( i < del.length - 1){
+            loc += del[i] + ':';
+       } else {
+             loc += del[i];
+       }
+
+	}
+
+	window.location = loc;
+}
+
+function deleteSession(){
+    var del = new Array();
+    var loc = '../admin.php?action=sessiondelete&sid=';
+
+    $('#management_table').find('td > input:checkbox').each( function() {
+	if( $(this).attr('checked') ) 
+	    del[del.length] = $(this).parent().siblings(1).eq(0).children().attr('href').split("=")[1];
+    });
+
+	for( var i = 0; i < del.length; i++ ) {
+       if( i < del.length - 1){
+            loc += del[i] + ':';
+       } else {
+             loc += del[i];
+       }
+	}
+	window.location = loc;
+}
+
+function hideSession(){
+    var del = new Array();
+    var loc = '../admin.php?action=sessionhide&sid=';
+
+    $('#management_table').find('td > input:checkbox').each( function() {
+	if( $(this).attr('checked') ) 
+	    del[del.length] = $(this).parent().siblings(1).eq(0).children().attr('href').split("=")[1];
+    });
+
+    
+	for( var i = 0; i < del.length; i++ ) {
+       if( i < del.length - 1){
+            loc += del[i] + ':';
+       } else {
+             loc += del[i];
+       }
+
+	}
+
+	window.location = loc;
+}
 
 function deleteExperiment()  { 
 	

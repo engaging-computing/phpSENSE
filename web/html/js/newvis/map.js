@@ -39,7 +39,7 @@ var map = new function Map() {
     this.addInfoWindowSession = function(marker, gmap, ses){
         var contentString = '<div><table width="260px">';
         var sessionName = data.sessions[ses].meta['name'];
-        
+
         contentString += "<tr><td><b>Name: </b></td><td>"+ sessionName+"</td></tr>";
         for(var field in data.fields) {
             
@@ -77,7 +77,7 @@ var map = new function Map() {
     this.addInfoWindow = function(marker, gmap, ses, dp){
         var contentString = '<div><table width="260px">';
         var sessionName = data.sessions[ses].meta['name'];
-        
+
         contentString += "<tr><td><b>Name: </b></td><td>"+ sessionName+"</td></tr>";
         for(var field in data.fields) {
             
@@ -137,8 +137,7 @@ var map = new function Map() {
         else {
             this.Options['center'] = new google.maps.LatLng(data.sessions[0].meta['latitude'], data.sessions[0].meta['longitude']);
         }    
-        
-        
+
         /* Create the new map */    
         this.gmap = new google.maps.Map(document.getElementById("map_canvas"), this.Options);
         
@@ -217,8 +216,7 @@ var map = new function Map() {
                                                                      icon: '/html/img/vis/v3icon.php?color=' + hslToRgb( ( 0.6 + ( 1.0*ses/data.sessions.length ) ) % 1.0, 1.0, 0.5 )
                     });
                     map.addInfoWindowSession(markers[markers.length-1],this.gmap,ses);
-                    
-                  
+
                     latlngbounds.extend( tmp);
                 }
             }

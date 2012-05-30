@@ -120,6 +120,22 @@ $(document).ready(function(){
             }
         });
     }
+    
+    if($('#session_hidden').length > 0) {
+        $('#session_hidden').click(function(){
+            if($(this).attr("checked")) {
+                // Make Featured
+                $.get('actions/experiments.php', { action:"hideSes", id:$(this).attr('name') }, function(data){
+                    alert(data);
+                });
+            } else {
+                // Remove Feature
+                $.get('actions/experiments.php', { action:"unhideSes", id:$(this).attr('name') }, function(data){
+                    alert(data);
+                });
+            }
+        });
+    }
 
 	if($('.star').length > 0) {
 	    for(var i = 1; i < 6; i++) {

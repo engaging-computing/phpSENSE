@@ -1,4 +1,5 @@
 /******************************************************************************
+w
  * Validate.js                                                                *
  *****************************************************************************/
 
@@ -49,13 +50,17 @@ $(document).ready( function() {
 			            dataString += 'team=' + $('#team').val() + '&';
 			            dataString += 'testType=' + $('#testType').val() + '&';
 			            dataString += 'sessionLoc=' + $('#sessionLoc').val();
-			            
+			            dataString += '&submit=1'
+
+
 			            $.ajax({
 			                type: 'POST',
 			                url: '/tsor.php',
 			                data: dataString,
 			                success: function(msg) {
-			                    alert('Successfully added data');
+					    /*console.log(dataString);*/
+					    /*console.log(msg);*/
+					  window.location = msg;
 			                }
 			            });
 			            

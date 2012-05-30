@@ -337,22 +337,37 @@ data.qSortFieldNum = function( fieldNum ) {
 	
 }
 
-data.avgField = function( fieldName ) {
-	
-	var avg = 0;
+data.avgFieldHelper = function (ses) {
+  var avg = 0;
+  var count = 0;
+
+  for(var dp in this.sessions[ses].data) {
+		avg += this.sessions[ses].data[dp][field];
+		count++;
+	}
+
+  return (avg/count);
+}
+
+data.avgField = function (fieldName,ses){
+    var avg = 0;
 	var count = 0;
 	
-	for(var field in this.fields )
-		if( this.fields[field].name.toLowerCase() == fieldName.toLowerCase() )
-			for(var ses in this.sessions ) {
-				for(var dp in this.sessions[ses].data) {
-					avg += this.sessions[ses].data[dp][field];
-					count++;
-				}
-			}
-	
-	return (avg/count);
-	
+	for(var field in this.fields ){
+		if( this.fields[field].name.toLowerCase() == fieldName.toLowerCase() ){
+      if(!ses) {
+        for(var ses in this.sessions) {
+          avg += this.avgFieldHelper(ses);
+          count++;
+        }
+      }
+      else {
+        return this.avgFieldHelper(ses);
+      }
+    }
+  }  
+  return avg/count;    
+
 }
 
 data.fullSort = function( fieldName ) {
