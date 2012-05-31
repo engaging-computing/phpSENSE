@@ -74,15 +74,15 @@
 							</tr>
 							<tr id="template" style="display:none;">
 								{ foreach from=$fields item=field }
-									<td><input type="text" id="{ $field.field_name|replace:' ':'_' }_xxx" name="{ $field.field_name|replace:' ':'_'  }_xxx"  style="width:90%;"></td>
+									<td><input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_xxx" name="{ $field.field_name|replace:' ':'_'  }_xxx"  style="width:90%;"></td>
 								{ /foreach }
 							</tr>
 							<tr>
 								{ foreach from=$fields item=field }
 								    { if $field.field_name == 'Time' }
-								      	 <td><input type="text" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" class="time"></td>
+								      	 <td><input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" class="time"></td>
 								    { else }
-									<td><input type="text"  id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" ></td>
+									<td><input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" ></td>
 								    { /if }
 								{ /foreach }
 							</tr>
