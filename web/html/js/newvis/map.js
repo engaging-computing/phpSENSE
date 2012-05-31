@@ -10,6 +10,9 @@ var map = new function Map() {
     var inited;
     var measureField;
     var infowindow = null;
+    var latlngbounds = new google.maps.LatLngBounds( );
+    
+    
     this.Options = {
         zoom: 8,
         center: new google.maps.LatLng(0,0),
@@ -126,7 +129,7 @@ var map = new function Map() {
         var lonField = null;
         var markers = Array();
         var f = null;
-        var latlngbounds = new google.maps.LatLngBounds( );
+        
         /* Find the latitude and longitude fields in the current session (if they exist) */
         for(var field in data.fields) {
             if(data.fields[field].name.toLowerCase() == 'latitude'){
@@ -301,6 +304,13 @@ var map = new function Map() {
             $('#measuredField').append('<option value="'+field+'">'+data.fields[field].name+'</option>');
         }
         
+        
+        /* Add a tools menu */
+        $('#controldiv').append('<div id="tools" style="float:left;margin:10px;"></div>');
+        $('#tools').append('<table id="toolsTable" style="border:1px solid grey;padding:5px;"><tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;></table>');
+        $('#toolsTable').append('<tr><td style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</tr></td>');
+        $('#toolsTable').append('<tr><td><button id="resetButton" type="button" >Reset Map</button></tr></td>');
+        
     }
     
     
@@ -340,8 +350,18 @@ var map = new function Map() {
             
         });
         
+        $('#resetButton').click(function(e){
+           map.resetMap();
+        });
+        
     }
     
+    this.resetMap = function(){
+        this.gmap.fitBounds(latlngbounds);   
+        if(this.infowindow){
+            this.infowindow.close();
+        }
+    }
     
     /* Start the map and hide the previous vis */
     this.start = function (data) {
