@@ -107,7 +107,10 @@
 							</tr>
 						</table>
 						<input type="hidden" id="row_count" name="row_count" value="1" />
-						<span class="hint"><a href="javascript:addManualDataRow();">Add Row</a></span>
+						<span>
+						    <button type="button" id="addManualRowButton">Add Row</button>
+						    <button type="button" id="removeManualRowButton" disabled="disabled">Remove Row</button>
+						</span>
 					</div>
 				{ elseif $state == 2 }
 					<legend>Field to Header Matching</legend>
