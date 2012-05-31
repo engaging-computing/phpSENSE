@@ -173,7 +173,12 @@ var bar = new function Bar(){
 		var ymin = ybounds[0];
 		var ymax = ybounds[1];
 		
+                
 		var ydiff = ymax - ymin;
+                
+                ymin -= ymin * 0.2;
+                ymax += ymax * 0.2;
+                var ydiff = ymax - ymin;
 
 		var yinc = ydiff/(this.drawheight/(this.fontheight*3/2));
 		
