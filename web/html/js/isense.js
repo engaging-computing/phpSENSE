@@ -424,52 +424,51 @@ function addField() {
     
     $("#custom_field_type_" + new_row_count).change(filterUnits);
 }
-$(document).ready( function() {
-    $("#addManualRowButton").click(
-        function addManualDataRow(e) {
-            $('#row_count').val(parseInt($('#row_count').val()) + 1);
-            var org = $('tr#template').clone();
-            org.attr('id', $('#row_count').val());
-            
-            org.find('td > input').each(function(i){
-                var id =  $(this).attr('id');
-            var name = $(this).attr('name');
-            
-            //console.log(id);
-            
-            if( id == 'Time_xxx' || id == 'time_xxx' )
-                $(this).attr('class', 'time');
-            
-            id = id.replace(/(xxx)/g, $('#row_count').val());
-            name = name.replace(/(xxx)/g, $('#row_count').val());
-            
-            $(this).attr('id', id);
-            $(this).attr('name', name);
-            $(this).addClass('required');
-            //$(this).addClass('numeric');
-            });
-            
-            org.css('display', '');
-            $('#manual_table').append(org);
-            
-            $("#removeManualRowButton").removeAttr('disabled');
-        });
+
+
+function addManualDataRow() {
+    $('#row_count').val(parseInt($('#row_count').val()) + 1);
+    var org = $('tr#template').clone();
+    org.attr('id', $('#row_count').val());
+    
+    org.find('td > input').each(function(i){
+        var id =  $(this).attr('id');
+        var name = $(this).attr('name');
         
-        $("#removeManualRowButton").click(
-            function removeManualDataRow(e) {
-                if ($('#row_count').val() > 1)
-                {
-                    $('#row_count').val(parseInt($('#row_count').val()) - 1);
-                    
-                    $('#manual_table tr:last').remove();
-                    
-                    if ($('#row_count').val() == 1)
-                    {
-                        $("#removeManualRowButton").attr('disabled', 'disabled');
-                    }
-                }
-            });
-});
+        //console.log(id);
+        
+        if( id == 'Time_xxx' || id == 'time_xxx' )
+            $(this).attr('class', 'time');
+        
+        id = id.replace(/(xxx)/g, $('#row_count').val());
+        name = name.replace(/(xxx)/g, $('#row_count').val());
+        
+        $(this).attr('id', id);
+        $(this).attr('name', name);
+        $(this).addClass('required');
+        //$(this).addClass('numeric');
+    });
+    
+    org.css('display', '');
+    $('#manual_table').append(org);
+    
+    $("#removeManualRowButton").removeAttr('disabled');
+}
+
+
+function removeManualDataRow() {
+    if ($('#row_count').val() > 1)
+    {
+        $('#row_count').val(parseInt($('#row_count').val()) - 1);
+        
+        $('#manual_table tr:last').remove();
+        
+        if ($('#row_count').val() == 1)
+        {
+            $("#removeManualRowButton").attr('disabled', 'disabled');
+        }
+    }
+}
 
 function addLinkRow() {
     $('#row_count').val(parseInt($('#row_count').val()) + 1)

@@ -108,8 +108,10 @@
 						</table>
 						<input type="hidden" id="row_count" name="row_count" value="1" />
 						<span>
-						    <button type="button" id="addManualRowButton">Add Row</button>
-						    <button type="button" id="removeManualRowButton" disabled="disabled">Remove Row</button>
+						    <a href="javascript:addManualDataRow();">
+						        <button type="button" id="addManualRowButton">Add Row</button></a>
+						    <a href="javascript:removeManualDataRow();">
+						        <button type="button" id="removeManualRowButton" disabled="disabled">Remove Row</button></a>
 						</span>
 					</div>
 				{ elseif $state == 2 }
