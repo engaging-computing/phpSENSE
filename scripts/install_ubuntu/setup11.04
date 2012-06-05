@@ -41,7 +41,7 @@ sudo /etc/init.d/apache2 reload
 echo "Dumping mongodb/mysql database on isense.cs.uml.edu." 
 mkdir ~/databasebackup
 echo "Enter your isense.cs.uml.edu password when prompted"
-ssh isense.cs.uml.edu "mkdir ~/databasebackup; cd ~/databasebackup; mongodump --host localhost; mysqldump -u root -pRedsox*101188 -x --all-databases > fullsql.sql;"
+ssh isense.cs.uml.edu "mkdir ~/databasebackup; cd ~/databasebackup; mongodump --host localhost; mysqldump -u root -p -x --all-databases > fullsql.sql;"
 scp -r $(whoami)@isense.cs.uml.edu:~/databasebackup ~/
 
 echo "A current copy of the database should be stored in ~/databasebackup"
