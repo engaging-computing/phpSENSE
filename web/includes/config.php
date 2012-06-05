@@ -138,5 +138,6 @@ $smarty->config_dir =   dirname(__FILE__) . '/smarty/templates/configs';
 $smarty->assign('google_account',   GOOGLE_ACCOUNT);
 $smarty->assign('FLOT_ENABLED',     FLOT_ENABLED);
 $smarty->assign('GMAP_KEY',         GMAP_KEY);
+$smarty->assign('versionNumber', getVersionNumber());
 
 ?>
