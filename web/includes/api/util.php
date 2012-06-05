@@ -196,4 +196,7 @@ function dateDifference($day_1, $day_2) {
 	return $date_diff_string;
 }
 
+function getVersionNumber(){
+            return exec('git describe --tags');
+}
 ?>
