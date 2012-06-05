@@ -173,7 +173,12 @@ var bar = new function Bar(){
 		var ymin = ybounds[0];
 		var ymax = ybounds[1];
 		
+                
 		var ydiff = ymax - ymin;
+                
+                ymin -= ymin * 0.2;
+                ymax += ymax * 0.2;
+                var ydiff = ymax - ymin;
 
 		var yinc = ydiff/(this.drawheight/(this.fontheight*3/2));
 		
@@ -402,7 +407,7 @@ var bar = new function Bar(){
 		this.mouseY = 0;
 
 		this.bgcolor = "rgb(255,255,255)";
-		this.gridcolor = "rgb(128,128,128)";
+		this.gridcolor = "rgb(0,0,0)";
 		this.bordercolor = "rgb(0,0,0)";
 		this.textcolor = "rgb(0,0,0)";
 		

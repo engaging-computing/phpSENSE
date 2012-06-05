@@ -25,6 +25,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  -->
+ 
 { if $user.guest }
 <div id="main-full">
 	<div>Guests do not have access to contribute to experiments. If you already have an account, click <a href="login.php">here</a> to login. If not, click <a href="register.php">here</a> to register for an account.</div>
@@ -37,15 +38,33 @@
 			<fieldset id="basic-info">
 				{ if $state == 1 }
                     { if $hideName || $hideProcedure || $hideLocation}
-					<legend>Step 1: Session Information</legend>
+                    
+                               
+                    
+				<legend>Step 1: Session Information</legend>
 			    	<p>Your session will be created with the following information.</p>
-					{ if $hideName }<label for="session_name">* Name:</label><input type="text" name="session_name" id="session_name" class="required urlSafe" value="{ $session_name }"/><img height="10px" width="10px" id="session_name_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_name_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
+			    	
+				{ if $hideName }
+				<label for="session_name">* Name:</label>
+				<input type="text" name="session_name" id="session_name" class="required urlSafe" value="{ $session_name }" onKeyPress="return event.keyCode!=13"/>
+				<img height="10px" width="10px" id="session_name_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" />
+				<img height="10px" width="10px" id="session_name_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
 			    	<span id="session_name_hint" class="hint">Example: "My Super Awesome Test"</span><br/>
-			    	{/if}{ if $hideProcedure }<label for="session_description">* Procedure:</label><textarea name="session_description" id="session_description" class="required">{ $session_description }</textarea><img height="10px" width="10px" id="session_description_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;top:-15px;" /><img height="10px" width="10px" id="session_description_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;top:-15px;" /><br/>
+			    	
+			    	{/if}{ if $hideProcedure }
+			    	<label for="session_description">* Procedure:</label>
+			    	<textarea name="session_description" id="session_description" class="required">{ $session_description }</textarea>
+			    	<img height="10px" width="10px" id="session_description_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;top:-15px;" />
+			    	<img height="10px" width="10px" id="session_description_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;top:-15px;" /><br/>
 			    	<span id="session_description_hint" class="hint">Describe the session procedure and other details.</span><br/>
-					{/if}{ if $hideLocation }
-					    <label for="session_citystate">* Location:</label><input type="text" name="session_citystate" id="session_citystate" value="{ $session_citystate }" class="required"/><img height="10px" width="10px" id="session_citystate_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" /><img height="10px" width="10px" id="session_citystate_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
-					<span id="session_citystate_hint" class="hint">Example: "4 Yawkey Way, Boston, MA" or "Boston, Ma" </span><br/>
+			    	
+				{/if}{ if $hideLocation }
+				<label for="session_citystate">* Location:</label>
+				<input type="text" name="session_citystate" id="session_citystate" value="{ $session_citystate }" class="required" onKeyPress="return event.keyCode!=13"/>
+				<img height="10px" width="10px" id="session_citystate_validated" src="/html/img/validated.png" class="validated" style="position:relative;left:-15px;" />
+				<img height="10px" width="10px" id="session_citystate_failed" src="/html/img/failed.png" class="failed" style="position:relative;left:-15px;" /><br/>
+				<span id="session_citystate_hint" class="hint">Example: "4 Yawkey Way, Boston, MA" or "Boston, Ma" </span><br/>
+				
                         {/if}
                         <legend>Step 2: Add Session Data</legend></br>
                         {else} 
@@ -88,7 +107,10 @@
 							</tr>
 						</table>
 						<input type="hidden" id="row_count" name="row_count" value="1" />
-						<span class="hint"><a href="javascript:addManualDataRow();">Add Row</a></span>
+						<span>
+						    <button type="button" id="addManualRowButton">Add Row</button>
+						    <button type="button" id="removeManualRowButton" disabled="disabled">Remove Row</button>
+						</span>
 					</div>
 				{ elseif $state == 2 }
 					<legend>Field to Header Matching</legend>
