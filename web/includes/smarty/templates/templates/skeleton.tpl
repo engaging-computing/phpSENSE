@@ -44,7 +44,6 @@
 		<link rel="stylesheet" type="text/css" href="/loader.php/css" />
 		<link rel="shortcut icon" href="/img/favicon.png" />
 		
-		{ $head }
 	</head>
 	<body>
 		<div id="container">
