@@ -168,6 +168,10 @@ function sort_exp_activity($a, $b) {
 	return ($a['session_count'] < $b['session_count']);
 }
 
+function getVersionNumber(){
+    return exec('git describe --tags');
+}
+
 function dateDifference($day_1, $day_2) {
 	$diff = $day_1 - $day_2;
 
