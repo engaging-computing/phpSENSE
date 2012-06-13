@@ -154,8 +154,6 @@ for( $i = 1; $i < 10; $i++ ) {
 
 }
 
-$smarty->assign('head', '<script src="/html/js/hideexp.js"></script>');
-
 // Assign params to Smarty
 $smarty->assign('title',		ucwords($action . ' ' . $type));
 $smarty->assign('marker',		$type);
