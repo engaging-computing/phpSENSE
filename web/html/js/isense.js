@@ -125,8 +125,9 @@ $(document).ready(function(){
         $('#close_experiment').click(function(){
             $('#close_experiment').hide();
             $('#close_loading_msg').show();
+            
             if($(this).attr("checked")) {
-                // Make Featured
+                // Make closed
                 $.get('actions/experiments.php', { action:"closeExp", id:$(this).val() }, function(data){
                     $('#close_experiment').show();
                     $('#close_loading_msg').hide();
@@ -135,7 +136,7 @@ $(document).ready(function(){
                 });
             }
             else {
-                // Remove Feature
+                // unclose
                 $.get('actions/experiments.php', { action:"uncloseExp", id:$(this).val() }, function(data){
                     $('#close_experiment').show();
                     $('#close_loading_msg').hide();
