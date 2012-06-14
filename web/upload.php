@@ -774,7 +774,9 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 }
 
 
+
 // Assign values specific for this view
+$smarty->assign('closed',       $meta['closed']);
 $smarty->assign('state', 		$state);
 $smarty->assign('errors', 		$errors);
 $smarty->assign('time_fix',		$timefix);
@@ -792,6 +794,8 @@ $smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>
 // Assign values required for all views
 $smarty->assign('user', 	    $session->getUser());
 $smarty->assign('content', 	    $smarty->fetch('upload.tpl'));
+
+
 
 // Send this Bad Larry to standard out
 $smarty->display('skeleton.tpl');

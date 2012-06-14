@@ -27,11 +27,14 @@
  -->
  
 { if $user.guest }
-<div id="main-full">
-	<div>Guests do not have access to contribute to experiments. If you already have an account, click <a href="login.php">here</a> to login. If not, click <a href="register.php">here</a> to register for an account.</div>
-</div>
+    <div id="main-full">
+        <div>Guests do not have access to contribute to experiments. If you already have an account, click <a href="login.php">here</a> to login. If not, click <a href="register.php">here</a> to register for an account.</div>
+    </div>
+{ elseif $closed == 1}
+    <div id="main-full">
+        <div>Sorry this experiment is currently closed.</div>
+    </div>
 { else }
-
 	<div id="main">
 		{ include file="parts/errors.tpl" }
 		<form method="POST" id="upload_form" name="upload_form" enctype="multipart/form-data">

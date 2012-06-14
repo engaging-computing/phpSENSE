@@ -79,6 +79,24 @@ if(isset($_GET['action'])) {
         	}
         	echo "worked!";
         	break;
+
+        case "closeExp":        
+            $user  = $session->getUser();
+            $owner = getExperimentOwner($_GET['id']);
+            if($user['administrator'] || $user['user_id'] == $owner) {
+                closeExperiment($_GET['id']);
+            }
+            echo "worked!";          
+            break;
+
+        case "uncloseExp":
+            $user  = $session->getUser();
+            $owner = getExperimentOwner($_GET['id']);
+            if($user['administrator'] || $user['user_id'] == $owner) {
+                uncloseExperiment($_GET['id']);
+            }
+            echo "worked!";
+            break;
 	}
 }
 
