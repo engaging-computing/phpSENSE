@@ -37,7 +37,7 @@ if(isset($_GET['id'])) {
 	$id = (int) safeString($_GET['id']);
 	$meta = getExperiment($id);
 	$is_activity = ($meta['activity'] == 1);
-
+	
 	if(count($meta) > 0) {
 		
 		// Grab some meta data
