@@ -686,7 +686,7 @@ function getExpOwner($sid) {
 
 function closeExperiment($eid){
     global $db;
-
+    
     $sql = "UPDATE experiments SET closed=1 where experiment_id={$eid}";
 
     $query = $db->query($sql);
@@ -703,6 +703,21 @@ function uncloseExperiment($eid){
     $query = $db->query($sql);
 
     return true;
+}
+
+function experimentClosed($eid){
+    global $db;
+    $sql = "SELECT closed FROM experiments WHERE experiment_id={$eid}";
+    $query = $db->query($sql);
+
+    if($query[0]['closed'] == 1){
+        return true;
+    } else {
+        return false;
+    }
+    
+    
+    
 }
 
 ?>

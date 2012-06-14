@@ -32,8 +32,7 @@ $errors = array();
 $title = "Experiment Not Found";
 $time = false;
 $is_activity = false;
-if(isset($_GET['id'])) {
-		
+if(isset($_GET['id'])) {	
 	$id = (int) safeString($_GET['id']);
 	$meta = getExperiment($id);
 	$is_activity = ($meta['activity'] == 1);
