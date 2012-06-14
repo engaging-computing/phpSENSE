@@ -120,6 +120,32 @@ $(document).ready(function(){
             }
         });
     }
+
+    if($('#close_experiment').length>0){
+        $('#close_experiment').click(function(){
+            $('#close_experiment').hide();
+            $('#close_loading_msg').show();
+            
+            if($(this).attr("checked")) {
+                // Make closed
+                $.get('actions/experiments.php', { action:"closeExp", id:$(this).val() }, function(data){
+                    $('#close_experiment').show();
+                    $('#close_loading_msg').hide();
+                    $('#contribute').hide();
+             
+                });
+            }
+            else {
+                // unclose
+                $.get('actions/experiments.php', { action:"uncloseExp", id:$(this).val() }, function(data){
+                    $('#close_experiment').show();
+                    $('#close_loading_msg').hide();
+                    $('#contribute').show();
+                  
+                });
+            }
+        });
+    }
     
     if($('#session_hidden').length > 0) {
         $('#session_hidden').click(function(){
