@@ -1,0 +1,334 @@
+<?php
+/* Copyright (c) 2011, iSENSE Project. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer. Redistributions in binary
+ * form must reproduce the above copyright notice, this list of conditions and
+ * the following disclaimer in the documentation and/or other materials
+ * provided with the distribution. Neither the name of the University of
+ * Massachusetts Lowell nor the names of its contributors may be used to
+ * endorse or promote products derived from this software without specific
+ * prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ * DAMAGE.
+ */
+// Returns the data requested in $_GET as a javascript object
+
+Header('content-type: application/x-javascript');
+
+require_once '../includes/config.php';
+
+class Data {
+
+    public $eid;
+    
+    public $relVis = array('Table');
+    
+    public $fields = array();
+    public $sessions = array();
+   
+
+    // DO NOT USE UNIT_IDs FOR TYPE CHECKS
+    public function getTimeField() {
+        foreach( $this->fields as $index=>$field )
+            if( $field->type_id == 7 )
+                return $index;
+    }
+
+    /* Turn on the relevant vizes */
+    public function setRelVis() {
+        
+        /* See how much data the experiment has */
+        $total = 0;
+        foreach( $this->sessions as $session ) {
+            $total += count($session->data);
+        }
+      
+        /* If there is more than one data point in a session add the following vizes */
+        if( $total > 1 ) {
+            $this->relVis = array_merge(array('Scatter', 'Bar', 'Histogram'), $this->relVis); 
+
+            /* if a time field exists, add timeline */
+            foreach( $this->fields as $field ){
+                if ($field->type_id == 7) {
+                    $this->relVis = array_merge(array('Timeline'), $this->relVis); 
+                }
+            }
+        }
+
+        /* Add the map last because it should always be first. */
+        $this->relVis = array_merge(array('Map'), $this->relVis);   
+    }  
+    
+    public function setTime() {
+        
+        $time = $this->getTimeField();
+        
+        if( isset($time) )
+            for( $j = 0; $j < count($this->sessions); $j++ )
+                for( $n = 0; $n < count($this->sessions[$j]->data); $n++ )
+                    if( !is_numeric($this->sessions[$j]->data[$n][$time]) )
+                        $this->sessions[$j]->data[$n][$time] = strtotime(stripslashes($this->sessions[$j]->data[$n][$time]));
+                
+    }
+    
+    public function sortTime() {
+        $time = $this->getTimeField();
+        
+        for( $ses = 0; $ses < count($this->sessions); $ses++ ) {
+            
+            $cur = 1;
+            $stack[1]['l'] = 0;
+            $stack[1]['r'] = count($this->sessions[$ses]->data) - 1;
+            
+            if (count($this->sessions[$ses]->data) > 0) {
+                do{
+                    $l = $stack[$cur]['l'];
+                    $r = $stack[$cur]['r'];
+                    $cur--;
+                    
+                    do{
+                        $i = $l;
+                        $j = $r;
+                        $tmp = $this->sessions[$ses]->data[(int) ($l+$r)/2][$time];
+                        
+                        do {
+                            while( $this->sessions[$ses]->data[$i][$time] < $tmp )
+                                $i++;
+                            
+                            while( $tmp < $this->sessions[$ses]->data[$j][$time])
+                                $j--;
+                            
+                            if( $i <= $j ) {
+                                $w = $this->sessions[$ses]->data[$i];
+                                $this->sessions[$ses]->data[$i] = $this->sessions[$ses]->data[$j];
+                                $this->sessions[$ses]->data[$j] = $w;
+                                
+                                $i++;
+                                $j--;
+                            }
+                            
+                        } while( $i <= $j );
+                        
+                        if( $i < $r ) {
+                            $cur++;
+                            $stack[$cur]['l'] = $i;
+                            $stack[$cur]['r'] = $r;
+                        }
+                        
+                        $r = $j;
+                        
+                    } while( $l < $r );
+                } while( $cur != 0 );
+                
+            }
+        }
+    }
+
+    public function sortTimeNew() {
+        
+        function TimeCMP($a, $b) {
+
+            
+
+        }
+        
+    }
+    
+};
+
+class DataSession {
+    
+    public $SessionID;
+    public $IsVisible = 1;
+    
+    public $MetaData = array();
+    public $DataPoints = array();
+    public $Pictures = array();
+    
+};
+
+class DataField {
+    
+    public $FieldID = 0;
+    public $FieldName;
+    public $TypeID = 0;
+    public $UnitID = 0;
+    public $TypeName = 0;
+    public $UnitName = 0;
+    public $UnitAbbreviation;
+    public $IsVisible = 0;
+    
+    public function __construct() {
+        $this->FieldID = func_get_arg(0);
+        $this->FieldName = func_get_arg(1);
+        $this->TypeID = func_get_arg(2);
+        $this->UnitID = func_get_arg(3);
+        $this->type_name = func_get_arg(4);
+        $this->UnitName = func_get_arg(5);
+        $this->UnitAbbreviation = func_get_arg(6);
+        $this->IsVisible = func_get_arg(7);
+        
+        //set default of geolocation and text to not visible
+        /*if ($this->type_id == 37 || $this->type_id == 19) {
+            $this->visibility = 0;
+        }*/
+    }
+    
+};
+
+
+/*
+ * The raw fields should be assigned using SetFields
+ * before the constructor is called. This will allow
+ * proper sorting of numeric and textual fields.
+ */
+class DataPoint {
+    
+    public $Text = array();
+    public $Numeric = array();
+    
+    static public $Fields;
+    
+    static public function SetFields($fields) {
+        self::$Fields = $fields;
+    }
+    
+    public function __construct($dataArray) {
+        
+        foreach (self::$Fields as $index=>$field) {
+            //Check for String
+            if ($field->TypeID == 37) {
+                $this->Text[] = $field->FieldName . ": " . $dataArray[$index];
+            }
+            else {
+                if (!is_numeric($dataArray[$index])) {
+                    $this->Numeric[] = "";
+                }
+                else {
+                    $this->Numeric[] = $dataArray[$index];
+                }
+            }
+        }
+    }
+};
+
+
+if(isset($_REQUEST['sessions'])) {
+
+    //Create Data object
+    $data = new Data;
+
+    //Load session data
+    $sessions = explode(" ", $_REQUEST['sessions']);
+    
+    $data->eid = getSessionExperimentId($sessions[0]);
+
+    //Load fields into Data object
+    $fields = getFields($data->eid);
+    
+    //print_r($fields);
+    $pick = true;
+    $visible = 1;
+            
+    foreach( $fields as $index=>$field ) { 
+        if ($pick && $field['type_id'] != 37 && $field['type_id'] != 19 && $field['type_id'] != 7) {
+            $visible = 1;
+            $pick = false;
+        }
+        else if ($field['type_id'] == 7) {
+            $visible = 1;
+        }
+        else {
+            $visible = 0;
+        }
+        
+        $data->fields[$index] = new DataField($field['field_id'], $field['field_name'], $field['type_id'], $field['unit_id'], $field['type_name'], $field['unit_name'], $field['unit_abbreviation'], $visible);
+    }
+    
+    $newdata = array();
+
+    //setup for data massaging
+    DataPoint::SetFields($data->fields);
+    function InitDataPoint($data) {
+        return new DataPoint($data);
+    }
+
+    //Load sessions into Data object
+    foreach( $sessions as $index=>$ses ) {        
+        $data->sessions[$index] = new DataSession;
+        $data->sessions[$index]->SessionID = $ses;
+        $data->sessions[$index]->MetaData = getSession($ses);
+        $data->sessions[$index]->DataPoints = array_map(InitDataPoint, getData($data->eid, $ses)); //getData($data->eid, $ses);
+        $data->sessions[$index]->Pictures = getSessionPictures($ses);
+    }
+
+    //Filter out textual fields now that data is loaded.
+    function FieldFilter($field) {
+        return $field->TypeID != 37;
+    }
+    $data->fields = array_filter(FieldFilter, $data->fields);
+
+    //Sort data
+    {
+        $cmpIndex = -1;
+    
+        //First try Time
+        foreach ($data->fields as $index=>$field) {
+            if ($field->TypeID == 7) {
+                $cmpIndex = $index;
+                break;
+            }
+        }
+    
+        //Else try first numeric
+        if ($cmpIndex == -1 && count($data->fields) > 0) {
+            $cmpIndex = 0;
+        }
+        
+        //Else use first textual
+    
+        function DataPointCmp($a, $b) {
+        
+            if (cmpIndex == -1) {
+                //Textual Compare
+                return $a->Text[0] < $b->Text[0];
+            }
+            else {
+                //Numeric Compare
+                return $a->Numeric[$cmpIndex] < $b->Numeric[$cmpIndex];
+            }
+        }
+        
+        //Sort
+        foreach ($data->sessions as $index=>$session) {
+            usort($data->sessions[$index]->DataPoints, DataPointCmp);
+        }
+    }
+    
+    // NOTE: I'm not sure if this is nessiary anymore.
+    //Parse time data as ms since epoch time
+    $data->setTime();
+    
+    //Sorts each session by time if time is a field
+    //$data->sortTime();
+    
+    //Determine witch vises are relevant
+    $data->setRelVis();
+
+    echo 'var data =' . json_encode($data) .';';    
+}
+?>
