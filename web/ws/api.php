@@ -467,7 +467,7 @@ if(isset($_REQUEST['method'])) {
     	        $proc_data = stripslashes(urldecode($_REQUEST['data']));
     	        $proc_data = json_decode($proc_data);	  
 
-    	        if(experimentClosed($_REQUEST['eid']){
+    	        if(experimentClosed($_REQUEST['eid'])){
                     $status=400;
                     $data = array('msg'=>"Experiment Closed");
     	        } else {
