@@ -107,6 +107,7 @@ else {
     $smarty->assign('title', $userdata['firstname'] . ' ' . $userdata['lastname'] . '\'s Profile');
 }
 
+$smarty->assign('user_avatar', getUserAvatar($id));
 $smarty->assign('userdata', $userdata);
 
 $smarty->assign('user', $session->getUser());

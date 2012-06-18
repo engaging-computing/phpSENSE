@@ -156,7 +156,7 @@
 	<div id="sidebar">
 		<div class="module">
 			<div style="text-align:center;">
-				<img src="picture.php?id={$id}" alt="No picture uploaded." />
+				<img src="{$user_avatar}" alt="No picture uploaded." />
 			</div>
 			<div>
 				<div>
