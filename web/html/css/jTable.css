@@ -1,27 +1,39 @@
-* { margin : auto;
-	padding: 0px;
-	border : 0px;
-	}
-
 #edit_table {
-	width: 50%;
+	width: 100%;
 	min-height: 80%;
+	border: solid 1px black;
 }
 	
 .edit_table { 
 	width:100%;
 	height:100%;
+	border-top: solid 1px black;
+}
+
+.edit_table tr {
+    height:40px;
 }
 
 .jTable_head {
-	background-color: #EEE;
+	background-color: #999;
+}
+
+.jTable_header *:hover {
+
+}
+
+.rotate_left {
+    -webkit-transform: rotate(-90deg); 
+    -moz-transform: rotate(-90deg);
+}
+
+.rotate_right {
+    -webkit-transform: rotate(90deg); 
+    -moz-transform: rotate(90deg);
 }
 
 .jTable_header {
-	height : 2em;
-}
-
-.jTable_header {
+    height : 2em;
 	text-align : center;
 }
 
@@ -44,30 +56,31 @@
 }
 
 .jTable_highlight_top * { 
-	border-top: 1px solid blue;
+	border-top: 3px solid #89f;
 }
 
 .jTable_highlight_bot * { 
-	border-bottom: 1px solid blue;
+	border-bottom: 3px solid #89f;
 }
 
 .drag_target * {
-	background-color: #333
+	background-color: #89f;
 }
 
 .edit_controls {
 	height : 2.5em;
-	text-align: center;
+    float:left;
 }
 
 .edit_controls * {
-	margin : .5em;
+	margin : 1em;
 	height : 2em;
 	width : 7em;
 	border: solid 1px black;
 }
 
 .new_row_active {
+    margin-left:2em;
 	background-color:#EEE;
 	color: black;
 }
@@ -82,7 +95,7 @@
 	color: black;
 }
 
-.new_row_active:hover {
+.new_row_active :hover {
 	background-color: #CCC;
 }
 
@@ -97,23 +110,29 @@
 .new_row_not{
 	color: #CCC;
 	border: solid 1px #CCC;
-
 }
 
 .edit_row_not {
 	color: #CCC;
 	border: solid 1px #CCC;
-
 }
 
 .delete_row_not {
 	color: #CCC;
 	border: solid 1px #CCC;
+}
 
+.jTable_save {
+	margin : 1em;
+	height : 2em;
+	width : 7em;
+	border: solid 1px black;
+	position:relative;
+	left:50%;
 }
 
 .jTable_selected {
-	background-color : blue;
+	background-color : #89f;
 }
 
 .jTable_lightbox_veil {
@@ -131,9 +150,9 @@
 	text-align: center;
 	position:absolute;
 	top: 25%;
-	left: 25%;
+	left: 10%;
 	min-height: 50%;
-	width : 50%;
+	width : 80%;
 	background-color: white;
 }
 
@@ -151,14 +170,26 @@
 }
 
 .jTable_lightbox_body {
-	overflow-x:scroll;
-	background-color :#ccc;
+	background-color :#FFF;
 }
 
+.jTable_lightbox_body_table_wrap {
+    overflow-x:scroll;
+    width:90%;
+    margin-left:5%;
+}
 
 .jTable_lightbox_body table * {
 	background-color: #EEE;
-	padding: 10px;
+	padding: 10px;	
+}
+
+.jTable_lightbox_body table tr td input {
+    padding:5px;
+}
+
+.jTable_lightbox_body table tr td {
+    padding-right: 20px;
 }
 
 .jTable_lightbox_body input {
@@ -170,7 +201,11 @@
 	margin-top: 20px;
 }
 
-.jTable_lightbox_body div button {
+.jTable_lightbox_buttons {
+    margin-top: 20px;
+}
+
+.jTable_lightbox_buttons button {
 	padding: 1em;
 	min-width:7em;
 	margin-right:20px;

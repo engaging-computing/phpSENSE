@@ -2,17 +2,21 @@
 
 require_once '../includes/config.php';
 
-if(isset($_GET['exp'])) {
-	$presort = $mdb->find('e' . $_GET['exp']);
-	
+if(isset($_REQUEST['exp'])) {
+    if(isset($_REQUEST['exp']) && isset($_REQUEST['ses'])) {
+        $eid = $_GET['exp'];
+        $sid = $_GET['ses'];
+    }
+    
+    $presort = getData($eid, $sid, false, false);
+	//$presort = $mdb->find('e' . $_GET['exp']);
     $keys = array_keys($presort[0]);
-
     $me = $session->getUser();
 
     if($me['administrator']) {
-        $tmp = getSessionsForExperiment($_GET['exp']);
+        $tmp = getSessionsForExperiment($eid);
         foreach( $tmp as $ses_data ) {
-            $owners[] = getSessionOwner($ses_data['session_id']);
+            $owners[] = getSessionOwner($sid);
         }
         unset($tmp);
     }
@@ -29,83 +33,7 @@ if(isset($_GET['exp'])) {
     }
     $javascript .= '];';
     
-    //Loads data from mongo into a sortable array
-    foreach( $presort as $index => $row ) {
-        for( $i = 0; $i < count($keys); $i++ ) {
-			$tmp[$index][$i] = $row[$keys[$i]];
-        }    
-    }
-
-    //Find session_id field and decrement it by 1
-
-    $dc = count($tmp[0]);
-    $dc--;
-
-    //Create sortArray[Ses] for each session_id
-    //Load each data point connected to a session into the appropriate session
-
-    for( $t = 0; $t < count($tmp); $t++) {
-	    if(!isset($sortArray[$tmp[$t][$dc]]))
-		    $sortArray[$tmp[$t][$dc]] = array();
-
-		array_push( $sortArray[$tmp[$t][$dc]], $tmp[$t] );
-    }
-
-    //Dump unsorted data
-
-    unset($tmp);
-
-    //Tabularize data
-    //Set i_ses and i_exp
-    $empty = 0;
-
-    for( $in = 0; $in < count($keys); $in++ ) {
-        if( $keys[$in] == 'Session' || $keys[$in] == 'session' )
-            $i_ses = $in;
-        else if( $keys[$in] == 'Experiment' || $keys[$in] == 'experiment' )
-            $i_exp = $in;
-        else if( $keys[$in] == '_id' )
-            $i_id = $in;
-        else
-            $empty++;
-    }
-
-    if( $empty == count($keys) ) {
-        $i_ses = $dc;
-        $i_exp = $dc-1;
-    }
-    
-    unset($empty);
-
-    //Sort Data object by sessions with ses_id as the key
-    $sessions = array_keys($sortArray);
-    $newArray = $sortArray;
-
-    sort($sessions);
-    unset($sortArray);
-
-    foreach( $sessions as $index=>$ses ) {
-        $sortArray[$ses] = $newArray[$ses];
-    }
-
-    //Marks sessions for removal based on ownership
-    foreach( $format_table as $index => $table ) {
-        $rem[$table] = 0;
-        if( intval($owners[$index]) != intval($me['user_id']) && !$me['administrator'] )
-            $rem[$table]--;
-    }
-    
-    //Unsets sessions marked for removal
-    foreach( $format_table as $index => $table ) {
-        if($rem[$table] == -1) {
-            unset($sortArray[$table]);
-            unset($session_name[$index]);
-        } else
-            $sortArray[$table] = $newArray[$table];
-    }
-    
-    
-    $session_name = getSessionsTitle(array_keys($sortArray));
+    $sortArray = $presort;
     
     //Dump Session Names into javascript
     
@@ -123,11 +51,20 @@ if(isset($_GET['exp'])) {
         $content = 'Error: You are not the creator of any of these sessions!';
     } else {
 
-    $smarty->assign('head', '<link rel="stylesheet" type="text/css" href="/html/css/jTable.css" />' .
-					        '<script src="/html/js/lib/jquery.jTable.js"></script>' .
-					        $javascript .
-					        '<script type="text/javascript" src="/html/js/edit.js"></script>' );
-                    }
+
+        $head = "";
+
+        $head .= '<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>';
+        $head .= '<script type="text/javascript" src="/html/js/lib/jquery.jTable.js"></script>';
+        //$head .= '<script type="text/javascript" src="/html/js/lib/datatables.editor.js"></script>';
+        
+        $head .= '<link rel="stylesheet" type="text/css" href="/html/css/jTable.css"></link>';
+        //$head .= '<link rel="stylesheet" type="text/css" href="/html/css/demo_table.css"></link>';
+        $head .= $javascript;
+        $head .= '<script type="text/javascript" src="/html/js/edit.js"></script>';
+
+        $smarty->assign('head', $head );
+    }
 
     $smarty->assign('title', 'Experiment# : ' . getNameFromEid($_GET['exp']) . '</div><div id="sessionNumber">');
     $smarty->assign('user', $session->getUser());

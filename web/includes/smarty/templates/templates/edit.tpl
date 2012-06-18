@@ -1,11 +1,11 @@
-<div id="blahblahbody" width="100%" height="100%">
+<div id="edit_table" width="100%" height="100%">
    {if isset($sortArray)}
-        <table width="100%" id="edit_table">
+        <table width="100%" class="edit_table">
             <thead>
                 {foreach from=$tableKeys key=col item=tKey}
-                    <th id='h{$col}'>{$tKey}</th>
+                    <th>{$tKey}</th>
                 {/foreach}
-            </thead>
+            </thead><tbody>
         {foreach from=$sortArray key=r item=row}
             <tr > 
                 {foreach from=$row key=d item=dp}
@@ -15,7 +15,7 @@
                 {/foreach}
             </tr>
         {/foreach}
-        </table>
+        </tbody></table>
 
     {else}
         ohhh noez
