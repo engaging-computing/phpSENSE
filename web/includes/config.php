@@ -123,6 +123,7 @@ require_once API_DIR . 'util.php';
 require_once API_DIR . 'vis.php';
 require_once API_DIR . 'graph.php';
 require_once API_DIR . 'activity.php';
+require_once API_DIR . 'conversions.php';
 
 /* Initalizes Smarty Templates */
 require_once 'smarty/lib/Smarty.class.php';
@@ -137,5 +138,5 @@ $smarty->config_dir =   dirname(__FILE__) . '/smarty/templates/configs';
 $smarty->assign('google_account',   GOOGLE_ACCOUNT);
 $smarty->assign('FLOT_ENABLED',     FLOT_ENABLED);
 $smarty->assign('GMAP_KEY',         GMAP_KEY);
-
+$smarty->assign('versionNumber',     getVersionNumber());
 ?>
