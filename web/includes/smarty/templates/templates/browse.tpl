@@ -61,9 +61,9 @@
                                                 <span class="loading_msg" style="display:none;">Loading...</span>
                                                 <span style="color:#444">Feature:</span> <input type="checkbox" class="feature_vis" value="{$result.meta.vis_id}" {if $result.meta.featured == 1}checked{/if} />
                                                 {if $result.meta.featured == 1}
-                                                    <a style="display:inline" id="pickimage_{ $result.meta.vis_id }" href="pickvisimage.php?id={ $result.meta.vis_id }">Pick Image</a>
+                                                    <a style="display:inline" id="pickimage_{ $result.meta.vis_id }" href="upload-pictures.php?id={ $result.meta.vis_id }">Pick Image</a>
                                                 {else}
-                                                    <a style="display:none;" id="pickimage_{ $result.meta.vis_id }" href="pickvisimage.php?id={ $result.meta.vis_id }">Pick Image</a>
+                                                    <a style="display:none;" id="pickimage_{ $result.meta.vis_id }" href="upload-pictures.php?id={ $result.meta.vis_id }">Pick Image</a>
                                                 {/if}
                                                 <span style="color:#444">Hidden:</span> <input type="checkbox" class="hide_vis" value="{$result.meta.vis_id}" {if $result.meta.hidden == 1} checked {/if} />
                                                 
@@ -132,9 +132,9 @@
                                                 <span class="loading_msg" style="display:none;">Loading...</span>
                                                 <span style="color:#444">Feature:</span> <input type="checkbox" class="feature_experiment" value="{$result.meta.experiment_id}" {if $result.meta.featured == 1}checked{/if} />
                                                 {if $result.meta.featured == 1}
-                                                    <a style="display:inline" id="pickimage_{ $result.meta.experiment_id }" href="pickexpimage.php?id={ $result.meta.experiment_id }">Pick Image</a>
+                                                    <a style="display:inline" id="pickimage_{ $result.meta.experiment_id }" href="upload-pictures.php?id={ $result.meta.experiment_id }">Pick Image</a>
                                                 {else}
-                                                    <a style="display:none;" id="pickimage_{ $result.meta.experiment_id }" href="pickexpimage.php?id={ $result.meta.experiment_id }">Pick Image</a>
+                                                    <a style="display:none;" id="pickimage_{ $result.meta.experiment_id }" href="upload-pictures.php?id={ $result.meta.experiment_id }">Pick Image</a>
                                                 {/if}
                                                 <span style="color:#444">Hidden:</span> <input type="checkbox" class="hide_experiment" id="{$result.meta.experiment_id}" {if $result.meta.hidden == 1} checked {/if} />
                                                 
