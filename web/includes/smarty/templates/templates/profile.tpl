@@ -98,7 +98,7 @@
 							</div>
 							<div class="info_column" style="float;right;"> 							
 								<div class="name" style="font-size:16px;"><a href="vis.php?sessions={ $result.sessions }&state={ $result.url_params }">{ $result.name }</a></div>
-								<div class="description" style="font-size:13px;">{ $result.description }blah</div>
+								<div class="description" style="font-size:13px;">{ $result.description }</div>
 								<div class="sub" style="font-size:13px;"><span>Last Modified { $result.timeobj|date_diff }</span></div>
 							</div> 
 						</div>
