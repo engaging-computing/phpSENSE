@@ -123,9 +123,8 @@ if(isset($_GET['exp'])) {
         $content = 'Error: You are not the creator of any of these sessions!';
     } else {
 
-    $smarty->assign('head', '<link rel="stylesheet" type="text/css" href="/html/css/table.css" />' .
-					        '<link href="/html/css/table/fancyTable.css" rel="stylesheet" media="screen" />' .
-					        '<script src="/html/js/lib/jquery.fixedheadertable.js"></script>' .
+    $smarty->assign('head', '<link rel="stylesheet" type="text/css" href="/html/css/jTable.css" />' .
+					        '<script src="/html/js/lib/jquery.jTable.js"></script>' .
 					        $javascript .
 					        '<script type="text/javascript" src="/html/js/edit.js"></script>' );
                     }
