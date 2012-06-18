@@ -156,7 +156,11 @@
 	<div id="sidebar">
 		<div class="module">
 			<div style="text-align:center;">
-				<img src="picture.php?id={$id}" alt="No picture uploaded." />
+				<img src="{$user_avatar}" alt="No picture uploaded." />
+				
+				{ if $is_owner }
+				<div> <a href="http://gravatar.com/">Set your avatar using Gravatar</a> </div>
+				{ /if}
 			</div>
 			<div>
 				<div>
