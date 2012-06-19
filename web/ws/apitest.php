@@ -1,3 +1,9 @@
+<html>
+<head>
+<title>iSenseDev Automated Testing</title>
+</head>
+<body>
+
 <?php
 
 //Log in token used to authenticate a user
@@ -7,11 +13,7 @@ $session_key = null;
 $session_id = null;
 
 
-
-
 function loginTest($user,$pass){
-    global $session_id;
-    
     //The target for this test
     //$target =  "isensedev.cs.uml.edu/ws/api.php?method=login";
     $target =  "localhost/ws/api.php?method=login";
@@ -34,33 +36,11 @@ function loginTest($user,$pass){
     curl_close($ch);
 
     //Parse the response to an associative array
-    $parsed_response = json_decode($result,true);
-
-    return $parsed_response;
- /*   //---------------------------------------------------------------------------------
-    
-    //The status of the request
-    $status =  $parsed_response['status'];
-    
-    
-    
-    if ($status == 600){
-        return false;
-    }
-    elseif ($status == 200)
-    {
-    //The session_id needed to test the other stuff
-        $session_key = $x['data']['session'];
-        return true;
-    //---------------------------------------------------------------------------------
-    }*/
+    return json_decode($result,true);
 }
 
 function createSessionTest($exp){
-    echo "Testing createSession on exp: ". $exp . "<br>";
     global $session_key;
-    global $session_id;
-    
     //The target for this test
     //$target = "http://isensedev.cs.uml.edu/ws/api.php?method=createSession";
     $target = "localhost/ws/api.php?method=createSession";
@@ -74,8 +54,8 @@ function createSessionTest($exp){
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
         'session_key' => $session_key,
         'eid' => $exp,
-        'name' => 'Name Test'.time(),
-        'description' => 'Procedure Test'.time(),
+        'name' => 'Automated Testing'.time(),
+        'description' => 'Automated Testing Proc'.time(),
         'street' => '1 university ave',
         'city' => 'Lowell MA',
         'country' => 'USA'
@@ -85,80 +65,79 @@ function createSessionTest($exp){
     $result = curl_exec($ch);
     //Close curl
     curl_close($ch);
-
     //Parse the response to an associative array
-    $parsed_response = json_decode($result,true);
-    
-    $status =  $parsed_response['status'];
-    
-    if($status == 200){ //200 OK
-        echo "200 OK<br>";
-        $session_id = $parsed_response['data']['sessionId'];
-        return true;
-    } elseif ($status == 400) {// 400 Closed Experiment
-        echo " Experiment: " . $exp . " is closed!<br>";
-        return false;
-    } elseif ($status == 600) {// 600 Bad Request
-        echo "BAD REQUEST<br>";
-        return false;
-    } else {
-        return false;
-    }
-
+    return json_decode($result,true);
 }
 
-
-
-
-//Just runs the login test function
-echo "Testing login on correct user/pass....<br>";
+//Tests the login functionality
+//correct user/pass
+echo "<b>Testing login with correct user/pass....</b><br>";
 $login_response = loginTest('sor','sor');
-//print_r($login_response);
-if ($login_response['status'] == 200){
-    echo "PASS, Successful login. UID: ". $login_response['data']['uid'] . ", Session Key: " . $login_response['data']['session'] . '<br><br>';
-}
-else{
-    echo "FAIL, Status: " . $login_response['status'] . '<br><br>';
-}
-
-
-echo "Testing login on incorrect user/pass....<br>";
-$login_response = loginTest('sor','sors');
-if ($login_response['status'] == 600){
-    echo "PASS, Unsuccessful login ...give info";
-}
-elseif ($login_response['status'] == 400){
-    echo "FAIL, Successful login ....give info";
-}
-
-/*
-if(loginTest('sor','sor')){
-    echo "PASS, Successful login ".$session_id;
+if ($login_response['status'] == 200) {
+    echo "SUCCESS, Successful login. UID: ";
+    echo "<a href=\"http://localhost/profile.php?id=" . $login_response['data']['uid'] ."\">" . $login_response['data']['uid'] . "</a>";
+    echo ", Session Key: " . $login_response['data']['session'] . '<br>';
+    $session_key = $login_response['data']['session'];
 } else {
-    echo "FAIL, Could not login";
+    echo "FAILURE, Unsccessful login. JSON:";
+    print_r($login_response);
+    echo "<br>";
 }
-
-echo '<br><br>';
-
-
-*/
-
-
-/*
-//Test unclosed experiment
-if(createSessionTest(346)){
-    echo "PASS, Successfuly created session on open experiment";
+echo '<br>';
+//incorrect user/pass
+echo "<b>Testing login with incorrect user/pass....</b><br>";
+$login_response = loginTest('sor','');
+if ($login_response['status'] == 600) {
+    echo "SUCCESS, Unsuccessful login.<br>";
+} elseif ($login_response['status'] == 200) {
+    echo "FAILURE, Successful login. JSON:";
+    print_r($login_response);
+    echo "<br>";
 } else {
-    echo "FAIL, Could not create session on open experiment ";
+    echo "FAILURE, Something unexpected happened. JSON:";
+    print_r($login_response);
+    echo "<br>";
 }
+echo '<hr>';
 
-echo '<br><br>';
-
-//Test closed experiment
-if(createSessionTest(345)){
-    echo "FAIL, Created session on close experiment";
+//Tests creating an session on a closed/open experiment
+//session on an open experiment
+echo "<b>Trying to create a session on an open experiment....</b><br>";
+$exp = 346;
+$createSession_response = createSessionTest($exp);
+if ($createSession_response['status'] == 200 ){
+    $session_id = $createSession_response['data']['sessionId'];
+    echo "SUCCESS, Successfuly created a session on an open experiment. ";
+    echo "Exp: ";
+    echo "<a href=\"http://localhost/experiment.php?id=" . $exp ."\">" . $exp . "</a>";
+    echo ", SessionID: ";
+    echo "<a href=\"http://localhost/newvis.php?sessions=" . $session_id  ."\">" . $session_id . "</a>";
+    echo "<br>";
 } else {
-    echo "PASS, Could not create session on a closed experiment";
-}*/
-
+    echo "FAILURE, Could not create session on open experiment. JSON: ";
+    print_r($createSession_response);
+    echo "<br>";
+}
+echo "<br>";
+//session on a closed experiment
+echo "<b>Trying to create a session on a closed experiment....</b><br>";
+$exp = 345;
+$createSession_response = createSessionTest($exp);
+if ($createSession_response['status'] == 400) {
+    echo "SUCCESS, Unable to create a session on a closed experiment.<br>";
+} elseif ($createSession_response['status'] == 200) {
+    $session_id = $createSession_response['data']['sessionId'];
+    echo "FAILURE, Created an experiment on a closed experiment. Exp: ";
+    echo "<a href=\"http://localhost/experiment.php?id=" . $exp ."\">" . $exp . "</a>, SessionID: ";
+    echo "<a href=\"http://localhost/newvis.php?sessions=" . $session_id  ."\">" . $session_id . "</a>.  JSON: ";
+    print_r($createSession_response);
+    echo "<br>";
+} else {
+    echo "FAILURE, Something unexpected happened. JSON:";
+    print_r($login_response);
+    echo "<br>";
+}
+echo "<hr>";
 ?>
+</body>
+</html>
