@@ -259,7 +259,17 @@
 			$(this).addClass('jTable_header');
 			$(this).children().each(function(index) {
 				$(this).attr('id', 'col_'+index);
+				
+				$(this).mouseover( function() {
+				   $(this).find('img').addClass('jTable_rotate_right'); 
+				});
+				$(this).mouseout( function() {
+				    $(this).find('img').removeClass('jTable_rotate_right');
+				});
+				
 				$(this).click(function(event, ui){ 
+				    					
+					$(this).find('img').addClass('jTable_open'); 
 					
 					//Find index of the header that got pressed
 					header_index = $(this).attr('id').substr(4);
@@ -269,7 +279,7 @@
 					
 					//Populate sort array from header
 					$(this).parent().parent().parent().find('tbody tr').each(function(index) {
-						sortArray[index] = new Array( index, $(this).children().eq(header_index).text() );
+					    sortArray[index] = new Array( index, $(this).children().eq(header_index).text() );
 					});
 					
 					//Sort array
@@ -278,8 +288,8 @@
 					//Rearange table DOM
 					$(sortArray).each(function() {
 					    new_table += '<tr>';
-						$(root).find('table tbody tr').eq(this[0]).children().each(function() {new_table += '<td>' + $(this).text() + '</td>'});
-						new_table += '</tr>';
+					    $(root).find('table tbody tr').eq(this[0]).children().each(function() {new_table += '<td>' + $(this).text() + '</td>'});
+					    new_table += '</tr>';
 					});					
 					
 					//Delete DOM
@@ -287,6 +297,7 @@
 					
 					//Insert new DOM
 					$(this).parent().parent().parent().find('tbody').html(new_table);
+
 					
 					$(root).jTable('update');
 					
@@ -383,6 +394,46 @@
 				}
 			});
 		});
+
+        //When you click the save button at the top right of the table
+        //Save functionality
+        $('.jTable_save').click(function() {
+            //Build an object to save the table
+            save_table = new Array();
+            save_table.header = new Array();
+            save_table.body = new Array();
+            
+            //this should go through each table header and add it to the save_table.header array
+            $(root).find('table thead tr').children().each( function(index) {
+                save_table.header[index] = $(this).text();
+            });
+            
+            $(root).find('table tbody tr').each(function(indexI){
+               
+               cur_row = new Array();
+                              
+               $(this).children().each(function(indexJ) {
+                   cur_row[indexJ] = $(this).text();
+               });
+               
+               console.log(cur_row);
+               
+               save_table.body[indexI] = cur_row;
+                
+            });
+            
+            //but it doesnt... wtf?
+            console.log(save_table.body);
+            
+            $.ajax({
+                type: "POST",
+                url: "../../ses-update.php",
+                data: save_table,
+                success: function(data) {alert('it WORKED!!!'); console.log(data);} 
+            });
+            
+        });
+
     }
 };
 

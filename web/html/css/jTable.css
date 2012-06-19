@@ -22,12 +22,12 @@
 
 }
 
-.rotate_left {
+.jTable_rotate_left {
     -webkit-transform: rotate(-90deg); 
     -moz-transform: rotate(-90deg);
 }
 
-.rotate_right {
+.jTable_rotate_right {
     -webkit-transform: rotate(90deg); 
     -moz-transform: rotate(90deg);
 }
