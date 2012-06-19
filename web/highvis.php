@@ -73,7 +73,7 @@ if(isset($_REQUEST['sessions'])) {
     $head .= '<script type="text/javascript" src="/html/js/highvis/viscommon.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/visaxiscommon.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mousewheel.js"></script>';
-    //$head .= '<script type="text/javascript" src="/html/js/modifiers.js"></script>';
+    //$head .= '<script type="text/javascript" src="/html/js/highmodifiers.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/timeline.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/scatter.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/histogram.js"></script>';
