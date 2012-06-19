@@ -80,8 +80,9 @@ if (isset($_REQUEST['submit'])) {
   //print_r($data);
 
   putData($eid, $sid, $data);
-  //echo "<html><head><script type=\"text/javascript\">window.location=\"../vis.php?sessions=" . $sid . "\"</script></head></html>";
-  echo "../vis.php?sessions=" . $sid;	
+
+  echo "../newvis.php?sessions=" . $sid;
+  
 } else {
 	
 	$smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>' . 

@@ -684,4 +684,54 @@ function getExpOwner($sid) {
     return false;
 }
 
+function closeExperiment($eid){
+    global $db;
+    
+    $sql = "UPDATE experiments SET closed=1 where experiment_id={$eid}";
+
+    $query = $db->query($sql);
+
+    return true;
+    
+}
+
+function uncloseExperiment($eid){
+    global $db;
+    $sql = "UPDATE experiments SET closed=0 where experiment_id={$eid}";
+
+    $query = $db->query($sql);
+
+    return true;
+}
+
+function experimentClosed($eid){
+    global $db;
+    
+    $sql = "SELECT closed FROM experiments WHERE experiment_id={$eid}";
+    $query = $db->query($sql);
+    
+    if($query[0]['closed'] == 1){
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+function getExperimentOwner($eid){
+
+    global $db;
+    
+    $sql = "SELECT owner_id FROM experiments WHERE experiment_id={$eid} LIMIT 0,1";
+    
+    $output = $db->query($sql);
+
+    if($db->numOfRows) {
+        return $output[0]['owner_id'];
+    }
+
+    return false;
+
+}
+
 ?>

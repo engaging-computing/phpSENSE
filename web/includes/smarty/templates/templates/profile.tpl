@@ -98,7 +98,7 @@
 							</div>
 							<div class="info_column" style="float;right;"> 							
 								<div class="name" style="font-size:16px;"><a href="vis.php?sessions={ $result.sessions }&state={ $result.url_params }">{ $result.name }</a></div>
-								<div class="description" style="font-size:13px;">{ $result.description }blah</div>
+								<div class="description" style="font-size:13px;">{ $result.description }</div>
 								<div class="sub" style="font-size:13px;"><span>Last Modified { $result.timeobj|date_diff }</span></div>
 							</div> 
 						</div>
@@ -156,7 +156,11 @@
 	<div id="sidebar">
 		<div class="module">
 			<div style="text-align:center;">
-				<img src="picture.php?id={$id}" alt="No picture uploaded." />
+				<img src="{$user_avatar}" alt="No picture uploaded." />
+				
+				{ if $is_owner }
+				<div> <a href="http://gravatar.com/">Set your avatar using Gravatar</a> </div>
+				{ /if}
 			</div>
 			<div>
 				<div>

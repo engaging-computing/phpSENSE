@@ -9,7 +9,7 @@ var map = new function Map() {
     
     var inited;
     var measureField;
-    var infowindow = null;
+    
     var latlngbounds = new google.maps.LatLngBounds( );
     
     
@@ -42,7 +42,7 @@ var map = new function Map() {
     this.addInfoWindowSession = function(marker, gmap, ses){
         var contentString = '<div><table width="260px">';
         var sessionName = data.sessions[ses].meta['name'];
-        
+        var infowindow = null;
         contentString += "<tr><td><b>Name: </b></td><td>"+ sessionName+"</td></tr>";
         for(var field in data.fields) {
             
@@ -68,20 +68,21 @@ var map = new function Map() {
         
         contentString += "</table></div>";
         
-        if(map.infowindow){
-            map.infowindow.close();
+        if(infowindow){
+            infowindow.close();
         }
-        map.infowindow = new google.maps.InfoWindow({
+        infowindow = new google.maps.InfoWindow({
             content: contentString
         });
         
         google.maps.event.addListener(marker, 'click', function() {
-            map.infowindow.open(gmap,marker);
+           infowindow.open(gmap,marker);
         });
     }
     
     
     this.addInfoWindow = function(marker, gmap, ses, dp){
+        var infowindow = null;
         var contentString = '<div><table width="260px">';
         var sessionName = data.sessions[ses].meta['name'];
         
@@ -109,16 +110,16 @@ var map = new function Map() {
         }
         contentString += "</table></div>";
         
-        if(map.infowindow){
-            map.infowindow.close();
+        if(infowindow){
+            infowindow.close();
         }
         
-        map.infowindow = new google.maps.InfoWindow({
+        infowindow = new google.maps.InfoWindow({
             content: contentString
         });
         
         google.maps.event.addListener(marker, 'click', function() {
-            map.infowindow.open(gmap,marker);
+            infowindow.open(gmap,marker);
         });
     }
     

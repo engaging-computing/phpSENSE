@@ -84,6 +84,15 @@
 						</td>
 					</tr>
 				{ /if }
+				{ if $user.user_id == $meta.owner_id or $user.administrator == 1 }
+                    <tr>
+                        <td class="heading" valign="top">Closed:</td>
+                        <td>
+                            <input type="checkbox" id="close_experiment" name="close_experiment" value="{$meta.experiment_id}" {if $meta.closed == 1}checked{/if}/>
+                            <span id="close_loading_message" style="display:none;">Loading...</span>
+                        </td>
+                    </tr>
+                { /if }
 			</table>
 		</div>
 	</div>
@@ -110,7 +119,7 @@
 						{ if $meta.experiment_id == 350 }
     	                	<div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Contribute" onclick="window.location.href='./tsor.php';"/> - Contribute data to this experiment.</div>
 						{ else }
-							<div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Contribute" onclick="window.location.href='upload.php?id={$meta.experiment_id}';"/> - Contribute data to this experiment.</div>
+                            <div id="contribute" style="margin:0px 0px 6px 0px;" {if $meta.closed == 1 }hidden="hidden" {/if} ><input type="submit" style="width:73px;" value="Contribute" onclick="window.location.href='upload.php?id={$meta.experiment_id}';" /> - Contribute data to this experiment.</div>
 						{ /if }
 
     	                <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Export" onclick="loadExport({$meta.experiment_id});"/> - Download data from selected sessions.</div>
