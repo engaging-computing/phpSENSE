@@ -84,66 +84,72 @@ class Data {
                         $this->sessions[$j]->data[$n][$time] = strtotime(stripslashes($this->sessions[$j]->data[$n][$time]));
                 
     }
-    
-    public function sortTime() {
-        $time = $this->getTimeField();
+
+    public function removeTextFields() {
         
-        for( $ses = 0; $ses < count($this->sessions); $ses++ ) {
-            
-            $cur = 1;
-            $stack[1]['l'] = 0;
-            $stack[1]['r'] = count($this->sessions[$ses]->data) - 1;
-            
-            if (count($this->sessions[$ses]->data) > 0) {
-                do{
-                    $l = $stack[$cur]['l'];
-                    $r = $stack[$cur]['r'];
-                    $cur--;
-                    
-                    do{
-                        $i = $l;
-                        $j = $r;
-                        $tmp = $this->sessions[$ses]->data[(int) ($l+$r)/2][$time];
-                        
-                        do {
-                            while( $this->sessions[$ses]->data[$i][$time] < $tmp )
-                                $i++;
-                            
-                            while( $tmp < $this->sessions[$ses]->data[$j][$time])
-                                $j--;
-                            
-                            if( $i <= $j ) {
-                                $w = $this->sessions[$ses]->data[$i];
-                                $this->sessions[$ses]->data[$i] = $this->sessions[$ses]->data[$j];
-                                $this->sessions[$ses]->data[$j] = $w;
-                                
-                                $i++;
-                                $j--;
-                            }
-                            
-                        } while( $i <= $j );
-                        
-                        if( $i < $r ) {
-                            $cur++;
-                            $stack[$cur]['l'] = $i;
-                            $stack[$cur]['r'] = $r;
-                        }
-                        
-                        $r = $j;
-                        
-                    } while( $l < $r );
-                } while( $cur != 0 );
-                
-            }
+        function FieldFilter($field) {
+            return $field->typeID != 37;
         }
+        
+        $data->fields = array_filter($data->fields, FieldFilter);
     }
 
-    public function sortTimeNew() {
+    public function sortTime() {
         
-        function TimeCMP($a, $b) {
-
+        $cmpIndex = -1;
+    
+        //First try Time
+        foreach ($this->fields as $index=>$field) {
+            if ($field->typeID == 7) {
+                $cmpIndex = $index;
+                break;
+            }
+        }
+    
+        //Else try first numeric
+        if ($cmpIndex == -1 && count($this->fields) > 0) {
+            $cmpIndex = 0;
+        }
+        
+        //Else use first textual
+    
+        $DataPointCmp = function($a, $b) use ($cmpIndex) {
+        
+            if ($cmpIndex == -1) {
+                //Textual Compare
+                
+                return strcmp($a->Text[0], $b->Text[0]);
+            }
+            else {
+                //Numeric Compare
+                
+                return $a->numeric[$cmpIndex] < $b->numeric[$cmpIndex] ? -1 : 1;
+            }
+        };
+        
+        //Sort
+        foreach ($this->sessions as $index=>$session) {
+            usort($this->sessions[$index]->dataPoints, $DataPointCmp);
+        }
+        
+    }
+    
+    public function addDataPointNumbers() {
+        
+        array_unshift($this->fields, new DataField(-1, "Datapoint #", 21, 66, "Numeric", "Number", "#", true));
+        
+        foreach($this->sessions as &$sess) {
             
-
+            $dpiter = 1;
+            
+            foreach($sess->dataPoints as &$dp) {
+                
+                array_unshift($dp->numeric, $dpiter);
+                
+                $dpiter += 1;
+                
+            }
+            
         }
         
     }
@@ -152,35 +158,35 @@ class Data {
 
 class DataSession {
     
-    public $SessionID;
-    public $IsVisible = 1;
+    public $sessionID;
+    public $isVisible = true;
     
-    public $MetaData = array();
-    public $DataPoints = array();
-    public $Pictures = array();
+    public $metaData = array();
+    public $dataPoints = array();
+    public $pictures = array();
     
 };
 
 class DataField {
     
-    public $FieldID = 0;
-    public $FieldName;
-    public $TypeID = 0;
-    public $UnitID = 0;
-    public $TypeName = 0;
-    public $UnitName = 0;
-    public $UnitAbbreviation;
-    public $IsVisible = 0;
+    public $fieldID = 0;
+    public $fieldName;
+    public $typeID = 0;
+    public $unitID = 0;
+    public $typeName = 0;
+    public $unitName = 0;
+    public $unitAbbreviation;
+    public $isVisible = false;
     
     public function __construct() {
-        $this->FieldID = func_get_arg(0);
-        $this->FieldName = func_get_arg(1);
-        $this->TypeID = func_get_arg(2);
-        $this->UnitID = func_get_arg(3);
-        $this->type_name = func_get_arg(4);
-        $this->UnitName = func_get_arg(5);
-        $this->UnitAbbreviation = func_get_arg(6);
-        $this->IsVisible = func_get_arg(7);
+        $this->fieldID = func_get_arg(0);
+        $this->fieldName = func_get_arg(1);
+        $this->typeID = func_get_arg(2);
+        $this->unitID = func_get_arg(3);
+        $this->typeName = func_get_arg(4);
+        $this->unitName = func_get_arg(5);
+        $this->unitAbbreviation = func_get_arg(6);
+        $this->isVisible = func_get_arg(7);
         
         //set default of geolocation and text to not visible
         /*if ($this->type_id == 37 || $this->type_id == 19) {
@@ -198,28 +204,28 @@ class DataField {
  */
 class DataPoint {
     
-    public $Text = array();
-    public $Numeric = array();
+    public $text = array();
+    public $numeric = array();
     
-    static public $Fields;
+    static public $fields;
     
     static public function SetFields($fields) {
-        self::$Fields = $fields;
+        self::$fields = $fields;
     }
     
     public function __construct($dataArray) {
         
-        foreach (self::$Fields as $index=>$field) {
+        foreach (self::$fields as $index=>$field) {
             //Check for String
-            if ($field->TypeID == 37) {
-                $this->Text[] = $field->FieldName . ": " . $dataArray[$index];
+            if ($field->typeID == 37) {
+                $this->text[] = $field->fieldName . ": " . $dataArray[$index];
             }
             else {
                 if (!is_numeric($dataArray[$index])) {
-                    $this->Numeric[] = "";
+                    $this->numeric[] = "";
                 }
                 else {
-                    $this->Numeric[] = $dataArray[$index];
+                    $this->numeric[] = $dataArray[$index];
                 }
             }
         }
@@ -242,18 +248,20 @@ if(isset($_REQUEST['sessions'])) {
     
     //print_r($fields);
     $pick = true;
-    $visible = 1;
-            
+    $visible = true;
+    
+    //Make only the first non-geolocation numeric field visible
+    //All time fields visible, and no text fields visible        
     foreach( $fields as $index=>$field ) { 
         if ($pick && $field['type_id'] != 37 && $field['type_id'] != 19 && $field['type_id'] != 7) {
-            $visible = 1;
+            $visible = true;
             $pick = false;
         }
         else if ($field['type_id'] == 7) {
-            $visible = 1;
+            $visible = true;
         }
         else {
-            $visible = 0;
+            $visible = false;
         }
         
         $data->fields[$index] = new DataField($field['field_id'], $field['field_name'], $field['type_id'], $field['unit_id'], $field['type_name'], $field['unit_name'], $field['unit_abbreviation'], $visible);
@@ -270,61 +278,28 @@ if(isset($_REQUEST['sessions'])) {
     //Load sessions into Data object
     foreach( $sessions as $index=>$ses ) {        
         $data->sessions[$index] = new DataSession;
-        $data->sessions[$index]->SessionID = $ses;
-        $data->sessions[$index]->MetaData = getSession($ses);
-        $data->sessions[$index]->DataPoints = array_map(InitDataPoint, getData($data->eid, $ses)); //getData($data->eid, $ses);
-        $data->sessions[$index]->Pictures = getSessionPictures($ses);
+        $data->sessions[$index]->sessionID = $ses;
+        $data->sessions[$index]->metaData = getSession($ses);
+        $data->sessions[$index]->dataPoints = array_map(InitDataPoint, getData($data->eid, $ses)); //getData($data->eid, $ses);
+        $data->sessions[$index]->pictures = getSessionPictures($ses);
     }
+
+    /*print_r("POST: ");
+    print_r($data->fields);
+    reset($data->fields);*/
 
     //Filter out textual fields now that data is loaded.
-    function FieldFilter($field) {
-        return $field->TypeID != 37;
-    }
-    $data->fields = array_filter(FieldFilter, $data->fields);
-
-    //Sort data
-    {
-        $cmpIndex = -1;
-    
-        //First try Time
-        foreach ($data->fields as $index=>$field) {
-            if ($field->TypeID == 7) {
-                $cmpIndex = $index;
-                break;
-            }
-        }
-    
-        //Else try first numeric
-        if ($cmpIndex == -1 && count($data->fields) > 0) {
-            $cmpIndex = 0;
-        }
-        
-        //Else use first textual
-    
-        function DataPointCmp($a, $b) {
-        
-            if (cmpIndex == -1) {
-                //Textual Compare
-                return $a->Text[0] < $b->Text[0];
-            }
-            else {
-                //Numeric Compare
-                return $a->Numeric[$cmpIndex] < $b->Numeric[$cmpIndex];
-            }
-        }
-        
-        //Sort
-        foreach ($data->sessions as $index=>$session) {
-            usort($data->sessions[$index]->DataPoints, DataPointCmp);
-        }
-    }
+    $data->removeTextFields();
     
     // NOTE: I'm not sure if this is nessiary anymore.
     //Parse time data as ms since epoch time
-    $data->setTime();
+    //$data->setTime();
     
     //Sorts each session by time if time is a field
-    //$data->sortTime();
+    $data->sortTime();
+    
+    //Adds data point number field to data object
+    $data->addDataPointNumbers();
     
     //Determine witch vises are relevant
     $data->setRelVis();
