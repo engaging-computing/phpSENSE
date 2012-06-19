@@ -35,7 +35,7 @@ class Data {
 
     public $eid;
     
-    public $relVis = array('Table');
+    public $relVis = array();//array('Table');
     
     public $fields = array();
     public $sessions = array();
@@ -54,7 +54,7 @@ class Data {
         /* See how much data the experiment has */
         $total = 0;
         foreach( $this->sessions as $session ) {
-            $total += count($session->data);
+            $total += count($session->dataPoints);
         }
       
         /* If there is more than one data point in a session add the following vizes */
@@ -70,7 +70,7 @@ class Data {
         }
 
         /* Add the map last because it should always be first. */
-        $this->relVis = array_merge(array('Map'), $this->relVis);   
+        //$this->relVis = array_merge(array('Map'), $this->relVis);   
     }  
     
     public function setTime() {
