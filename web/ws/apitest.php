@@ -69,6 +69,29 @@ function createSessionTest($exp){
     return json_decode($result,true);
 }
 
+function getSessionTest($exp){
+    //The target for this test
+    //$target = "http://isensedev.cs.uml.edu/ws/api.php?method=createSession";
+    $target = "localhost/ws/api.php?method=getSessions";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'experiment' => $exp,
+     )); 
+
+    //Run curl to get the response
+    $result = curl_exec($ch);
+    //Close curl
+    curl_close($ch);
+    //Parse the response to an associative array
+    return json_decode($result,true);
+}
+
 //Tests the login functionality
 //correct user/pass
 echo "<b>Testing login with correct user/pass....</b><br>";
@@ -127,7 +150,7 @@ if ($createSession_response['status'] == 400) {
     echo "SUCCESS, Unable to create a session on a closed experiment.<br>";
 } elseif ($createSession_response['status'] == 200) {
     $session_id = $createSession_response['data']['sessionId'];
-    echo "FAILURE, Created an experiment on a closed experiment. Exp: ";
+    echo "FAILURE, Created a session on a closed experiment. Exp: ";
     echo "<a href=\"http://localhost/experiment.php?id=" . $exp ."\">" . $exp . "</a>, SessionID: ";
     echo "<a href=\"http://localhost/newvis.php?sessions=" . $session_id  ."\">" . $session_id . "</a>.  JSON: ";
     print_r($createSession_response);
@@ -138,6 +161,7 @@ if ($createSession_response['status'] == 400) {
     echo "<br>";
 }
 echo "<hr>";
+print_r(getSessionTest(346));
 ?>
 </body>
 </html>
