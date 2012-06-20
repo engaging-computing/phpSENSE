@@ -173,7 +173,7 @@ echo "<b>Tests that we correctly got the session(s)....</b><br>";
 $exp = 346;
 $getSessions_response = getSessionsTest($exp);
 if ($getSessions_response['status'] == 200) {
-    echo "SUCCESS, Sucessfully got session(s).<br>";
+    echo "SUCCESS, Successfully got session(s).<br>";
 } else {
     echo "FAILURE, Unable to get session(s). JSON: ";
     print_r($getSessions_response);
@@ -188,7 +188,7 @@ $getSessions_response = getSessionsTest($exp);
 if ($getSessions_response['status'] == 600) {
     echo "SUCCESS, Unable to session(s).<br>";
 } elseif ($getSessions_response['status'] == 200) {
-    echo "FAILURE, Sucessfully got session(s). JSON: ";
+    echo "FAILURE, Successfully got session(s). JSON: ";
     print_r($getSessions_response);
     echo "<br>";
 } else {
