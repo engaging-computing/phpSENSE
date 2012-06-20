@@ -247,47 +247,22 @@ function getExperimentsWithPhotos($limit = 3) {
 function getFeaturedExperimentsWithPhotos($limit = 6) {
 	global $db;
 
+    $sql = "SELECT experiments.experiment_id,
+                   experiments.exp_image,
+                   experiments.name,
+                   users.user_id,
+                   users.firstname
+            FROM experiments,users
+            WHERE featured=1
+            AND exp_image IS NOT NULL
+            AND users.user_id = experiments.owner_id
+            ORDER BY timecreated DESC
+            LIMIT {$limit}";
 
-
-	$oq = $db->query( "SELECT DISTINCT tmp.*
-			   FROM (SELECT DISTINCT `p`.title,
-						 `p`.experiment_id,
-						 `p`.description,
-						 `p`.provider_url,
-						 `p`.provider_id,
-						 `p`.created
-				 FROM pictures AS `p`
-				 WHERE experiment_id 
-				 IN (SELECT p.experiment_id
-				     FROM (SELECT @rownum:=@rownum+1 AS 'rank',
-						  e.experiment_id FROM experiments AS e,
-						  (SELECT @rownum:=0) AS r 
-					   WHERE featured=1
-					   HAVING @rownum < 6
-					   ORDER BY timecreated DESC
-					  ) AS p
-				     ) 
-				 ORDER BY created DESC
-				 ) AS tmp
-			   GROUP BY tmp.experiment_id;" );
-
-	$ps = $db->query("SELECT name, owner_id, firstname, lastname
-			  FROM (SELECT name, owner_id, experiment_id, firstname, lastname 
-				FROM experiments, users
-				WHERE featured=1 AND owner_id = user_id
-				ORDER BY timecreated DESC
-				LIMIT 0, 6) AS tmp
-			  ORDER BY experiment_id ASC;");
-	
-	$tmp = array();
-
-	for( $i = 0; $i < count($oq); $i++ ) $tmp[$i] = array_merge( $oq[$i], $ps[$i] );
-
-	
-
+    $output = $db->query($sql);
 	
 	if($db->numOfRows) {
-		return $tmp;
+		return $output;
 	}
 	
 	return false;
