@@ -734,4 +734,14 @@ function getExperimentOwner($eid){
 
 }
 
+function updateExperimentImage($url,$eid){
+    global $db;
+    
+    $sql = "UPDATE experiments SET exp_image='{$url}' WHERE experiment_id={$eid}";
+
+    $output = $db->query($sql);
+
+    return true;
+}
+
 ?>
