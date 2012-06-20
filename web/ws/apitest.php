@@ -69,7 +69,7 @@ function createSessionTest($exp){
     return json_decode($result,true);
 }
 
-function getSessionTest($exp){
+function getSessionsTest($exp){
     //The target for this test
     //$target = "http://isensedev.cs.uml.edu/ws/api.php?method=createSession";
     $target = "localhost/ws/api.php?method=getSessions";
@@ -91,8 +91,12 @@ function getSessionTest($exp){
     //Parse the response to an associative array
     return json_decode($result,true);
 }
+//200 - OK
+//400 - Bad Request
+//600 - Bad Reqest/Doesn't Exist
 
-//Tests the login functionality
+//--------------------------------------------------------------------------------------------------------------------
+//Login Test
 //correct user/pass
 echo "<b>Testing login with correct user/pass....</b><br>";
 $login_response = loginTest('sor','sor');
@@ -122,8 +126,8 @@ if ($login_response['status'] == 600) {
     echo "<br>";
 }
 echo '<hr>';
-
-//Tests creating an session on a closed/open experiment
+//--------------------------------------------------------------------------------------------------------------------
+//Create Session Test
 //session on an open experiment
 echo "<b>Trying to create a session on an open experiment....</b><br>";
 $exp = 346;
@@ -161,7 +165,42 @@ if ($createSession_response['status'] == 400) {
     echo "<br>";
 }
 echo "<hr>";
-print_r(getSessionTest(346));
+//--------------------------------------------------------------------------------------------------------------------
+//Get Sessions Test
+
+//This test verifies that we correctly got the session(s)
+echo "<b>Tests that we correctly got the session(s)....</b><br>";
+$exp = 346;
+$getSessions_response = getSessionsTest($exp);
+if ($getSessions_response['status'] == 200) {
+    echo "SUCCESS, Sucessfully got session(s).<br>";
+} else {
+    echo "FAILURE, Unable to get session(s). JSON: ";
+    print_r($getSessions_response);
+    echo "<br>";
+}
+echo "<br>";
+
+//This test verifies that we did not get the session(s).
+echo "<b>Tests that we correctly got the session(s)....</b><br>";
+$exp = 0;
+$getSessions_response = getSessionsTest($exp);
+if ($getSessions_response['status'] == 600) {
+    echo "SUCCESS, Unable to session(s).<br>";
+} elseif ($getSessions_response['status'] == 200) {
+    echo "FAILURE, Sucessfully got session(s). JSON: ";
+    print_r($getSessions_response);
+    echo "<br>";
+} else {
+    echo "FAILURE, Something unexpected happened. JSON:";
+    print_r($getSessions_response);
+    echo "<br>";
+}
+echo "<hr>";
+
+
+
+
 ?>
 </body>
 </html>
