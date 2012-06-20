@@ -99,9 +99,7 @@ if(isset($_GET['action'])) {
             break;
 
         case "changeimage":
-            $fd = fopen("/home/jdalphon/Desktop/txt.txt", "w");
-            fwrite($fd, $_GET['eid']." ".$_GET['purl']);
-            fclose($fd);
+
             $user  = $session->getUser();
             $owner = getExperimentOwner($_GET['eid']);
             $url = $_GET['purl'];

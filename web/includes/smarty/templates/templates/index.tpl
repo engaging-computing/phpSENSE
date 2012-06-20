@@ -33,7 +33,7 @@
 					<div class="featuredimage">
 						<a href="/experiment.php?id={$exp.experiment_id}"><img height="200" width="287" src="picture.php?url={$exp.exp_image}&h=200&w=287"></a>
 					</div>
-					<div class="featuredtext">
+					<div class="fetauredtext">
 						<a href="/experiment.php?id={$exp.experiment_id}">{ $exp.name|capitalize|truncate:32:"":true }</a>
 					</div>
 					<div class="featuredsubtext">
