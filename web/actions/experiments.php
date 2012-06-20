@@ -28,8 +28,8 @@
 
 require_once '../includes/config.php';
 
+
 if(isset($_GET['action'])) {
-	
 	switch($_GET['action']) {
 		case "addfeature":
 			addFeaturedExperiment($_GET['id']);
@@ -96,6 +96,19 @@ if(isset($_GET['action'])) {
                 uncloseExperiment($_GET['id']);
             }
             echo "worked!";
+            break;
+
+        case "changeimage":
+            $fd = fopen("/home/jdalphon/Desktop/txt.txt", "w");
+            fwrite($fd, $_GET['eid']." ".$_GET['purl']);
+            fclose($fd);
+            $user  = $session->getUser();
+            $owner = getExperimentOwner($_GET['eid']);
+            $url = $_GET['purl'];
+            $eid = $_GET['eid'];
+            if($user['administrator'] || $user['user_id'] == $owner) {
+                updateExperimentImage($url,$eid);
+            }
             break;
 	}
 }

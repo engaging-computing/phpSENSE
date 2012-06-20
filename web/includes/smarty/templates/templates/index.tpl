@@ -31,13 +31,13 @@
 			<div class="featureditemwrapper">
 				<div class="featureditem">
 					<div class="featuredimage">
-						<a href="/experiment.php?id={$exp.experiment_id}"><img height="200" width="287" src="picture.php?url={$exp.provider_url}&h=200&w=287"></a>
+						<a href="/experiment.php?id={$exp.experiment_id}"><img height="200" width="287" src="picture.php?url={$exp.exp_image}&h=200&w=287"></a>
 					</div>
 					<div class="featuredtext">
 						<a href="/experiment.php?id={$exp.experiment_id}">{ $exp.name|capitalize|truncate:32:"":true }</a>
 					</div>
 					<div class="featuredsubtext">
-						Created by <a href="/profile.php?id={$exp.owner_id}">{ $exp.firstname } { $exp.lastname }</a>
+						Created by <a href="/profile.php?id={$exp.user_id}">{ $exp.firstname } { $exp.lastname }</a>
 					</div>
 				</div>
 			</div>

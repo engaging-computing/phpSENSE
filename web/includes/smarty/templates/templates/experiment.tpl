@@ -126,6 +126,7 @@
     	                <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Activity" onclick="createActivity({$meta.experiment_id});"/> - Create an activity for users to complete.</div>
     	                { if $user.user_id == $meta.owner_id or $user.administrator == 1 }
     	                    <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Edit" onclick="window.location.href='experiment-edit.php?id={$meta.experiment_id}'"/> - Edit this experiment.</div>
+    	                    <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Image" onclick="window.location.href='pickexpimage.php?id={$meta.experiment_id}'"/> - Set the picture that will show should this experiment be featured.</div>
     	                { /if }
     	            { /if }
     	            <div><input type="submit" style="width:73px;" value="{if not $activity}Visualize{else}Complete{/if}" onclick="loadVis({$meta.experiment_id}, {if $activity}true{else}false{/if});"/> - {if $activity}View data for this experiment and solve for the prompt.{else}Select sessions below to visualize data{/if}</div>
