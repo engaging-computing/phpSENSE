@@ -33,21 +33,15 @@ require_once '../includes/config.php';
 
 class Data {
 
-    public $eid;
+    public $experimentID;
+    public $experimentName;
     
-    public $relVis = array('Table');
+    public $relVis      = array(/*'Table'*/);
     
-    public $fields = array();
-    public $sessions = array();
-   
-
-    // DO NOT USE UNIT_IDs FOR TYPE CHECKS
-    public function getTimeField() {
-        foreach( $this->fields as $index=>$field )
-            if( $field->type_id == 7 )
-                return $index;
-    }
-
+    public $fields      = array();
+    public $dataPoints  = array();
+    public $metaData    = array();
+  
     /* Turn on the relevant vizes */
     public function setRelVis() {
         
@@ -70,100 +64,8 @@ class Data {
         }
 
         /* Add the map last because it should always be first. */
-        $this->relVis = array_merge(array('Map'), $this->relVis);   
+        //$this->relVis = array_merge(array('Map'), $this->relVis);   
     }  
-    
-    public function setTime() {
-        
-        $time = $this->getTimeField();
-        
-        if( isset($time) )
-            for( $j = 0; $j < count($this->sessions); $j++ )
-                for( $n = 0; $n < count($this->sessions[$j]->data); $n++ )
-                    if( !is_numeric($this->sessions[$j]->data[$n][$time]) )
-                        $this->sessions[$j]->data[$n][$time] = strtotime(stripslashes($this->sessions[$j]->data[$n][$time]));
-                
-    }
-
-    public function removeTextFields() {
-        
-        function FieldFilter($field) {
-            return $field->typeID != 37;
-        }
-        
-        $data->fields = array_filter($data->fields, FieldFilter);
-    }
-
-    public function sortTime() {
-        
-        $cmpIndex = -1;
-    
-        //First try Time
-        foreach ($this->fields as $index=>$field) {
-            if ($field->typeID == 7) {
-                $cmpIndex = $index;
-                break;
-            }
-        }
-    
-        //Else try first numeric
-        if ($cmpIndex == -1 && count($this->fields) > 0) {
-            $cmpIndex = 0;
-        }
-        
-        //Else use first textual
-    
-        $DataPointCmp = function($a, $b) use ($cmpIndex) {
-        
-            if ($cmpIndex == -1) {
-                //Textual Compare
-                
-                return strcmp($a->Text[0], $b->Text[0]);
-            }
-            else {
-                //Numeric Compare
-                
-                return $a->numeric[$cmpIndex] < $b->numeric[$cmpIndex] ? -1 : 1;
-            }
-        };
-        
-        //Sort
-        foreach ($this->sessions as $index=>$session) {
-            usort($this->sessions[$index]->dataPoints, $DataPointCmp);
-        }
-        
-    }
-    
-    public function addDataPointNumbers() {
-        
-        array_unshift($this->fields, new DataField(-1, "Datapoint #", 21, 66, "Numeric", "Number", "#", true));
-        
-        foreach($this->sessions as &$sess) {
-            
-            $dpiter = 1;
-            
-            foreach($sess->dataPoints as &$dp) {
-                
-                array_unshift($dp->numeric, $dpiter);
-                
-                $dpiter += 1;
-                
-            }
-            
-        }
-        
-    }
-    
-};
-
-class DataSession {
-    
-    public $sessionID;
-    public $isVisible = true;
-    
-    public $metaData = array();
-    public $dataPoints = array();
-    public $pictures = array();
     
 };
 
@@ -176,7 +78,6 @@ class DataField {
     public $typeName = 0;
     public $unitName = 0;
     public $unitAbbreviation;
-    public $isVisible = false;
     
     public function __construct() {
         $this->fieldID = func_get_arg(0);
@@ -186,52 +87,9 @@ class DataField {
         $this->typeName = func_get_arg(4);
         $this->unitName = func_get_arg(5);
         $this->unitAbbreviation = func_get_arg(6);
-        $this->isVisible = func_get_arg(7);
-        
-        //set default of geolocation and text to not visible
-        /*if ($this->type_id == 37 || $this->type_id == 19) {
-            $this->visibility = 0;
-        }*/
     }
     
 };
-
-
-/*
- * The raw fields should be assigned using SetFields
- * before the constructor is called. This will allow
- * proper sorting of numeric and textual fields.
- */
-class DataPoint {
-    
-    public $text = array();
-    public $numeric = array();
-    
-    static public $fields;
-    
-    static public function SetFields($fields) {
-        self::$fields = $fields;
-    }
-    
-    public function __construct($dataArray) {
-        
-        foreach (self::$fields as $index=>$field) {
-            //Check for String
-            if ($field->typeID == 37) {
-                $this->text[] = $field->fieldName . ": " . $dataArray[$index];
-            }
-            else {
-                if (!is_numeric($dataArray[$index])) {
-                    $this->numeric[] = "";
-                }
-                else {
-                    $this->numeric[] = $dataArray[$index];
-                }
-            }
-        }
-    }
-};
-
 
 if(isset($_REQUEST['sessions'])) {
 
@@ -241,65 +99,72 @@ if(isset($_REQUEST['sessions'])) {
     //Load session data
     $sessions = explode(" ", $_REQUEST['sessions']);
     
-    $data->eid = getSessionExperimentId($sessions[0]);
+    $data->experimentID     = getSessionExperimentId($sessions[0]);
+    $data->experimentName   = getNameFromEid($data->experimentID);
+
+    echo $data->experimentID . "\r\n";
 
     //Load fields into Data object
-    $fields = getFields($data->eid);
-    
-    //print_r($fields);
-    $pick = true;
-    $visible = true;
+    $fields = getFields($data->experimentID);
     
     //Make only the first non-geolocation numeric field visible
     //All time fields visible, and no text fields visible        
     foreach( $fields as $index=>$field ) { 
-        if ($pick && $field['type_id'] != 37 && $field['type_id'] != 19 && $field['type_id'] != 7) {
-            $visible = true;
-            $pick = false;
-        }
-        else if ($field['type_id'] == 7) {
-            $visible = true;
-        }
-        else {
-            $visible = false;
-        }
         
-        $data->fields[$index] = new DataField($field['field_id'], $field['field_name'], $field['type_id'], $field['unit_id'], $field['type_name'], $field['unit_name'], $field['unit_abbreviation'], $visible);
+        $data->fields[$index] = new DataField($field['field_id'], $field['field_name'], $field['type_id'], $field['unit_id'], $field['type_name'], $field['unit_name'], $field['unit_abbreviation']);
+
     }
+    
+    array_unshift($data->fields, new DataField(-1, "Session ID-Name", 37, 81, "Text", "Text", ""));
     
     $newdata = array();
+    
+    
+    
+    
+    
+    
+    
+    print_r($sessions);
+    
+    reset($sessions);
 
-    //setup for data massaging
-    DataPoint::SetFields($data->fields);
-    function InitDataPoint($data) {
-        return new DataPoint($data);
-    }
+    $sessionNames = getSessionsTitle($sessions);
+
+
+
+    
+
+
 
     //Load sessions into Data object
-    foreach( $sessions as $index=>$ses ) {        
-        $data->sessions[$index] = new DataSession;
-        $data->sessions[$index]->sessionID = $ses;
-        $data->sessions[$index]->metaData = getSession($ses);
-        $data->sessions[$index]->dataPoints = array_map(InitDataPoint, getData($data->eid, $ses)); //getData($data->eid, $ses);
-        $data->sessions[$index]->pictures = getSessionPictures($ses);
+    foreach( $sessions as $index=>$ses ) {
+        
+        $idName = "" . $ses . "-" . $sessionNames[$index] . "";
+        
+        //Add Session ID-Name field to data
+        $tmpData = getData($data->eid, $ses);
+        foreach ($tmpData as $j=>$dataPoint) {
+            array_unshift($tmpData[$j], $idName);
+        }
+        
+        //Validate Numerics
+        foreach ($tmpData as $j=>$dataPoint) {
+            foreach ($data->fields as $k=>$field) {
+                if ($field->typeID != 37 && !is_numeric($dataPoint[$k]))
+                {
+                    $tmpData[$j][$k] = null;
+                }
+            }
+        }
+        
+        //add the data
+        $data->dataPoints = array_merge($data->dataPoints, $tmpData);
+            
+        //Get session related meta data
+        $data->metaData[$idName] = getSession($ses);
+        $data->metaData[$idName]->picture = getSessionPictures($ses);
     }
-
-    /*print_r("POST: ");
-    print_r($data->fields);
-    reset($data->fields);*/
-
-    //Filter out textual fields now that data is loaded.
-    $data->removeTextFields();
-    
-    // NOTE: I'm not sure if this is nessiary anymore.
-    //Parse time data as ms since epoch time
-    //$data->setTime();
-    
-    //Sorts each session by time if time is a field
-    $data->sortTime();
-    
-    //Adds data point number field to data object
-    $data->addDataPointNumbers();
     
     //Determine witch vises are relevant
     $data->setRelVis();
