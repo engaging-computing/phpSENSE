@@ -48,7 +48,7 @@ class Data {
         /* See how much data the experiment has */
         $total = 0;
         foreach( $this->sessions as $session ) {
-            $total += count($session->data);
+            $total += count($session->dataPoints);
         }
       
         /* If there is more than one data point in a session add the following vizes */

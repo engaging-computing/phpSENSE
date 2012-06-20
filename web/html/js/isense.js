@@ -29,6 +29,20 @@ $(document).ready(function(){
         });
     }
 
+    if($('img.selectexpimage').length > 0){
+        $('img.selectexpimage').click(function(){
+            $('img.selectexpimage').css( 'border', '0px none #fff' );
+            $('img.selectexpimage').css( 'margin', '5px' );
+            $('img.selectexpimage').css( 'padding', '0px')
+            $(this).css( 'border', '4px solid #2396e6' );
+            $(this).css( 'padding', '1px' );
+            $(this).css( 'margin', '0px' );
+            $(this).css( 'background', '#fff');
+            //alert( "URL: " + $(this).attr("src") + "\nEXP ID: " + $('#storedexpid').val() );
+            $.get('actions/experiments.php', { action:"changeimage", purl:$(this).attr("src"), eid:$('#storedexpid').val() }, function(data){});
+        });
+    }
+    
     if($('input.feature_experiment').length > 0) {
         $('input.feature_experiment').click(function(){
             //$('input.feature_experiment').hide();			This stuff is commented out because it
