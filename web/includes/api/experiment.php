@@ -744,4 +744,26 @@ function updateExperimentImage($url,$eid){
     return true;
 }
 
+//Promote an experiment as iSENSE recommended.
+function recommendExperiment($eid){
+    global $db;
+
+    $sql = "UPDATE experiments SET recommended=1 WHERE experiment_id={$eid}";
+
+    $output = $db->query($sql);
+
+    return true;
+}
+
+//Demote an experiment from iSENSE recommended status.
+function unrecommendExperiment($eid){
+    global $db;
+
+    $sql = "UPDATE experiments SET recommended=0 WHERE experiment_id={$eid}";
+
+    $output = $db->query($sql);
+
+    return true;
+}
+
 ?>
