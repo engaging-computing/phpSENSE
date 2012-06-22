@@ -76,6 +76,13 @@
 							<span id="loading_msg" style="display:none;">Loading...</span>
 						</td>
 					</tr>
+                    <tr>
+                        <td class="heading" valign="top">Recommend:</td>
+                        <td>
+                            <input type="checkbox" id="recommend_experiment" name="recommend_experiment" value="{$meta.experiment_id}" {if $meta.recommended == 1}checked{/if}/>
+                            <span id="recommended_loading_msg" style="display:none;">Loading...</span>
+                        </td>
+                    </tr>
 					<tr>
 						<td class="heading" valign="top">Hidden:</td>
 						<td>
