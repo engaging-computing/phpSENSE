@@ -102,8 +102,6 @@ if(isset($_REQUEST['sessions'])) {
     $data->experimentID     = getSessionExperimentId($sessions[0]);
     $data->experimentName   = getNameFromEid($data->experimentID);
 
-    echo $data->experimentID . "\r\n";
-
     //Load fields into Data object
     $fields = getFields($data->experimentID);
     
@@ -119,31 +117,18 @@ if(isset($_REQUEST['sessions'])) {
     
     $newdata = array();
     
-    
-    
-    
-    
-    
-    
-    print_r($sessions);
-    
-    reset($sessions);
-
     $sessionNames = getSessionsTitle($sessions);
-
-
-
     
-
-
-
+    //print_r($data->fields);
+    //reset($data->fields);
+    
     //Load sessions into Data object
     foreach( $sessions as $index=>$ses ) {
         
-        $idName = "" . $ses . "-" . $sessionNames[$index] . "";
+        $idName = "" . $ses . "-" . $sessionNames[$index]['name'] . "";
         
         //Add Session ID-Name field to data
-        $tmpData = getData($data->eid, $ses);
+        $tmpData = getData($data->experimentID, $ses);
         foreach ($tmpData as $j=>$dataPoint) {
             array_unshift($tmpData[$j], $idName);
         }
@@ -151,9 +136,15 @@ if(isset($_REQUEST['sessions'])) {
         //Validate Numerics
         foreach ($tmpData as $j=>$dataPoint) {
             foreach ($data->fields as $k=>$field) {
-                if ($field->typeID != 37 && !is_numeric($dataPoint[$k]))
+                if ($field->typeID != 37 && !is_numeric(intval($dataPoint[$k])))
                 {
+                    
                     $tmpData[$j][$k] = null;
+                    
+                } else {
+                    
+                    $tmpData[$j][$k] = intval($dataPoint[$k]);
+                    
                 }
             }
         }
@@ -163,7 +154,7 @@ if(isset($_REQUEST['sessions'])) {
             
         //Get session related meta data
         $data->metaData[$idName] = getSession($ses);
-        $data->metaData[$idName]->picture = getSessionPictures($ses);
+        $data->metaData[$idName]['pictures'] = getSessionPictures($ses);
     }
     
     //Determine witch vises are relevant
