@@ -1,6 +1,7 @@
 <html>
 <head>
 <title>iSenseDev Automated Testing</title>
+<link rel="stylesheet" type="text/css" href="apitest.css" />
 </head>
 <body>
 
@@ -61,7 +62,7 @@ function initialize(){
     global $db;
     echo "Setting experiment 1 to open.<br>";
     $result = $db->query('UPDATE experiments SET closed=0 WHERE experiment_id=1');
-
+    
     if($result==1) {
         echo "Setting experiment 2 to closed.<br>";
         $result2 = $db->query('UPDATE experiments SET closed=1 WHERE experiment_id=2');
@@ -76,7 +77,7 @@ function initialize(){
 function loginTest($user,$pass){
     //The target for this test
     $target =  "localhost/ws/api.php?method=login";
-
+    
     //Curl crap that will mostly stay the same
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $target);
@@ -86,21 +87,21 @@ function loginTest($user,$pass){
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
         'username' => $user,
         'password' => $pass
-    ));
-
-    //Run curl to get the response
-    $result = curl_exec($ch);
-
-    //Close curl
-    curl_close($ch);
-
-    //Parse the response to an associative array
-    return json_decode($result,true);
+        ));
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        
+        //Close curl
+        curl_close($ch);
+        
+        //Parse the response to an associative array
+        return json_decode($result,true);
 }
 
 function createSessionTest($exp){
     global $session_key;
-
+    
     //The target for this test
     $target = "localhost/ws/api.php?method=createSession";
     
@@ -118,14 +119,15 @@ function createSessionTest($exp){
         'street' => '1 university ave',
         'city' => 'Lowell MA',
         'country' => 'USA'
-     )); 
-
-    //Run curl to get the response
-    $result = curl_exec($ch);
-    //Close curl
-    curl_close($ch);
-    //Parse the response to an associative array
-    return json_decode($result,true);
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+        curl_close($ch);
+        //Parse the response to an associative array
+        //echo "<br>".$result."<br>";
+        return json_decode($result,true);
 }
 
 function getSessionsTest($exp){
@@ -140,153 +142,153 @@ function getSessionsTest($exp){
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
         'experiment' => $exp,
-     )); 
-
-    //Run curl to get the response
-    $result = curl_exec($ch);
-    //Close curl
-    curl_close($ch);
-    //Parse the response to an associative array
-    return json_decode($result,true);
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+        curl_close($ch);
+        //Parse the response to an associative array
+        return json_decode($result,true);
 }
 
 function getExperimentFieldsTest($exp){
-	//The target for this test
-	$target = "localhost/ws/api.php?method=getExperimentFields";
-
-	//Curl crap that will mostly stay the same
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $target);
-	curl_setopt($ch, CURLOPT_HEADER, false);
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-		'experiment' => $exp,
-		)); 
-
-	//Run curl to get the response
-	$result = curl_exec($ch);
-	//Close curl
-	curl_close($ch);
-	//Parse the response to an associative array
-	return json_decode($result,true);
+    //The target for this test
+    $target = "localhost/ws/api.php?method=getExperimentFields";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'experiment' => $exp,
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+        curl_close($ch);
+        //Parse the response to an associative array
+        return json_decode($result,true);
 } 
 
 function getExperimentVisualizationsTest($exp){
-	//The target for this test
-	$target = "localhost/ws/api.php?method=getExperimentVisualizations";
-
-	//Curl crap that will mostly stay the same
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $target);
-	curl_setopt($ch, CURLOPT_HEADER, false);
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-		'experiment' => $exp,
-		)); 
-
-	//Run curl to get the response
-	$result = curl_exec($ch);
-	//Close curl
-	curl_close($ch);
-	//Parse the response to an associative array
-	return json_decode($result,true);	
+    //The target for this test
+    $target = "localhost/ws/api.php?method=getExperimentVisualizations";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'experiment' => $exp,
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+        curl_close($ch);
+        //Parse the response to an associative array
+        return json_decode($result,true);	
 }
 
 function getExperimentTagsTest($exp){
-	//The target for this test
-	$target = "localhost/ws/api.php?method=getExperimentTags";
-
-	//Curl crap that will mostly stay the same
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $target);
-	curl_setopt($ch, CURLOPT_HEADER, false);
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-		'experiment' => $exp,
-		)); 
-
-	//Run curl to get the response
-	$result = curl_exec($ch);
-	//Close curl
-	curl_close($ch);
-	//Parse the response to an associative array
-	return json_decode($result,true);	
+    //The target for this test
+    $target = "localhost/ws/api.php?method=getExperimentTags";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'experiment' => $exp,
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+        curl_close($ch);
+        //Parse the response to an associative array
+        return json_decode($result,true);	
 }
 
 function getExperimentVideosTest($exp){
-	//The target for this test
-	$target = "localhost/ws/api.php?method=getExperimentVideos";
-
-	//Curl crap that will mostly stay the same
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $target);
-	curl_setopt($ch, CURLOPT_HEADER, false);
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-		'experiment' => $exp,
-		)); 
-
-	//Run curl to get the response
-	$result = curl_exec($ch);
-	//Close curl
-	curl_close($ch);
-	//Parse the response to an associative array
-	return json_decode($result,true);	
+    //The target for this test
+    $target = "localhost/ws/api.php?method=getExperimentVideos";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'experiment' => $exp,
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+        curl_close($ch);
+        //Parse the response to an associative array
+        return json_decode($result,true);	
 }
 
 function getExperimentImagesTest($exp){
-	//The target for this test
-	$target = "localhost/ws/api.php?method=getExperimentImages";
-
-	//Curl crap that will mostly stay the same
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $target);
-	curl_setopt($ch, CURLOPT_HEADER, false);
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-		'experiment' => $exp,
-		)); 
-
-	//Run curl to get the response
-	$result = curl_exec($ch);
-	//Close curl
-	curl_close($ch);
-	//Parse the response to an associative array
-	return json_decode($result,true);	
+    //The target for this test
+    $target = "localhost/ws/api.php?method=getExperimentImages";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'experiment' => $exp,
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+        curl_close($ch);
+        //Parse the response to an associative array
+        return json_decode($result,true);	
 }
 
 //--------------------------------------------------------------------------------------------------------------------
 //Initialize
-echo "<h2><u>Initalization</u></h2>";
+echo "<h1>Initalization</h1>";
 //setting up closed and open experiments
-echo "<b>Initializing database....</b><br>";
+echo "<h2>Initializing database....</h2>";
 if(initialize()){
-	echo "Initialization completed!<br>";	
+    echo "<div class='success'>SUCCESS</div>, Initialization completed!<br>";	
 } else {
-	echo "Initialization failed!<br>";
+    echo "<div class='failure'>FAILURE</div>, Initialization failed!<br>";
 }
 echo "<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Login Test
-echo "<h2><u>Login Test</u></h2>";
+echo "<h1>Login Test</h1>";
 //Correct user/pass
-echo "<b>Testing login with correct username and password....</b><br>";
+echo "<h2>Testing login with correct username and password....</h2>";
 
 $login_response = loginTest('james.dalphond@gmail.com','password');
 
 if ($login_response['status'] == 200) {
-    echo "SUCCESS, Successful login. UID: ";
+    echo "<div class='success'>SUCCESS</div>, Successful login. UID: ";
     echo "<a href=\"http://localhost/profile.php?id=" . $login_response['data']['uid'] ."\">" . $login_response['data']['uid'] . "</a>";
     echo ", Session Key: " . $login_response['data']['session'] . '<br>';
     $session_key = $login_response['data']['session'];
 } else {
-    echo "FAILURE, Unsuccessful login. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Unsuccessful login. JSON:";
     print_r($login_response);
     echo "<br>";
 }
@@ -294,18 +296,18 @@ if ($login_response['status'] == 200) {
 echo '<br>';
 
 //Incorrect user/pass
-echo "<b>Testing login with incorrect username and password....</b><br>";
+echo "<h2>Testing login with incorrect username and password....</h2>";
 
 $login_response = loginTest('sor','');
 
 if ($login_response['status'] == 600) {
-    echo "SUCCESS, Unsuccessful login.<br>";
+    echo "<div class='success'>SUCCESS</div>, Unsuccessful login.<br>";
 } elseif ($login_response['status'] == 200) {
-    echo "FAILURE, Successful login. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Successful login. JSON:";
     print_r($login_response);
     echo "<br>";
 } else {
-    echo "FAILURE, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
     print_r($login_response);
     echo "<br>";
 }
@@ -314,24 +316,24 @@ echo '<hr>';
 
 //--------------------------------------------------------------------------------------------------------------------
 //Create Session Test
-echo "<h2><u>Create Session Test</u></h2>";
+echo "<h1>Create Session Test</h1>";
 
 //Session on an open experiment
-echo "<b>Trying to create a session on an open experiment....</b><br>";
+echo "<h2>Trying to create a session on an open experiment....</h2>";
 
 $exp = 1;
 $createSession_response = createSessionTest($exp);
 
 if ($createSession_response['status'] == 200 ){
     $session_id = $createSession_response['data']['sessionId'];
-    echo "SUCCESS, Successfully created a session on an open experiment. ";
+    echo "<div class='success'>SUCCESS</div>, Successfully created a session on an open experiment. ";
     echo "Exp: ";
     echo "<a href=\"http://localhost/experiment.php?id=" . $exp ."\">" . $exp . "</a>";
     echo ", SessionID: ";
     echo "<a href=\"http://localhost/newvis.php?sessions=" . $session_id  ."\">" . $session_id . "</a>";
     echo "<br>";
 } else {
-    echo "FAILURE, Could not create session on open experiment. JSON: ";
+    echo "<div class='failure'>FAILURE</div>, Could not create session on open experiment. JSON: ";
     print_r($createSession_response);
     echo "<br>";
 }
@@ -341,22 +343,22 @@ echo "<br>";
 
 
 //Session on a closed experiment
-echo "<b>Trying to create a session(s) on a closed experiment....</b><br>";
+echo "<h2>Trying to create a session(s) on a closed experiment....</h2>";
 
 $exp = 2;
 $createSession_response = createSessionTest($exp);
 
 if ($createSession_response['status'] == 400) {
-    echo "SUCCESS, Unable to create a session on a closed experiment.<br>";
+    echo "<div class='success'>SUCCESS</div>, Unable to create a session on a closed experiment.<br>";
 } elseif ($createSession_response['status'] == 200) {
     $session_id = $createSession_response['data']['sessionId'];
-    echo "FAILURE, Created a session on a closed experiment. Exp: ";
+    echo "<div class='failure'>FAILURE</div>, Created a session on a closed experiment. Exp: ";
     echo "<a href=\"http://localhost/experiment.php?id=" . $exp ."\">" . $exp . "</a>, SessionID: ";
     echo "<a href=\"http://localhost/newvis.php?sessions=" . $session_id  ."\">" . $session_id . "</a>.  JSON: ";
     print_r($createSession_response);
     echo "<br>";
 } else {
-    echo "FAILURE, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
     print_r($login_response);
     echo "<br>";
 }
@@ -367,17 +369,17 @@ echo "<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Get Sessions Test
-echo "<h2><u>Get Session Test</u></h2>";
+echo "<h1>Get Session Test</h1>";
 //Verifies that we correctly got the session(s)
-echo "<b>Tests that we correctly got the session(s)....</b><br>";
+echo "<h2>Tests that we correctly got the session(s)....</h2>";
 
 $exp = 1;
 $getSessions_response = getSessionsTest($exp);
 
 if ($getSessions_response['status'] == 200) {
-    echo "SUCCESS, Successfully got session(s).<br>";
+    echo "<div class='success'>SUCCESS</div>, Successfully got session(s).<br>";
 } else {
-    echo "FAILURE, Unable to get session(s). JSON: ";
+    echo "<div class='failure'>FAILURE</div>, Unable to get session(s). JSON: ";
     print_r($getSessions_response);
     echo "<br>";
 }
@@ -387,19 +389,19 @@ echo "<br>";
 
 
 //Verifies that we did not get the session(s).
-echo "<b>Tests that we did not get the session(s) in a non-existent experiment....</b><br>";
+echo "<h2>Tests that we did not get the session(s) in a non-existent experiment....</h2>";
 
 $exp = 0;
 $getSessions_response = getSessionsTest($exp);
 
 if ($getSessions_response['status'] == 600) {
-    echo "SUCCESS, Unable to session(s).<br>";
+    echo "<div class='success'>SUCCESS</div>, Unable to session(s).<br>";
 } elseif ($getSessions_response['status'] == 200) {
-    echo "FAILURE, Successfully got session(s). JSON: ";
+    echo "<div class='failure'>FAILURE</div>, Successfully got session(s). JSON: ";
     print_r($getSessions_response);
     echo "<br>";
 } else {
-    echo "FAILURE, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
     print_r($getSessions_response);
     echo "<br>";
 }
@@ -410,19 +412,19 @@ echo "<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Get Experiment Fields Test
-echo "<h2><u>Get Experient Fields Test</u></h2>";
+echo "<h1>Get Experient Fields Test</h1>";
 //Verfies that the we got experiment fields
-echo "<b>Tests that we got the experiment fields...</b><br>";
+echo "<h2>Tests that we got the experiment fields...</h2>";
 
 $exp = 1;
 $getExperimentFields_response = getExperimentFieldsTest($exp);
 
 if ($getExperimentFields_response['status'] == 200) {
-	echo "SUCCESS, Got experiment fields.<br>";
+    echo "<div class='success'>SUCCESS</div>, Got experiment fields.<br>";
 } else {
-	echo "FAILURE, Unable to get experiment fields. JSON: ";
-	print_r($getExperimentFields_response);
-	echo"<br>";
+    echo "<div class='failure'>FAILURE</div>, Unable to get experiment fields. JSON: ";
+    print_r($getExperimentFields_response);
+    echo"<br>";
 }
 
 
@@ -430,21 +432,21 @@ echo "<br>";
 
 
 //Verifies that we did not get the experiment fields
-echo "<b>Tests that we did not get the experiment fields...</b><br>";
+echo "<h2>Tests that we did not get the experiment fields...</h2>";
 
 $exp = 0;
 $getExperimentFields_response = getExperimentFieldsTest($exp);
 
 if ($getExperimentFields_response['status'] == 600) {
-	echo "SUCCESS, Unable to get experiment fields.<br>";
+    echo "<div class='success'>SUCCESS</div>, Unable to get experiment fields.<br>";
 } elseif ($getExperimentFields_response['status'] == 200) {
-	echo "FAILURE, Got experiment fields. JSON: ";
-	print_r($getExperimentFields_response);
-	echo"<br>";
-} else {
-	echo "FAILURE, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Got experiment fields. JSON: ";
     print_r($getExperimentFields_response);
-	echo"<br>";
+    echo"<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    print_r($getExperimentFields_response);
+    echo"<br>";
 }
 
 echo"<hr>";
@@ -453,19 +455,19 @@ echo"<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Get Experiment Visualizations Test
-echo "<h2><u>Create Session Test</u></h2>";
+echo "<h1>Create Session Test</h1>";
 //Verifies that we got the experiment visualizations
-echo "<b>Tests that we got the experiment visualizations...</b><br>";
+echo "<h2>Tests that we got the experiment visualizations...</h2>";
 
 $exp = 346;
 $getExperimentVisualizations_response = getExperimentVisualizationsTest($exp);
 
 if ($getExperimentVisualizations_response['status'] == 200) {
-	echo "SUCCESS, Got experiment visualizations.<br>";
+    echo "<div class='success'>SUCCESS</div>, Got experiment visualizations.<br>";
 } else {
-	echo "FAILURE, Unable to get experiment visualizations. JSON: ";
-	print_r($getExperimentVisualizations_response);
-	echo"<br>";
+    echo "<div class='failure'>FAILURE</div>, Unable to get experiment visualizations. JSON: ";
+    print_r($getExperimentVisualizations_response);
+    echo"<br>";
 }
 
 
@@ -473,21 +475,21 @@ echo "<br>";
 
 
 //Verifies that we did not get the experiment fields
-echo "<b>Tests that we did not get the experiment visualizations...</b><br>";
+echo "<h2>Tests that we did not get the experiment visualizations...</h2>";
 
 $exp = 0;
 $getExperimentVisualizations_response = getExperimentVisualizationsTest($exp);
 
 if ($getExperimentVisualizations_response['status'] == 600) {
-	echo "SUCCESS, Unable to get experiment visualizations.<br>";
+    echo "<div class='success'>SUCCESS</div>, Unable to get experiment visualizations.<br>";
 } elseif ($getExperimentVisualizations_response['status'] == 200) {
-	echo "FAILURE, Got experiment fields. JSON: ";
-	print_r($getExperimentVisualizations_response);
-	echo"<br>";
-} else {
-	echo "FAILURE, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Got experiment fields. JSON: ";
     print_r($getExperimentVisualizations_response);
-	echo"<br>";
+    echo"<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    print_r($getExperimentVisualizations_response);
+    echo"<br>";
 }
 
 echo"<hr>";
@@ -496,19 +498,19 @@ echo"<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Get Experiment Tags Test
-echo "<h2><u>Get Experiment Tags Test</u></h2>";
+echo "<h1>Get Experiment Tags Test</h1>";
 //Verifies that we got the experiment tags
-echo "<b>Tests that we got the experiment tags...</b><br>";
+echo "<h2>Tests that we got the experiment tags...</h2>";
 
 $exp = 1;
 $getExperimentTags_response = getExperimentTagsTest($exp);
 
 if ($getExperimentTags_response['status'] == 200) {
-	echo "SUCCESS, Got experiment tags.<br>";
+    echo "<div class='success'>SUCCESS</div>, Got experiment tags.<br>";
 } else {
-	echo "FAILURE, Unable to get experiment tags. JSON: ";
-	print_r($getExperimentTags_response);
-	echo"<br>";
+    echo "<div class='failure'>FAILURE</div>, Unable to get experiment tags. JSON: ";
+    print_r($getExperimentTags_response);
+    echo"<br>";
 }
 
 
@@ -516,21 +518,21 @@ echo "<br>";
 
 
 //Verifies that we did not get the experiment tags
-echo "<b>Tests that we did not get the experiment tags...</b><br>";
+echo "<h2>Tests that we did not get the experiment tags...</h2>";
 
 $exp = 0;
 $getExperimentTags_response = getExperimentTagsTest($exp);
 
 if ($getExperimentTags_response['status'] == 600) {
-	echo "SUCCESS, Unable to get experiment tags.<br>";
+    echo "<div class='success'>SUCCESS</div>, Unable to get experiment tags.<br>";
 } elseif ($getExperimentTags_response['status'] == 200) {
-	echo "FAILURE, Got experiment tags. JSON: ";
-	print_r($getExperimentTags_response);
-	echo"<br>";
-} else {
-	echo "FAILURE, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Got experiment tags. JSON: ";
     print_r($getExperimentTags_response);
-	echo"<br>";
+    echo"<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    print_r($getExperimentTags_response);
+    echo"<br>";
 }
 
 echo"<hr>";
@@ -539,19 +541,19 @@ echo"<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Get Experiment Videos Test
-echo "<h2><u>Get Experiment Videos Test</u></h2>";
+echo "<h1>Get Experiment Videos Test</h1>";
 //Verifies that we got the experiment videos
-echo "<b>Tests that we got the experiment videos...</b><br>";
+echo "<h2>Tests that we got the experiment videos...</h2>";
 
 $exp = 183;
 $getExperimentVideos_response = getExperimentVideosTest($exp);
 
 if ($getExperimentVideos_response['status'] == 200) {
-	echo "SUCCESS, Got experiment videos.<br>";
+    echo "<div class='success'>SUCCESS</div>, Got experiment videos.<br>";
 } else {
-	echo "FAILURE, Unable to get experiment videos. JSON: ";
-	print_r($getExperimentVideos_response);
-	echo"<br>";
+    echo "<div class='failure'>FAILURE</div>, Unable to get experiment videos. JSON: ";
+    print_r($getExperimentVideos_response);
+    echo"<br>";
 }
 
 
@@ -559,22 +561,22 @@ echo "<br>";
 
 
 //Verifies that we did not get the experiment videos
-echo "<b>Tests that we did not get the experiment videos...</b><br>";
+echo "<h2>Tests that we did not get the experiment videos...</h2>";
 
 $exp = 0;
 $getExperimentVideos_response = getExperimentVideosTest($exp);
 
 if ($getExperimentVideos_response['status'] == 600) {
-	echo "SUCCESS, Unable to get experiment videos.<br>";
-	} elseif ($getExperimentVideos_response['status'] == 200) {
-		echo "FAILURE, Got experiment videos. JSON: ";
-		print_r($getExperimentVideos_response);
-		echo"<br>";
-	} else {
-		echo "FAILURE, Something unexpected happened. JSON:";
-		print_r($getExperimentVideos_response);
-		echo"<br>";
-	}
+    echo "<div class='success'>SUCCESS</div>, Unable to get experiment videos.<br>";
+} elseif ($getExperimentVideos_response['status'] == 200) {
+    echo "<div class='failure'>FAILURE</div>, Got experiment videos. JSON: ";
+    print_r($getExperimentVideos_response);
+    echo"<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    print_r($getExperimentVideos_response);
+    echo"<br>";
+}
 
 echo"<hr>";
 
@@ -582,19 +584,19 @@ echo"<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Get Experiment Images Test
-echo "<h2><u>Get Experiment Images Test</u></h2>";
+echo "<h1>Get Experiment Images Test</h1>";
 //Verifies that we got the experiment images
-echo "<b>Tests that we got the experiment images...</b><br>";
+echo "<h2>Tests that we got the experiment images...</h2>";
 
 $exp = 183;
 $getExperimentImages_response = getExperimentImagesTest($exp);
 
 if ($getExperimentImages_response['status'] == 200) {
-	echo "SUCCESS, Got experiment images.<br>";
+    echo "<div class='success'>SUCCESS</div>, Got experiment images.<br>";
 } else {
-	echo "FAILURE, Unable to get experiment images. JSON: ";
-	print_r($getExperimentImages_response);
-	echo"<br>";
+    echo "<div class='failure'>FAILURE</div>, Unable to get experiment images. JSON: ";
+    print_r($getExperimentImages_response);
+    echo"<br>";
 }
 
 
@@ -602,22 +604,22 @@ echo "<br>";
 
 
 //Verifies that we did not get the experiment images
-echo "<b>Tests that we did not get the experiment images...</b><br>";
+echo "<h2>Tests that we did not get the experiment images...</h2>";
 
 $exp = 346;
 $getExperimentImages_response = getExperimentImagesTest($exp);
 
 if ($getExperimentImages_response['status'] == 600) {
-	echo "SUCCESS, Unable to get experiment images.<br>";
-	} elseif ($getExperimentImages_response['status'] == 200) {
-		echo "FAILURE, Got experiment images. JSON: ";
-		print_r($getExperimentImages_response);
-		echo"<br>";
-	} else {
-		echo "FAILURE, Something unexpected happened. JSON:";
-		print_r($getExperimentImages_response);
-		echo"<br>";
-	}
+    echo "<div class='success'>SUCCESS</div>, Unable to get experiment images.<br>";
+} elseif ($getExperimentImages_response['status'] == 200) {
+    echo "<div class='failure'>FAILURE</div>, Got experiment images. JSON: ";
+    print_r($getExperimentImages_response);
+    echo"<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    print_r($getExperimentImages_response);
+    echo"<br>";
+}
 
 echo"<hr>";
 
