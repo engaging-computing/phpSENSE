@@ -136,14 +136,20 @@ if(isset($_REQUEST['sessions'])) {
         //Validate Numerics
         foreach ($tmpData as $j=>$dataPoint) {
             foreach ($data->fields as $k=>$field) {
-                if ($field->typeID != 37 && !is_numeric(intval($dataPoint[$k])))
+                if ($field->typeID != 37)
                 {
                     
-                    $tmpData[$j][$k] = null;
+                    $tmpData[$j][$k] = intval($dataPoint[$k]);
+                    
+                    if(!is_numeric(intval($dataPoint[$k]))){
+                    
+                        $tmpData[$j][$k] = null;
+                    
+                    }
                     
                 } else {
                     
-                    $tmpData[$j][$k] = intval($dataPoint[$k]);
+                    
                     
                 }
             }
