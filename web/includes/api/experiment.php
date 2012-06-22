@@ -866,7 +866,7 @@ function theRealDeal($hidden=0,$featured="off",$recommended="off", $tags= null, 
 
 
 //One function to rule them all
-function theRealDeal2($page=1, $limit=10, $hidden=0,$featured="off",$recommended="off", $tags= null, $sort = "recent"){
+function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recommended="off", $tags= null, $sort = "recent"){
     global $db;
 
     $result = array();

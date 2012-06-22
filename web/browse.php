@@ -65,8 +65,8 @@ $recommended = $params['recommended'];
 $sorttype = $params['sorttype'];
 
 if($type=="experiments"){
-    $results = theRealDeal2($page, $limit,0, $featured, $recommended, $query, $sorttype);
-    $count = theRealDeal2(-1, $limit, 0, $featured, $recommended, $query, $sorttype);
+    $results = browseExperiments($page, $limit,0, $featured, $recommended, $query, $sorttype);
+    $count = browseExperiments(-1, $limit, 0, $featured, $recommended, $query, $sorttype);
 } elseif ($type == "people") {
     if($action == "search"){
         $results = searchPeople($query, $page, $limit, $sort);
