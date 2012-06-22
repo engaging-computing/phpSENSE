@@ -28,6 +28,9 @@
 // 3 is a deleted experimetnt
 // 346 has data
 
+//Users:
+// james.dalphond@gmail.com (password) - uid: 5
+
 
 //To do:
 //kc - low - getPeople
@@ -52,6 +55,9 @@ $session_key = null;
 
 //Session id for experiment
 $session_id = null;
+
+//User id for logged in user
+$uid = null;
 
 function initialize(){
     global $db;
@@ -257,6 +263,28 @@ function getExperimentImagesTest($exp){
         return json_decode($result,true);	
 }
 
+function getVisByUserTest($user){
+    //The target for this test
+    $target = "localhost/ws/api.php?method=getVisByUser";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'user' => $user,
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+
+        curl_close($ch);
+        //Parse the response to an associative array
+        return json_decode($result,true);       
+}
 //--------------------------------------------------------------------------------------------------------------------
 //Initialize
 echo "<h1>Initalization</h1>";
@@ -278,12 +306,13 @@ echo "<h2>Testing login with correct username and password....</h2>";
 $login_response = loginTest('james.dalphond@gmail.com','password');
 
 if ($login_response['status'] == 200) {
-    echo "<div class='success'>SUCCESS</div>, Successful login. UID: ";
-    echo "<a href=\"http://localhost/profile.php?id=" . $login_response['data']['uid'] ."\">" . $login_response['data']['uid'] . "</a>";
-    echo ", Session Key: " . $login_response['data']['session'] . '<br>';
+    $uid = $login_response['data']['uid'];
     $session_key = $login_response['data']['session'];
+    echo "<div class='success'>SUCCESS</div>, Successful login. UID: ";
+    echo "<a href=\"http://localhost/profile.php?id=" . $uid ."\">" . $uid . "</a>";
+    echo ", Session Key: " . $session_key . '<br>';
 } else {
-    echo "<div class='failure'>FAILURE</div>, Unsuccessful login. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Unsuccessful login. JSON: ";
     print_r($login_response);
     echo "<br>";
 }
@@ -298,11 +327,11 @@ $login_response = loginTest('sor','');
 if ($login_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unsuccessful login.<br>";
 } elseif ($login_response['status'] == 200) {
-    echo "<div class='failure'>FAILURE</div>, Successful login. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Successful login. JSON: ";
     print_r($login_response);
     echo "<br>";
 } else {
-    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($login_response);
     echo "<br>";
 }
@@ -353,7 +382,7 @@ if ($createSession_response['status'] == 400) {
     print_r($createSession_response);
     echo "<br>";
 } else {
-    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($login_response);
     echo "<br>";
 }
@@ -396,7 +425,7 @@ if ($getSessions_response['status'] == 600) {
     print_r($getSessions_response);
     echo "<br>";
 } else {
-    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getSessions_response);
     echo "<br>";
 }
@@ -439,7 +468,7 @@ if ($getExperimentFields_response['status'] == 600) {
     print_r($getExperimentFields_response);
     echo"<br>";
 } else {
-    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getExperimentFields_response);
     echo"<br>";
 }
@@ -482,7 +511,7 @@ if ($getExperimentVisualizations_response['status'] == 600) {
     print_r($getExperimentVisualizations_response);
     echo"<br>";
 } else {
-    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getExperimentVisualizations_response);
     echo"<br>";
 }
@@ -525,7 +554,7 @@ if ($getExperimentTags_response['status'] == 600) {
     print_r($getExperimentTags_response);
     echo"<br>";
 } else {
-    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getExperimentTags_response);
     echo"<br>";
 }
@@ -535,7 +564,8 @@ echo"<hr>";
 
 
 //--------------------------------------------------------------------------------------------------------------------
-//Get Experiment Videos Test
+//Get Experiment Videos Test;
+
 echo "<h1>Get Experiment Videos Test</h1>";
 //Verifies that we got the experiment videos
 echo "<h2>Tests that we got the experiment videos...</h2>";
@@ -568,7 +598,7 @@ if ($getExperimentVideos_response['status'] == 600) {
     print_r($getExperimentVideos_response);
     echo"<br>";
 } else {
-    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getExperimentVideos_response);
     echo"<br>";
 }
@@ -609,18 +639,34 @@ if ($getExperimentImages_response['status'] == 600) {
 } elseif ($getExperimentImages_response['status'] == 200) {
     echo "<div class='failure'>FAILURE</div>, Got experiment images. JSON: ";
     print_r($getExperimentImages_response);
-    echo"<br>";
+    echo "<br>";
 } else {
-    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getExperimentImages_response);
-    echo"<br>";
+    echo "<br>";
 }
 
-echo"<hr>";
-
+echo "<hr>";
 
 
 //--------------------------------------------------------------------------------------------------------------------
+//Get Visualizations by User
+echo "<h1>Get Visualizations by User</h1>";
+
+echo "<h2>Tests that we can get visualizations by user...</h2>";
+
+$user = 5;
+$getVisByUser_response = getVisByUserTest($user);
+if ($getVisByUser_response['status'] == 200) {
+    echo "<div class='success'>SUCCESS</div>, Able to get visualizations.<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Unable to get visualizations. JSON: ";
+    print_r($getVisByUser_response);
+    echo "<br>";
+}
+
+echo "<hr>";
+
 
 
 ?>
