@@ -98,6 +98,26 @@ if(isset($_GET['action'])) {
             echo "worked!";
             break;
 
+        //Promote an experiment as iSENSE recommended.
+        case "recommend":
+            $user  = $session->getUser();
+            $owner = getExperimentOwner($_GET['id']);
+            if($user['administrator'] || $user['user_id'] == $owner) {
+                recommendExperiment($_GET['id']);
+            }
+            echo "worked!";
+            break;
+            
+        //Demote an experiment from iSENSE recommended status.
+        case "unrecommend":
+            $user  = $session->getUser();
+            $owner = getExperimentOwner($_GET['id']);
+            if($user['administrator'] || $user['user_id'] == $owner) {
+                unrecommendExperiment($_GET['id']);
+            }
+            echo "worked!";
+            break;
+            
         case "changeimage":
 
             $user  = $session->getUser();
