@@ -161,7 +161,7 @@
 												<td rowspan="4"><input type="checkbox" name="sessions" value="{ $session.session_id }" { if $i == 0 }checked{/if}></td>
 											</tr>
 											<tr >
-												<td rowspan="4" width="34px"><img src="picture.php?id={ $session.owner_id }&h=32&w=32" height="32px" width="32px"></td>
+												<td rowspan="4" width="34px"><img src={ $session.owner_avatar }&h=32&w=32" height="32px" width="32px"></td>
 											</tr>
 											<tr>
 												<td valign="top"><a href="profile.php?id={ $session.owner_id }">{ $session.firstname } { $session.lastname }</a>
