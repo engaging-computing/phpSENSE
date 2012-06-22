@@ -894,25 +894,33 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
         if($tags !=null){
             $tags = explode(" ", $tags);
         }
+
+        if(count($tags)> 1){
         
-        for($i=0;$i<count($tags);$i++){
-        
-            if($i == 0){
-                $sql .= " AND ((tagIndex.value like '%{$tags[$i]}%'
-                        AND tagIndex.tag_id = tagExperimentMap.tag_id
-                        AND experiments.experiment_id = tagExperimentMap.experiment_id
-                        AND tagIndex.weight=1)";
-            } elseif($i!=0 && $i<count($tags)-1) {
-                $sql .= " OR (tagIndex.value like '%{$tags[$i]}%'
-                        AND tagIndex.tag_id = tagExperimentMap.tag_id
-                        AND experiments.experiment_id = tagExperimentMap.experiment_id
-                        AND tagIndex.weight=1)";
-            } else {
-                $sql .= " OR (tagIndex.value like '%{$tags[$i]}%'
-                        AND tagIndex.tag_id = tagExperimentMap.tag_id
-                        AND experiments.experiment_id = tagExperimentMap.experiment_id
-                        AND tagIndex.weight=1))";
+            for($i=0;$i<count($tags);$i++){
+
+                if($i == 0){
+                    $sql .= " AND ((tagIndex.value like '%{$tags[$i]}%'
+                    AND tagIndex.tag_id = tagExperimentMap.tag_id
+                    AND experiments.experiment_id = tagExperimentMap.experiment_id
+                    AND tagIndex.weight=1)";
+                } elseif($i!=0 && $i<count($tags)-1) {
+                    $sql .= " OR (tagIndex.value like '%{$tags[$i]}%'
+                    AND tagIndex.tag_id = tagExperimentMap.tag_id
+                    AND experiments.experiment_id = tagExperimentMap.experiment_id
+                    AND tagIndex.weight=1)";
+                } else {
+                    $sql .= " OR (tagIndex.value like '%{$tags[$i]}%'
+                    AND tagIndex.tag_id = tagExperimentMap.tag_id
+                    AND experiments.experiment_id = tagExperimentMap.experiment_id
+                    AND tagIndex.weight=1))";
+                }
             }
+        } else {
+            $sql .= " AND (tagIndex.value like '%{$tags[$i]}%'
+                    AND tagIndex.tag_id = tagExperimentMap.tag_id
+                    AND experiments.experiment_id = tagExperimentMap.experiment_id
+                    AND tagIndex.weight=1)";
         }
     }
     
@@ -925,7 +933,7 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
     }
 
     $sql .= " DESC ";
-            
+
     $result = $db->query($sql);
 
     $keys = array();
