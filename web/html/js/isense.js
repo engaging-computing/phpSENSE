@@ -29,6 +29,8 @@ $(document).ready(function(){
         });
     }
 
+
+    
     if($('img.selectexpimage').length > 0){
         $('img.selectexpimage').click(function(){
             $('img.selectexpimage').css( 'border', '0px none #fff' );
@@ -156,6 +158,28 @@ $(document).ready(function(){
                     $('#close_loading_msg').hide();
                     $('#contribute').show();
                   
+                });
+            }
+        });
+    }
+
+    if($('#recommend_experiment').length>0){
+        $('#recommend_experiment').click(function(){
+            $('#recommend_experiment').hide();
+            $('#recommend_loading_msg').show();
+
+            if($(this).attr("checked")) {
+                // Recommend the experiment
+                $.get('actions/experiments.php', { action:"recommend", id:$(this).val() }, function(data){
+                    $('#recommend_experiment').show();
+                    $('#recommend_loading_msg').hide();
+                });
+            }
+            else {
+                // Unrecommend the experiment
+                $.get('actions/experiments.php', { action:"unrecommend", id:$(this).val() }, function(data){
+                    $('#recommend_experiment').show();
+                    $('#recommend_loading_msg').hide();
                 });
             }
         });
