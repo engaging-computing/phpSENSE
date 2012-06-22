@@ -15,20 +15,20 @@
 
 
 
-//NOTES:
+//HTTP codes
 // 200 - OK
 // 400 - Bad Request
 // 600 - Bad Reqest/Doesn't Exist
 
+//Experiments:
 // 0 has no data
 // 1 is an open experiment
 // 2 is a closed experiment
-//346 has data
+// 3 is a deleted experimetnt
+// 346 has data
 
 
-
-
-//Things we have left to do:
+//To do:
 // getPeople
 // getSessions (deal with limits)
 // sessiondata
@@ -43,13 +43,11 @@
 // getDataSince
 // uploadImageToExperiment
 // uploadImageToSession
-// whatsMyIp
-// getFileChecksum
+// whatsMyIp --dont need to do
+// getFileChecksum --dont need to do
 
 
 
-
-//Needed to initialize experiments
 
 require_once('../includes/config.php');
 
@@ -60,22 +58,19 @@ $session_key = null;
 $session_id = null;
 
 function initialize(){
-	global $db;
-	
-	
-	echo "Setting experiment 1 to open..<br>";
-	$result = $db->query('UPDATE experiments SET closed=0 WHERE experiment_id=1');
-	
-	if($result==1){
-		echo "Setting experiment 2 to closed..<br>";
-		$result2 = $db->query('UPDATE experiments SET closed=1 WHERE experiment_id=2');
-		if($result2 == 1){
-			return true;
-		}
-	} else {
-		return false;
-	}
-	
+    global $db;
+    echo "Setting experiment 1 to open.<br>";
+    $result = $db->query('UPDATE experiments SET closed=0 WHERE experiment_id=1');
+
+    if($result==1) {
+        echo "Setting experiment 2 to closed.<br>";
+        $result2 = $db->query('UPDATE experiments SET closed=1 WHERE experiment_id=2');
+        if($result2 == 1){
+            return true;
+        }
+    } else {
+        return false;
+    }
 }
 
 function loginTest($user,$pass){
@@ -155,7 +150,7 @@ function getSessionsTest($exp){
     return json_decode($result,true);
 }
 
-function getExperimentFields($exp){
+function getExperimentFieldsTest($exp){
 	//The target for this test
 	$target = "localhost/ws/api.php?method=getExperimentFields";
 
@@ -177,7 +172,7 @@ function getExperimentFields($exp){
 	return json_decode($result,true);
 } 
 
-function getExperimentVisualizations($exp){
+function getExperimentVisualizationsTest($exp){
 	//The target for this test
 	$target = "localhost/ws/api.php?method=getExperimentVisualizations";
 
@@ -199,7 +194,7 @@ function getExperimentVisualizations($exp){
 	return json_decode($result,true);	
 }
 
-function getExperimentTags($exp){
+function getExperimentTagsTest($exp){
 	//The target for this test
 	$target = "localhost/ws/api.php?method=getExperimentTags";
 
@@ -221,7 +216,7 @@ function getExperimentTags($exp){
 	return json_decode($result,true);	
 }
 
-function getExperimentVideos($exp){
+function getExperimentVideosTest($exp){
 	//The target for this test
 	$target = "localhost/ws/api.php?method=getExperimentVideos";
 
@@ -243,7 +238,7 @@ function getExperimentVideos($exp){
 	return json_decode($result,true);	
 }
 
-function getExperimentImages($exp){
+function getExperimentImagesTest($exp){
 	//The target for this test
 	$target = "localhost/ws/api.php?method=getExperimentImages";
 
@@ -267,19 +262,19 @@ function getExperimentImages($exp){
 
 //--------------------------------------------------------------------------------------------------------------------
 //Initialize
-
-echo "<b>Initializing database...</b><br>";
+echo "<h2><u>Initalization</u></h2>";
+//setting up closed and open experiments
+echo "<b>Initializing database....</b><br>";
 if(initialize()){
-	echo "Initialization completed<br><br><br>";	
+	echo "Initialization completed!<br>";	
 } else {
-	echo "Initialization failed<br><br><br>";
+	echo "Initialization failed!<br>";
 }
-
-
+echo "<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Login Test
-
+echo "<h2><u>Login Test</u></h2>";
 //Correct user/pass
 echo "<b>Testing login with correct username and password....</b><br>";
 
@@ -296,9 +291,7 @@ if ($login_response['status'] == 200) {
     echo "<br>";
 }
 
-
 echo '<br>';
-
 
 //Incorrect user/pass
 echo "<b>Testing login with incorrect username and password....</b><br>";
@@ -319,10 +312,9 @@ if ($login_response['status'] == 600) {
 
 echo '<hr>';
 
-
-
 //--------------------------------------------------------------------------------------------------------------------
 //Create Session Test
+echo "<h2><u>Create Session Test</u></h2>";
 
 //Session on an open experiment
 echo "<b>Trying to create a session on an open experiment....</b><br>";
@@ -375,7 +367,7 @@ echo "<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Get Sessions Test
-
+echo "<h2><u>Get Session Test</u></h2>";
 //Verifies that we correctly got the session(s)
 echo "<b>Tests that we correctly got the session(s)....</b><br>";
 
@@ -411,19 +403,19 @@ if ($getSessions_response['status'] == 600) {
     print_r($getSessions_response);
     echo "<br>";
 }
-
+echo "More tests to come!";
 echo "<hr>";
 
 
 
 //--------------------------------------------------------------------------------------------------------------------
 //Get Experiment Fields Test
-
+echo "<h2><u>Get Experient Fields Test</u></h2>";
 //Verfies that the we got experiment fields
 echo "<b>Tests that we got the experiment fields...</b><br>";
 
 $exp = 1;
-$getExperimentFields_response = getExperimentFields($exp);
+$getExperimentFields_response = getExperimentFieldsTest($exp);
 
 if ($getExperimentFields_response['status'] == 200) {
 	echo "SUCCESS, Got experiment fields.<br>";
@@ -441,7 +433,7 @@ echo "<br>";
 echo "<b>Tests that we did not get the experiment fields...</b><br>";
 
 $exp = 0;
-$getExperimentFields_response = getExperimentFields($exp);
+$getExperimentFields_response = getExperimentFieldsTest($exp);
 
 if ($getExperimentFields_response['status'] == 600) {
 	echo "SUCCESS, Unable to get experiment fields.<br>";
@@ -461,12 +453,12 @@ echo"<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Get Experiment Visualizations Test
-
+echo "<h2><u>Create Session Test</u></h2>";
 //Verifies that we got the experiment visualizations
 echo "<b>Tests that we got the experiment visualizations...</b><br>";
 
 $exp = 346;
-$getExperimentVisualizations_response = getExperimentVisualizations($exp);
+$getExperimentVisualizations_response = getExperimentVisualizationsTest($exp);
 
 if ($getExperimentVisualizations_response['status'] == 200) {
 	echo "SUCCESS, Got experiment visualizations.<br>";
@@ -484,7 +476,7 @@ echo "<br>";
 echo "<b>Tests that we did not get the experiment visualizations...</b><br>";
 
 $exp = 0;
-$getExperimentVisualizations_response = getExperimentVisualizations($exp);
+$getExperimentVisualizations_response = getExperimentVisualizationsTest($exp);
 
 if ($getExperimentVisualizations_response['status'] == 600) {
 	echo "SUCCESS, Unable to get experiment visualizations.<br>";
@@ -504,12 +496,12 @@ echo"<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Get Experiment Tags Test
-
+echo "<h2><u>Get Experiment Tags Test</u></h2>";
 //Verifies that we got the experiment tags
 echo "<b>Tests that we got the experiment tags...</b><br>";
 
 $exp = 1;
-$getExperimentTags_response = getExperimentTags($exp);
+$getExperimentTags_response = getExperimentTagsTest($exp);
 
 if ($getExperimentTags_response['status'] == 200) {
 	echo "SUCCESS, Got experiment tags.<br>";
@@ -527,7 +519,7 @@ echo "<br>";
 echo "<b>Tests that we did not get the experiment tags...</b><br>";
 
 $exp = 0;
-$getExperimentTags_response = getExperimentTags($exp);
+$getExperimentTags_response = getExperimentTagsTest($exp);
 
 if ($getExperimentTags_response['status'] == 600) {
 	echo "SUCCESS, Unable to get experiment tags.<br>";
@@ -547,12 +539,12 @@ echo"<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Get Experiment Videos Test
-
+echo "<h2><u>Get Experiment Videos Test</u></h2>";
 //Verifies that we got the experiment videos
 echo "<b>Tests that we got the experiment videos...</b><br>";
 
 $exp = 183;
-$getExperimentVideos_response = getExperimentVideos($exp);
+$getExperimentVideos_response = getExperimentVideosTest($exp);
 
 if ($getExperimentVideos_response['status'] == 200) {
 	echo "SUCCESS, Got experiment videos.<br>";
@@ -570,7 +562,7 @@ echo "<br>";
 echo "<b>Tests that we did not get the experiment videos...</b><br>";
 
 $exp = 0;
-$getExperimentVideos_response = getExperimentVideos($exp);
+$getExperimentVideos_response = getExperimentVideosTest($exp);
 
 if ($getExperimentVideos_response['status'] == 600) {
 	echo "SUCCESS, Unable to get experiment videos.<br>";
@@ -590,12 +582,12 @@ echo"<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 //Get Experiment Images Test
-
+echo "<h2><u>Get Experiment Images Test</u></h2>";
 //Verifies that we got the experiment images
 echo "<b>Tests that we got the experiment images...</b><br>";
 
 $exp = 183;
-$getExperimentImages_response = getExperimentImages($exp);
+$getExperimentImages_response = getExperimentImagesTest($exp);
 
 if ($getExperimentImages_response['status'] == 200) {
 	echo "SUCCESS, Got experiment images.<br>";
@@ -613,7 +605,7 @@ echo "<br>";
 echo "<b>Tests that we did not get the experiment images...</b><br>";
 
 $exp = 346;
-$getExperimentImages_response = getExperimentImages($exp);
+$getExperimentImages_response = getExperimentImagesTest($exp);
 
 if ($getExperimentImages_response['status'] == 600) {
 	echo "SUCCESS, Unable to get experiment images.<br>";
