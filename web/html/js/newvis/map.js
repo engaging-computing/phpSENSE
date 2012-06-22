@@ -48,7 +48,7 @@ var map = new function Map() {
             
             var title = data.fields[field].name;
             var type_id = data.fields[field].type_id;
-            var val = data.avgField(title,ses);
+            var val = data.sessions[ses].getMeanVal(field);
             
             /* Do not display time or custom*/
             if(type_id != 7 && type_id != 22){
@@ -61,9 +61,6 @@ var map = new function Map() {
                     contentString += "<tr><td><b>" + title + ":  </b></td><td>" + val + " (" + unit +")</td></tr>";
                 }
             }
-            
-            
-            
         }
         
         contentString += "</table></div>";
