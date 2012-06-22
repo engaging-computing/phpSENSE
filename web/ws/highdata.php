@@ -149,7 +149,7 @@ if(isset($_REQUEST['sessions'])) {
                     
                 } else {
                     
-                    
+                    $tmpData[$j][$k] = $dataPoint[$k];
                     
                 }
             }
