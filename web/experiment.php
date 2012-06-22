@@ -88,6 +88,12 @@ if(isset($_GET['id'])) {
 		$smarty->assign('expimages',	$images);
 		$smarty->assign('videos', 	$videos);
 		$smarty->assign('collabs', 	$collabs);
+		
+		//Get user avatars
+                $userAvatars = array();
+                foreach ($sessions as $index=>$ses) {
+                    $sessions[$index]['owner_avatar'] = getUserAvatar($ses['owner_id'], 32);
+                }
 		$smarty->assign('sessions', 	$sessions);
 		
 		$votes = ($meta['rating_votes'] == 0) ? 1 : $meta['rating_votes'];
