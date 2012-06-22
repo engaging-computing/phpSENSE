@@ -67,18 +67,6 @@
 										</div>
 										<div class="description" >{ $result.meta.description|truncate:180:"...":true}</div>
 										<div class="sub">
-                                            {if $user.administrator == 1}
-                                                <span class="loading_msg" style="display:none;">Loading...</span>
-                                                <span style="color:#444">Feature:</span> <input type="checkbox" class="feature_vis" value="{$result.meta.vis_id}" {if $result.meta.featured == 1}checked{/if} />
-                                                {if $result.meta.featured == 1}
-                                                    <a style="display:inline" id="pickimage_{ $result.meta.vis_id }" href="upload-pictures.php?id={ $result.meta.vis_id }">Pick Image</a>
-                                                {else}
-                                                    <a style="display:none;" id="pickimage_{ $result.meta.vis_id }" href="upload-pictures.php?id={ $result.meta.vis_id }">Pick Image</a>
-                                                {/if}
-                                                <span style="color:#444">Hidden:</span> <input type="checkbox" class="hide_vis" value="{$result.meta.vis_id}" {if $result.meta.hidden == 1} checked {/if} />
-
-
-                                            {/if}
                                             <span> Last Modified { $result.meta.timecreated|date_diff } </span>
 										</div>
 									</td>
@@ -141,17 +129,6 @@
 										    <a class="session_count">{ $result.session_count }</a>
 										    <a class="contrib_count">{ $result.contrib_count }</a>
 										    <a class="rating_browse">{ $result.meta.rating_comp|substr:0:3 }</a>
-										    {if $user.administrator == 1}
-                                                <span class="loading_msg" style="display:none;">Loading...</span>
-                                                <span style="color:#444">Feature:</span> <input type="checkbox" class="feature_experiment" value="{$result.meta.experiment_id}" {if $result.meta.featured == 1}checked{/if} />
-                                                {if $result.meta.featured == 1}
-                                                    <a style="display:inline" id="pickimage_{ $result.meta.experiment_id }" href="upload-pictures.php?id={ $result.meta.experiment_id }">Pick Image</a>
-                                                {else}
-                                                    <a style="display:none;" id="pickimage_{ $result.meta.experiment_id }" href="upload-pictures.php?id={ $result.meta.experiment_id }">Pick Image</a>
-                                                {/if}
-                                                <span style="color:#444">Hidden:</span> <input type="checkbox" class="hide_experiment" id="{$result.meta.experiment_id}" {if $result.meta.hidden == 1} checked {/if} />
-
-                                            {/if}
 											<span>Last Modified { $result.meta.timemodified|date_diff }</span>
 											{ if $result.meta.hidden == 1 }
 												<br><span>This experiment is hidden</span>
