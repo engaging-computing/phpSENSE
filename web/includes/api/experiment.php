@@ -355,7 +355,7 @@ function packageBrowseExperimentResults($results, $page = 1, $limit = 10, $overr
 	}
 }
 
-function browseExperimentsByRecent($page = 1, $limit = 10, $override = false) {
+function browseExperimentsByRecent($page = 1, $limit = 10, $recommended = "off", $featured= false, $override = false) {
 	global $db;
 	
 	$sqlCmd = "SELECT 	experiments.*, 
@@ -365,8 +365,10 @@ function browseExperimentsByRecent($page = 1, $limit = 10, $override = false) {
 						FROM experiments 
 						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
 						WHERE experiments.hidden = 0
-						AND experiments.activity = 0
-						ORDER BY experiments.timemodified DESC";
+						AND experiments.activity = 0";
+
+
+	$sqlCmd.= " ORDER BY experiments.timemodified DESC";
 	
 	$output = $db->query($sqlCmd);
 
@@ -764,6 +766,184 @@ function unrecommendExperiment($eid){
     $output = $db->query($sql);
 
     return true;
+}
+
+//One function to rule them all
+function theRealDeal($hidden=0,$featured="off",$recommended="off", $tags= null, $sort = "recent"){
+    global $db;
+    
+    $result = array();
+
+    //If there are tags we want to search by each of them. 
+    if($tags !=null){
+        $tags = explode(" ", $tags);
+    }
+    
+    if($tags){
+    
+        foreach($tags as $tag){
+            $sql = "SELECT DISTINCT *
+                    FROM experiments ";
+
+            if($tags){
+                $sql .= ", tagExperimentMap, tagIndex";
+            }
+
+            $sql .= " WHERE experiments.hidden = {$hidden} ";
+
+            if($featured == 'on'){
+                $sql .= " AND experiments.featured=1 ";
+            }
+
+            if($recommended == 'on'){
+                $sql .= " AND experiments.recommended=1 ";
+            }
+
+            if($tag){
+                $sql .= " AND tagIndex.value like '%{$tag}%'
+                        AND tagIndex.tag_id = tagExperimentMap.tag_id
+                        AND experiments.experiment_id = tagExperimentMap.experiment_id
+                        AND tagIndex.weight=1 ";
+            }
+
+            if($sort == "rating"){
+                $sql .= " ORDER BY experiments.rating";
+            } elseif ($sort == "activity"){
+                $sql .= " ORDER BY experiments.timemodified";
+            } else {
+                $sql .= " ORDER BY experiments.timecreated";
+            }
+
+            $sql .= " DESC ";
+  
+            $result = array_merge($result,$db->query($sql));
+        }
+
+     
+    } else {
+
+       $sql = "SELECT DISTINCT *
+                FROM experiments ";
+                    
+        $sql .= " WHERE experiments.hidden = {$hidden} ";
+
+        if($featured == 'on'){
+            $sql .= " AND experiments.featured=1 ";
+        }
+
+        if($recommended == 'on'){
+            $sql .= " AND experiments.recommended=1 ";
+        }
+
+        if($sort == "rating"){
+            $sql .= " ORDER BY experiments.rating";
+        } elseif ($sort == "activity"){
+            $sql .= " ORDER BY experiments.timemodified";
+        } else {
+            $sql .= " ORDER BY experiments.timecreated";
+        }
+
+        $sql .= " DESC ";
+        $result = array_merge($result,$db->query($sql));
+    }
+    
+    $keys = array();
+    $tmp = array();
+    for($i = 0; $i < count($result); $i++) {
+        $tmpKey = $result[$i]['experiment_id'];
+        if (in_array($tmpKey,$keys)){
+        } else {
+            echo $tmpKey;
+            $keys[count($keys)] = $tmpKey;
+            $tmp[count($tmp)] = $result[$i];
+        }
+    }
+
+    $result = $tmp;
+    
+    return $result;
+}
+
+
+//One function to rule them all
+function theRealDeal2($page=1, $limit=10, $hidden=0,$featured="off",$recommended="off", $tags= null, $sort = "recent"){
+    global $db;
+
+    $result = array();
+
+    $sql = "SELECT DISTINCT *
+            FROM experiments ";
+
+    if($tags){
+        $sql .= ", tagExperimentMap, tagIndex";
+    }
+
+    $sql .= " WHERE experiments.hidden = {$hidden} ";
+
+    if($featured == 'on'){
+        $sql .= " AND experiments.featured=1 ";
+    }
+
+    if($recommended == 'on'){
+        $sql .= " AND experiments.recommended=1";
+    }
+
+    if($tags){
+        
+        //If there are tags we want to search by each of them.
+        if($tags !=null){
+            $tags = explode(" ", $tags);
+        }
+        
+        for($i=0;$i<count($tags);$i++){
+        
+            if($i == 0){
+                $sql .= " AND ((tagIndex.value like '%{$tags[$i]}%'
+                        AND tagIndex.tag_id = tagExperimentMap.tag_id
+                        AND experiments.experiment_id = tagExperimentMap.experiment_id
+                        AND tagIndex.weight=1)";
+            } elseif($i!=0 && $i<count($tags)-1) {
+                $sql .= " OR (tagIndex.value like '%{$tags[$i]}%'
+                        AND tagIndex.tag_id = tagExperimentMap.tag_id
+                        AND experiments.experiment_id = tagExperimentMap.experiment_id
+                        AND tagIndex.weight=1)";
+            } else {
+                $sql .= " OR (tagIndex.value like '%{$tags[$i]}%'
+                        AND tagIndex.tag_id = tagExperimentMap.tag_id
+                        AND experiments.experiment_id = tagExperimentMap.experiment_id
+                        AND tagIndex.weight=1))";
+            }
+        }
+    }
+    
+    if($sort == "rating"){
+        $sql .= " ORDER BY experiments.rating";
+    } elseif ($sort == "activity"){
+        $sql .= " ORDER BY experiments.timemodified";
+    } else {
+        $sql .= " ORDER BY experiments.timecreated";
+    }
+
+    $sql .= " DESC ";
+            
+    $result = $db->query($sql);
+
+    $keys = array();
+    $tmp = array();
+
+    for($i = 0; $i < count($result); $i++) {
+        $tmpKey = $result[$i]['experiment_id'];
+        if (in_array($tmpKey,$keys)){
+        } else {
+            $keys[count($keys)] = $tmpKey;
+            $tmp[count($tmp)] = $result[$i];
+        }
+    }
+
+    $result = $tmp;
+
+    return packageBrowseExperimentResults($result, $page,$limit,false);
+
 }
 
 ?>

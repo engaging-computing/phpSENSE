@@ -29,6 +29,8 @@ $(document).ready(function(){
         });
     }
 
+
+    
     if($('img.selectexpimage').length > 0){
         $('img.selectexpimage').click(function(){
             $('img.selectexpimage').css( 'border', '0px none #fff' );
