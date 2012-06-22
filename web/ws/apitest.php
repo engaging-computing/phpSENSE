@@ -30,24 +30,19 @@
 
 
 //To do:
-// getPeople
-// getSessions (deal with limits)
-// sessiondata
-// getExperiments (make sure you deal with limits)
-// getUserProfile
-// getExperimentByUser
-// getVisByUser
-// getSessionsByUser
-// getImagesByUser
-// getVideosByUser
-// addSessionData/updateSessionData
-// getDataSince
+//kc - low - getPeople
+//*** - getSessions (deal with limits)
+//*** - getExperiments (make sure you deal with limits)
+//kc - low - getUserProfile
+//kc - low - getExperimentByUser
+//ar - low - getVisByUser
+//ar - low - getSessionsByUser
+//ar - low - getImagesByUser
+//low - getVideosByUser
+//jeremy email - addSessionData/updateSessionData
+//skip for now - getDataSince
 // uploadImageToExperiment
-// uploadImageToSession
-// whatsMyIp --dont need to do
-// getFileChecksum --dont need to do
-
-
+//jermey uses this one - uploadImageToSession
 
 
 require_once('../includes/config.php');
@@ -60,11 +55,11 @@ $session_id = null;
 
 function initialize(){
     global $db;
-    echo "Setting experiment 1 to open.<br>";
+    echo "Setting experiment 1 to open...<br>";
     $result = $db->query('UPDATE experiments SET closed=0 WHERE experiment_id=1');
     
     if($result==1) {
-        echo "Setting experiment 2 to closed.<br>";
+        echo "Setting experiment 2 to closed...<br>";
         $result2 = $db->query('UPDATE experiments SET closed=1 WHERE experiment_id=2');
         if($result2 == 1){
             return true;
