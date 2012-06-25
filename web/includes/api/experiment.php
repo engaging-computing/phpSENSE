@@ -355,7 +355,7 @@ function packageBrowseExperimentResults($results, $page = 1, $limit = 10, $overr
 	}
 }
 
-function browseExperimentsByRecent($page = 1, $limit = 10, $recommended = "off", $featured= false, $override = false) {
+function browseExperimentsByRecent($page = 1, $limit = 10, $override = false) {
 	global $db;
 	
 	$sqlCmd = "SELECT 	experiments.*, 
