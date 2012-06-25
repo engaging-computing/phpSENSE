@@ -7,15 +7,6 @@
 
 <?php
 
-//Changes that I made:
-// Cleaned up code - spacing, spelling, experiment numbers (I tried to stick with using experiments 0, 1, and 2 for the most part- see NOTES)
-// Jim added the initialization function - if you don't  know what it does, you might want to ask him to explain
-// Add testing for getExperimentFields, getExperimentVisualizations, getExperimentTags, getExperimentVideos, and getExperimentImages
-
-
-
-
-
 //HTTP codes
 // 200 - OK
 // 400 - Bad Request
@@ -33,19 +24,49 @@
 
 
 //To do:
-//kc - low - getPeople
+//*** - getPeople
 //*** - getSessions (deal with limits)
 //*** - getExperiments (make sure you deal with limits)
-//kc - low - getUserProfile
-//kc - low - getExperimentByUser
-//ar - low - getVisByUser
-//ar - low - getSessionsByUser
+//DONE! kc - low - getUserProfile
+//DONE! kc - low - getExperimentByUser
+//DONE! ar - low - getVisByUser
+//DONE! ar - low - getSessionsByUser
 //ar - low - getImagesByUser
-//low - getVideosByUser
+//DONE! low - getVideosByUser
 //jeremy email - addSessionData/updateSessionData
 //skip for now - getDataSince
 // uploadImageToExperiment
 //jermey uses this one - uploadImageToSession
+
+
+// login
+
+// getExperiments
+// getPeople
+// getVisualizations
+// getSessions
+
+
+// getExperimentFields
+// getExperimentVisualizations
+// getExperimentTags
+// getExperimentVideos
+// getExperimentImages
+
+// getUserProfile
+// getExperimentByUser
+// getVisByUser
+// getSessionsByUser
+// getImagesByUser
+// getVideosByUser
+
+// createSession
+
+// getDataSince
+
+// uploadImageToExperiment
+// uploadImageToSession
+
 
 
 require_once('../includes/config.php');
@@ -142,7 +163,7 @@ function getSessionsTest($exp){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'experiment' => $exp,
+        'experiment' => $exp
         )); 
         
         //Run curl to get the response
@@ -164,7 +185,7 @@ function getExperimentFieldsTest($exp){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'experiment' => $exp,
+        'experiment' => $exp
         )); 
         
         //Run curl to get the response
@@ -186,7 +207,7 @@ function getExperimentVisualizationsTest($exp){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'experiment' => $exp,
+        'experiment' => $exp
         )); 
         
         //Run curl to get the response
@@ -208,7 +229,7 @@ function getExperimentTagsTest($exp){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'experiment' => $exp,
+        'experiment' => $exp
         )); 
         
         //Run curl to get the response
@@ -230,7 +251,7 @@ function getExperimentVideosTest($exp){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'experiment' => $exp,
+        'experiment' => $exp
         )); 
         
         //Run curl to get the response
@@ -252,7 +273,7 @@ function getExperimentImagesTest($exp){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'experiment' => $exp,
+        'experiment' => $exp
         )); 
         
         //Run curl to get the response
@@ -300,10 +321,10 @@ function getPeopleTest($query)){
         //echo "<br>".$result."<br>";
 //        return json_decode($result,true);
 //}
-/*
-function getUserProfileTest($user){
+
+function getUserProfileTest($id){
     //The target for this test
-    $target =  "localhost/ws/api.php?method=getUserProfileTest";
+    $target =  "localhost/ws/api.php?method=getUserProfile";
     
     //Curl crap that will mostly stay the same
     $ch = curl_init();
@@ -312,7 +333,7 @@ function getUserProfileTest($user){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' = $user;
+        'user' => $id
         ));
         
         //Run curl to get the response
@@ -325,7 +346,6 @@ function getUserProfileTest($user){
         return json_decode($result,true);
     
 }
-*/
 
 function getExperimentByUserTest($id){
     //The target for this test
@@ -338,7 +358,7 @@ function getExperimentByUserTest($id){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' => $id,
+        'user' => $id
         )); 
         
         //Run curl to get the response
@@ -350,7 +370,7 @@ function getExperimentByUserTest($id){
         return json_decode($result,true);
 }
 
-function getVisByUserTest($user){
+function getVisByUserTest($id){
     //The target for this test
     $target = "localhost/ws/api.php?method=getVisByUser";
     
@@ -361,7 +381,7 @@ function getVisByUserTest($user){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' => $user,
+        'user' => $id
         )); 
         
         //Run curl to get the response
@@ -372,9 +392,57 @@ function getVisByUserTest($user){
         //Parse the response to an associative array
         return json_decode($result,true);       
 }
+
+function getVideosByUserTest($id){
+    //The target for this test
+    $target = "localhost/ws/api.php?method=getVideosByUser";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'user' => $id
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+        curl_close($ch);
+        //Parse the response to an associative array
+        //echo "<br>".$result."<br>";
+        return json_decode($result,true);
+}
+
+function getSessionsByUserTest($id){
+    //The target for this test
+    $target = "localhost/ws/api.php?method=getSessionsByUser";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'user' => $id
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+
+        curl_close($ch);
+        //Parse the response to an associative array
+        return json_decode($result,true);       
+}
+
+
 //--------------------------------------------------------------------------------------------------------------------
 //Initialize
-echo "<h1>Initalization</h1>";
+echo "<h1>Initialization</h1>";
 //setting up closed and open experiments
 echo "<h2>Initializing database....</h2>";
 if(initialize()){
@@ -390,7 +458,7 @@ echo "<h1>Login Test</h1>";
 //Correct user/pass
 echo "<h2>Testing login with correct username and password....</h2>";
 
-$login_response = loginTest('james.dalphond@gmail.com','password');
+$login_response = loginTest('sor','sor');
 
 if ($login_response['status'] == 200) {
     $uid = $login_response['data']['uid'];
@@ -424,6 +492,8 @@ if ($login_response['status'] == 600) {
 }
 
 echo '<hr>';
+
+
 
 //--------------------------------------------------------------------------------------------------------------------
 //Create Session Test
@@ -585,7 +655,7 @@ if ($getExperimentVisualizations_response['status'] == 200) {
 echo "<br>";
 
 
-//Verifies that we did not get the experiment fields
+//Verifies that we did not get the experiment visualizations
 echo "<h2>Tests that we did not get the experiment visualizations...</h2>";
 
 $exp = 0;
@@ -764,25 +834,17 @@ if ($getPeople_response['status'] == 200) {
 
 
 //--------------------------------------------------------------------------------------------------------------------
-//Get User Profile Test
-
-// Correctly get the user's profile
-
-
-
-//--------------------------------------------------------------------------------------------------------------------
 // Get Experiment by User Test
-
-// Get experiment from a user that has experiment
+// Get experiment(s) from a user that has experiment(s)
 echo "<h1>Get Experiment by User Test</h1>";
-echo "<h2>Tests that we got an experiment from a user with experiments...</h2>";
+echo "<h2>Tests that we got an experiment(s) from a user with experiment(s)...</h2>";
 
 $id = 5;
 $getExperimentByUser_response = getExperimentByUserTest($id);
 
 if ($getExperimentByUser_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Got experiment from user.<br>";
-} elseif ($getExperimentByUser_response['status'] == 200) {
+} elseif ($getExperimentByUser_response['status'] == 600) {
     echo "<div class='failure'>FAILURE</div>, Did not get experiment from user. JSON: ";
     print_r($getExperimentByUser_response);
     echo"<br>";
@@ -792,16 +854,40 @@ if ($getExperimentByUser_response['status'] == 200) {
     echo"<br>";
 }
 
-echo"<hr>";
+echo"<br>";
+
+//Verifies that we did not get the experiment(s) from a user without experiment(s)
+echo "<h2>Tests that we did not get the experiment(s) from a user without experiments...</h2>";
+
+$id = 95;
+$getExperimentByUser_response = getExperimentByUserTest($id);
+
+if ($getExperimentByUser_response['status'] == 600) {
+    echo "<div class='success'>SUCCESS</div>, Unable to get experiment(s) from user.<br>";
+} elseif ($getExperimentByUser_response['status'] == 200) {
+    echo "<div class='failure'>FAILURE</div>, Got experiment(s) from user. JSON: ";
+    print_r($getExperimentByUser_response);
+    echo "<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
+    print_r($getExperimentByUser_response);
+    echo "<br>";
+}
+
+echo "<hr>";
+
+
 
 //--------------------------------------------------------------------------------------------------------------------
-//Get Visualizations by User
-echo "<h1>Get Visualizations by User</h1>";
+//Get Vis by User
+echo "<h1>Get Vis by User</h1>";
 
+//Verfies we got Vis by user
 echo "<h2>Tests that we can get visualizations by user...</h2>";
 
-$user = 5;
-$getVisByUser_response = getVisByUserTest($user);
+$id = 5;
+$getVisByUser_response = getVisByUserTest($id);
+
 if ($getVisByUser_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Able to get visualizations.<br>";
 } else {
@@ -810,7 +896,162 @@ if ($getVisByUser_response['status'] == 200) {
     echo "<br>";
 }
 
+echo "<br>";
+
+//Verifies that we failed getting Vis by user
+echo "<h2>Tests that we cannot get visualizations by user...</h2>";
+
+$id = -1;
+$getVisByUser_response = getVisByUserTest($id);
+
+if ($getVisByUser_response['status'] == 600) {
+    echo "<div class='success'>SUCCESS</div>, Unable to get vis from user.<br>";
+} elseif ($getVisByUser_response['status'] == 200) {
+    echo "<div class='failure'>FAILURE</div>, Got vis from user. JSON: ";
+    print_r($getVisByUser_response);
+    echo "<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
+    print_r($getVisByUser_response);
+    echo "<br>";
+}
+
 echo "<hr>";
+
+
+
+//--------------------------------------------------------------------------------------------------------------------
+// Get Videos by User Test
+
+// Verifies that we got video(s) from a user that has experiment with videos
+echo "<h1>Get Videos by User Test</h1>";
+echo "<h2>Tests that we got a video from a user with videos...</h2>";
+
+$id = 3;
+$getVideosByUser_response = getVideosByUserTest($id);
+
+if ($getVideosByUser_response['status'] == 200) {
+    echo "<div class='success'>SUCCESS</div>, Got video(s) from user.<br>";
+} elseif ($getVideosByUser_response['status'] == 600) {
+    echo "<div class='failure'>FAILURE</div>, Did not get video(s) from user. JSON: ";
+    print_r($getVideosByUser_response);
+    echo"<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    print_r($getVideosByUser_response);
+    echo"<br>";
+}
+
+echo"<br>";
+
+//Verifies that we did not get the video(s) from the user that does not have video(s)
+echo "<h2>Tests that we did not get the videos from a user without videos...</h2>";
+
+$id = 95;
+$getVideosByUser_response = getVideosByUserTest($id);
+
+if ($getVideosByUser_response['status'] == 600) {
+    echo "<div class='success'>SUCCESS</div>, Unable to get video(s) from user.<br>";
+} elseif ($getVideosByUser_response['status'] == 200) {
+    echo "<div class='failure'>FAILURE</div>, Got video(s) from user. JSON: ";
+    print_r($getExperimentByUser_response);
+    echo "<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
+    print_r($getVideosByUser_response);
+    echo "<br>";
+}
+
+echo "<hr>";
+
+
+
+
+//--------------------------------------------------------------------------------------------------------------------
+//Get User Profile Test
+
+//Verifies that we have received a user profile
+echo "<h1>Gets User Profile Test</h1>";
+echo "<h2>Tests that we got a user profile..</h2>";
+
+$id = 1;
+$getUserProfile_response = getUserProfileTest($id);
+
+if ($getUserProfile_response['status'] == 200) {
+    echo "<div class='success'>SUCCESS</div>, Got user profile.<br>";
+} elseif ($getUserProfile_response['status'] == 600) {
+    echo "<div class='failure'>FAILURE</div>, Did not get user profile. JSON: ";
+    print_r($getUserProfile_response);
+    echo"<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
+    print_r($getUserProfile_response);
+    echo"<br>";
+}
+
+echo"<br>";
+
+//Verifies that we did not get user profile
+echo "<h2>Tests that we did not get the user profile...</h2>";
+
+$id = -1;
+$getUserProfile_response = getUserProfileTest($id);
+
+if ($getUserProfile_response.length == 0) {
+    echo "<div class='success'>SUCCESS</div>, Unable to get user profile.<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, You got the user profile. JSON: ";
+    print_r($getUserProfile_response);
+    echo "<br>";
+}
+
+echo "<hr>";
+
+
+
+//--------------------------------------------------------------------------------------------------------------------
+//Get Sessions By User Test
+
+echo "<h1>Get Sessions by User</h1>";
+
+
+//Verifies that we got sessions by user
+echo "<h2>Tests that we can get sessions by user...</h2>";
+
+$id = 319;
+$getSessionsByUser_response = getSessionsByUserTest($id);
+
+if ($getSessionsByUser_response['status'] == 200) {
+    echo "<div class='success'>SUCCESS</div>, Able to get sessions.<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Unable to get sessions. JSON: ";
+    print_r($getSessionsByUser_response);
+    echo "<br>";
+}
+
+echo "<br>";
+
+//Verifies that we failed getting Sessions by user
+echo "<h2>Tests that we cannot get sessions by user...</h2>";
+
+$id = -1;
+$getSessionsByUser_response = getSessionsByUserTest($id);
+
+if ($getSessionsByUser_response['status'] == 600) {
+    echo "<div class='success'>SUCCESS</div>, Unable to get sessions from user.<br>";
+} elseif ($getSessionsByUser_response['status'] == 200) {
+    echo "<div class='failure'>FAILURE</div>, Got sessions from user. JSON: ";
+    print_r($getSessionsByUser_response);
+    echo "<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
+    print_r($getSessionsByUser_response);
+    echo "<br>";
+}
+
+echo "<hr>";
+
+
 
 ?>
 </body>

@@ -30,23 +30,33 @@
 	<div id="searchboxwrapper">
 		<div id="searchbox">
 			<form method="GET" action="browse.php">
-				<div>Search: <input type="text" name="query" value="{ $query }" /> <input type="hidden" name="type" value="{ $type }" /> <input type="submit" name="action" value="Search" /></div>
+				<div padding-bottom="10">Search: <input type="text" name="query" value="{ $query }" /> <input type="hidden" name="type" value="{ $type }" /> <input type="submit" name="action" value="Search" /></div>
+
+                { if $type != "people" and $type != "visualizations" }
+                    <div>
+                        <span>Sort:</span>
+
+    					<select name="sorttype">
+    					    <option value="recent">Recent</option>
+    					    <option value="popularity">Popularity</option>
+    					    <option value="activity">Activity</option>
+    					    <option value="rating">Rating</option>
+    					</select>
+                    </div>
+                        <tr>
+                        <td><span>Filter:</span></td>
+                        <td>Recommended: <input type="checkbox" id="recommended" name="recommended" {if $recommended == 'on'}checked{/if} /></td>
+                        <tr>
+                    </div>
+                { /if }
 			</form>
-			{ if $type != "people" and $type != "visualizations" } 
-				<div>
-					<span>Sort:</span>
-					<a href="browse.php?type={ $type }&amp;page={ $page }&amp;limit={ $limit }&amp;action={ $action }&amp;query={ $query }&amp;sort=recent">Recent</a> | 
-					<a href="browse.php?type={ $type }&amp;page={ $page }&amp;limit={ $limit }&amp;action={ $action }&amp;query={ $query }&amp;sort=popularity">Popularity</a> | 
-					<a href="browse.php?type={ $type }&amp;page={ $page }&amp;limit={ $limit }&amp;action={ $action }&amp;query={ $query }&amp;sort=activity">Activity</a> | 
-					<a href="browse.php?type={ $type }&amp;page={ $page }&amp;limit={ $limit }&amp;action={ $action }&amp;query={ $query }&amp;sort=rating">Rating</a>
-				</div>
-			{ /if }
 		</div>
 		<div id="results">
 			{ if !empty($results) }
-				
+
+				<!-- If viewing only visualizations -->
 				{ if $type == "visualizations" }
-				    
+
 					{ foreach from=$results item=result }
 						<div class="result{ if $result.is_activity == 1} activity { else } vis { /if }">
 							<table width="100%" cellpaddding="0" cellspacing="0">
@@ -55,20 +65,8 @@
 										<div class="name">
 											<a href="visdir.php?id={ $result.meta.vis_id }">{ $result.meta.name }</a>
 										</div>
-										<div class="description" >{ $result.meta.description|truncate:180:"...":true}</div>	
+										<div class="description" >{ $result.meta.description|truncate:180:"...":true}</div>
 										<div class="sub">
-                                            {if $user.administrator == 1}
-                                                <span class="loading_msg" style="display:none;">Loading...</span>
-                                                <span style="color:#444">Feature:</span> <input type="checkbox" class="feature_vis" value="{$result.meta.vis_id}" {if $result.meta.featured == 1}checked{/if} />
-                                                {if $result.meta.featured == 1}
-                                                    <a style="display:inline" id="pickimage_{ $result.meta.vis_id }" href="upload-pictures.php?id={ $result.meta.vis_id }">Pick Image</a>
-                                                {else}
-                                                    <a style="display:none;" id="pickimage_{ $result.meta.vis_id }" href="upload-pictures.php?id={ $result.meta.vis_id }">Pick Image</a>
-                                                {/if}
-                                                <span style="color:#444">Hidden:</span> <input type="checkbox" class="hide_vis" value="{$result.meta.vis_id}" {if $result.meta.hidden == 1} checked {/if} />
-                                                
-                                                
-                                            {/if}
                                             <span> Last Modified { $result.meta.timecreated|date_diff } </span>
 										</div>
 									</td>
@@ -81,9 +79,10 @@
 							</table>
 						</div>
 					{ /foreach }
-				
+
+				<!-- If viewing only People -->
 				{ elseif $type == "people"}
-				
+
 					{ foreach from=$results item=result }
 						<div class="result">
 							<table width="100%" cellpaddding="0" cellspacing="0">
@@ -94,7 +93,7 @@
 										</div>
 										<div class="description" >
 										    Created {$result.experiment_count} { if $result.experiment_count == 1}experiment{else}experiments{/if} and contributed { $result.session_count } { if $result.session_count == 1}session{else}sessions{/if}.
-										</div>	
+										</div>
 										<div class="sub">
 											<span>Joined { $result.firstaccess|date_diff }</span>
 										</div>
@@ -108,9 +107,11 @@
 							</table>
 						</div>
 					{ /foreach }
-					
+
+
+				<!-- If viewing Experiments -->
 				{ else }
-				
+
 					{ foreach from=$results item=result }
 						<div class="result">
 							<table width="100%" cellpaddding="0" cellspacing="0">
@@ -123,24 +124,13 @@
 											    <a href="activity.php?id={ $result.meta.experiment_id }">{ $result.meta.name|capitalize }</a>
 											{ /if }
 										</div>
-										<div class="description" >{ $result.meta.description|truncate:180:"...":true}</div>	
+										<div class="description" >{ $result.meta.description|truncate:180:"...":true}</div>
 										<div class="sub">
 										    <a class="session_count">{ $result.session_count }</a>
 										    <a class="contrib_count">{ $result.contrib_count }</a>
 										    <a class="rating_browse">{ $result.meta.rating_comp|substr:0:3 }</a>
-										    {if $user.administrator == 1}
-                                                <span class="loading_msg" style="display:none;">Loading...</span>
-                                                <span style="color:#444">Feature:</span> <input type="checkbox" class="feature_experiment" value="{$result.meta.experiment_id}" {if $result.meta.featured == 1}checked{/if} />
-                                                {if $result.meta.featured == 1}
-                                                    <a style="display:inline" id="pickimage_{ $result.meta.experiment_id }" href="upload-pictures.php?id={ $result.meta.experiment_id }">Pick Image</a>
-                                                {else}
-                                                    <a style="display:none;" id="pickimage_{ $result.meta.experiment_id }" href="upload-pictures.php?id={ $result.meta.experiment_id }">Pick Image</a>
-                                                {/if}
-                                                <span style="color:#444">Hidden:</span> <input type="checkbox" class="hide_experiment" id="{$result.meta.experiment_id}" {if $result.meta.hidden == 1} checked {/if} />
-                                                
-                                            {/if}
 											<span>Last Modified { $result.meta.timemodified|date_diff }</span>
-											{ if $result.meta.hidden == 1 } 
+											{ if $result.meta.hidden == 1 }
 												<br><span>This experiment is hidden</span>
 											{ /if }
 										</div>
@@ -154,9 +144,9 @@
 							</table>
 						</div>
 					{ /foreach }
-					
+
 				{ /if }
-				
+
 			{ else }
 				<div class="result">Sorry, it we could not find any { $marker } matching your criteria.</div>
 			{ /if }
@@ -165,11 +155,11 @@
 			<table cellpadding="0" cellspacing="0">
 				<tr>
 
-				{ if $page != 1 } 
+				{ if $page != 1 }
 
 					<td width="44">
 							<a href="browse.php?type={ $type }&amp;page={ math equation="y - x" x=1 y=$page }&amp;limit={ $limit }&amp;action={ $action }&amp;query={ $query }&amp;sort={ $sort }">Previous</a>
-					</td>	
+					</td>
 
 				{ /if }
 
@@ -191,14 +181,14 @@
 						<td>
 
 							{ if $page == $navbar } <u> { /if }
-							
+
 								<a href="browse.php?type={ $type }&amp;page={ $navbar }&amp;limit={ $limit }&amp;action={ $action }&amp;query={ $query }&amp;sort={ $sort }">
 									{ $navbar }
 								</a>
 
 							{ if $page == $navbar } </u> { /if }
 
-						</td>					
+						</td>
 
 					{ /foreach }
 
