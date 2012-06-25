@@ -1,4 +1,4 @@
- <html>
+<html>
 <head>
 <title>iSenseDev Automated Testing</title>
 <link rel="stylesheet" type="text/css" href="apitest.css" />
@@ -78,12 +78,23 @@
 
 require_once('../../includes/config.php');
 
+echo "<div class=\"testheading\">Starting login test....<br></div>";
+
+require_once('apitest-login.php');
+
+echo "<div class=\"testheading\">Starting Get Gerernal Info Test...<br></div>";
 
 require_once('apitest-get_general_info.php');
 
+echo "<div class=\"testheading\">Starting Get User Info Test...<br></div>";
+
 require_once('apitest-get_user_info.php');
 
+echo "<div class=\"testheading\">Starting Session Test...<br></div>";
+
 require_once('apitest-session.php');
+
+echo "<div class=\"testheading\">Starting Experiment Test...<br></div>";
 
 require_once('apitest-experiment.php');
 
@@ -165,67 +176,6 @@ if(initialize()){
     echo "<div class='failure'>FAILURE</div>, Initialization failed!<br>";
 }
 echo "<hr>";
-
-//--------------------------------------------------------------------------------------------------------------------
-//Login Test
-echo "<h1>Login Test</h1>";
-
-require_once('apitest-login.php');
-
-echo '<hr>';
-
-
-//--------------------------------------------------------------------------------------------------------------------
-//Create Session Test
-echo "<h1>Create Session Test</h1>";
-
-//Session on an open experiment
-echo "<h2>Trying to create a session on an open experiment....</h2>";
-
-$exp = 1;
-$createSession_response = createSessionTest($exp);
-
-if ($createSession_response['status'] == 200 ){
-    $session_id = $createSession_response['data']['sessionId'];
-    echo "<div class='success'>SUCCESS</div>, Successfully created a session on an open experiment. ";
-    echo "Exp: ";
-    echo "<a href=\"http://localhost/experiment.php?id=" . $exp ."\">" . $exp . "</a>";
-    echo ", SessionID: ";
-    echo "<a href=\"http://localhost/newvis.php?sessions=" . $session_id  ."\">" . $session_id . "</a>";
-    echo "<br>";
-} else {
-    echo "<div class='failure'>FAILURE</div>, Could not create session on open experiment. JSON: ";
-    print_r($createSession_response);
-    echo "<br>";
-}
-
-
-echo "<br>";
-
-
-//Session on a closed experiment
-echo "<h2>Trying to create a session(s) on a closed experiment....</h2>";
-
-$exp = 2;
-$createSession_response = createSessionTest($exp);
-
-if ($createSession_response['status'] == 400) {
-    echo "<div class='success'>SUCCESS</div>, Unable to create a session on a closed experiment.<br>";
-} elseif ($createSession_response['status'] == 200) {
-    $session_id = $createSession_response['data']['sessionId'];
-    echo "<div class='failure'>FAILURE</div>, Created a session on a closed experiment. Exp: ";
-    echo "<a href=\"http://localhost/experiment.php?id=" . $exp ."\">" . $exp . "</a>, SessionID: ";
-    echo "<a href=\"http://localhost/newvis.php?sessions=" . $session_id  ."\">" . $session_id . "</a>.  JSON: ";
-    print_r($createSession_response);
-    echo "<br>";
-} else {
-    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
-    print_r($login_response);
-    echo "<br>";
-}
-
-echo "<hr>";
-
 
 
 
