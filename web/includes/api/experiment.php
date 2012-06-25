@@ -872,7 +872,7 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
     $result = array();
 
     $sql = "SELECT DISTINCT *
-            FROM experiments ";
+    FROM experiments ";
 
     if($tags){
         $sql .= ", tagExperimentMap, tagIndex";
@@ -889,41 +889,27 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
     }
 
     if($tags){
-        
+
+        $sql .= " AND ( ";
+
         //If there are tags we want to search by each of them.
-        if($tags !=null){
-            $tags = explode(" ", $tags);
-        }
+        $tags = explode(" ", $tags);
 
-        if(count($tags)> 1){
-        
-            for($i=0;$i<count($tags);$i++){
+        for($i=0;$i<count($tags);$i++){
 
-                if($i == 0){
-                    $sql .= " AND ((tagIndex.value like '%{$tags[$i]}%'
-                    AND tagIndex.tag_id = tagExperimentMap.tag_id
-                    AND experiments.experiment_id = tagExperimentMap.experiment_id
-                    AND tagIndex.weight=1)";
-                } elseif($i!=0 && $i<count($tags)-1) {
-                    $sql .= " OR (tagIndex.value like '%{$tags[$i]}%'
-                    AND tagIndex.tag_id = tagExperimentMap.tag_id
-                    AND experiments.experiment_id = tagExperimentMap.experiment_id
-                    AND tagIndex.weight=1)";
-                } else {
-                    $sql .= " OR (tagIndex.value like '%{$tags[$i]}%'
-                    AND tagIndex.tag_id = tagExperimentMap.tag_id
-                    AND experiments.experiment_id = tagExperimentMap.experiment_id
-                    AND tagIndex.weight=1))";
-                }
+            $sql .= " (tagIndex.value like '%{$tags[$i]}%'
+            AND tagIndex.tag_id = tagExperimentMap.tag_id
+            AND experiments.experiment_id = tagExperimentMap.experiment_id
+            AND tagIndex.weight=1)";
+
+            if($i < count($tags) -1){
+                $sql .= " OR ";
             }
-        } else {
-            $sql .= " AND (tagIndex.value like '%{$tags[$i]}%'
-                    AND tagIndex.tag_id = tagExperimentMap.tag_id
-                    AND experiments.experiment_id = tagExperimentMap.experiment_id
-                    AND tagIndex.weight=1)";
         }
+
+        $sql .= " )";
     }
-    
+
     if($sort == "rating"){
         $sql .= " ORDER BY experiments.rating";
     } elseif ($sort == "activity"){
@@ -947,7 +933,7 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
             $tmp[count($tmp)] = $result[$i];
         }
     }
-
+    
     $result = $tmp;
 
     return packageBrowseExperimentResults($result, $page,$limit,false);
