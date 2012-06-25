@@ -1,4 +1,4 @@
-<html>
+ <html>
 <head>
 <title>iSenseDev Automated Testing</title>
 <link rel="stylesheet" type="text/css" href="apitest.css" />
@@ -31,12 +31,12 @@
 //DONE! kc - low - getExperimentByUser
 //DONE! ar - low - getVisByUser
 //DONE! ar - low - getSessionsByUser
-//ar - low - getImagesByUser
+//DONE! ar - low - getImagesByUser
 //DONE! low - getVideosByUser
-//jeremy email - addSessionData/updateSessionData
-//skip for now - getDataSince
+//jeremy email - putSessionData/updateSessionData
 // uploadImageToExperiment
 //jermey uses this one - uploadImageToSession
+//skip for now - getDataSince
 
 
 // login
@@ -67,6 +67,8 @@
 // uploadImageToExperiment
 // uploadImageToSession
 
+
+//Need to fix mysql error - user -1 has images
 
 
 require_once('../includes/config.php');
@@ -392,7 +394,28 @@ function getVisByUserTest($id){
         //Parse the response to an associative array
         return json_decode($result,true);       
 }
+function getImagesByUserTest($id){
+    //The target for this test
+    $target = "localhost/ws/api.php?method=getImagesByUser";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'user' => $id
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
 
+        curl_close($ch);
+        //Parse the response to an associative array
+        return json_decode($result,true);       
+}
 function getVideosByUserTest($id){
     //The target for this test
     $target = "localhost/ws/api.php?method=getVideosByUser";
@@ -913,6 +936,47 @@ if ($getVisByUser_response['status'] == 600) {
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getVisByUser_response);
+    echo "<br>";
+}
+
+echo "<hr>";
+
+//--------------------------------------------------------------------------------------------------------------------
+
+//Get Images by User
+echo "<h1>Get Images by User</h1>";
+
+//Verfies we got Images by user
+echo "<h2>Tests that we can get images by user...</h2>";
+
+$id = 1;
+$getImagesByUser_response = getImagesByUserTest($id);
+
+if ($getImagesByUser_response['status'] == 200) {
+    echo "<div class='success'>SUCCESS</div>, Able to get images.<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Unable to get images. JSON: ";
+    print_r($getImagesByUser_response);
+    echo "<br>";
+}
+
+echo "<br>";
+
+//Verifies that we failed getting Images by user
+echo "<h2>Tests that we cannot get images by user...</h2>";
+
+$id = -1;
+$getImagesByUser_response = getImagesByUserTest($id);
+
+if ($getImagesByUser_response['status'] == 600) {
+    echo "<div class='success'>SUCCESS</div>, Unable to get images from user.<br>";
+} elseif ($getImagesByUser_response['status'] == 200) {
+    echo "<div class='failure'>FAILURE</div>, Got images from user. JSON: ";
+    print_r($getImagesByUser_response);
+    echo "<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
+    print_r($getImagesByUser_response);
     echo "<br>";
 }
 
