@@ -31,12 +31,12 @@
 //DONE! kc - low - getExperimentByUser
 //DONE! ar - low - getVisByUser
 //DONE! ar - low - getSessionsByUser
-//ar - low - getImagesByUser
+//DONE! ar - low - getImagesByUser
 //DONE! low - getVideosByUser
-//jeremy email - addSessionData/updateSessionData
-//skip for now - getDataSince
+//jeremy email - putSessionData/updateSessionData
 // uploadImageToExperiment
 //jermey uses this one - uploadImageToSession
+//skip for now - getDataSince
 
 
 // login
@@ -67,6 +67,8 @@
 // uploadImageToExperiment
 // uploadImageToSession
 
+
+//Need to fix mysql error - user -1 has images
 
 
 require_once('../includes/config.php');
