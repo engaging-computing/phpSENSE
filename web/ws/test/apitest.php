@@ -76,7 +76,17 @@
 //Need to fix mysql error - user -1 has images
 
 
-require_once('../includes/config.php');
+require_once('../../includes/config.php');
+
+
+require_once('apitest-get_general_info.php');
+
+require_once('apitest-get_user_info.php');
+
+require_once('apitest-session.php');
+
+require_once('apitest-experiment.php');
+
 
 //Log in token used to authenticate a user
 $session_key = null;
@@ -103,193 +113,6 @@ function initialize(){
     }
 }
 
-function loginTest($user,$pass){
-    //The target for this test
-    $target =  "localhost/ws/api.php?method=login";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'username' => $user,
-        'password' => $pass
-        ));
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        
-        //Close curl
-        curl_close($ch);
-        
-        //Parse the response to an associative array
-        return json_decode($result,true);
-}
-
-function createSessionTest($exp){
-    global $session_key;
-    
-    //The target for this test
-    $target = "localhost/ws/api.php?method=createSession";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'session_key' => $session_key,
-        'eid' => $exp,
-        'name' => 'Automated Testing'.time(),
-        'description' => 'Automated Testing Proc'.time(),
-        'street' => '1 university ave',
-        'city' => 'Lowell MA',
-        'country' => 'USA'
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-        curl_close($ch);
-        //Parse the response to an associative array
-        //echo "<br>".$result."<br>";
-        return json_decode($result,true);
-}
-
-function getSessionsTest($exp){
-    //The target for this test
-    $target = "localhost/ws/api.php?method=getSessions";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'experiment' => $exp
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-        curl_close($ch);
-        //Parse the response to an associative array
-        return json_decode($result,true);
-}
-
-function getExperimentFieldsTest($exp){
-    //The target for this test
-    $target = "localhost/ws/api.php?method=getExperimentFields";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'experiment' => $exp
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-        curl_close($ch);
-        //Parse the response to an associative array
-        return json_decode($result,true);
-} 
-
-function getExperimentVisualizationsTest($exp){
-    //The target for this test
-    $target = "localhost/ws/api.php?method=getExperimentVisualizations";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'experiment' => $exp
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-        curl_close($ch);
-        //Parse the response to an associative array
-        return json_decode($result,true);	
-}
-
-function getExperimentTagsTest($exp){
-    //The target for this test
-    $target = "localhost/ws/api.php?method=getExperimentTags";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'experiment' => $exp
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-        curl_close($ch);
-        //Parse the response to an associative array
-        return json_decode($result,true);	
-}
-
-function getExperimentVideosTest($exp){
-    //The target for this test
-    $target = "localhost/ws/api.php?method=getExperimentVideos";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'experiment' => $exp
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-        curl_close($ch);
-        //Parse the response to an associative array
-        return json_decode($result,true);	
-}
-
-function getExperimentImagesTest($exp){
-    //The target for this test
-    $target = "localhost/ws/api.php?method=getExperimentImages";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'experiment' => $exp
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-        curl_close($ch);
-        //Parse the response to an associative array
-        return json_decode($result,true);	
-}
 /*
 function getPeopleTest($query)){
     
@@ -317,7 +140,6 @@ function getPeopleTest($query)){
         'page' => '1',
         'limit' => '10', 
         'sort' => 'default'
-        */
 //       )); 
         
         //Run curl to get the response
@@ -328,144 +150,8 @@ function getPeopleTest($query)){
         //echo "<br>".$result."<br>";
 //        return json_decode($result,true);
 //}
+        */
 
-function getUserProfileTest($id){
-    //The target for this test
-    $target =  "localhost/ws/api.php?method=getUserProfile";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' => $id
-        ));
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        
-        //Close curl
-        curl_close($ch);
-        
-        //Parse the response to an associative array
-        return json_decode($result,true);
-    
-}
-
-function getExperimentByUserTest($id){
-    //The target for this test
-    $target = "localhost/ws/api.php?method=getExperimentByUser";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' => $id
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-        curl_close($ch);
-        //Parse the response to an associative array
-        //echo "<br>".$result."<br>";
-        return json_decode($result,true);
-}
-
-function getVisByUserTest($id){
-    //The target for this test
-    $target = "localhost/ws/api.php?method=getVisByUser";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' => $id
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-
-        curl_close($ch);
-        //Parse the response to an associative array
-        return json_decode($result,true);       
-}
-function getImagesByUserTest($id){
-    //The target for this test
-    $target = "localhost/ws/api.php?method=getImagesByUser";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' => $id
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-
-        curl_close($ch);
-        //Parse the response to an associative array
-        return json_decode($result,true);       
-}
-function getVideosByUserTest($id){
-    //The target for this test
-    $target = "localhost/ws/api.php?method=getVideosByUser";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' => $id
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-        curl_close($ch);
-        //Parse the response to an associative array
-        //echo "<br>".$result."<br>";
-        return json_decode($result,true);
-}
-
-function getSessionsByUserTest($id){
-    //The target for this test
-    $target = "localhost/ws/api.php?method=getSessionsByUser";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' => $id
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-
-        curl_close($ch);
-        //Parse the response to an associative array
-        return json_decode($result,true);       
-}
 
 
 //--------------------------------------------------------------------------------------------------------------------
@@ -483,44 +169,10 @@ echo "<hr>";
 //--------------------------------------------------------------------------------------------------------------------
 //Login Test
 echo "<h1>Login Test</h1>";
-//Correct user/pass
-echo "<h2>Testing login with correct username and password....</h2>";
 
-$login_response = loginTest('sor','sor');
-
-if ($login_response['status'] == 200) {
-    $uid = $login_response['data']['uid'];
-    $session_key = $login_response['data']['session'];
-    echo "<div class='success'>SUCCESS</div>, Successful login. UID: ";
-    echo "<a href=\"http://localhost/profile.php?id=" . $uid ."\">" . $uid . "</a>";
-    echo ", Session Key: " . $session_key . '<br>';
-} else {
-    echo "<div class='failure'>FAILURE</div>, Unsuccessful login. JSON: ";
-    print_r($login_response);
-    echo "<br>";
-}
-
-echo '<br>';
-
-//Incorrect user/pass
-echo "<h2>Testing login with incorrect username and password....</h2>";
-
-$login_response = loginTest('sor','');
-
-if ($login_response['status'] == 600) {
-    echo "<div class='success'>SUCCESS</div>, Unsuccessful login.<br>";
-} elseif ($login_response['status'] == 200) {
-    echo "<div class='failure'>FAILURE</div>, Successful login. JSON: ";
-    print_r($login_response);
-    echo "<br>";
-} else {
-    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
-    print_r($login_response);
-    echo "<br>";
-}
+require_once('apitest-login.php');
 
 echo '<hr>';
-
 
 
 //--------------------------------------------------------------------------------------------------------------------
@@ -834,12 +486,11 @@ if ($getExperimentImages_response['status'] == 600) {
 echo "<hr>";
 
 
-
+/*
 //--------------------------------------------------------------------------------------------------------------------
 //Get People Test
 
 //Finds the person that you have searched for
-/*
 $action = 'search';
 $query = 'Non Admin';
 $getPeople_response = getPeopleTest($action, $query);
@@ -999,7 +650,7 @@ echo "<h2>Tests that we got a video from a user with videos...</h2>";
 $id = 3;
 $getVideosByUser_response = getVideosByUserTest($id);
 
-if ($getVideosByUser_response['status'] == 200) {
+if ($getVideosByUser_responsincludee['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Got video(s) from user.<br>";
 } elseif ($getVideosByUser_response['status'] == 600) {
     echo "<div class='failure'>FAILURE</div>, Did not get video(s) from user. JSON: ";

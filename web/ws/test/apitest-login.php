@@ -25,4 +25,41 @@ function loginTest($user,$pass){
         return json_decode($result,true);
 }
 
+//Correct user/pass
+echo "<h2>Testing login with correct username and password....</h2>";
+
+$login_response = loginTest('sor','sor');
+
+if ($login_response['status'] == 200) {
+    $uid = $login_response['data']['uid'];
+    $session_key = $login_response['data']['session'];
+    echo "<div class='success'>SUCCESS</div>, Successful login. UID: ";
+    echo "<a href=\"http://localhost/profile.php?id=" . $uid ."\">" . $uid . "</a>";
+    echo ", Session Key: " . $session_key . '<br>';
+} else {
+    echo "<div class='failure'>FAILURE</div>, Unsuccessful login. JSON: ";
+    print_r($login_response);
+    echo "<br>";
+}
+
+echo '<br>';
+
+//Incorrect user/pass
+echo "<h2>Testing login with incorrect username and password....</h2>";
+
+$login_response = loginTest('sor','');
+
+if ($login_response['status'] == 600) {
+    echo "<div class='success'>SUCCESS</div>, Unsuccessful login.<br>";
+} elseif ($login_response['status'] == 200) {
+    echo "<div class='failure'>FAILURE</div>, Successful login. JSON: ";
+    print_r($login_response);
+    echo "<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
+    print_r($login_response);
+    echo "<br>";
+}
+
+
 ?>
