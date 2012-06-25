@@ -634,7 +634,7 @@ if ($getExperimentVisualizations_response['status'] == 200) {
 echo "<br>";
 
 
-//Verifies that we did not get the experiment fields
+//Verifies that we did not get the experiment visualizations
 echo "<h2>Tests that we did not get the experiment visualizations...</h2>";
 
 $exp = 0;
@@ -858,17 +858,39 @@ echo "<hr>";
 
 
 //--------------------------------------------------------------------------------------------------------------------
-//Get Visualizations by User
-echo "<h1>Get Visualizations by User</h1>";
+//Get Vis by User
+echo "<h1>Get Vis by User</h1>";
 
+//Verfies we got Vis by user
 echo "<h2>Tests that we can get visualizations by user...</h2>";
 
 $user = 5;
 $getVisByUser_response = getVisByUserTest($user);
+
 if ($getVisByUser_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Able to get visualizations.<br>";
 } else {
     echo "<div class='failure'>FAILURE</div>, Unable to get visualizations. JSON: ";
+    print_r($getVisByUser_response);
+    echo "<br>";
+}
+
+echo "<br>";
+
+//Verifies that we failed getting Vis by user
+echo "<h2>Tests that we cannot get visualizations by user...</h2>";
+
+$user = -1;
+$getVisByUser_response = getVisByUserTest($user);
+
+if ($getVisByUser_response['status'] == 600) {
+    echo "<div class='success'>SUCCESS</div>, Unable to get vis from user.<br>";
+} elseif ($getVisByUser_response['status'] == 200) {
+    echo "<div class='failure'>FAILURE</div>, Got vis from user. JSON: ";
+    print_r($getVisByUser_response);
+    echo "<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getVisByUser_response);
     echo "<br>";
 }
