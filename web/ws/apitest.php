@@ -29,8 +29,8 @@
 //*** - getExperiments (make sure you deal with limits)
 //DONE! kc - low - getUserProfile
 //DONE! kc - low - getExperimentByUser
-//ar - low - getVisByUser
-//ar - low - getSessionsByUser
+//DONE! ar - low - getVisByUser
+//DONE! ar - low - getSessionsByUser
 //ar - low - getImagesByUser
 //DONE! low - getVideosByUser
 //jeremy email - addSessionData/updateSessionData
@@ -370,7 +370,7 @@ function getExperimentByUserTest($id){
         return json_decode($result,true);
 }
 
-function getVisByUserTest($user){
+function getVisByUserTest($id){
     //The target for this test
     $target = "localhost/ws/api.php?method=getVisByUser";
     
@@ -381,7 +381,7 @@ function getVisByUserTest($user){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' => $user
+        'user' => $id
         )); 
         
         //Run curl to get the response
@@ -416,7 +416,28 @@ function getVideosByUserTest($id){
         return json_decode($result,true);
 }
 
+function getSessionsByUserTest($id){
+    //The target for this test
+    $target = "localhost/ws/api.php?method=getSessionsByUser";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'user' => $id
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
 
+        curl_close($ch);
+        //Parse the response to an associative array
+        return json_decode($result,true);       
+}
 
 
 //--------------------------------------------------------------------------------------------------------------------
@@ -864,8 +885,8 @@ echo "<h1>Get Vis by User</h1>";
 //Verfies we got Vis by user
 echo "<h2>Tests that we can get visualizations by user...</h2>";
 
-$user = 5;
-$getVisByUser_response = getVisByUserTest($user);
+$id = 5;
+$getVisByUser_response = getVisByUserTest($id);
 
 if ($getVisByUser_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Able to get visualizations.<br>";
@@ -880,8 +901,8 @@ echo "<br>";
 //Verifies that we failed getting Vis by user
 echo "<h2>Tests that we cannot get visualizations by user...</h2>";
 
-$user = -1;
-$getVisByUser_response = getVisByUserTest($user);
+$id = -1;
+$getVisByUser_response = getVisByUserTest($id);
 
 if ($getVisByUser_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unable to get vis from user.<br>";
@@ -986,6 +1007,49 @@ if ($getUserProfile_response.length == 0) {
 
 echo "<hr>";
 
+
+
+//--------------------------------------------------------------------------------------------------------------------
+//Get Sessions By User Test
+
+echo "<h1>Get Sessions by User</h1>";
+
+
+//Verifies that we got sessions by user
+echo "<h2>Tests that we can get sessions by user...</h2>";
+
+$id = 319;
+$getSessionsByUser_response = getSessionsByUserTest($id);
+
+if ($getSessionsByUser_response['status'] == 200) {
+    echo "<div class='success'>SUCCESS</div>, Able to get sessions.<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Unable to get sessions. JSON: ";
+    print_r($getSessionsByUser_response);
+    echo "<br>";
+}
+
+echo "<br>";
+
+//Verifies that we failed getting Sessions by user
+echo "<h2>Tests that we cannot get sessions by user...</h2>";
+
+$id = -1;
+$getSessionsByUser_response = getSessionsByUserTest($id);
+
+if ($getSessionsByUser_response['status'] == 600) {
+    echo "<div class='success'>SUCCESS</div>, Unable to get sessions from user.<br>";
+} elseif ($getSessionsByUser_response['status'] == 200) {
+    echo "<div class='failure'>FAILURE</div>, Got sessions from user. JSON: ";
+    print_r($getSessionsByUser_response);
+    echo "<br>";
+} else {
+    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
+    print_r($getSessionsByUser_response);
+    echo "<br>";
+}
+
+echo "<hr>";
 
 
 
