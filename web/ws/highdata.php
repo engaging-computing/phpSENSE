@@ -46,11 +46,8 @@ class Data {
     public function setRelVis() {
         
         /* See how much data the experiment has */
-        $total = 0;
-        foreach( $this->sessions as $session ) {
-            $total += count($session->dataPoints);
-        }
-      
+        $total = count($this->dataPoints);
+      echo $total . "\r\n";
         /* If there is more than one data point in a session add the following vizes */
         if( $total > 1 ) {
             $this->relVis = array_merge(array('Scatter', 'Bar', 'Histogram'), $this->relVis); 
