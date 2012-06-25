@@ -38,21 +38,24 @@
 //jermey uses this one - uploadImageToSession
 //skip for now - getDataSince
 
-
+// apitest-login.php
 // login
 
+// apitest-get_general_info.php
 // getExperiments
 // getPeople
 // getVisualizations
 // getSessions
+// getDataSince
 
-
+// apitest-get_experiment_info.php
 // getExperimentFields
 // getExperimentVisualizations
 // getExperimentTags
 // getExperimentVideos
 // getExperimentImages
 
+// apitest-get_user_info.php
 // getUserProfile
 // getExperimentByUser
 // getVisByUser
@@ -60,12 +63,14 @@
 // getImagesByUser
 // getVideosByUser
 
+// apitest-session.php
 // createSession
-
-// getDataSince
-
-// uploadImageToExperiment
 // uploadImageToSession
+// putSessionData
+
+
+// apitest-experiment.php
+// uploadImageToExperiment
 
 
 //Need to fix mysql error - user -1 has images
