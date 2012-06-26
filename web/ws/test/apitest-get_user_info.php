@@ -1,4 +1,4 @@
-<?php
+    <?php
 
 function getUserProfileTest($id){
     //The target for this test
@@ -277,7 +277,7 @@ echo "<hr>";
 echo "<h1>Get Videos by User Test</h1>";
 echo "<h2>Tests that we got a video from a user with videos...</h2>";
 
-$id = 3;
+$id = 2;
 $getVideosByUser_response = getVideosByUserTest($id);
 
 if ($getVideosByUser_response['status'] == 200) {

@@ -25,6 +25,8 @@ function loginTest($user,$pass){
         return json_decode($result,true);
 }
 
+//-------------------------------------------------------------------------------------------------------------------
+//Login Test
 echo "<h1>Login Test</h1>";
 
 //Correct user/pass
@@ -62,6 +64,7 @@ if ($login_response['status'] == 600) {
     print_r($login_response);
     echo "<br>";
 }
+
 echo '<hr>';
 
 ?>
