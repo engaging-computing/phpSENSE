@@ -46,7 +46,7 @@ if(isset($_REQUEST['eids'])) {
         echo "</pre>";
     }
     
-    echo "Starting on... " . $eids . "<br>";
+    echo "Starting on... <pre>" . print_r($eids, true) . "</pre><br>";
     
     foreach ($eids as $index=>$eid) {
         $fields = getFields($eid);
@@ -66,14 +66,17 @@ if(isset($_REQUEST['eids'])) {
                         if (!isNaN(fixed.valueOf())) {
                             replacement = NumberLong(fixed.valueOf());
                         }
-                        else {
+                        else if (!isNaN(Number(obj[\"" . $field['field_name'] . "\"]))){
                             replacement = NumberLong(Number(obj[\"" . $field['field_name'] . "\"]));
                         }
+                        else {
+                            replacement = 'NaN';
+                        }
                         
-                        db.e" . $eid . ".update({_id : obj['_id']}, {\$set : {" . $field['field_name'] . " : replacement}});
+                        
                         ret.push('Replacing ' + obj[\"" . $field['field_name'] . "\"] + ' with ' + replacement + '\\r\\n');
                     }); return ret;}";
-                        
+                        //db.e" . $eid . ".update({_id : obj['_id']}, {\$set : {" . $field['field_name'] . " : replacement}});
                 echo "<pre>";
                 print_r( $mdb->db->execute($func));
                 echo "</pre>";
