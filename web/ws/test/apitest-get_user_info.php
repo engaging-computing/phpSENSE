@@ -1,4 +1,4 @@
-<?php
+    <?php
 
 function getUserProfileTest($id){
     //The target for this test
@@ -277,10 +277,10 @@ echo "<hr>";
 echo "<h1>Get Videos by User Test</h1>";
 echo "<h2>Tests that we got a video from a user with videos...</h2>";
 
-$id = 3;
+$id = 2;
 $getVideosByUser_response = getVideosByUserTest($id);
 
-if ($getVideosByUser_responsincludee['status'] == 200) {
+if ($getVideosByUser_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Got video(s) from user.<br>";
 } elseif ($getVideosByUser_response['status'] == 600) {
     echo "<div class='failure'>FAILURE</div>, Did not get video(s) from user. JSON: ";

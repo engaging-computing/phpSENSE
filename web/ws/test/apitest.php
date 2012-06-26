@@ -42,15 +42,15 @@
 // ******apitest-login.php******
 // login
 
-// apitest-get_general_info.php
+// ******apitest-get_general_info.php******
 // getExperiments*
-// getPeople
+// getPeople*
 // getVisualizations*
 // getSessions
-// getDataSince*
+
 
 //DONE
-// *****apitest-get_experiment_info.php******
+// *****apitest-get_experiment_info.php****** 
 // getExperimentFields
 // getExperimentVisualizations
 // getExperimentTags
@@ -74,6 +74,8 @@
 
 // ******apitest-experiment.php******
 // uploadImageToExperiment*
+
+
 
 require_once('../../includes/config.php');
 
