@@ -67,6 +67,7 @@ function getVisByUser($uid) {
 									visualizations.url_params,
 									visualizations.hidden, 
 									visualizations.timecreated,
+									visualizations.description,
 									visualizations.timecreated AS `timeobj`,
 									experiments.name AS `experiment_name`, 
 									experiments.description  AS `experiment_description`,

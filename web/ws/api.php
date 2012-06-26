@@ -434,9 +434,14 @@ if(isset($_REQUEST['method'])) {
 
             $uid = getUserIdFromSessionToken($session_key);
 
-            if($sid = createSession(array('uid' => $uid, 'session' => $session_key), $eid, $name, $description, $street, $city, $country, $default_read, $default_contribute, $finalized)) {
-                $status = 200;
-    			$data = array('sessionId' => $sid ."");
+            if(experimentClosed($_REQUEST['eid'])){
+                $status=400;
+                $data = array('msg'=>"Experiment Closed");
+            } else {
+                if($sid = createSession(array('uid' => $uid, 'session' => $session_key), $eid, $name, $description, $street, $city, $country, $default_read, $default_contribute, $finalized)) {
+                    $status = 200;
+                    $data = array('sessionId' => $sid ."");
+                }
     		}
 
             break;
@@ -461,14 +466,19 @@ if(isset($_REQUEST['method'])) {
                 
     	        $proc_data = stripslashes(urldecode($_REQUEST['data']));
     	        $proc_data = json_decode($proc_data);	  
-    	        
-    	        if(($count = putData($eid, $sid, $proc_data)) > 0) {
-    	            $data = array("msg" => "worked");
-    	            $status = 200;
-    	        }
-    	        else {
-    	            $data = array("msg" => "Data empty");
-    	            $status = 550;
+
+    	        if(experimentClosed($_REQUEST['eid'])){
+                    $status=400;
+                    $data = array('msg'=>"Experiment Closed");
+    	        } else {
+                    if(($count = putData($eid, $sid, $proc_data)) > 0) {
+                        $data = array("msg" => "worked");
+                        $status = 200;
+                    }
+                    else {
+                        $data = array("msg" => "Data empty");
+                        $status = 550;
+                    }
     	        }
 	            
 	        }

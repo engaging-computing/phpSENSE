@@ -76,6 +76,13 @@
 							<span id="loading_msg" style="display:none;">Loading...</span>
 						</td>
 					</tr>
+                    <tr>
+                        <td class="heading" valign="top">Recommend:</td>
+                        <td>
+                            <input type="checkbox" id="recommend_experiment" name="recommend_experiment" value="{$meta.experiment_id}" {if $meta.recommended == 1}checked{/if}/>
+                            <span id="recommended_loading_msg" style="display:none;">Loading...</span>
+                        </td>
+                    </tr>
 					<tr>
 						<td class="heading" valign="top">Hidden:</td>
 						<td>
@@ -84,6 +91,15 @@
 						</td>
 					</tr>
 				{ /if }
+				{ if $user.user_id == $meta.owner_id or $user.administrator == 1 }
+                    <tr>
+                        <td class="heading" valign="top">Closed:</td>
+                        <td>
+                            <input type="checkbox" id="close_experiment" name="close_experiment" value="{$meta.experiment_id}" {if $meta.closed == 1}checked{/if}/>
+                            <span id="close_loading_message" style="display:none;">Loading...</span>
+                        </td>
+                    </tr>
+                { /if }
 			</table>
 		</div>
 	</div>
@@ -110,13 +126,14 @@
 						{ if $meta.experiment_id == 350 }
     	                	<div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Contribute" onclick="window.location.href='./tsor.php';"/> - Contribute data to this experiment.</div>
 						{ else }
-							<div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Contribute" onclick="window.location.href='upload.php?id={$meta.experiment_id}';"/> - Contribute data to this experiment.</div>
+                            <div id="contribute" style="margin:0px 0px 6px 0px;" {if $meta.closed == 1 }hidden="hidden" {/if} ><input type="submit" style="width:73px;" value="Contribute" onclick="window.location.href='upload.php?id={$meta.experiment_id}';" /> - Contribute data to this experiment.</div>
 						{ /if }
 
     	                <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Export" onclick="loadExport({$meta.experiment_id});"/> - Download data from selected sessions.</div>
     	                <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Activity" onclick="createActivity({$meta.experiment_id});"/> - Create an activity for users to complete.</div>
     	                { if $user.user_id == $meta.owner_id or $user.administrator == 1 }
     	                    <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Edit" onclick="window.location.href='experiment-edit.php?id={$meta.experiment_id}'"/> - Edit this experiment.</div>
+    	                    <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Image" onclick="window.location.href='pickexpimage.php?id={$meta.experiment_id}'"/> - Set the picture that will show should this experiment be featured.</div>
     	                { /if }
     	            { /if }
     	            <div><input type="submit" style="width:73px;" value="{if not $activity}Visualize{else}Complete{/if}" onclick="loadVis({$meta.experiment_id}, {if $activity}true{else}false{/if});"/> - {if $activity}View data for this experiment and solve for the prompt.{else}Select sessions below to visualize data{/if}</div>
@@ -144,7 +161,7 @@
 												<td rowspan="4"><input type="checkbox" name="sessions" value="{ $session.session_id }" { if $i == 0 }checked{/if}></td>
 											</tr>
 											<tr >
-												<td rowspan="4" width="34px"><img src="picture.php?id={ $session.owner_id }&h=32&w=32" height="32px" width="32px"></td>
+												<td rowspan="4" width="34px"><img src={ $session.owner_avatar }&h=32&w=32" height="32px" width="32px"></td>
 											</tr>
 											<tr>
 												<td valign="top"><a href="profile.php?id={ $session.owner_id }">{ $session.firstname } { $session.lastname }</a>

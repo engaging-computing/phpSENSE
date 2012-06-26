@@ -32,12 +32,11 @@ $errors = array();
 $title = "Experiment Not Found";
 $time = false;
 $is_activity = false;
-if(isset($_GET['id'])) {
-		
+if(isset($_GET['id'])) {	
 	$id = (int) safeString($_GET['id']);
 	$meta = getExperiment($id);
 	$is_activity = ($meta['activity'] == 1);
-
+	
 	if(count($meta) > 0) {
 		
 		// Grab some meta data
@@ -89,6 +88,12 @@ if(isset($_GET['id'])) {
 		$smarty->assign('expimages',	$images);
 		$smarty->assign('videos', 	$videos);
 		$smarty->assign('collabs', 	$collabs);
+		
+		//Get user avatars
+                $userAvatars = array();
+                foreach ($sessions as $index=>$ses) {
+                    $sessions[$index]['owner_avatar'] = getUserAvatar($ses['owner_id'], 32);
+                }
 		$smarty->assign('sessions', 	$sessions);
 		
 		$votes = ($meta['rating_votes'] == 0) ? 1 : $meta['rating_votes'];

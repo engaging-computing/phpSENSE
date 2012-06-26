@@ -114,21 +114,29 @@ for( var ses in data.sessions ) {
 	data.sessions[ses].getModeVal = function( field ) {
 		var tmp = new Array();
 		var max_count = 0;
+		var max_index = null;
 		
+		//Init
 		for( var dP in this.data ) {
-			tmp[''+this.data[dP][field]+''] = 0;
+			
+			tmp[this.data[dP][field].toString()] = 0;
 		}	
 		
+		//Count repeats
 		for( var dP in this.data ) {
-			tmp[''+this.data[dP][field]+'']++;
+
+			tmp[this.data[dP][field].toString()] += 1;
 		}
 		
-		for( var dP in tmp) {
-			if( tmp[dP] > max_count )
-				max_count = dP;
+		//Pick Best
+		for (var key in tmp) {
+			if (tmp[key] > max_count) {
+				max_index = key;
+				max_count = tmp[key];
+			}
 		}
 		
-		return max_count;
+		return Number(max_index);
 		
 	}
 	
@@ -337,22 +345,16 @@ data.qSortFieldNum = function( fieldNum ) {
 	
 }
 
-data.avgField = function( fieldName ) {
-	
-	var avg = 0;
-	var count = 0;
-	
-	for(var field in this.fields )
-		if( this.fields[field].name.toLowerCase() == fieldName.toLowerCase() )
-			for(var ses in this.sessions ) {
-				for(var dp in this.sessions[ses].data) {
-					avg += this.sessions[ses].data[dp][field];
-					count++;
-				}
-			}
-	
-	return (avg/count);
-	
+data.avgFieldHelper = function (ses) {
+  var avg = 0;
+  var count = 0;
+
+  for(var dp in this.sessions[ses].data) {
+		avg += this.sessions[ses].data[dp][field];
+		count++;
+	}
+
+  return (avg/count);
 }
 
 data.avgField = function (fieldName,ses){
@@ -361,17 +363,18 @@ data.avgField = function (fieldName,ses){
 	
 	for(var field in this.fields ){
 		if( this.fields[field].name.toLowerCase() == fieldName.toLowerCase() ){
-            for(var dp in this.sessions[ses].data) {
-                var curval = this.sessions[ses].data[dp][field]
-                if(curval != "" || isNaN(curval) == false){
-                     avg += curval;
-			            count++;
-                }			    
-              
-			}
+      if(!ses) {
+        for(var ses in this.sessions) {
+          avg += this.avgFieldHelper(ses);
+          count++;
         }
-    }  
-    return avg/count;    
+      }
+      else {
+        return this.avgFieldHelper(ses);
+      }
+    }
+  }  
+  return avg/count;    
 
 }
 

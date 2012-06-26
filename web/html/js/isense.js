@@ -29,6 +29,22 @@ $(document).ready(function(){
         });
     }
 
+
+    
+    if($('img.selectexpimage').length > 0){
+        $('img.selectexpimage').click(function(){
+            $('img.selectexpimage').css( 'border', '0px none #fff' );
+            $('img.selectexpimage').css( 'margin', '5px' );
+            $('img.selectexpimage').css( 'padding', '0px')
+            $(this).css( 'border', '4px solid #2396e6' );
+            $(this).css( 'padding', '1px' );
+            $(this).css( 'margin', '0px' );
+            $(this).css( 'background', '#fff');
+            //alert( "URL: " + $(this).attr("src") + "\nEXP ID: " + $('#storedexpid').val() );
+            $.get('actions/experiments.php', { action:"changeimage", purl:$(this).attr("src"), eid:$('#storedexpid').val() }, function(data){});
+        });
+    }
+    
     if($('input.feature_experiment').length > 0) {
         $('input.feature_experiment').click(function(){
             //$('input.feature_experiment').hide();			This stuff is commented out because it
@@ -116,6 +132,54 @@ $(document).ready(function(){
                 $.get('actions/experiments.php', { action:"unhide", id:$(this).val() }, function(data){
                     $('#hide_experiment').show();
                     $('#hidden_loading_msg').hide();
+                });
+            }
+        });
+    }
+
+    if($('#close_experiment').length>0){
+        $('#close_experiment').click(function(){
+            $('#close_experiment').hide();
+            $('#close_loading_msg').show();
+            
+            if($(this).attr("checked")) {
+                // Make closed
+                $.get('actions/experiments.php', { action:"closeExp", id:$(this).val() }, function(data){
+                    $('#close_experiment').show();
+                    $('#close_loading_msg').hide();
+                    $('#contribute').hide();
+             
+                });
+            }
+            else {
+                // unclose
+                $.get('actions/experiments.php', { action:"uncloseExp", id:$(this).val() }, function(data){
+                    $('#close_experiment').show();
+                    $('#close_loading_msg').hide();
+                    $('#contribute').show();
+                  
+                });
+            }
+        });
+    }
+
+    if($('#recommend_experiment').length>0){
+        $('#recommend_experiment').click(function(){
+            $('#recommend_experiment').hide();
+            $('#recommend_loading_msg').show();
+
+            if($(this).attr("checked")) {
+                // Recommend the experiment
+                $.get('actions/experiments.php', { action:"recommend", id:$(this).val() }, function(data){
+                    $('#recommend_experiment').show();
+                    $('#recommend_loading_msg').hide();
+                });
+            }
+            else {
+                // Unrecommend the experiment
+                $.get('actions/experiments.php', { action:"unrecommend", id:$(this).val() }, function(data){
+                    $('#recommend_experiment').show();
+                    $('#recommend_loading_msg').hide();
                 });
             }
         });
@@ -424,33 +488,52 @@ function addField() {
     
     $("#custom_field_type_" + new_row_count).change(filterUnits);
 }
-
-function addManualDataRow() {
-    $('#row_count').val(parseInt($('#row_count').val()) + 1);
-    var org = $('tr#template').clone();
-    org.attr('id', $('#row_count').val());
-    
-    org.find('td > input').each(function(i){
-       var id =  $(this).attr('id');
-       var name = $(this).attr('name');
-
-       //console.log(id);
-
-	if( id == 'Time_xxx' || id == 'time_xxx' )
-	    $(this).attr('class', 'time');
-       
-       id = id.replace(/(xxx)/g, $('#row_count').val());
-       name = name.replace(/(xxx)/g, $('#row_count').val());
-       
-       $(this).attr('id', id);
-       $(this).attr('name', name);
-       $(this).addClass('required');
-	   //$(this).addClass('numeric');
-    });
-    
-    org.css('display', '');
-    $('#manual_table').append(org);
-}
+$(document).ready( function() {
+    $("#addManualRowButton").click(
+        function addManualDataRow(e) {
+            $('#row_count').val(parseInt($('#row_count').val()) + 1);
+            var org = $('tr#template').clone();
+            org.attr('id', $('#row_count').val());
+            
+            org.find('td > input').each(function(i){
+                var id =  $(this).attr('id');
+            var name = $(this).attr('name');
+            
+            //console.log(id);
+            
+            if( id == 'Time_xxx' || id == 'time_xxx' )
+                $(this).attr('class', 'time');
+            
+            id = id.replace(/(xxx)/g, $('#row_count').val());
+            name = name.replace(/(xxx)/g, $('#row_count').val());
+            
+            $(this).attr('id', id);
+            $(this).attr('name', name);
+            $(this).addClass('required');
+            //$(this).addClass('numeric');
+            });
+            
+            org.css('display', '');
+            $('#manual_table').append(org);
+            
+            $("#removeManualRowButton").removeAttr('disabled');
+        });
+        
+        $("#removeManualRowButton").click(
+            function removeManualDataRow(e) {
+                if ($('#row_count').val() > 1)
+                {
+                    $('#row_count').val(parseInt($('#row_count').val()) - 1);
+                    
+                    $('#manual_table tr:last').remove();
+                    
+                    if ($('#row_count').val() == 1)
+                    {
+                        $("#removeManualRowButton").attr('disabled', 'disabled');
+                    }
+                }
+            });
+});
 
 function addLinkRow() {
     $('#row_count').val(parseInt($('#row_count').val()) + 1)

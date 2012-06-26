@@ -1,0 +1,42 @@
+h1
+{
+    color:black;
+    font-size:16pt;
+    text-decoration:underline;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+h2
+{
+    color:black;
+    font-size:12pt;
+    text-decoration:bold;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+.failure
+{
+    color:red;
+    font-size:12pt;
+    margin-bottom: 0;
+    margin-top: 0;
+    float: left;   
+}
+.success
+{
+    color:blue;
+    font-size:12pt;
+    margin-bottom: 0;
+    margin-top: 0;
+    float: left;
+    
+}
+.testheading
+{
+    color:red;
+    font-size:24pt;
+    text-decoration:underline;
+    margin-bottom: 0;
+    margin-top: 0;
+    
+}

@@ -26,7 +26,7 @@
  * DAMAGE.
  */
  
-function createExperiment($token, $name, $description, $fields, $req_name, $req_procedure, $req_location, $name_prefix, $location, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
+function createExperiment($token, $name, $description, $fields, $req_name=1, $req_procedure=1, $req_location=1, $name_prefix=null, $location=null, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
 	global $db;
 	
 	$uid = $token['uid'];
@@ -365,8 +365,10 @@ function browseExperimentsByRecent($page = 1, $limit = 10, $override = false) {
 						FROM experiments 
 						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
 						WHERE experiments.hidden = 0
-						AND experiments.activity = 0
-						ORDER BY experiments.timemodified DESC";
+						AND experiments.activity = 0";
+
+
+	$sqlCmd.= " ORDER BY experiments.timemodified DESC";
 	
 	$output = $db->query($sqlCmd);
 
@@ -647,21 +649,28 @@ function isProcedureRequired($eid){
     global $db;
     $sql = "SELECT req_procedure FROM experiments WHERE experiments.experiment_id={$eid}";
     $query = $db->query($sql);
-    return $query[0]["req_procedure"];
+    return $query[0]['req_procedure'];
 }
 
 function getSessionPrefix($eid){
     global $db;
     $sql = "SELECT name_prefix FROM experiments WHERE experiments.experiment_id={$eid}";
     $query = $db->query($sql);
-    return $query[0]["name_prefix"];
+    return $query[0]['name_prefix'];
 }
 
 function getExperimentLocation($eid){
     global $db;
     $sql = "SELECT location FROM experiments WHERE experiments.experiment_id={$eid}";
     $query = $db->query($sql);
-    return $query[0]["location"];
+    return $query[0]['location'];
+}
+
+function getSessionOffset($eid) {
+    global $db;
+    $sql = "SELECT DISTINCT COUNT(*) FROM experimentSessionMap WHERE experiment_id={$eid};";
+    $query = $db->query($sql);
+    return $query[0]['COUNT(*)'];
 }
 
 function getExpOwner($sid) {
@@ -675,6 +684,260 @@ function getExpOwner($sid) {
     }
     
     return false;
+}
+
+function closeExperiment($eid){
+    global $db;
+    
+    $sql = "UPDATE experiments SET closed=1 where experiment_id={$eid}";
+
+    $query = $db->query($sql);
+
+    return true;
+    
+}
+
+function uncloseExperiment($eid){
+    global $db;
+    $sql = "UPDATE experiments SET closed=0 where experiment_id={$eid}";
+
+    $query = $db->query($sql);
+
+    return true;
+}
+
+function experimentClosed($eid){
+    global $db;
+    
+    $sql = "SELECT closed FROM experiments WHERE experiment_id={$eid}";
+    $query = $db->query($sql);
+    
+    if($query[0]['closed'] == 1){
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+function getExperimentOwner($eid){
+
+    global $db;
+    
+    $sql = "SELECT owner_id FROM experiments WHERE experiment_id={$eid} LIMIT 0,1";
+    
+    $output = $db->query($sql);
+
+    if($db->numOfRows) {
+        return $output[0]['owner_id'];
+    }
+
+    return false;
+
+}
+
+function updateExperimentImage($url,$eid){
+    global $db;
+    
+    $sql = "UPDATE experiments SET exp_image='{$url}' WHERE experiment_id={$eid}";
+
+    $output = $db->query($sql);
+
+    return true;
+}
+
+//Promote an experiment as iSENSE recommended.
+function recommendExperiment($eid){
+    global $db;
+
+    $sql = "UPDATE experiments SET recommended=1 WHERE experiment_id={$eid}";
+
+    $output = $db->query($sql);
+
+    return true;
+}
+
+//Demote an experiment from iSENSE recommended status.
+function unrecommendExperiment($eid){
+    global $db;
+
+    $sql = "UPDATE experiments SET recommended=0 WHERE experiment_id={$eid}";
+
+    $output = $db->query($sql);
+
+    return true;
+}
+
+//One function to rule them all
+function theRealDeal($hidden=0,$featured="off",$recommended="off", $tags= null, $sort = "recent"){
+    global $db;
+    
+    $result = array();
+
+    //If there are tags we want to search by each of them. 
+    if($tags !=null){
+        $tags = explode(" ", $tags);
+    }
+    
+    if($tags){
+    
+        foreach($tags as $tag){
+            $sql = "SELECT DISTINCT *
+                    FROM experiments ";
+
+            if($tags){
+                $sql .= ", tagExperimentMap, tagIndex";
+            }
+
+            $sql .= " WHERE experiments.hidden = {$hidden} ";
+
+            if($featured == 'on'){
+                $sql .= " AND experiments.featured=1 ";
+            }
+
+            if($recommended == 'on'){
+                $sql .= " AND experiments.recommended=1 ";
+            }
+
+            if($tag){
+                $sql .= " AND tagIndex.value like '%{$tag}%'
+                        AND tagIndex.tag_id = tagExperimentMap.tag_id
+                        AND experiments.experiment_id = tagExperimentMap.experiment_id
+                        AND tagIndex.weight=1 ";
+            }
+
+            if($sort == "rating"){
+                $sql .= " ORDER BY experiments.rating";
+            } elseif ($sort == "activity"){
+                $sql .= " ORDER BY experiments.timemodified";
+            } else {
+                $sql .= " ORDER BY experiments.timecreated";
+            }
+
+            $sql .= " DESC ";
+  
+            $result = array_merge($result,$db->query($sql));
+        }
+
+     
+    } else {
+
+       $sql = "SELECT DISTINCT *
+                FROM experiments ";
+                    
+        $sql .= " WHERE experiments.hidden = {$hidden} ";
+
+        if($featured == 'on'){
+            $sql .= " AND experiments.featured=1 ";
+        }
+
+        if($recommended == 'on'){
+            $sql .= " AND experiments.recommended=1 ";
+        }
+
+        if($sort == "rating"){
+            $sql .= " ORDER BY experiments.rating";
+        } elseif ($sort == "activity"){
+            $sql .= " ORDER BY experiments.timemodified";
+        } else {
+            $sql .= " ORDER BY experiments.timecreated";
+        }
+
+        $sql .= " DESC ";
+        $result = array_merge($result,$db->query($sql));
+    }
+    
+    $keys = array();
+    $tmp = array();
+    for($i = 0; $i < count($result); $i++) {
+        $tmpKey = $result[$i]['experiment_id'];
+        if (in_array($tmpKey,$keys)){
+        } else {
+            echo $tmpKey;
+            $keys[count($keys)] = $tmpKey;
+            $tmp[count($tmp)] = $result[$i];
+        }
+    }
+
+    $result = $tmp;
+    
+    return $result;
+}
+
+
+//One function to rule them all
+function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recommended="off", $tags= null, $sort = "recent"){
+    global $db;
+
+    $result = array();
+
+    $sql = "SELECT DISTINCT *
+    FROM experiments ";
+
+    if($tags){
+        $sql .= ", tagExperimentMap, tagIndex";
+    }
+
+    $sql .= " WHERE experiments.hidden = {$hidden} ";
+
+    if($featured == 'on'){
+        $sql .= " AND experiments.featured=1 ";
+    }
+
+    if($recommended == 'on'){
+        $sql .= " AND experiments.recommended=1";
+    }
+
+    if($tags){
+
+        $sql .= " AND ( ";
+
+        //If there are tags we want to search by each of them.
+        $tags = explode(" ", $tags);
+
+        for($i=0;$i<count($tags);$i++){
+
+            $sql .= " (tagIndex.value like '%{$tags[$i]}%'
+            AND tagIndex.tag_id = tagExperimentMap.tag_id
+            AND experiments.experiment_id = tagExperimentMap.experiment_id
+            AND tagIndex.weight=1)";
+
+            if($i < count($tags) -1){
+                $sql .= " OR ";
+            }
+        }
+
+        $sql .= " )";
+    }
+
+    if($sort == "rating"){
+        $sql .= " ORDER BY experiments.rating";
+    } elseif ($sort == "activity"){
+        $sql .= " ORDER BY experiments.timemodified";
+    } else {
+        $sql .= " ORDER BY experiments.timecreated";
+    }
+
+    $sql .= " DESC ";
+
+    $result = $db->query($sql);
+
+    $keys = array();
+    $tmp = array();
+
+    for($i = 0; $i < count($result); $i++) {
+        $tmpKey = $result[$i]['experiment_id'];
+        if (in_array($tmpKey,$keys)){
+        } else {
+            $keys[count($keys)] = $tmpKey;
+            $tmp[count($tmp)] = $result[$i];
+        }
+    }
+    
+    $result = $tmp;
+
+    return packageBrowseExperimentResults($result, $page,$limit,false);
+
 }
 
 ?>
