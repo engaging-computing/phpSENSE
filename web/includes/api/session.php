@@ -574,41 +574,4 @@ function getData($eid, $sid) {
 }
 */
 
-function getDataWithID($eid, $sid) {
-    global $mdb;
-
-    $excluded = array("session", "experiment");
-
-    $fields = getFields($eid);
-    $data = array();
-    
-    // Get the data from MongoDB
-	$results = $mdb->find("e{$eid}", array("session" => (int)$sid));
-
-	if(count($results) > 0) {
-    	/*foreach($results as $i => $r) {
-    	    foreach($fields as $f) {
-    	        $data[$i][$f['field_name']] = $r[$f['field_name']];
-    	    }
-    	}*/
-    	    	
-    	//$results = $data;
-    	//unset($data);
-	
-        foreach($results as $result) { 
-            $row = array();
-    	        
-            foreach($result as $k => $v) {
-    			if(!in_array($k, $excluded)) $row[$k] = $v;
-    		}
-    		
-    		$data[] = $row;
-    	}
-    }
-	
-
-
-	return $data;
-}
-
 ?>
