@@ -383,7 +383,8 @@ function putData($eid, $sid, $data) {
 function getData($eid, $sid, $get_header = false, $strip_keys = true) {
     global $mdb;
 
-    $excluded = array("session", "experiment", "_id");
+    $excluded = array("session", "experiment");
+
     $fields = getFields($eid);
     $data = array();
     
