@@ -237,6 +237,11 @@ if(isset($_REQUEST['sessions'])) {
                         $data->sessions[$index]->data[$j][$k] = "";
                     }
                 }
+                if ($curField->type_id != intval(7)) {
+                    if (!is_numeric($datum[$k])) {
+                        $data->sessions[$index]->data[$j][$k] = strtotime($data->sessions[$index]->data[$j][$k]);
+                    }
+                }
             }
         }
     }
