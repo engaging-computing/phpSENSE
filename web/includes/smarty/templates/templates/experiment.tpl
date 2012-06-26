@@ -189,13 +189,11 @@
 										{ /if }
 									{ /foreach }
 								</td>
-								{ if $meta.owner_id == $user.user_id or $user.administrator == 1 or $session.owner_id == $user.user_id }
+								{ if $user.administrator == 1 or $session.owner_id == $user.user_id }
 								    <td style="border-bottom:1px solid #CCC;width:36%;">
 										<a href="session-upload-pictures.php?sid={ $session.session_id }&id={ $id }">Add Image</a> - 
 								        <a href="javascript:void(0);" onclick="window.location.href='session-edit.php?id={$session.session_id}';">Edit Session</a>
-								    { if $meta.owner_id != $user.user_id}
 								        - <a href-"javasript:void(0)" onclick="window.location.href='/edit.php?exp={$session.experiment_id}&ses={$session.session_id}';">Edit Data</a>
-								    {/if}
 								    </td>
 								{ /if }
 							</tr>
