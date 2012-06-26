@@ -9,6 +9,7 @@ if(isset($_REQUEST['exp'])) {
     }
     
     $presort = getData($eid, $sid, false, false);
+        
 	//$presort = $mdb->find('e' . $_GET['exp']);
     $keys = array_keys($presort[0]);
     $me = $session->getUser();
@@ -56,17 +57,15 @@ if(isset($_REQUEST['exp'])) {
 
         $head .= '<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>';
         $head .= '<script type="text/javascript" src="/html/js/lib/jquery.jTable.js"></script>';
-        //$head .= '<script type="text/javascript" src="/html/js/lib/datatables.editor.js"></script>';
         
         $head .= '<link rel="stylesheet" type="text/css" href="/html/css/jTable.css"></link>';
-        //$head .= '<link rel="stylesheet" type="text/css" href="/html/css/demo_table.css"></link>';
         $head .= $javascript;
         $head .= '<script type="text/javascript" src="/html/js/edit.js"></script>';
 
         $smarty->assign('head', $head );
     }
 
-    $smarty->assign('title', 'Experiment# : ' . getNameFromEid($_GET['exp']) . '</div><div id="sessionNumber">');
+    $smarty->assign('title', 'Experiment # <span id="experimentID"> ' . $_GET['exp'] . '</span> : ' . getNameFromEid($_GET['exp']) . '</div><div id="sessionID" style="display:none;"> ' . $_GET['ses'] );
     $smarty->assign('user', $session->getUser());
 
     $smarty->assign('i_ses', $i_ses);

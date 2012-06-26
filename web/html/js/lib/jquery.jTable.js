@@ -415,21 +415,21 @@
                $(this).children().each(function(indexJ) {
                    cur_row[indexJ] = $(this).text();
                });
-               
-               console.log(cur_row);
-               
+                              
                save_table.body[indexI] = cur_row;
                 
             });
             
-            //but it doesnt... wtf?
-            console.log(save_table.body);
-            
+            save_table.eid = $('#ExperimentID').text();
+            save_table.sid = $('#SessionID').text();            
+                                                
             $.ajax({
                 type: "POST",
                 url: "../../ses-update.php",
-                data: save_table,
-                success: function(data) {alert('it WORKED!!!'); console.log(data);} 
+                data: { t_eid : save_table.eid, t_sid : save_table.sid , t_head : save_table.header, t_data : save_table.body },
+                success: function(data, status) { 
+                    console.log(data);
+                } 
             });
             
         });

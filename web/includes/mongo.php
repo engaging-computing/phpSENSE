@@ -86,6 +86,12 @@ class MDB {
 	
 	function selectCollection($col) {
 		$this->col = $this->db->selectCollection($col);
+		return $this->col;
+	}
+	
+	function dropSession( $eid, $sid ) {
+	    $this->selectCollection('e' . $eid);
+	    $this->col->remove(array('session' => $sid), array('safe'=>false));
 	}
 	
 	function insert($collection, $data) {
