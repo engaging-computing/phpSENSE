@@ -293,6 +293,15 @@ function browseMySessions($uid) {
 	return false;
 }
 
+function isSessionHidden( $ses ) {
+    global $db;
+    
+    $output = $db->query('SELECT finalized FROM sessions WHERE session_id = ' . $ses . ';');
+    
+    return $output[0]['finalized'];
+
+}
+
 function getNumberOfSessions() {
 	global $db;
 	
