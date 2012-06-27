@@ -38,7 +38,26 @@ if(isset($_GET['id'])) {
 	$is_activity = ($meta['activity'] == 1);
 	
 	if(count($meta) > 0) {
-		
+        		
+        //Set Pagination
+        if(isset($_REQUEST['start']) && is_numeric($_REQUEST['start'])) {
+            
+            $paginationStart = $_REQUEST['start'];
+            
+            if(isset($_REQUEST['limit']) && is_numeric($_REQUEST['limit'])) {
+                $paginationLimit = $_REQUEST['limit'];
+            } else {
+                $paginationLimit = 20;
+            }
+            
+        } else {
+        //Set default 
+        
+            $paginationStart = 0;
+            $paginationLimit = 20;
+            
+        }
+        
 		// Grab some meta data
 		$title = $meta['name'];
 		$ownerid = $meta['owner_id'];
@@ -111,6 +130,8 @@ else {
 	array_push($errors, "The experiment you're looking for is no longer available.");
 }
 
+$smarty->assign('sessionPaginationStart', $paginationStart);
+$smarty->assign('sessionPaginationLimit', $paginationLimit);
 $smarty->assign('id',		$id);
 $smarty->assign('activity',	$is_activity);
 $smarty->assign('user', 	$session->getUser());
