@@ -151,7 +151,8 @@ function searchPeople($terms, $page = 1, $limit = 10, $sort = "relevancy", $incl
 			
 			for($i = 0; $i < count($results); $i++) {
                 if($results[$i]['private']) {
-                    $results[$i]['lastname'] = substr(ucfirst($results[$i]['lastname']), 0, 1);
+                    //Filter private last names
+                    $results[$i]['lastname'] = substr(ucfirst($results[$i]['lastname']), 0, 1) . '.';
                 }
 				$results[$i]['session_count'] = countNumberOfContributedSessions($results[$i]['user_id']);
 				$results[$i]['experiment_count'] = countNumberOfContributedExperiments($results[$i]['user_id']);
@@ -183,7 +184,7 @@ function browsePeople($page = 1, $limit = 10, $sort = "", $includePrivate = 1) {
 			for($i = 0; $i < count($results); $i++) {
                 if($results[$i]['private']) {
                     //Filter private last names
-                    $results[$i]['lastname'] = substr(ucfirst($results[$i]['lastname']), 0, 1);
+                    $results[$i]['lastname'] = substr(ucfirst($results[$i]['lastname']), 0, 1) . '.';
                 }
 				$results[$i]['session_count'] = countNumberOfContributedSessions($results[$i]['user_id']);
 				$results[$i]['experiment_count'] = countNumberOfContributedExperiments($results[$i]['user_id']);

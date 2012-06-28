@@ -72,8 +72,9 @@ function getExperiment($eid) {
                                  users 
                                  WHERE experiments.owner_id = users.user_id AND experiments.experiment_id = {$eid}");
 	
+	//Filter private last names
 	if($result[0]['private']) {
-        $output[0]['lastname'] = substr(ucfirst($output[0]['lastname']), 0, 1);
+        $output[0]['lastname'] = substr(ucfirst($output[0]['lastname']), 0, 1) . '.';
 	}
 	
 	if($db->numOfRows) {

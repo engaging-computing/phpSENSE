@@ -194,9 +194,10 @@ function getSessionsForExperiment($eid) {
                     ORDER BY sessions.timecreated DESC";	
 	$result = $db->query($sql);
 	
+	//Filter private last names
 	foreach($result as $index => $r) {
         if($r['private']) {
-            $result[$index]['lastname'] = substr(ucfirst($r['lastname']), 0, 1);
+            $result[$index]['lastname'] = substr(ucfirst($r['lastname']), 0, 1) . '.';
         }
 	}
 	

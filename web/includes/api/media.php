@@ -266,7 +266,7 @@ function getFeaturedExperimentsWithPhotos($limit = 6) {
 	//Filter private last names
 	foreach($output as $key => $o) {
 	    if($o['private']) {
-	        $output[$key]['lastname'] = substr(ucfirst($o['lastname']), 0, 1);
+	        $output[$key]['lastname'] = substr(ucfirst($o['lastname']), 0, 1) . '.';
 	    }
 	}
 	
