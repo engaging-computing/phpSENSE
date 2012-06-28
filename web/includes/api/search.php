@@ -134,7 +134,7 @@ function searchVisualizations($terms, $page = 1, $limit = 10, $sort = "relevancy
 }
 
 //SEARCH PEOPLE
-function searchPeople($terms, $page = 1, $limit = 10, $sort = "relevancy") {
+function searchPeople($terms, $page = 1, $limit = 10, $sort = "relevancy", $includePrivate = 1) {
 	global $db;
 	
 	$sql = "SELECT users.* FROM users 
@@ -150,6 +150,9 @@ function searchPeople($terms, $page = 1, $limit = 10, $sort = "relevancy") {
 			$results = array_splice($results, $offset, $limit);
 			
 			for($i = 0; $i < count($results); $i++) {
+                if($results[$i]['private']) {
+                    $results[$i]['lastname'] = substr(ucfirst($results[$i]['lastname']), 0, 1);
+                }
 				$results[$i]['session_count'] = countNumberOfContributedSessions($results[$i]['user_id']);
 				$results[$i]['experiment_count'] = countNumberOfContributedExperiments($results[$i]['user_id']);
 			}
@@ -165,7 +168,7 @@ function searchPeople($terms, $page = 1, $limit = 10, $sort = "relevancy") {
 }
 
 //BROWSE PEOPLE
-function browsePeople($page = 1, $limit = 10, $sort = "") {
+function browsePeople($page = 1, $limit = 10, $sort = "", $includePrivate = 1) {
 	global $db;
 	
 	$sql = "SELECT users.* FROM users ORDER BY users.lastname ASC, users.firstname ASC";
@@ -178,6 +181,10 @@ function browsePeople($page = 1, $limit = 10, $sort = "") {
 			$results = array_splice($results, $offset, $limit);
 
 			for($i = 0; $i < count($results); $i++) {
+                if($results[$i]['private']) {
+                    //Filter private last names
+                    $results[$i]['lastname'] = substr(ucfirst($results[$i]['lastname']), 0, 1);
+                }
 				$results[$i]['session_count'] = countNumberOfContributedSessions($results[$i]['user_id']);
 				$results[$i]['experiment_count'] = countNumberOfContributedExperiments($results[$i]['user_id']);
 			}
