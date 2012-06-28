@@ -47,7 +47,7 @@ class Data {
         
         /* See how much data the experiment has */
         $total = count($this->dataPoints);
-      echo $total . "\r\n";
+        
         /* If there is more than one data point in a session add the following vizes */
         if( $total > 1 ) {
             $this->relVis = array_merge(array('Scatter', 'Bar', 'Histogram'), $this->relVis); 
@@ -135,19 +135,12 @@ if(isset($_REQUEST['sessions'])) {
             foreach ($data->fields as $k=>$field) {
                 if ($field->typeID != 37)
                 {
-                    
-                    $tmpData[$j][$k] = intval($dataPoint[$k]);
-                    
-                    if(!is_numeric(intval($dataPoint[$k]))){
+                    if(!is_numeric($dataPoint[$k])){
                     
                         $tmpData[$j][$k] = null;
-                    
                     }
-                    
                 } else {
-                    
                     $tmpData[$j][$k] = $dataPoint[$k];
-                    
                 }
             }
         }
