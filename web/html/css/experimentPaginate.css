@@ -1,0 +1,45 @@
+.session_cell {
+    height: 4em;
+    border-bottom: solid 1px black;
+}
+
+.session_cell  * {
+    float:left;
+    text-align:center;
+}
+
+.session_cell * a {
+    padding-top:1.2em;
+}
+
+.session_select {
+    height:10px;
+    width:3%;
+    padding-left:5px;
+    padding-top:1.5em;
+}
+
+.owner_img {
+    width:50px;
+    padding:9px 10px 0px;
+}
+
+.owner_name {
+    height:100%;
+    min-width: 120px;
+}
+
+.session_name {
+    height:100%;
+    width:180px;
+    text-align:left;
+}
+
+#experiment_control_panel div a {
+    font-size: 80%;
+    padding-top:1.6em;
+}
+
+.edit_session {
+    padding: 0px 5px 0px;
+}

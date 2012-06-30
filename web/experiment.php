@@ -57,7 +57,7 @@ if(isset($_GET['id'])) {
 		if($is_activity) {
 		    $fields     = getFields($meta['activity_for']);
 		    $tags       = getTagsForExperiment($meta['activity_for']);
-		    $sessions 	= getVisibleSessionsForExperiment($id);
+		    $sessions 	= getSessionsForExperiment($id);
 		    $vises	= getResponsesForActivity($id);
 		}
 		else {

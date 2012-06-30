@@ -153,11 +153,51 @@
 				<div id="session_list" width="100%" cellpadding="0" cellspacing="0">
                     { if $sessions }
                         { foreach from=$sessions item=session key=i }
-                            { if $session.finalized }
                                 <div class="session_cell">
-                                    {$session|var_dump}
+                                    <div class="session_select">
+                                        <input type="checkbox" id="{$session.session_id}" {if $i == 0}checked{/if} />
+                                    </div>
+                                    
+                                    <div class="owner_img">
+                                        <img src="{$session.owner_avatar}&h=32&w=32" width="32px" height="32px" />
+                                    </div>
+                                    
+                                    <div class="owner_name">
+                                        <a href="profile.php?id={ $session.owner_id }">{ $session.firstname } { $session.lastname }</a>
+                                    </div>
+                                    
+                                    <div class="session_name">
+                                        <a href="newvis.php?sessions={ $session.session_id }">{ $session.name }</a>
+                                    </div>
+                                    
+                                    <div class="pictures_maybe">
+                                        { counter start=0 skip=1 assign='imginc' }
+                                        { foreach from=$expimages item=expimg key=j }
+                                            { if $expimg.session_id == $session.session_id && $imginc < 7 }
+                                                { counter }
+                                                <a class="nounderline" href="{ $expimg.provider_url }">
+                                                    <img src="{ $expimg.provider_url }" width="30px" height="30px"/>
+                                                </a>
+                                            { /if }
+                                        { /foreach }
+                                    </div>
+                                    
+                                    {if $user.administrator == 1 or $session.owner_id == $user.user_id}
+                                        <div id="experiment_control_panel">
+                                            <div class="add_img">
+                                                <a href="session-upload-pictures.php?sid={ $session.session_id }&id={ $id }">Add Image</a>
+                                            </div>
+                                            
+                                            <div class="edit_session">
+                                                <a href="javascript:void(0);" onclick="window.location.href='session-edit.php?id={$session.session_id}';">Edit Session</a>
+                                            </div>
+                                            
+                                            <div class="edit_data">
+                                                <a href-"javasript:void(0)" onclick="window.location.href='/edit.php?exp={$session.experiment_id}&ses={$session.session_id}';">Edit Data</a>
+                                            </div>
+                                        </div>
+                                    {/if}
                                 </div>
-                            { /if }
                         { /foreach }
 					{ /if }
 				</div>
