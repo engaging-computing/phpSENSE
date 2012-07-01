@@ -155,7 +155,7 @@
                         { foreach from=$sessions item=session key=i }
                                 <div class="session_cell">
                                     <div class="session_select">
-                                        <input type="checkbox" id="{$session.session_id}" {if $i == 0}checked{/if} />
+                                        <input type="checkbox" name="sessions" value="{$session.session_id}" {if $i == 0}checked{/if} />
                                     </div>
                                     
                                     <div class="owner_img">
