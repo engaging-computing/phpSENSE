@@ -25,6 +25,9 @@ function loginTest($user,$pass){
         return json_decode($result,true);
 }
 
+//--------------------------------------------------------------------------------------------------------------------
+
+//Tests login
 echo "<h1>Login Test</h1>";
 
 //Correct user/pass
