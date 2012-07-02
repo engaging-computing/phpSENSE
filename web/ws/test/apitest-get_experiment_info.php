@@ -112,8 +112,10 @@ function getExperimentImagesTest($exp){
 
 
 //--------------------------------------------------------------------------------------------------------------------
+
 //Get Experiment Fields Test
-echo "<h1>Get Experient Fields Test</h1>";
+echo "<h1>Get Experiment Fields Test</h1>";
+
 //Verfies that the we got experiment fields
 echo "<h2>Tests that we got the experiment fields...</h2>";
 
@@ -128,9 +130,7 @@ if ($getExperimentFields_response['status'] == 200) {
     echo"<br>";
 }
 
-
 echo "<br>";
-
 
 //Verifies that we did not get the experiment fields
 echo "<h2>Tests that we did not get the experiment fields...</h2>";
@@ -152,11 +152,11 @@ if ($getExperimentFields_response['status'] == 600) {
 
 echo"<hr>";
 
-
-
 //--------------------------------------------------------------------------------------------------------------------
+
 //Get Experiment Visualizations Test
 echo "<h1>Create Session Test</h1>";
+
 //Verifies that we got the experiment visualizations
 echo "<h2>Tests that we got the experiment visualizations...</h2>";
 
@@ -171,9 +171,7 @@ if ($getExperimentVisualizations_response['status'] == 200) {
     echo"<br>";
 }
 
-
 echo "<br>";
-
 
 //Verifies that we did not get the experiment visualizations
 echo "<h2>Tests that we did not get the experiment visualizations...</h2>";
@@ -195,11 +193,11 @@ if ($getExperimentVisualizations_response['status'] == 600) {
 
 echo"<hr>";
 
-
-
 //--------------------------------------------------------------------------------------------------------------------
+
 //Get Experiment Tags Test
 echo "<h1>Get Experiment Tags Test</h1>";
+
 //Verifies that we got the experiment tags
 echo "<h2>Tests that we got the experiment tags...</h2>";
 
@@ -214,9 +212,7 @@ if ($getExperimentTags_response['status'] == 200) {
     echo"<br>";
 }
 
-
 echo "<br>";
-
 
 //Verifies that we did not get the experiment tags
 echo "<h2>Tests that we did not get the experiment tags...</h2>";
@@ -238,12 +234,11 @@ if ($getExperimentTags_response['status'] == 600) {
 
 echo"<hr>";
 
-
-
 //--------------------------------------------------------------------------------------------------------------------
-//Get Experiment Videos Test;
 
+//Get Experiment Videos Test
 echo "<h1>Get Experiment Videos Test</h1>";
+
 //Verifies that we got the experiment videos
 echo "<h2>Tests that we got the experiment videos...</h2>";
 
@@ -258,9 +253,7 @@ if ($getExperimentVideos_response['status'] == 200) {
     echo"<br>";
 }
 
-
 echo "<br>";
-
 
 //Verifies that we did not get the experiment videos
 echo "<h2>Tests that we did not get the experiment videos...</h2>";
@@ -282,11 +275,11 @@ if ($getExperimentVideos_response['status'] == 600) {
 
 echo"<hr>";
 
-
-
 //--------------------------------------------------------------------------------------------------------------------
+
 //Get Experiment Images Test
 echo "<h1>Get Experiment Images Test</h1>";
+
 //Verifies that we got the experiment images
 echo "<h2>Tests that we got the experiment images...</h2>";
 
@@ -301,9 +294,7 @@ if ($getExperimentImages_response['status'] == 200) {
     echo"<br>";
 }
 
-
 echo "<br>";
-
 
 //Verifies that we did not get the experiment images
 echo "<h2>Tests that we did not get the experiment images...</h2>";
@@ -326,6 +317,3 @@ if ($getExperimentImages_response['status'] == 600) {
 echo "<hr>";
 
 ?>
-
-
-

@@ -1,4 +1,4 @@
- <html>
+<html>
 <head>
 <title>iSenseDev Automated Testing</title>
 <link rel="stylesheet" type="text/css" href="apitest.css" />
@@ -7,81 +7,54 @@
 
 <?php
 
-//HTTP codes
-// 200 - OK
-// 400 - Bad Request
-// 600 - Bad Reqest/Doesn't Exist
-
-//Experiments:
-// 0 has no data
-// 1 is an open experiment
-// 2 is a closed experiment
-// 3 is a deleted experimetnt
-// 346 has data
-
-//Users:
-// james.dalphond@gmail.com (password) - uid: 5
-
-
 //To do:
-//*** - getPeople
-//*** - getSessions (deal with limits)
-//*** - getExperiments (make sure you deal with limits)
-//DONE! kc - low - getUserProfile
-//DONE! kc - low - getExperimentByUser
-//DONE! ar - low - getVisByUser
-//DONE! ar - low - getSessionsByUser
-//DONE! ar - low - getImagesByUser
-//DONE! low - getVideosByUser
-//jeremy email - putSessionData/updateSessionData
+// getPeople
+// getSessions (deal with limits)
+// getExperiments (make sure you deal with limits)
+// putSessionData/updateSessionData
 // uploadImageToExperiment
-//jermey uses this one - uploadImageToSession
-//skip for now - getDataSince
+// uploadImageToSession
 
-//DONE
-// ******apitest-login.php******
+
+//DONE!!!
+// ***apitest-login.php***
 // login
 
-// ******apitest-get_general_info.php******
-// getExperiments*
-// getPeople*
-// getVisualizations*
+// ***apitest-get_general_info.php***
+// getExperiments
+// getPeople
+// getVisualizations
 // getSessions
+// getDataSince
 
-
-//DONE
-// *****apitest-get_experiment_info.php****** 
+//DONE!!!
+// ***apitest-get_experiment_info.php***
 // getExperimentFields
 // getExperimentVisualizations
 // getExperimentTags
 // getExperimentVideos
 // getExperimentImages
 
-//DONE
-// ******apitest-get_user_info.php******
-// getUserProfile
+//DONE!!!
+// ***apitest-get_user_info.php***
 // getExperimentByUser
 // getVisByUser
-// getSessionsByUser
 // getImagesByUser
 // getVideosByUser
+// getUserProfile
+// getSessionsByUser
 
-// ******apitest-session.php******
+// ***apitest-session.php***
 // createSession
-// uploadImageToSession*
-// putSessionData*
+// uploadImageToSession
+// putSessionData
 
+// ***apitest-experiment.php***
+// uploadImageToExperiment
 
-// ******apitest-experiment.php******
-// uploadImageToExperiment*
-
-
+// Note to Jim: Need to fix mysql error - user -1 has images, otherwise Get Images By User Test fails
 
 require_once('../../includes/config.php');
-
-echo "<div class=\"testheading\">Starting login test....<br></div>";
-
-
 
 //Log in token used to authenticate a user
 $session_key = null;
@@ -109,7 +82,6 @@ function initialize(){
 }
 
 
-
 //--------------------------------------------------------------------------------------------------------------------
 //Initialize
 echo "<h1>Initialization</h1>";
@@ -122,26 +94,31 @@ if(initialize()){
 }
 echo "<hr>";
 
-
 //--------------------------------------------------------------------------------------------------------------------
 
-
-//Need to fix mysql error - user -1 has images
-
+echo "<div class=\"testheading\">Starting login test....<br></div>";
 
 require_once('apitest-login.php');
 
-require_once('apitest-get_general_info.php');
-
-require_once('apitest-get_user_info.php');
-
-require_once('apitest-session.php');
+echo "<div class=\"testheading\">Starting Experiment Test...<br></div>";
 
 require_once('apitest-experiment.php');
 
+echo "<div class=\"testheading\">Starting Session Test...<br></div>";
 
+require_once('apitest-session.php');
 
+echo "<div class=\"testheading\">Starting Get General Info Test...<br></div>";
 
+require_once('apitest-get_general_info.php');
+
+echo "<div class=\"testheading\">Starting Get User Info Test...<br></div>";
+
+require_once('apitest-get_user_info.php');
+
+echo "<div class=\"testheading\">Starting Get Experiment Info Test...<br></div>";
+
+require_once('apitest-get_experiment_info.php');
 
 ?>
 </body>
