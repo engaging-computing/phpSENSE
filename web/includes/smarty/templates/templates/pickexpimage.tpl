@@ -11,5 +11,6 @@
             {/if}
         {/foreach} 
     {/if}
+    <a href="upload-pictures.php?id={$expid}"><img style="height:120px;width:165px;margin:5px;" src="html/img/isenseaddimage.png"/></a>
 </div>
 <input type="hidden" id="storedexpid" value="{$expid}"/>
