@@ -15,7 +15,7 @@ var scatter = new function Scatter(){
         
         controls += '<div style="float:left;margin:10px;border:1px solid grey;padding:5px;"><div style="text-align:center;text-decoration:underline;padding-bottom:5px;">Tools:</div><button id="resetview" type="button">Reset View</button></div>';
         
-        controls += buildSessionControls('scatter');
+        //controls += buildSessionControls('scatter');
         
         // --- //
         

@@ -31,63 +31,53 @@
 
 
 (function() {
-  var _ref;
+  var BaseVis, _base, _ref, _ref1;
 
   if ((_ref = window.globals) == null) {
     window.globals = {};
   }
 
-  window.globals.curVis = null;
+  if ((_ref1 = (_base = window.globals).groupIndex) == null) {
+    _base.groupIndex = 0;
+  }
 
-  /*
-  CoffeeScript version of runtime.
-  */
+  BaseVis = (function() {
 
-
-  ($(document)).ready(function() {
-    var can, vis, _i, _len, _ref1;
-    _ref1 = ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas'];
-    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-      can = _ref1[_i];
-      ($(can)).hide();
+    function BaseVis() {
+      this.drawControls();
     }
-    /* Generate tabs
-    */
 
-    for (vis in data.relVis) {
-      ($('#vis_select')).append('<li class="vis_tab_' + vis + '"><a href="#">' + data.relVis[vis] + '</a></li>');
-    }
-    ($('#vis_select > li > a')).css('background-color', '#ccc');
-    ($('#vis_select > li > a')).css('border-bottom', '1px solid black');
-    ($('.vis_tab_0 > a')).css('background-color', '#fff');
-    ($('.vis_tab_0 > a')).css('border-bottom', '1px solid white');
-    window.globals.curVis = eval(data.relVis[0].toLowerCase());
-    ($('#vis_select > li > a')).unbind();
-    /* Change vis click handler
-    */
+    BaseVis.prototype.drawControls = function() {
+      var controls, fieldIndex, group, _i, _j, _len, _len1, _ref2, _ref3;
+      controls = '<div class="vis_control_container">';
+      controls += '<div class="vis_controls">';
+      controls;
 
-    ($('#vis_select')).children().children().click(function() {
-      if (window.global.curVis != null) {
-        window.globals.curVis.end();
+      controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Groups:</tr></td>';
+      controls += '<tr><td><div class="vis_control_table_div">';
+      controls += '<select>';
+      _ref2 = data.getTextFields();
+      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+        fieldIndex = _ref2[_i];
+        controls += "<option value=\"" + fieldIndex + "\">" + data.fields[fieldIndex].fieldName + "</option>";
       }
-      /* Remove old selection
-      */
-
-      ($('#vis_select  > li > a')).css('background-color', '#ccc');
-      ($('#vis_select  > li > a')).css('border-bottom', '1px solid black');
-      window.globals.curVis = eval(this.text.toLowerCase());
-      /* Set new selection
-      */
-
-      ($(this)).css("background-color", "#ffffff");
-      ($(this)).css('border-bottom', '1px solid white');
-      if (window.globals.curVis.inited) {
-        return window.globals.curVis.start();
-      } else {
-        return window.globals.curVis.init();
+      controls += "</select></div></td></tr>";
+      _ref3 = data.getUnique(window.globals.groupIndex);
+      for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
+        group = _ref3[_j];
+        controls += '<tr><td>';
+        controls += '<div class="vis_control_table_div">';
+        controls += "<input class=\"group_input\" type=\"checkbox\" name=\"nam\" value=\"" + group + "\"></input>&nbsp";
+        controls += "" + group + "&nbsp";
+        controls += "</div></td></tr>";
       }
-    });
-    return window.globals.curVis.init();
-  });
+      controls += '</table></div>';
+      controls += '</div>';
+      return (document.getElementById("controldiv")).innerHTML = controls;
+    };
+
+    return BaseVis;
+
+  })();
 
 }).call(this);
