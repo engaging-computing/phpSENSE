@@ -167,7 +167,7 @@
                                     </div>
                                     
                                     <div class="session_name">
-                                        <a href="newvis.php?sessions={ $session.session_id }">{ $session.name }</a>
+                                        <a href="newvis.php?sessions={ $session.session_id }">{ $session.name|truncate:27 }</a>
                                     </div>
                                     
                                     <div class="pictures_maybe">

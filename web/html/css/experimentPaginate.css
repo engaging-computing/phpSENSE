@@ -54,7 +54,7 @@
     min-width  : 20%;
     float : left;
     text-align : center;
-    padding-top : 2em;
+    padding-top : 1em;
 }
 
 #page_info {
@@ -72,7 +72,7 @@
     min-width  : 20%;
     float : right;
     text-align : center;
-    padding-top : 2em;
+    padding-top : 1em;
     position:relative;
     top:-5em;
 }
@@ -83,8 +83,18 @@
     border : 1px solid #DDD;
 }
 
+.pictures_maybe {
+    height: 100%;
+    width : 32px;
+}
+
+
 .page_disabled {
     background-color : #CCC;
     text-decoration : none;
     color : #888;
+}
+
+.page_disabled input {
+    color : black;
 }
