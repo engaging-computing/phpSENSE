@@ -293,6 +293,15 @@ function browseMySessions($uid) {
 	return false;
 }
 
+function isSessionHidden( $ses ) {
+    global $db;
+    
+    $output = $db->query('SELECT finalized FROM sessions WHERE session_id = ' . $ses . ';');
+    
+    return $output[0]['finalized'];
+
+}
+
 function getNumberOfSessions() {
 	global $db;
 	
@@ -383,7 +392,8 @@ function putData($eid, $sid, $data) {
 function getData($eid, $sid, $get_header = false, $strip_keys = true) {
     global $mdb;
 
-    $excluded = array("session", "experiment", "_id");
+    $excluded = array("session", "experiment");
+
     $fields = getFields($eid);
     $data = array();
     
