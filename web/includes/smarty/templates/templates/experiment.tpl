@@ -153,57 +153,82 @@
 				<table id="session_list" width="100%" cellpadding="0" cellspacing="0">
 					{ if $sessions }
 						{ foreach from=$sessions item=session key=i }
-							<tr>
-								<td width="35%" style="border-bottom:1px solid #CCC;">
-									<div style="padding:3px 0px;">
-										<table width="100%" cellpadding="0" cellspacing="0">
-											<tr>
-												<td rowspan="4"><input type="checkbox" name="sessions" value="{ $session.session_id }" { if $i == 0 }checked{/if}></td>
-											</tr>
-											<tr >
-												<td rowspan="4" width="34px"><img src={ $session.owner_avatar }&h=32&w=32" height="32px" width="32px"></td>
-											</tr>
-											<tr>
-												<td valign="top"><a href="profile.php?id={ $session.owner_id }">{ $session.firstname } { $session.lastname }</a>
-											</tr>
-											<tr>
-												<td valign="top">
-													{ $session.timecreated }
-												</td>
-											</tr>
-										</table>
-									</div>
-								</td>
-								<td style="border-bottom:1px solid #CCC;" { if $session.owner_id != $user.user_id } colspan="2" {/if}>
-									<a href="{if $newvis==1}new{/if}vis.php?sessions={ $session.session_id }">{ $session.name }</a>
-									{ if $user.administrator == 1 }<br/>{ $session.debug_data }{ /if }
-								</td>
-								<td style="border-bottom:1px solid #CCC;">
-									{ counter start=0 skip=1 assign='imginc' }
-									{ foreach from=$expimages item=expimg key=j }
-										{ if $expimg.session_id == $session.session_id && $imginc < 7 }
-											{ counter }
-											<a class="nounderline" href="{ $expimg.provider_url }">
-												<img src="{ $expimg.provider_url }" width="30px" height="30px"/>
-											</a>
-										{ /if }
-									{ /foreach }
-								</td>
-								{ if $user.administrator == 1 or $session.owner_id == $user.user_id }
-								    <td style="border-bottom:1px solid #CCC;width:36%;">
-										<a href="session-upload-pictures.php?sid={ $session.session_id }&id={ $id }">Add Image</a> - 
-								        <a href="javascript:void(0);" onclick="window.location.href='session-edit.php?id={$session.session_id}';">Edit Session</a>
-								        - <a href-"javasript:void(0)" onclick="window.location.href='/edit.php?exp={$session.experiment_id}&ses={$session.session_id}';">Edit Data</a>
-								    </td>
-								{ /if }
-							</tr>
+                            {if $i > $sessionPaginationStart && $i < ($sessionPaginationStart + $sessionPaginationLimit) }
+                                <tr>
+                                    <td width="35%" style="border-bottom:1px solid #CCC;">
+                                        <div style="padding:3px 0px;">
+                                            <table width="100%" cellpadding="0" cellspacing="0">
+                                                <tr>
+                                                    <td rowspan="4"><input type="checkbox" name="sessions" value="{ $session.session_id }" { if $i == 0 }checked{/if}></td>
+                                                </tr>
+                                                <tr >
+                                                    <td rowspan="4" width="34px"><img src={ $session.owner_avatar }&h=32&w=32" height="32px" width="32px"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td valign="top"><a href="profile.php?id={ $session.owner_id }">{ $session.firstname } { $session.lastname }</a>
+                                                </tr>
+                                                <tr>
+                                                    <td valign="top">
+                                                        { $session.timecreated }
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </td>
+                                    <td style="border-bottom:1px solid #CCC;" { if $session.owner_id != $user.user_id } colspan="2" {/if}>
+                                        <a href="{if $newvis==1}new{/if}vis.php?sessions={ $session.session_id }">{ $session.name }</a>
+                                        { if $user.administrator == 1 }<br/>{ $session.debug_data }{ /if }
+                                    </td>
+                                    <td style="border-bottom:1px solid #CCC;">
+                                        { counter start=0 skip=1 assign='imginc' }
+                                        { foreach from=$expimages item=expimg key=j }
+                                            { if $expimg.session_id == $session.session_id && $imginc < 7 }
+                                                { counter }
+                                                <a class="nounderline" href="{ $expimg.provider_url }">
+                                                    <img src="{ $expimg.provider_url }" width="30px" height="30px"/>
+                                                </a>
+                                            { /if }
+                                        { /foreach }
+                                    </td>
+                                    { if $user.administrator == 1 or $session.owner_id == $user.user_id }
+                                        <td style="border-bottom:1px solid #CCC;width:36%;">
+                                            <a href="session-upload-pictures.php?sid={ $session.session_id }&id={ $id }">Add Image</a> - 
+                                            <a href="javascript:void(0);" onclick="window.location.href='session-edit.php?id={$session.session_id}';">Edit Session</a>
+                                            - <a href-"javasript:void(0)" onclick="window.location.href='/edit.php?exp={$session.experiment_id}&ses={$session.session_id}';">Edit Data</a>
+                                        </td>
+                                    { /if }
+                                </tr>
+                            {/if}
 						{ /foreach }
 					{ else }
 						<tr>
 							<td style=" padding:6px 0px 0px 0px; font-weight:bold; font-style: italic;">No sessions were found.</td>
 						</tr>
 					{ /if }
-				</table>
+                </table>
+                <div style="width:100%;padding-top:1.5em;">
+                    <div id="sesPagLeft" style="float:left;width:15%;text-align:center;">
+                        {if $sessionPaginationStart-$sessionPaginationLimit >= 0 }
+                            <a href="http://{$smarty.server.SERVER_NAME}/experiment.php?id={$id}&start={$sessionPaginationStart-$sessionPaginationLimit}&limit={$sessionPaginationLimit}">
+                                Back!
+                            </a>
+                        {else}
+                            Back!
+                        {/if}
+                    </div>
+                    <div id="sesInfo" style="width:70%;float:left;text-align:center;">
+                        <p>Displaying {$sessionPaginationStart}...{$sessionPaginationStart+$sessionPaginationLimit}</p>
+                    </div>
+                    <div id="sesPagRight" style="float:right;width:15%;text-align:center;">
+                        {if count($sessions) > $sessionPaginationStart+$sessionPaginationLimit }
+                            <a href="http://{$smarty.server.SERVER_NAME}/experiment.php?id={$id}&start={$sessionPaginationStart+$sessionPaginationLimit}&limit={$sessionPaginationLimit}">
+                                Next!
+                            </a>
+                        {else}
+                            Next!
+                        {/if}
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
