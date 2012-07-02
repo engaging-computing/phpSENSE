@@ -11,7 +11,7 @@
             {/if}
         {/foreach}
     {else}
-        There are no images associated with this experiment.
+        <img class="selectexpimage" style="height:120px;width:165px;padding:1px 1px 1px 1px;border:4px solid #2396e6;background:#fff;" src="http://s3.amazonaws.com/isenseimgs/429_162_1340048099_1.png"/>
     {/if}
     {*$test*}
     

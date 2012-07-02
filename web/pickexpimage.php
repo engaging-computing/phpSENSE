@@ -19,14 +19,17 @@ $test = $exp['activity_for'];
 //$test = $expid;
 
 
-if(isset($exp['picture_url'])) {
-    $imgurl = $exp['picture_url'];
+if(isset($exp['exp_image'])) {
+    $imgurl = $exp['exp_image'];
 } else {
+    
+    /*
     if( $exp['activity'] == 0 ){
         $imgurl = getExperimentDefaultPicture( $expid );
     } else {
         $imgurl = getExperimentDefaultPicture( $exp['activity_for'] );
     }
+    */
 }
 
 if( $exp['activity'] == 0 ){
