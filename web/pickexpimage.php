@@ -38,6 +38,10 @@ if( $exp['activity'] == 0 ){
     $images = getImagesForExperiment( $exp['activity_for'] );
 }
 
+if($images == false) $images = array();
+
+array_push($images, array(provider_url => "http://s3.amazonaws.com/isenseimgs/429_162_1340048099_1.png"));
+
 $smarty->assign('user',     $session->getUser());
 $smarty->assign('title',    'Featured Experiment Image');
 $smarty->assign('images',   $images);
