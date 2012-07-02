@@ -1,8 +1,4 @@
 <?php
-// apitest-session.php
-// createSession
-// uploadImageToSession
-// putSessionData
 
 function createSessionTest($exp){
     global $session_key;
@@ -35,7 +31,58 @@ function createSessionTest($exp){
         return json_decode($result,true);
 }
 
+/*
+function uploadImageToSessionTest(){    
+    //The target for this test
+    $target = "localhost/ws/api.php?method=uploadImageToSession";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        '' => 
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+        curl_close($ch);
+        //Parse the response to an associative array
+        //echo "<br>".$result."<br>";
+        return json_decode($result,true);
+}
+*/
+
+/*
+function putSessionDataTest(){    
+    //The target for this test
+    $target = "localhost/ws/api.php?method=putSessionData";
+    
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        '' => 
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+        curl_close($ch);
+        //Parse the response to an associative array
+        //echo "<br>".$result."<br>";
+        return json_decode($result,true);
+}
+*/
+
 //--------------------------------------------------------------------------------------------------------------------
+
 //Create Session Test
 echo "<h1>Create Session Test</h1>";
 
@@ -59,9 +106,7 @@ if ($createSession_response['status'] == 200 ){
     echo "<br>";
 }
 
-
 echo "<br>";
-
 
 //Session on a closed experiment
 echo "<h2>Trying to create a session(s) on a closed experiment....</h2>";
@@ -83,6 +128,24 @@ if ($createSession_response['status'] == 400) {
     print_r($login_response);
     echo "<br>";
 }
+
+echo "<hr>";
+
+//--------------------------------------------------------------------------------------------------------------------
+
+//Upload Image To Session Test
+echo "<h1>Upload Image To Session Test</h1>";
+
+echo "<br>";
+
+echo "<hr>";
+
+//--------------------------------------------------------------------------------------------------------------------
+
+//Put Session Data Test
+echo "<h1>Put Session Data Test</h1>";
+
+echo "<br>";
 
 echo "<hr>";
 
