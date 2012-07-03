@@ -52,6 +52,7 @@ function getPeopleTest($page, $limits, $query, $sort, $action){
     //Close curl
     curl_close($ch);
     //Parse the response to an associative array
+    /*echo "<br>".$result."<br>";*/
     return json_decode($result,true);
 }
 
