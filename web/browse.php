@@ -132,9 +132,9 @@ $smarty->assign('params',		$params);
 $smarty->assign('results',		$results);
 $smarty->assign('sorttext',		$sorttext);
 $smarty->assign('next',			$next);
-$smarty->assign('navbarpages',		$navbarpages);
+$smarty->assign('navbarpages',	$navbarpages);
 $smarty->assign('numpages',		$numpages);
-
+$smarty->assign('sorttype',     $sorttype);
 $smarty->assign('user', 		$session->getUser());
 $smarty->assign('content', 		$smarty->fetch('browse.tpl'));
 $smarty->display('skeleton.tpl');
