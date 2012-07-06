@@ -536,7 +536,21 @@ $(document).ready( function() {
                         $("#removeManualRowButton").attr('disabled', 'disabled');
                     }
                 }
-            });
+            }
+		);
+		
+		$(".checkboxformsubmitter").click(function(){
+			
+			$("#browseform").submit();
+			
+		});
+		
+		$(".selectformsubmitter").change(function(){
+			
+			$("#browseform").submit();
+			
+		});
+		
 });
 
 function addLinkRow() {
