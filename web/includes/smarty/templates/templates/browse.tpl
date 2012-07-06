@@ -128,8 +128,10 @@
 										<div class="sub">
 										    <a class="session_count">{ $result.session_count }</a>
 										    <a class="contrib_count">{ $result.contrib_count }</a>
+                                            {if $result.meta.rating_comp > 0}
 										    <a class="rating_browse">{ $result.meta.rating_comp|substr:0:3 }</a>
-											<span>Last Modified { $result.meta.timemodified|date_diff }</span>
+										    {/if}
+                                                <span>Last Modified { $result.meta.timemodified|date_diff }</span>
 											{ if $result.meta.hidden == 1 }
 												<br><span>This experiment is hidden</span>
 											{ /if }
