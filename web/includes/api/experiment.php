@@ -355,7 +355,7 @@ function packageBrowseExperimentResults($results, $page = 1, $limit = 10, $overr
 	}
 }
 
-function browseExperimentsByRecent($page = 1, $limit = 10, $recommended = "off", $featured= false, $override = false) {
+function browseExperimentsByRecent($page = 1, $limit = 10, $override = false) {
 	global $db;
 	
 	$sqlCmd = "SELECT 	experiments.*, 
@@ -779,6 +779,7 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
             (experiments.rating/experiments.rating_votes) as rating_comp
             FROM experiments ";
 
+
     if($tags){
         $sql .= ", tagExperimentMap, tagIndex";
     }
@@ -794,33 +795,27 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
     }
 
     if($tags){
-        
+
+        $sql .= " AND ( ";
+
         //If there are tags we want to search by each of them.
-        if($tags !=null){
-            $tags = explode(" ", $tags);
-        }
-        
+        $tags = explode(" ", $tags);
+
         for($i=0;$i<count($tags);$i++){
-        
-            if($i == 0){
-                $sql .= " AND ((tagIndex.value like '%{$tags[$i]}%'
-                        AND tagIndex.tag_id = tagExperimentMap.tag_id
-                        AND experiments.experiment_id = tagExperimentMap.experiment_id
-                        AND tagIndex.weight=1)";
-            } elseif($i!=0 && $i<count($tags)-1) {
-                $sql .= " OR (tagIndex.value like '%{$tags[$i]}%'
-                        AND tagIndex.tag_id = tagExperimentMap.tag_id
-                        AND experiments.experiment_id = tagExperimentMap.experiment_id
-                        AND tagIndex.weight=1)";
-            } else {
-                $sql .= " OR (tagIndex.value like '%{$tags[$i]}%'
-                        AND tagIndex.tag_id = tagExperimentMap.tag_id
-                        AND experiments.experiment_id = tagExperimentMap.experiment_id
-                        AND tagIndex.weight=1))";
+
+            $sql .= " (tagIndex.value like '%{$tags[$i]}%'
+            AND tagIndex.tag_id = tagExperimentMap.tag_id
+            AND experiments.experiment_id = tagExperimentMap.experiment_id
+            AND tagIndex.weight=1)";
+
+            if($i < count($tags) -1){
+                $sql .= " OR ";
             }
         }
+
+        $sql .= " )";
     }
-    
+
     if($sort == "rating"){
         $sql .= " ORDER BY experiments.rating/experiments.rating_votes";
     } elseif ($sort == "activity"){
@@ -830,7 +825,7 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
     }
 
     $sql .= " DESC ";
-            
+
     $result = $db->query($sql);
 
     $keys = array();
@@ -844,7 +839,7 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
             $tmp[count($tmp)] = $result[$i];
         }
     }
-
+    
     $result = $tmp;
 
     return packageBrowseExperimentResults($result, $page,$limit,false);

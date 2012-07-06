@@ -20,8 +20,7 @@ h2
     font-size:12pt;
     margin-bottom: 0;
     margin-top: 0;
-    float: left;
-    
+    float: left;   
 }
 .success
 {
@@ -30,5 +29,15 @@ h2
     margin-bottom: 0;
     margin-top: 0;
     float: left;
+    
+}
+.testheading
+{
+    color:black;
+    font-size:24pt;
+    text-decoration:underline;
+    margin-bottom: 0;
+    margin-top: 0;
+	text-align: center;
     
 }
