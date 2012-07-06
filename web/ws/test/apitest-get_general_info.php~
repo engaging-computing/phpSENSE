@@ -52,7 +52,6 @@ function getPeopleTest($page, $limits, $query, $sort, $action){
     //Close curl
     curl_close($ch);
     //Parse the response to an associative array
-    /*echo "<br>".$result."<br>";*/
     return json_decode($result,true);
 }
 
@@ -119,6 +118,43 @@ for($i=0; $i<$limits; $i++){
       echo "<div class='failure'>FAILURE</div>, Page 1 and 2 are not different.<br>";
   } elseif($successflag == 1){
       echo "<div class='success'>SUCCESS</div>, Page 1 and 2 are different.<br>";
+  }
+
+echo "<br>";
+
+//Verifies that the number of experiments on a page does not exceed its limit
+echo "<h2>Verifies that limits are working....</h2>";
+
+$page = 1;
+$limits = 10;
+$query = "";
+$sort = "default";
+$action = "browse";
+
+$getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
+
+for($i=0; $i<count($getExperiments_response['data']); $i++);
+
+  if($i > $limits){
+      echo "<div class='failure'>FAILURE</div>, Page 1 does not satisfy the limit requirement.<br>";
+  } else{
+      echo "<div class='success'>SUCCESS</div>, Page 1 satisfies the limit requirement.<br>";
+  }
+
+$page = 2;
+$limits = 10;
+$query = "";
+$sort = "default";
+$action = "browse";
+
+$getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
+
+for($i=0; $i<count($getExperiments_response['data']); $i++);
+
+  if($i > $limits){
+      echo "<div class='failure'>FAILURE</div>, Page 2 does not satisfy the limit requirement.<br>";
+  } else{
+      echo "<div class='success'>SUCCESS</div>, Page 2 satisfies the limit requirement.<br>";
   }
 
 echo "<br>";

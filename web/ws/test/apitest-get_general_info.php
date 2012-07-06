@@ -122,6 +122,43 @@ for($i=0; $i<$limits; $i++){
 
 echo "<br>";
 
+//Verifies that the number of experiments on a page does not exceed its limit
+echo "<h2>Verifies that limits are working....</h2>";
+
+$page = 1;
+$limits = 10;
+$query = "";
+$sort = "default";
+$action = "browse";
+
+$getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
+
+for($i=0; $i<count($getExperiments_response['data']); $i++);
+
+  if($i > $limits){
+      echo "<div class='failure'>FAILURE</div>, Page 1 does not satisfy the limit requirement.<br>";
+  } else{
+      echo "<div class='success'>SUCCESS</div>, Page 1 satisfies the limit requirement.<br>";
+  }
+
+$page = 2;
+$limits = 10;
+$query = "";
+$sort = "default";
+$action = "browse";
+
+$getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
+
+for($i=0; $i<count($getExperiments_response['data']); $i++);
+
+  if($i > $limits){
+      echo "<div class='failure'>FAILURE</div>, Page 2 does not satisfy the limit requirement.<br>";
+  } else{
+      echo "<div class='success'>SUCCESS</div>, Page 2 satisfies the limit requirement.<br>";
+  }
+
+echo "<br>";
+
 echo "<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
@@ -164,6 +201,42 @@ for($i=0; $i<$limits; $i++){
       echo "<div class='success'>SUCCESS</div>, Page 1 and 2 are different.<br>";
   }
 
+echo "<br>";
+
+//Verifies that the number of people on a page does not exceed its limit
+echo "<h2>Verifies that limits are working....</h2>";
+
+$page = 1;
+$limits = 10;
+$query = "";
+$sort = "default";
+$action = "browse";
+
+$getPeople_response = getPeopleTest($page, $limits, $query, $sort, $action);
+
+for($i=0; $i<count($getPeople_response['data']); $i++);
+
+  if($i > $limits){
+      echo "<div class='failure'>FAILURE</div>, Page 1 does not satisfy the limit requirement.<br>";
+  } else{
+      echo "<div class='success'>SUCCESS</div>, Page 1 satisfies the limit requirement.<br>";
+  }
+
+$page = 2;
+$limits = 10;
+$query = "";
+$sort = "default";
+$action = "browse";
+
+$getPeople_response = getPeopleTest($page, $limits, $query, $sort, $action);
+
+for($i=0; $i<count($getPeople_response['data']); $i++);
+
+  if($i > $limits){
+      echo "<div class='failure'>FAILURE</div>, Page 2 does not satisfy the limit requirement.<br>";
+  } else{
+      echo "<div class='success'>SUCCESS</div>, Page 2 satisfies the limit requirement.<br>";
+  }
 
 echo "<br>";
 
