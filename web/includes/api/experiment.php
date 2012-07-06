@@ -775,14 +775,11 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
 
     $result = array();
 
-<<<<<<< HEAD
+
     $sql = "SELECT DISTINCT *,
             (experiments.rating/experiments.rating_votes) as rating_comp
             FROM experiments ";
-=======
-    $sql = "SELECT DISTINCT *
-    FROM experiments ";
->>>>>>> efe36b78dc342dac34018ad8542ab932e959183a
+
 
     if($tags){
         $sql .= ", tagExperimentMap, tagIndex";
