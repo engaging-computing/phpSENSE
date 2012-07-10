@@ -123,19 +123,19 @@ $sort = "default";
 $action = "browse";
 
 $getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
-
 $result1= Array();
 
-for($i=0; $i<$limits; $i++){
-  $result1[$i] = $getExperiments_response['data'][$i]['meta']['experiment_id']; 
+$i=0;
+foreach($getExperiments_response['data'] as $tmp){
+  $result1[$i] = $tmp[$i]['meta']['experiment_id']; 
+  $i++;
 }
 
 $page = 2;
 $getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
 
-
-for($i=0; $i<$limits; $i++){  
-  if(in_array($getExperiments_response['data'][$i]['meta']['experiment_id'],$result1 )) {
+foreach($getExperiments_response['data'] as $tmp){
+  if(in_array($tmp,$result1 )) {
       $successflag = 0;
   }else{
       $successflag = 1;
@@ -162,7 +162,10 @@ $action = "browse";
 
 $getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
 
-for($i=0; $i<count($getExperiments_response['data']); $i++);
+$i=0;
+foreach($getExperiments_response['data']['meta'] as $tmp){
+  $i++;
+}
 
   if($i > $limits){
       echo "<div class='failure'>FAILURE</div>, Page 1 does not satisfy the limit requirement.<br>";
@@ -178,7 +181,12 @@ $action = "browse";
 
 $getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
 
-for($i=0; $i<count($getExperiments_response['data']); $i++);
+$result1=Array();
+
+$i=0;
+foreach($getExperiments_response['data']['meta'] as $tmp){ 
+  $i++;
+}
 
   if($i > $limits){
       echo "<div class='failure'>FAILURE</div>, Page 2 does not satisfy the limit requirement.<br>";
@@ -222,7 +230,7 @@ echo "<br>";
 
 echo "<hr>";
 //--------------------------------------------------------------------------------------------------------------------
-/*
+
 //Get People Test
 echo "<h1>Get People Test</h1>";
 
@@ -230,24 +238,25 @@ echo "<h1>Get People Test</h1>";
 echo "<h2>Verifies that pages are working....</h2>";
 
 $page = 1;
-$limits = 4;
+$limits = 10;
 $query = "";
 $sort = "default";
 $action = "browse";
 
 $getPeople_response = getPeopleTest($page, $limits, $query, $sort, $action);
-
 $result1= Array();
 
-for($i=0; $i<$limits; $i++){
-  $result1[$i] = $getPeople_response['data'][$i]['user_id']; 
+$i=0;
+foreach($getPeople_response['data'] as $tmp){
+  $result1[$i] = $tmp[$i]['meta']['experiment_id']; 
+  $i++;
 }
 
 $page = 2;
 $getPeople_response = getPeopleTest($page, $limits, $query, $sort, $action);
 
-for($i=0; $i<$limits; $i++){  
-  if(in_array($getPeople_response['data'][$i]['user_id'],$result1 )) {
+foreach($getPeople_response['data'] as $tmp){
+  if(in_array($tmp,$result1 )) {
       $successflag = 0;
   }else{
       $successflag = 1;
@@ -262,7 +271,6 @@ for($i=0; $i<$limits; $i++){
   }
 
 echo "<br>";
-
 //Verifies that the number of people on a page does not exceed its limit
 echo "<h2>Verifies that limits are working....</h2>";
 
@@ -274,7 +282,10 @@ $action = "browse";
 
 $getPeople_response = getPeopleTest($page, $limits, $query, $sort, $action);
 
-for($i=0; $i<count($getPeople_response['data']); $i++);
+$i=0;
+foreach($getPeople_response['data']['meta'] as $tmp){
+  $i++;
+}
 
   if($i > $limits){
       echo "<div class='failure'>FAILURE</div>, Page 1 does not satisfy the limit requirement.<br>";
@@ -290,7 +301,10 @@ $action = "browse";
 
 $getPeople_response = getPeopleTest($page, $limits, $query, $sort, $action);
 
-for($i=0; $i<count($getPeople_response['data']); $i++);
+$i=0;
+foreach($getPeople_response['data']['meta'] as $tmp){
+  $i++;
+}
 
   if($i > $limits){
       echo "<div class='failure'>FAILURE</div>, Page 2 does not satisfy the limit requirement.<br>";
@@ -343,5 +357,4 @@ if ($getSessions_response['status'] == 600) {
 
 // echo "More tests to come!"; What does this mean?
 echo "<hr>";
-*/
 ?>
