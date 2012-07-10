@@ -98,24 +98,8 @@ if(isset($_REQUEST['method'])) {
 			$limit = $params['limit'];
 			$sort = $params['sort'];
 
-			if($action == "search") {
-				$data = searchExperiments($query, $page, $limit, $sort);
-			}
-			else {
-				if($sort == "default" || $sort == "recent") {
-					$data = browseExperimentsByRecent($page, $limit, true);
-				}
-				else if($sort == "popularity") {
-					$data = browseExperimentsByPopular($page, $limit, true);
-				}
-				else if($sort == "activity") {
-					$data = browseExperimentsByActivity($page, $limit, true);
-				}
-				else if($sort == "rating") {
-					$data = browseExperimentsByRating($page, $limit, true);
-				}
-			}
-				
+			$data = browseExperiments($page,$limit,0,"off","off",$query,$sort);
+			
 			if(count($data) > 0) {
 			    
 				for($i = 0; $i < count($data); $i++) {
@@ -128,7 +112,7 @@ if(isset($_REQUEST['method'])) {
 				    }
 				}
 			}
-
+          
 			$status = 200;
 			break;
 
