@@ -111,10 +111,15 @@ else {
 	array_push($errors, "The experiment you're looking for is no longer available.");
 }
 
-$qrimg = tempnam($id.".png","img");
+//Build the qr codes string
 $qrcode = "http://".$_SERVER['SERVER_NAME']."/experiment.php?id=".$id;
-QRcode::png($qrcode, $qrimg);
-$smarty->assign('qrcode',  "data/qrs/".$id.".png");
+$filename = "/data/qrs/".$id.".png";
+
+//Generate the qr code
+QRcode::png($qrcode,$filename);
+
+//Assign the qr code
+$smarty->assign('qrcode', $filename);
 
 
 $smarty->assign('id',		$id);
@@ -124,5 +129,7 @@ $smarty->assign('title', 	$title);
 $smarty->assign('head', 	$smarty->fetch('parts/experiment-head.tpl'));
 $smarty->assign('content', 	$smarty->fetch('experiment.tpl'));
 $smarty->display('skeleton.tpl')
+
+
 
 ?>
