@@ -21,11 +21,9 @@
 // login
 
 // ***apitest-get_general_info.php***
-// getExperiments
-// getPeople
-// getVisualizations
-// getSessions
-// getDataSince
+// getExperiments *incomplete
+// getPeople *incomplete
+// getSessions 
 
 //DONE!!!
 // ***apitest-get_experiment_info.php***
@@ -95,7 +93,7 @@ if(initialize()){
 echo "<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
-
+/*
 echo "<div class=\"testheading\">Starting login test....<br></div>";
 
 require_once('apitest-login.php');
@@ -107,11 +105,11 @@ require_once('apitest-experiment.php');
 echo "<div class=\"testheading\">Starting Session Test...<br></div>";
 
 require_once('apitest-session.php');
-
+*/
 echo "<div class=\"testheading\">Starting Get General Info Test...<br></div>";
 
 require_once('apitest-get_general_info.php');
-
+/*
 echo "<div class=\"testheading\">Starting Get User Info Test...<br></div>";
 
 require_once('apitest-get_user_info.php');
@@ -119,7 +117,7 @@ require_once('apitest-get_user_info.php');
 echo "<div class=\"testheading\">Starting Get Experiment Info Test...<br></div>";
 
 require_once('apitest-get_experiment_info.php');
-
+*/
 ?>
 </body>
 </html>

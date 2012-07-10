@@ -1,8 +1,8 @@
 <?php
 
-function getExperimentsTest($page, $limits, $query, $sort, $action){
+function getExperimentTest($id){
     //The target for this test
-    $target = "localhost/ws/api.php?method=getExperiments";
+    $target = "localhost/ws/api.php?method=getExperiment";
     
     //Curl crap that will mostly stay the same
     $ch = curl_init();
@@ -11,8 +11,37 @@ function getExperimentsTest($page, $limits, $query, $sort, $action){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+	'id' => $id
+        )); 
+        
+        //Run curl to get the response
+        $result = curl_exec($ch);
+        //Close curl
+        curl_close($ch);
+        //Parse the response to an associative array
+	
+        return json_decode($result,true);
+}
+
+function getExperimentsTest($page, $limits, $query, $sort, $action){
+    //The target for this test
+    $target = "localhost/ws/api.php?method=getExperiments";
+    /*
+    echo "<br><br>";
+    echo $target."&page=".$page."&limit=".$limits."&query=".$query."&sort=".$sort."&action=".$action;
+    echo "<br><br>";
+*/
+
+
+    //Curl crap that will mostly stay the same
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $target);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
         'page' => $page,
-	'limits' => $limits,
+	'limit' => $limits,
 	'query' => $query,
 	'sort' => $sort,
 	'action' => $action,
@@ -159,10 +188,41 @@ for($i=0; $i<count($getExperiments_response['data']); $i++);
 
 echo "<br>";
 
+//Verifies that the sorting is working correctly
+echo "<h2>Verifies that Rating sorting is working....</h2>";
+
+$page = 1;
+$limits = 10;
+$query = "";
+$sort = "rating";
+$action = "browse";
+
+$getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
+
+echo $getExperiments_response;
+for($j=0; $j<$limits; $j++){
+  $newest = $getExperiments_response['data'][$j]['meta']['rating']; 
+  echo $newest;
+  $next =  $getExperiments_response['data'][$j+1]['meta']['rating'];
+  echo $next;
+  print_r($next);
+  if($newest < $next){
+      $successflag = 0;
+      break;   
+  }
+}
+
+if($successflag == 0){
+  echo "<div class='failure'>FAILURE</div>, Page 1 did not sort correctly.<br>";
+} else{
+  echo "<div class='success'>SUCCESS</div>, Page 1 sorted correctly.<br>";
+}
+
+echo "<br>";
+
 echo "<hr>";
-
 //--------------------------------------------------------------------------------------------------------------------
-
+/*
 //Get People Test
 echo "<h1>Get People Test</h1>";
 
@@ -283,5 +343,5 @@ if ($getSessions_response['status'] == 600) {
 
 // echo "More tests to come!"; What does this mean?
 echo "<hr>";
-
+*/
 ?>

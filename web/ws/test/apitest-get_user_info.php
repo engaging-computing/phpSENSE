@@ -343,7 +343,7 @@ echo "<h2>Tests that we did not get the user profile...</h2>";
 $id = -1;
 $getUserProfile_response = getUserProfileTest($id);
 
-if ($getUserProfile_response.length == 0) {
+if (count($getUserProfile_response) == 0) {
     echo "<div class='success'>SUCCESS</div>, Unable to get user profile.<br>";
 } else {
     echo "<div class='failure'>FAILURE</div>, You got the user profile. JSON: ";
