@@ -19,14 +19,17 @@ $test = $exp['activity_for'];
 //$test = $expid;
 
 
-if(isset($exp['picture_url'])) {
-    $imgurl = $exp['picture_url'];
+if(isset($exp['exp_image'])) {
+    $imgurl = $exp['exp_image'];
 } else {
+    
+    /*
     if( $exp['activity'] == 0 ){
         $imgurl = getExperimentDefaultPicture( $expid );
     } else {
         $imgurl = getExperimentDefaultPicture( $exp['activity_for'] );
     }
+    */
 }
 
 if( $exp['activity'] == 0 ){
@@ -34,6 +37,10 @@ if( $exp['activity'] == 0 ){
 } else {
     $images = getImagesForExperiment( $exp['activity_for'] );
 }
+
+if($images == false) $images = array();
+
+array_push($images, array(provider_url => "http://s3.amazonaws.com/isenseimgs/429_162_1340048099_1.png"));
 
 $smarty->assign('user',     $session->getUser());
 $smarty->assign('title',    'Featured Experiment Image');
