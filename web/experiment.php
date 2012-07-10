@@ -111,6 +111,12 @@ else {
 	array_push($errors, "The experiment you're looking for is no longer available.");
 }
 
+$qrimg = tempnam($id.".png","img");
+$qrcode = "http://".$_SERVER['SERVER_NAME']."/experiment.php?id=".$id;
+QRcode::png($qrcode, $qrimg);
+$smarty->assign('qrcode',  "data/qrs/".$id.".png");
+
+
 $smarty->assign('id',		$id);
 $smarty->assign('activity',	$is_activity);
 $smarty->assign('user', 	$session->getUser());

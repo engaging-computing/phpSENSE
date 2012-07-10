@@ -128,6 +128,8 @@ require_once API_DIR . 'conversions.php';
 /* Initalizes Smarty Templates */
 require_once 'smarty/lib/Smarty.class.php';
 
+require_once 'phpqrcode/qrlib.php';
+
 $smarty = new Smarty();
 $smarty->template_dir = dirname(__FILE__) . '/smarty/templates/templates';
 $smarty->compile_dir =  dirname(__FILE__) . '/smarty/templates/templates_c';
