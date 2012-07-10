@@ -28,60 +28,65 @@
 
 require_once '../includes/config.php';
 
-if(isset($_REQUEST['eids'])) {
-    global $mdb;
+$tmpusr = $session->getUser();
+
+if($tmpusr['administrator']) {
+
+    if(isset($_REQUEST['eids'])) {
+        global $mdb;
     
-    $eids = explode(" ", $_REQUEST['eids']);
+        $eids = explode(" ", $_REQUEST['eids']);
     
-    if ($eids[0] == "all") {
-        $eids = array();
-        echo "<pre>";
-        foreach ($mdb->db->listCollections() as $index=>$coll) {
-            $name = $coll->getName();
+        if ($eids[0] == "all") {
+            $eids = array();
+            echo "<pre>";
+            foreach ($mdb->db->listCollections() as $index=>$coll) {
+                $name = $coll->getName();
             
-            if ($name[0] == 'e') {
-                $eids[] = trim($name, 'e');
+                if ($name[0] == 'e') {
+                    $eids[] = trim($name, 'e');
+                }
             }
+            echo "</pre>";
         }
-        echo "</pre>";
-    }
     
-    echo "Starting on... <pre>" . print_r($eids, true) . "</pre><br>";
+        echo "Starting on... <pre>" . print_r($eids, true) . "</pre><br>";
     
-    foreach ($eids as $index=>$eid) {
-        $fields = getFields($eid);
+        foreach ($eids as $index=>$eid) {
+            $fields = getFields($eid);
         
-        echo 'Trying EID:' . $eid . '<br>';
+            echo 'Trying EID:' . $eid . '<br>';
         
-        foreach ($fields as $fieldIndex=>$field) {
-            if ($field['type_id'] == 7) {
-                //Do Time Fix
+            foreach ($fields as $fieldIndex=>$field) {
+                if ($field['type_id'] == 7) {
+                    //Do Time Fix
                 
-                $func =  "function fix() {
-                    var ret = [];
-                    var data = db.e" . $eid . ".find({}).forEach(function(obj) {
-                        var fixed = new Date(obj[\"" . $field['field_name'] . "\"] + ' GMT');
-                        var replacement;
+                    $func =  "function fix() {
+                        var ret = [];
+                        var data = db.e" . $eid . ".find({}).forEach(function(obj) {
+                            var fixed = new Date(obj[\"" . $field['field_name'] . "\"] + ' GMT');
+                            var replacement;
                         
-                        if (!isNaN(fixed.valueOf())) {
-                            replacement = NumberLong(fixed.valueOf());
-                        }
-                        else if (!isNaN(Number(obj[\"" . $field['field_name'] . "\"]))){
-                            replacement = NumberLong(Number(obj[\"" . $field['field_name'] . "\"]));
-                        }
-                        else {
-                            replacement = 'NaN';
-                        }
+                            if (!isNaN(fixed.valueOf())) {
+                                replacement = NumberLong(fixed.valueOf());
+                            }
+                            else if (!isNaN(Number(obj[\"" . $field['field_name'] . "\"]))){
+                                replacement = NumberLong(Number(obj[\"" . $field['field_name'] . "\"]));
+                            }
+                            else {
+                                replacement = 'NaN';
+                            }
                         
                         
-                        ret.push('Replacing ' + obj[\"" . $field['field_name'] . "\"] + ' with ' + replacement + '\\r\\n');
-                    }); return ret;}";
+                            ret.push('Replacing ' + obj[\"" . $field['field_name'] . "\"] + ' with ' + replacement + '\\r\\n');
+                            }); return ret;}";
                         //db.e" . $eid . ".update({_id : obj['_id']}, {\$set : {" . $field['field_name'] . " : replacement}});
-                echo "<pre>";
-                print_r( $mdb->db->execute($func));
-                echo "</pre>";
+                        echo "<pre>";
+                        print_r( $mdb->db->execute($func));
+                        echo "</pre>";
+                    }
+                }
             }
         }
     }
-}
 ?>
