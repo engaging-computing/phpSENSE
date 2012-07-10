@@ -113,7 +113,7 @@ else {
 
 //Build the qr codes string
 $qrcode = "http://".$_SERVER['SERVER_NAME']."/experiment.php?id=".$id;
-$filename = "/data/qrs/".$id.".png";
+$filename = "data/qrs/".$id.".png";
 
 //Generate the qr code
 QRcode::png($qrcode,$filename);
