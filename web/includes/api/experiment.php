@@ -771,9 +771,11 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
     $result = array();
 
 
-    $sql = "SELECT DISTINCT *,
-            (experiments.rating/experiments.rating_votes) as rating_comp
-            FROM experiments ";
+    $sql = "SELECT DISTINCT experiments.*,
+            (experiments.rating/experiments.rating_votes) as rating_comp,
+            users.firstname
+            FROM experiments
+            LEFT JOIN users on experiments.owner_id = users.user_id";
 
 
     if($tags){
