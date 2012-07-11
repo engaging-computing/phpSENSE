@@ -62,13 +62,20 @@ function createExperiment($token, $name, $description, $fields, $req_name=1, $re
 
 function getExperiment($eid) {
 	global $db;
-										
+	
+	$result = $db->query("SELECT private FROM users WHERE user_id = {$eid} LIMIT 0,1");
+    
 	$output = $db->query("SELECT experiments.*, 
                                  users.firstname, 
                                  users.lastname 
                                  FROM experiments, 
                                  users 
                                  WHERE experiments.owner_id = users.user_id AND experiments.experiment_id = {$eid}");
+	
+	//Filter private last names
+	if($result[0]['private']) {
+        $output[0]['lastname'] = substr(ucfirst($output[0]['lastname']), 0, 1) . '.';
+	}
 	
 	if($db->numOfRows) {
 		return $output[0];

@@ -100,12 +100,12 @@ END;
 	mail($to, $subject, $msg, $headers);
 }
 
-function register($email, $firstName, $lastName, $password, $street, $city, $country) {
+function register($email, $firstName, $lastName, $password, $street, $city, $country, $private) {
 	global $db;
 	
 	if(assertUserDoesNotExists($email)) {
 		$auth = uniqid();
-		$work = createUser($auth, true, $firstName, $lastName, $password, $email, $street, $city, $country, false);
+		$work = createUser($auth, true, $firstName, $lastName, $password, $email, $street, $city, $country, $private, false);
 		
 		if($work) {
 			sendWelcomeEmail($email, $firstName, $lastName);
