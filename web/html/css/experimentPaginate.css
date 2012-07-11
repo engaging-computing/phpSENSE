@@ -1,0 +1,100 @@
+.session_cell {
+    height: 4em;
+    border-bottom: solid 1px black;
+}
+
+.session_cell  * {
+    float:left;
+    text-align:center;
+}
+
+.session_cell * a {
+    padding-top:1.2em;
+}
+
+.session_select {
+    height:10px;
+    width:3%;
+    padding-left:5px;
+    padding-top:1.5em;
+}
+
+.owner_img {
+    width:50px;
+    padding:9px 10px 0px;
+}
+
+.owner_name {
+    height:100%;
+    min-width: 120px;
+}
+
+.session_name {
+    height:100%;
+    width:180px;
+    text-align:left;
+}
+
+#experiment_control_panel div a {
+    font-size: 80%;
+    padding-top:1.6em;
+}
+
+.edit_session {
+    padding: 0px 5px 0px;
+}
+
+#page_controls {
+    height : 5em;
+    width : 100%;
+}
+
+#page_back {
+    height : 100%;
+    min-width  : 20%;
+    float : left;
+    text-align : center;
+    padding-top : 1em;
+}
+
+#page_info {
+    height : 100%;
+    max-width : 80%;
+    text-align : center;
+}
+
+#page_info p {
+    padding-top: 2em;
+}
+
+#page_forward {
+    height : 100%;
+    min-width  : 20%;
+    float : right;
+    text-align : center;
+    padding-top : 1em;
+    position:relative;
+    top:-5em;
+}
+
+.page_button {
+    padding : 1em;
+    background-color : #EEE; 
+    border : 1px solid #DDD;
+}
+
+.pictures_maybe {
+    height: 100%;
+    width : 32px;
+}
+
+
+.page_disabled {
+    background-color : #CCC;
+    text-decoration : none;
+    color : #888;
+}
+
+.page_disabled input {
+    color : black;
+}

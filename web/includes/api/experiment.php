@@ -330,36 +330,31 @@ function experimentHasTime($eid) {
 }
 
 function packageBrowseExperimentResults($results, $page = 1, $limit = 10, $override = false) {
-	
-	$output = array();
-	
-	if($page != -1) {
-		$offset = ($page - 1) * $limit;
-		$results =  array_splice($results, $offset, $limit);
+    
+    $output = array();
 
-		if(!$override) {
-			foreach($results as $result) {
-			    $sessioncount = countNumberOfSessions($result['experiment_id']);
-				$contribcount = countNumberOfContributors($result['experiment_id']);
-			    
-				$output[$result['experiment_id']] = array("meta" => $result, "tags" => array(), "relevancy" => 0, 'session_count' => $sessioncount, 'contrib_count' => $contribcount);
-			}
-		}
-		else {
-			foreach($results as $result) {
-				
-				$contribcount = (isset($result['contrib_count'])) ? $result['contrib_count'] : countNumberOfContributors($result['experiment_id']);
-				$sessioncount = (isset($result['session_count'])) ? $result['session_count'] : countNumberOfContributors($result['experiment_id']);
-			    
-				$output[] = array("meta" => $result, "tags" => array(), "relevancy" => 0, 'session_count' => $sessioncount, 'contrib_count' => $contribcount);
-			}
-		}
-		
-		return $output;
-	}
-	else {
-		return count($results);
-	}
+    foreach($results as $result) {
+        $sessioncount = countNumberOfSessions($result['experiment_id']);
+        $contribcount = countNumberOfContributors($result['experiment_id']);
+
+        $output[$result['experiment_id']] = array("meta" => $result, "tags" => array(), "relevancy" => 0, 'session_count' => $sessioncount, 'contrib_count' => $contribcount);
+    }
+
+    return $output;
+}
+
+function pagifyBrowseExperimentResults($results, $page = 1, $limit = 10, $override = false) {
+
+    $output = array();
+
+    if($page != -1) {
+        $offset = ($page - 1) * $limit;
+        $results =  array_splice($results, $offset, $limit);
+        return $results;
+    }
+    else {
+        return count($results);
+    }
 }
 
 function browseExperimentsByRecent($page = 1, $limit = 10, $override = false) {
@@ -775,102 +770,6 @@ function unrecommendExperiment($eid){
     return true;
 }
 
-//One function to rule them all
-function theRealDeal($hidden=0,$featured="off",$recommended="off", $tags= null, $sort = "recent"){
-    global $db;
-    
-    $result = array();
-
-    //If there are tags we want to search by each of them. 
-    if($tags !=null){
-        $tags = explode(" ", $tags);
-    }
-    
-    if($tags){
-    
-        foreach($tags as $tag){
-            $sql = "SELECT DISTINCT *
-                    FROM experiments ";
-
-            if($tags){
-                $sql .= ", tagExperimentMap, tagIndex";
-            }
-
-            $sql .= " WHERE experiments.hidden = {$hidden} ";
-
-            if($featured == 'on'){
-                $sql .= " AND experiments.featured=1 ";
-            }
-
-            if($recommended == 'on'){
-                $sql .= " AND experiments.recommended=1 ";
-            }
-
-            if($tag){
-                $sql .= " AND tagIndex.value like '%{$tag}%'
-                        AND tagIndex.tag_id = tagExperimentMap.tag_id
-                        AND experiments.experiment_id = tagExperimentMap.experiment_id
-                        AND tagIndex.weight=1 ";
-            }
-
-            if($sort == "rating"){
-                $sql .= " ORDER BY experiments.rating";
-            } elseif ($sort == "activity"){
-                $sql .= " ORDER BY experiments.timemodified";
-            } else {
-                $sql .= " ORDER BY experiments.timecreated";
-            }
-
-            $sql .= " DESC ";
-  
-            $result = array_merge($result,$db->query($sql));
-        }
-
-     
-    } else {
-
-       $sql = "SELECT DISTINCT *
-                FROM experiments ";
-                    
-        $sql .= " WHERE experiments.hidden = {$hidden} ";
-
-        if($featured == 'on'){
-            $sql .= " AND experiments.featured=1 ";
-        }
-
-        if($recommended == 'on'){
-            $sql .= " AND experiments.recommended=1 ";
-        }
-
-        if($sort == "rating"){
-            $sql .= " ORDER BY experiments.rating";
-        } elseif ($sort == "activity"){
-            $sql .= " ORDER BY experiments.timemodified";
-        } else {
-            $sql .= " ORDER BY experiments.timecreated";
-        }
-
-        $sql .= " DESC ";
-        $result = array_merge($result,$db->query($sql));
-    }
-    
-    $keys = array();
-    $tmp = array();
-    for($i = 0; $i < count($result); $i++) {
-        $tmpKey = $result[$i]['experiment_id'];
-        if (in_array($tmpKey,$keys)){
-        } else {
-            echo $tmpKey;
-            $keys[count($keys)] = $tmpKey;
-            $tmp[count($tmp)] = $result[$i];
-        }
-    }
-
-    $result = $tmp;
-    
-    return $result;
-}
-
 
 //One function to rule them all
 function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recommended="off", $tags= null, $sort = "recent"){
@@ -878,8 +777,11 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
 
     $result = array();
 
-    $sql = "SELECT DISTINCT *
-    FROM experiments ";
+
+    $sql = "SELECT DISTINCT *,
+            (experiments.rating/experiments.rating_votes) as rating_comp
+            FROM experiments ";
+
 
     if($tags){
         $sql .= ", tagExperimentMap, tagIndex";
@@ -918,14 +820,12 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
     }
 
     if($sort == "rating"){
-        $sql .= " ORDER BY experiments.rating";
-    } elseif ($sort == "activity"){
-        $sql .= " ORDER BY experiments.timemodified";
-    } else {
-        $sql .= " ORDER BY experiments.timecreated";
+        $sql .= " ORDER BY experiments.rating/experiments.rating_votes DESC";
+    } else if ($sort == "recent"){
+        $sql .= " ORDER BY experiments.timecreated DESC";
     }
 
-    $sql .= " DESC ";
+
 
     $result = $db->query($sql);
 
@@ -940,11 +840,28 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
             $tmp[count($tmp)] = $result[$i];
         }
     }
+
+    $packaged =  packageBrowseExperimentResults($tmp, $page,$limit,false);
+
+    if($sort == "popularity"){
+        usort($packaged,'popularitySort');
+    } else if ($sort == "activity"){
+        usort($packaged,'activitySort');
+    }
+
     
-    $result = $tmp;
+    return pagifyBrowseExperimentResults($packaged, $page,$limit,false);
 
-    return packageBrowseExperimentResults($result, $page,$limit,false);
 
+
+}
+
+function popularitySort($a,$b){
+    return  $b["contrib_count"] - $a["contrib_count"];
+}
+
+function activitySort($a,$b){
+    return  $b["session_count"] - $a["session_count"];
 }
 
 ?>

@@ -29,23 +29,23 @@
 	{ include file="parts/errors.tpl" }
 	<div id="searchboxwrapper">
 		<div id="searchbox">
-			<form method="GET" action="browse.php">
+			<form id="browseform" method="GET" action="browse.php">
 				<div padding-bottom="10">Search: <input type="text" name="query" value="{ $query }" /> <input type="hidden" name="type" value="{ $type }" /> <input type="submit" name="action" value="Search" /></div>
 
                 { if $type != "people" and $type != "visualizations" }
                     <div>
                         <span>Sort:</span>
 
-    					<select name="sorttype">
-    					    <option value="recent">Recent</option>
-    					    <option value="popularity">Popularity</option>
-    					    <option value="activity">Activity</option>
-    					    <option value="rating">Rating</option>
+    					<select class="selectformsubmitter" name="sorttype">
+    					    <option value="recent"{if $sorttype == "recent"} selected{/if}>Recent</option>
+    					    <option value="popularity"{if $sorttype == "popularity"} selected{/if}>Popularity</option>
+    					    <option value="activity"{if $sorttype == "activity"} selected{/if}>Activity</option>
+    					    <option value="rating"{if $sorttype == "rating"} selected{/if}>Rating</option>
     					</select>
                     </div>
                         <tr>
                         <td><span>Filter:</span></td>
-                        <td>Recommended: <input type="checkbox" id="recommended" name="recommended" {if $recommended == 'on'}checked{/if} /></td>
+                        <td>Recommended: <input class="checkboxformsubmitter" type="checkbox" id="recommended" name="recommended" {if $recommended == 'on'}checked{/if} /></td>
                         <tr>
                     </div>
                 { /if }
@@ -128,8 +128,10 @@
 										<div class="sub">
 										    <a class="session_count">{ $result.session_count }</a>
 										    <a class="contrib_count">{ $result.contrib_count }</a>
+                                            {if $result.meta.rating_comp > 0}
 										    <a class="rating_browse">{ $result.meta.rating_comp|substr:0:3 }</a>
-											<span>Last Modified { $result.meta.timemodified|date_diff }</span>
+										    {/if}
+                                                <span>Last Modified { $result.meta.timemodified|date_diff }</span>
 											{ if $result.meta.hidden == 1 }
 												<br><span>This experiment is hidden</span>
 											{ /if }
