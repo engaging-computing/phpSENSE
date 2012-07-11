@@ -39,7 +39,7 @@ if(isset($_GET['id'])) {
 	}
 }
 
-$userdata = getUserDetails($id);
+$userdata = getPublicProfile($id);
 
 $data = array();
 $output = array();

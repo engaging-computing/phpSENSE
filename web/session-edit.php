@@ -57,7 +57,13 @@ if(isset($_POST['session_create'])) {
     $city = safeString($_POST['session_citystate']);
     $street = safeString($_POST['session_street']);
     
-    $hidden_val = isSessionHidden($sid);
+    //$hidden_val = isSessionHidden($sid);
+    
+    if(strtolower($_POST['session_hidden']) == 'on'){
+        $hidden_val = 0;
+    } else {
+        $hidden_val = 1;
+    }
     
     $values = array(
                     'name' => safeString($_POST['session_name']),
