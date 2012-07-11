@@ -32,6 +32,42 @@ $tmpusr = $session->getUser();
 
 global $mdb;
 
+$top = <<<EndOfHTML
+    <head>
+	    <script type="text/javascript" src="../html/js/lib/jquery.js"></script>
+	    <script type="text/javascript" src="../html/js/lib/jquery-ui.js"></script>
+        <script>
+        $(document).ready(function() {
+            $('#dry_run').click(function (){
+                eids = $('#exp_ids').val();
+                eid = eids.split(' ');
+                redirrect = window.location.href + '?eids=';
+
+                for( tmp in eid ) {
+                    if(tmp != eid.length) {
+                        if(eid[tmp] != ' ' && eid[tmp] != ''){
+                            redirrect += eid[tmp] + '+';
+                        }
+                    } else { 
+                        redirrect += eid[tmp];
+                    }
+                }
+                
+                window.location.href = redirrect;
+                
+            });
+            
+            $('#run_all').click(function(){
+                window.location.href = window.location.href + '?eids=all&verify=yes';
+            });
+        });    
+            
+            
+        </script>
+    </head>
+EndOfHTML;
+
+echo $top;
 
 if ($tmpusr['administrator']) {
     if (isset($_REQUEST['eids'])) {        
@@ -159,6 +195,11 @@ if ($tmpusr['administrator']) {
                 }
             }
         }
-    } 
+    } else {
+        echo '<h1>Time Fix</h1><br/><h2>Enter the sessions you want to update:</h2><br/><form><input id="exp_ids" type="text" style="width:100%" /><br/>';
+        echo '<input id="dry_run" type="button" value="Dry run"><br/><br/><h2>Update all:</h2><br/><input id="run_all" type="button" value="Run All"></form>';
+    }
+} else {
+    echo 'Silly non-Admin what are you doing here?';
 }
 ?>
