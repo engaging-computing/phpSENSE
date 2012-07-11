@@ -68,13 +68,8 @@ if($type=="experiments"){
     $results = browseExperiments($page, $limit,0, $featured, $recommended, $query, $sorttype);
     $count = browseExperiments(-1, $limit, 0, $featured, $recommended, $query, $sorttype);
 } elseif ($type == "people") {
-    if($action == "search"){
-        $results = searchPeople($query, $page, $limit, $sort);
-        $count = searchPeople($query, -1, $limit, $sort);
-    } else {
-        $results = browsePeople($page, $limit);
-        $count = browsePeople(-1, $limit);
-    }
+    $results = getPeople($page, $limit,$query);
+    $count = getPeople(-1, $limit, $query);
 } elseif ($type == "visualizations"){
     if($action == "search"){
         $results = searchVisualizations($query, $page, $limit, $sort);
