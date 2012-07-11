@@ -1,6 +1,6 @@
 <?php
 
-function getExperimentTest($id){
+function getExperimentTest($exp){
     //The target for this test
     $target = "localhost/ws/api.php?method=getExperiment";
     
@@ -11,7 +11,7 @@ function getExperimentTest($id){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-	'id' => $id
+	'experiment' => $exp
         )); 
         
         //Run curl to get the response
@@ -26,12 +26,6 @@ function getExperimentTest($id){
 function getExperimentsTest($page, $limits, $query, $sort, $action){
     //The target for this test
     $target = "localhost/ws/api.php?method=getExperiments";
-    /*
-    echo "<br><br>";
-    echo $target."&page=".$page."&limit=".$limits."&query=".$query."&sort=".$sort."&action=".$action;
-    echo "<br><br>";
-*/
-
 
     //Curl crap that will mostly stay the same
     $ch = curl_init();
@@ -107,6 +101,28 @@ function getSessionsTest($exp){
 }
 
 //skipped getDataSince for now
+
+
+//--------------------------------------------------------------------------------------------------------------------
+
+//Get Experiment Test
+echo "<h1>Get Experiment Test</h1>";
+
+//Verifies that the experiment is correct
+echo "<h2>Verifies that experiment is correct...</h2>";
+
+$exp = 1;
+
+$getExperiment_response = getExperimentTest($exp);
+
+  if($getExperiment_response['data']['experiment_id'] == $exp){
+      echo "<div class='success'>SUCCESS</div>, The experiments ids matched.<br>";
+  } else{
+      echo "<div class='failure'>FAILURE</div>, The experiment ids did not match.<br>";
+  }
+
+echo "<br>";
+
 
 //--------------------------------------------------------------------------------------------------------------------
 
@@ -196,7 +212,7 @@ foreach($getExperiments_response['data']['meta'] as $tmp){
 
 echo "<br>";
 
-//Verifies that the sorting is working correctly
+//Verifies that the Rating sorting is working correctly
 echo "<h2>Verifies that Rating sorting is working....</h2>";
 
 $page = 1;
@@ -207,13 +223,9 @@ $action = "browse";
 
 $getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
 
-echo $getExperiments_response;
 for($j=0; $j<$limits; $j++){
-  $newest = $getExperiments_response['data'][$j]['meta']['rating']; 
-  echo $newest;
-  $next =  $getExperiments_response['data'][$j+1]['meta']['rating'];
-  echo $next;
-  print_r($next);
+  $newest = $getExperiments_response['data'][$j]['meta']['rating'];
+  $next =  $getExperiments_response['data'][$j++]['meta']['rating'];
   if($newest < $next){
       $successflag = 0;
       break;   
@@ -228,7 +240,92 @@ if($successflag == 0){
 
 echo "<br>";
 
-echo "<hr>";
+//Verifies that the Activity sorting is working correctly
+echo "<h2>Verifies that Activity sorting is working....</h2>";
+
+$page = 1;
+$limits = 10;
+$query = "";
+$sort = "activity";
+$action = "browse";
+
+$getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
+
+for($j=0; $j<$limits; $j++){
+  $newest = $getExperiments_response['data'][$j]['meta']['session_count'];
+  $next =  $getExperiments_response['data'][$j++]['meta']['session_count'];
+  if($newest < $next){
+      $successflag = 0;
+      break;   
+  }
+}
+
+if($successflag == 0){
+  echo "<div class='failure'>FAILURE</div>, Page 1 did not sort correctly.<br>";
+} else{
+  echo "<div class='success'>SUCCESS</div>, Page 1 sorted correctly.<br>";
+}
+
+echo "<br>";
+
+//Verifies that the Popularity sorting is working correctly
+echo "<h2>Verifies that Popularity sorting is working....</h2>";
+
+$page = 1;
+$limits = 10;
+$query = "";
+$sort = "popularity";
+$action = "browse";
+
+$getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
+
+for($j=0; $j<$limits; $j++){
+  $newest = $getExperiments_response['data'][$j]['meta']['contrib_count'];
+  $next =  $getExperiments_response['data'][$j++]['meta']['contrib_count'];
+  if($newest < $next){
+      $successflag = 0;
+      break;   
+  }
+}
+
+if($successflag == 0){
+  echo "<div class='failure'>FAILURE</div>, Page 1 did not sort correctly.<br>";
+} else{
+  echo "<div class='success'>SUCCESS</div>, Page 1 sorted correctly.<br>";
+}
+
+echo "<br>";
+
+
+//Verifies that the Recent sorting is working correctly
+echo "<h2>Verifies that Recent sorting is working....</h2>";
+
+$page = 1;
+$limits = 10;
+$query = "";
+$sort = "recent";
+$action = "browse";
+
+$getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
+for($j=0; $j<$limits; $j++){
+  $date1 = date($getExperiment_response['data'][$j]['meta']['timecreated']);
+  $date2 =  date($getExperiment_response['data'][$j++]['meta']['timecreated']);
+  echo $date1;
+  echo $date2;
+  if($date2 < $date1){
+      $successflag = 0;
+      break;   
+  }
+}
+
+if($successflag == 0){
+  echo "<div class='failure'>FAILURE</div>, Page 1 did not sort correctly.<br>";
+} else{
+  echo "<div class='success'>SUCCESS</div>, Page 1 sorted correctly.<br>";
+}
+
+echo "<br>";
+
 //--------------------------------------------------------------------------------------------------------------------
 
 //Get People Test
