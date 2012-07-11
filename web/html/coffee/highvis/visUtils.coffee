@@ -28,42 +28,14 @@
 ###
 
 window.globals ?= {}
-globals.curVis = null
 
 ###
-CoffeeScript version of runtime.
+Generated using http://jiminy.medialab.sciences-po.fr/tools/palettes/palettes.php
+Colors: 30
+Hue:       0.0 - 360.00
+Chroma:    0.0 -   1.70
+Lightness: 0.3 -   0.95
+K-means
 ###
-($ document).ready ->
-    ($ can).hide() for can in ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas']
-    
-    ### Generate tabs ###
-    for vis of data.relVis
-        ($ '#vis_select').append '<li class="vis_tab_' + vis + '"><a href="#">' + data.relVis[vis] + '</a></li>'
-        
-    ($ '#vis_select > li > a').css 'background-color', '#ccc'
-    ($ '#vis_select > li > a').css 'border-bottom', '1px solid black'
-        
-    ($ '.vis_tab_0 > a').css 'background-color', '#fff'
-    ($ '.vis_tab_0 > a').css 'border-bottom','1px solid white'
-        
-    globals.curVis = (eval 'globals.' + data.relVis[0].toLowerCase())
-        
-    ($ '#vis_select > li > a').unbind()
-    
-    ### Change vis click handler ###
-    ($ '#vis_select').children().children().click ->
-        globals.curVis.end() if global.curVis?
-        
-        ### Remove old selection ###
-        ($ '#vis_select  > li > a').css 'background-color', '#ccc'
-        ($ '#vis_select  > li > a').css 'border-bottom','1px solid black'
-            
-        globals.curVis = (eval 'globals.' + @text.toLowerCase())
-        
-        ### Set new selection ###
-        ($ @).css "background-color", "#ffffff"
-        ($ @).css 'border-bottom','1px solid white'
-        
-        globals.curVis.start()
-            
-    globals.curVis.start()
+globals.getColors = ->
+    ['#5E5A83', '#609B36', '#DC644F', '#9A8867', '#DA6694', '#40938C', '#A78E20', '#884646', '#546222', '#688CCF', '#529F69', '#415B62', '#AE8188', '#D1762F', '#408FB2', '#B18347', '#944B70', '#9F7FBC', '#C77967', '#914C2A', '#396B43', '#625744', '#C25562', '#735521', '#7D9080', '#715365', '#8A9044', '#C573B2', '#788AA2', '#EC5D7A']

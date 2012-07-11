@@ -27,43 +27,19 @@
  *
 ###
 
-window.globals ?= {}
-globals.curVis = null
+class window.Scatter extends BaseVis
+    constructor: (@canvas) ->
+    
+    buildOptions: ->
+        super()
+        
+        @chartOptions.type = "scatter"
+        @chartOptions.title =
+            text: "Scatter"
+    
+    drawControls: ->
+        @drawGroupControls()
+        @drawXAxisControls()
+        @drawFieldChkControls()
 
-###
-CoffeeScript version of runtime.
-###
-($ document).ready ->
-    ($ can).hide() for can in ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas']
-    
-    ### Generate tabs ###
-    for vis of data.relVis
-        ($ '#vis_select').append '<li class="vis_tab_' + vis + '"><a href="#">' + data.relVis[vis] + '</a></li>'
-        
-    ($ '#vis_select > li > a').css 'background-color', '#ccc'
-    ($ '#vis_select > li > a').css 'border-bottom', '1px solid black'
-        
-    ($ '.vis_tab_0 > a').css 'background-color', '#fff'
-    ($ '.vis_tab_0 > a').css 'border-bottom','1px solid white'
-        
-    globals.curVis = (eval 'globals.' + data.relVis[0].toLowerCase())
-        
-    ($ '#vis_select > li > a').unbind()
-    
-    ### Change vis click handler ###
-    ($ '#vis_select').children().children().click ->
-        globals.curVis.end() if global.curVis?
-        
-        ### Remove old selection ###
-        ($ '#vis_select  > li > a').css 'background-color', '#ccc'
-        ($ '#vis_select  > li > a').css 'border-bottom','1px solid black'
-            
-        globals.curVis = (eval 'globals.' + @text.toLowerCase())
-        
-        ### Set new selection ###
-        ($ @).css "background-color", "#ffffff"
-        ($ @).css 'border-bottom','1px solid white'
-        
-        globals.curVis.start()
-            
-    globals.curVis.start()
+globals.scatter = new Scatter 'scatter_canvas'

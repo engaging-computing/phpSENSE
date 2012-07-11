@@ -26,7 +26,7 @@
  * DAMAGE.
  */
 
-.vis_control_container {
+#controldiv {
     float: left;
     margin:10px;
     padding:5px;

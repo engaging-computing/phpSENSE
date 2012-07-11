@@ -28,39 +28,168 @@
 ###
 
 window.globals ?= {}
-window.globals.groupIndex ?= 0
+globals.groupIndex ?= 0
+globals.groupSelection ?= data.getUnique(globals.groupIndex)
+globals.fieldSelection ?= [] #This needs a sane init value
+globals.xAxis ?= 1 #This needs a sane init value
 
-class BaseVis
-    constructor: ->
-        @drawControls()
+class window.BaseVis
+    constructor: (@canvas) ->
 
-    makeGroupControl: ->
-        #controls  = '<div class="vis_control_container">'
-        controls += '<div id="groupControl" class="vis_controls">'
+    buildOptions: ->
+        @chartOptions = 
+            chart:
+                renderTo: @canvas
+            colors: globals.getColors()
+            credits:
+                enabled: false
+            #global: {}
+            #labels: {}
+            #legend: {}
+            #loading: {}
+            #plotOptions: {}
+            #point: {}
+            #series: [{}]
+            #subtitle: {}
+            #symbols: {}
+            title: {}
+            #tooltop: {}
+            #xAxis: {}
+            #yAxis: {}
+            #exporting: {}
+            #navigation: {}
+    
+    generateColors: ->
+        groups = data.getUnique(globals.groupIndex)
+    
+    start: ->
+        @buildOptions()
         
-        controls
+        if @chart?
+            @chart.destroy()
+        @chart = new Highcharts.Chart @chartOptions
+    
+        ($ '#' + @canvas).show()
+        @update()
+        
+    end: ->
+        @clearControls()
+        ($ '#' + @canvas).hide()
+        
+    update: ->
+        @clearControls()
+        @drawControls()
+        
+    clearControls: ->
+        ($ '#controldiv').find('*').unbind()
+        ($ '#controldiv').innerHTML = ''
+        
+    drawControls: ->
+        alert 'CALLED DRAW CONTROLS STUB IN BASEVIS'
+        
+    drawGroupControls: ->
+        controls = '<div id="groupControl" class="vis_controls">'
+        
         controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Groups:</tr></td>'
         
-        #Add grouping selector
+        # Add grouping selector
         controls += '<tr><td><div class="vis_control_table_div">'
-        controls += '<select>'
+        controls += '<select class="group_selector">'
         
         for fieldIndex in data.getTextFields()
             controls += "<option value=\"#{fieldIndex}\">#{data.fields[fieldIndex].fieldName}</option>"
         
         controls += "</select></div></td></tr>"
         
-        #Populate choices
-        for group in data.getUnique(window.globals.groupIndex)
+        # Populate choices
+        counter = 0
+        for group in data.getUnique(globals.groupIndex)
             controls += '<tr><td>'
-            controls += '<div class="vis_control_table_div">'
+            controls += "<div class=\"vis_control_table_div\" style=\"color:#{@chartOptions.colors[counter]};\">"
             
-            controls += "<input class=\"group_input\" type=\"checkbox\" name=\"nam\" value=\"#{group}\"></input>&nbsp"
+            controls += "<input class=\"group_input\" type=\"checkbox\" value=\"#{group}\" #{if group in globals.groupSelection then "checked" else ""}></input>&nbsp"
             controls += "#{group}&nbsp"
             controls += "</div></td></tr>"
+            counter += 1
+        controls += '</table></div>'
+        
+        # Write HTML
+        (($ '#controldiv').html ($ '#controldiv').html() + controls)
+        
+        # Make group select handler
+        ($ '.group_selector').change (e) =>
+            element = e.target or e.srcElement
+            globals.groupIndex = Number element.value
+            
+            # Set up new groups
+            globals.groupSelection = data.getUnique(globals.groupIndex)
+            @init()
+            
+        # Make group checkbox handler
+        ($ '.group_input').click (e) =>
+            selection = []
+            ($ '.group_input').each ()->
+                if @checked
+                    selection.push @value
+            globals.groupSelection = selection
+            @update()
+            
+    drawFieldChkControls: ->
+        controls = '<div id="fieldControl" class="vis_controls">'
+        
+        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Fields:</tr></td>'
+        
+        # Populate choices (not time or text)
+        # Maybe should allow time here?
+        for field of data.fields
+            if 7 != (Number data.fields[field].typeID) != 37
+                controls += '<tr><td>'
+                controls += '<div class="vis_control_table_div">'
+                
+                controls += "<input class=\"field_input\" type=\"checkbox\" value=\"#{field}\" #{if field in globals.fieldSelection then "checked" else ""}></input>&nbsp"
+                controls += "#{data.fields[field].fieldName}&nbsp"
+                controls += "</div></td></tr>"
         
         controls += '</table></div>'
         
-        #controls += '</div>'
+        # Write HTML
+        (($ '#controldiv').html ($ '#controldiv').html() + controls)
+            
+        # Make field checkbox handler
+        ($ '.field_input').click (e) =>
+            selection = []
+            ($ '.field_input').each ()->
+                if @checked
+                    selection.push @value
+            globals.fieldSelection = selection
+            @update()
+            
+    drawXAxisControls: ->
+        controls = '<div id="xAxisControl" class="vis_controls">'
         
-        controls
+        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>'
+        
+        # Populate choices (not text)
+        for field of data.fields
+            if (Number data.fields[field].typeID) != 37
+                controls += '<tr><td>'
+                controls += '<div class="vis_control_table_div">'
+                
+                controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{field}\" #{if field in globals.fieldSelection then "checked" else ""}></input>&nbsp"
+                controls += "#{data.fields[field].fieldName}&nbsp"
+                controls += "</div></td></tr>"
+        
+        controls += '</table></div>'
+        
+        # Write HTML
+        (($ '#controldiv').html ($ '#controldiv').html() + controls)
+            
+        # Make xAxis radio handler
+        ($ '.xAxis_input').click (e) =>
+            selection = null
+            ($ '.xAxis_input').each ()->
+                if @checked
+                    selection = @value
+            globals.xAxis = selection
+            @update()
+        
