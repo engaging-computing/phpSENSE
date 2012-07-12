@@ -210,40 +210,6 @@ function getSessionsForExperiment($eid) {
 	return false;	
 }
 
-function getVisibleSessionsForExperiment($eid) {
-    global $db;
-    
-    $sql = "SELECT  sessions.session_id, 
-                                    sessions.owner_id, 
-                                    sessions.name, 
-                                    sessions.description, 
-                                    experimentSessionMap.experiment_id,
-                                    sessions.street, 
-                                    sessions.city, 
-                                    sessions.country,
-                                    sessions.latitude,
-                                    sessions.longitude, 
-                                    sessions.timecreated, 
-                                    sessions.timemodified,
-                                    sessions.debug_data,
-                                    sessions.finalized,
-                                    users.firstname, 
-                                    users.lastname 
-                                    FROM users, experimentSessionMap, sessions
-                                    WHERE experimentSessionMap.experiment_id = {$eid}
-                                    AND sessions.session_id = experimentSessionMap.session_id
-                                    AND sessions.finalized = 1
-                                    AND users.user_id = sessions.owner_id
-                                    ORDER BY sessions.timecreated DESC";    
-    $output = $db->query($sql);
-                                        
-    if($db->numOfRows) {
-        return $output;
-    }
-    
-    return false;   
-}
-
 function getSessionTitle($eid) {
 	global $db;
 	
