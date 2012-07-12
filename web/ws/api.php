@@ -239,40 +239,66 @@ if(isset($_REQUEST['method'])) {
 			break;
 
 		case "getUserProfile":
-			if(isset($_REQUEST['user'])) {
+            $pass = true;
+            $params = array("user","session_key");
+            
+            foreach($params as $param) {
+                if(!isset($_REQUEST[$param])){
+                    $pass = false;
+                    $msg .= "Missing {$param}";
+                    break;
+                }
+            }
+            
+            $user = safeString($_REQUEST['user']);
 
-				$id = safeString($_REQUEST['user']);
-				$dataset = array();
+            $uid = getUserIdFromSessionToken(safeString($_REQUEST['session_key']));
+            
+            if($uid == null){
+                $pass = false;
+                
+            }
+            
+            if($pass){
+                if($uid == null){
+                    $msg = "Not logged in";
+                    $status = 400;
+                } else {
+                    $dataset = array();
 
-				$exp = browseExperimentsByUser($id);
-				$vid = getVideosByUser($id);
-				$ses = browseMySessions($id);
-				$img = getImagesByUser($id);
-				$vis = getVisByUser($id);
+                    $exp = browseExperimentsByUser($user);
+                    $vid = getVideosByUser($user);
+                    $ses = browseMySessions($user);
+                    $img = getImagesByUser($user);
+                    $vis = getVisByUser($user);
 
-				if(is_array($exp)) {
-					$dataset['experiments'] = $exp;
-				}
+                    if(is_array($exp)) {
+                        $dataset['experiments'] = $exp;
+                    }
 
-				if(is_array($vis)) {
-					$dataset['vis'] = $vis;
-				}
+                    if(is_array($vis)) {
+                        $dataset['vis'] = $vis;
+                    }
 
 
-				if(is_array($ses)) {
-					$dataset['sessions'] = $ses;
-				}
+                    if(is_array($ses)) {
+                        $dataset['sessions'] = $ses;
+                    }
 
-				if(is_array($img)) {
-					$dataset['images'] = $img;
-				}
+                    if(is_array($img)) {
+                        $dataset['images'] = $img;
+                    }
 
-				if(is_array($vid)) {
-					$dataset['video'] = $vid;
-				}
+                    if(is_array($vid)) {
+                        $dataset['video'] = $vid;
+                    }
 
-				$data = $dataset;
-				$status = 200;
+                    $data = $dataset;
+                    $status = 200;
+                }
+			} else {
+                $status = 551;
+                $data = array('msg'=>$msg);
 			}
 			break;
 
@@ -329,6 +355,19 @@ if(isset($_REQUEST['method'])) {
 			break;
 
 	    case "createSession":
+
+            //Check for required parameters.
+            $params = array("session_key", "eid");
+            $pass= true;
+            foreach($params as $param) {
+                if(!isset($_REQUEST[$param])){
+                    $pass = false;
+                    $msg .= "Missing {$param}";
+                    break;
+                }
+            }
+
+            //Pull in all parameters.
             $session_key = (string)$_REQUEST['session_key'];
             $eid = (string)$_REQUEST['eid'];
             $name = (string)$_REQUEST['name'];
@@ -337,22 +376,32 @@ if(isset($_REQUEST['method'])) {
             $city = (string)$_REQUEST['city'];
             $country = (string)$_REQUEST['country'];
 
-            // Don't touch these, if you do I will burn down your house.
+            // Don't touch these
             $default_read = 1;
             $default_contribute = 1;
             $finalized = 1;
 
+            //Validate the session_key
             $uid = getUserIdFromSessionToken($session_key);
 
-            if(experimentClosed($_REQUEST['eid'])){
-                $status=400;
-                $data = array('msg'=>"Experiment Closed");
-            } else {
-                if($sid = createSession(array('uid' => $uid, 'session' => $session_key), $eid, $name, $description, $street, $city, $country, $default_read, $default_contribute, $finalized)) {
-                    $status = 200;
-                    $data = array('sessionId' => $sid ."");
+            //If all required params are present
+            if($pass){
+                if(experimentClosed($_REQUEST['eid'])){ //Cannot create session in closed experiments. 
+                    $status=400;
+                    $data = array('msg'=>"Experiment Closed");
+                } else if ($uid == null){ //Cannot create session without valid credentials
+                    $status=400;
+                    $data = array('msg'=>"Not logged in");
+                } else { //Try and create a session
+                    if($sid = createSession(array('uid' => $uid, 'session' => $session_key), $eid, $name, $description, $street, $city, $country, $default_read, $default_contribute, $finalized)) {
+                        $status = 200;
+                        $data = array('sessionId' => $sid ."");
+                    }
                 }
-    		}
+    		}  else { //Failed, tell the user.
+                $data = array("msg" => $msg);
+                $status = 551;
+            }
 
             break;
 
@@ -365,9 +414,16 @@ if(isset($_REQUEST['method'])) {
 	        $pass = true;
 
 	        foreach($params as $param) {
-	            if(!isset($req[$param])) $pass = false; $msg = "Missing param {$param}"; break;
+	            if(!isset($_REQUEST[$param])){
+                    $pass = false;
+                    $msg .= "Missing {$param}";
+                    break;
+                }
 	        }
 
+            //Validate the session_key
+            $uid = getUserIdFromSessionToken($session_key);
+	        
 	        if($pass) {
 
 	            $sid = (int)$_REQUEST['sid'];
@@ -377,10 +433,13 @@ if(isset($_REQUEST['method'])) {
     	        $proc_data = stripslashes(urldecode($_REQUEST['data']));
     	        $proc_data = json_decode($proc_data);
 
-    	        if(experimentClosed($_REQUEST['eid'])){
+    	        if(experimentClosed($_REQUEST['eid'])){ //Cannot add to session in closed experiments
                     $status=400;
                     $data = array('msg'=>"Experiment Closed");
-    	        } else {
+    	        } else if ($uid == null) { //Cannot add data without valid credentials.
+                    $status=400;
+                    $data = array('msg'=>"Not logged in");
+    	        } else { //Try and put data.
                     if(($count = putData($eid, $sid, $proc_data)) > 0) {
                         $data = array("msg" => "worked");
                         $status = 200;
@@ -390,9 +449,8 @@ if(isset($_REQUEST['method'])) {
                         $status = 550;
                     }
     	        }
-
 	        }
-	        else {
+	        else { //Failed tell the user.
 	            $data = array("msg" => $msg);
 	            $status = 551;
 	        }
