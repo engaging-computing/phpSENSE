@@ -251,7 +251,9 @@ function getFeaturedExperimentsWithPhotos($limit = 6) {
                    experiments.exp_image,
                    experiments.name,
                    users.user_id,
-                   users.firstname
+                   users.firstname,
+                   users.lastname,
+                   users.private
             FROM experiments,users
             WHERE featured=1
             AND exp_image IS NOT NULL
@@ -260,6 +262,13 @@ function getFeaturedExperimentsWithPhotos($limit = 6) {
             LIMIT {$limit}";
 
     $output = $db->query($sql);
+	
+	//Filter private last names
+	foreach($output as $key => $o) {
+	    if($o['private']) {
+	        $output[$key]['lastname'] = substr(ucfirst($o['lastname']), 0, 1) . '.';
+	    }
+	}
 	
 	if($db->numOfRows) {
 		return $output;

@@ -38,7 +38,7 @@ data.selector = (fieldIndex, nans = false, filterFunc = ((dp) -> true)) ->
     else 
         (dp) -> (filterFunc dp) and (not isNaN dp[fieldIndex]) and (dp[fieldIndex] isnt null)
 
-    rawData = data.dataPoints.filter newFilterFunc
+    rawData = @dataPoints.filter newFilterFunc
     rawData.map (dp) -> dp[fieldIndex]
 
 ###
@@ -46,7 +46,7 @@ Gets the maximum (numeric) value for the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
 ###
 data.getMax = (fieldIndex, filterFunc = (dp) -> true) ->
-    rawData = data.selector(fieldIndex, filterFunc)
+    rawData = @selector(fieldIndex, false, filterFunc)
     rawData.reduce (a,b) -> Math.max(a,b)
 
 ###
@@ -54,7 +54,7 @@ Gets the minimum (numeric) value for the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
 ###
 data.getMin = (fieldIndex, filterFunc = (dp) -> true) ->
-    rawData = data.selector(fieldIndex, filterFunc)
+    rawData = @selector(fieldIndex, false, filterFunc)
     rawData.reduce (a,b) -> Math.min(a,b)
 
 ###
@@ -62,7 +62,7 @@ Gets the mean (numeric) value for the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
 ###
 data.getMean = (fieldIndex, filterFunc = (dp) -> true) ->
-    rawData = data.selector(fieldIndex, filterFunc)
+    rawData = @selector(fieldIndex, false, filterFunc)
     (rawData.reduce (a,b) -> a + b) / rawData.length
 
 ###
@@ -70,7 +70,7 @@ Gets the median (numeric) value for the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
 ###
 data.getMedian = (fieldIndex, filterFunc = (dp) -> true) ->
-    rawData = data.selector(fieldIndex, filterFunc)
+    rawData = @selector(fieldIndex, false, filterFunc)
     rawData.sort()
     
     mid = Math.floor (rawData.length / 2)
@@ -79,3 +79,22 @@ data.getMedian = (fieldIndex, filterFunc = (dp) -> true) ->
         return rawData[mid]
     else
         return (rawData[mid - 1] + rawData[mid]) / 2.0
+      
+###
+Gets a list of unique, non-null, stringified vals from the given field index.
+All included datapoints must pass the given filter (defaults to all datapoints).
+###
+data.getUnique = (fieldIndex, filterFunc = (dp) -> true) ->
+    rawData = @selector fieldIndex, true, (dp) -> (filterFunc dp) and dp[fieldIndex] isnt null
+    result = {}
+    
+    for dat in rawData
+        result[String(dat).toLowerCase()] = true
+        
+    keys for keys of result
+    
+###
+Gets a list of text field indicies
+###
+data.getTextFields = ->
+    (fieldIndex for fieldIndex of @fields).filter ((fi) -> @fields[fi].typeID == 37), this

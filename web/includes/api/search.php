@@ -133,6 +133,7 @@ function searchVisualizations($terms, $page = 1, $limit = 10, $sort = "relevancy
 	}
 }
 
+
 function getPeople($page, $limit, $query = null){
         global $db;
         
