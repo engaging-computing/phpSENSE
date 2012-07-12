@@ -51,7 +51,7 @@ class window.BaseVis
             #point: {}
             #series: [{}]
             #subtitle: {}
-            #symbols: {}
+            symbols: globals.getSymbols()
             title: {}
             #tooltop: {}
             #xAxis: {}
