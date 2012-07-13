@@ -45,9 +45,11 @@
     Scatter.prototype.buildOptions = function() {
       Scatter.__super__.buildOptions.call(this);
       this.chartOptions.type = "scatter";
-      return this.chartOptions.title = {
-        text: "Scatter"
-      };
+      return $.extend(true, this.chartOptions, {
+        tite: {
+          text: "Scatter"
+        }
+      });
     };
 
     Scatter.prototype.drawControls = function() {

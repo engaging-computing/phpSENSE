@@ -53,3 +53,45 @@ globals.getSymbols = ->
 Eric - You should put your symbol generation code here, then fill in the
        globals.getSymbols function above with the correct strings.
 ###
+
+addRadialMarkerStyle = (name, points, phase=0.0, magnitudes=[1]) ->
+
+    extension = {}
+
+    extension[name] = (x, y, w, h) ->
+
+        svg = Array()
+
+        verticies = Array()
+
+        offset = phase*2*Math.PI
+
+        modpoints = points * magnitudes.length
+
+        for i in [0..modpoints]
+
+            tx = (Math.sin 2*Math.PI*i/modpoints+offset) * magnitudes[i % magnitudes.length]
+            ty = (Math.cos 2*Math.PI*i/modpoints+offset) * magnitudes[i % magnitudes.length]
+
+            tx = tx/2+0.5
+            ty = ty/2+0.5
+
+            verticies.push [tx*w+x, ty*h+y]
+
+        svg.push "M"
+        svg.push verticies[0][0]
+        svg.push verticies[0][1]
+        svg.push "L"
+
+        for [vx, vy] in verticies
+
+            svg.push vx
+            svg.push vy
+
+        svg.push "Z"
+
+        svg
+
+    Highcharts.extend Highcharts.Renderer.prototype.symbols, extension
+
+addRadialMarkerStyle('blank', 0)

@@ -55,13 +55,25 @@
   }
 
   window.BaseVis = (function() {
+    /*
+        Constructor
+            Assigns target canvas name
+    */
 
     function BaseVis(canvas) {
       this.canvas = canvas;
     }
 
+    /*
+        Builds Highcharts options object
+            Builds up the options common to all vis types.
+            Subsequent derrived classes should use $.extend to expand upon these agter calling super()
+    */
+
+
     BaseVis.prototype.buildOptions = function() {
-      return this.chartOptions = {
+      var count, dummy, field, fieldDummys, group, groupDummys;
+      this.chartOptions = {
         chart: {
           renderTo: this.canvas
         },
@@ -69,14 +81,58 @@
         credits: {
           enabled: false
         },
+        series: [],
+        symbols: globals.getSymbols(),
         title: {}
       };
+      groupDummys = (function() {
+        var _i, _len, _ref5, _results;
+        _ref5 = data.getUnique(globals.groupIndex);
+        _results = [];
+        for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+          group = _ref5[_i];
+          _results.push(dummy = {
+            data: [],
+            marker: {
+              symbol: 'blank'
+            },
+            name: group
+          });
+        }
+        return _results;
+      })();
+      count = -1;
+      fieldDummys = (function() {
+        var _i, _len, _ref5, _ref6, _results;
+        _ref5 = data.fields;
+        _results = [];
+        for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+          field = _ref5[_i];
+          if (!((7 !== (_ref6 = Number(field.typeID)) && _ref6 !== 37))) {
+            continue;
+          }
+          count += 1;
+          _results.push(dummy = {
+            data: [],
+            color: '#000',
+            marker: {
+              symbol: this.chartOptions.symbols[count % this.chartOptions.symbols.length]
+            },
+            name: field.fieldName
+          });
+        }
+        return _results;
+      }).call(this);
+      return this.chartOptions.series = groupDummys.concat(fieldDummys);
     };
 
-    BaseVis.prototype.generateColors = function() {
-      var groups;
-      return groups = data.getUnique(globals.groupIndex);
-    };
+    /*
+        Start sequence used by runtime
+            This is called when the user switched to this vis.
+            Should re-build options and the chart itself to ensure sync with global settings.
+            This method should also be usable as a 'full update' in that it should destroy the current chart if it exists before generating a fresh one.
+    */
+
 
     BaseVis.prototype.start = function() {
       this.buildOptions();
@@ -88,24 +144,57 @@
       return this.update();
     };
 
+    /*
+        End sequence used by runtime
+            This is called when the user switches away from this vis.
+            Should destroy the chart, hide its canvas and remove controls.
+    */
+
+
     BaseVis.prototype.end = function() {
+      this.chart.destroy();
       this.clearControls();
       return ($('#' + this.canvas)).hide();
     };
+
+    /*
+        Update minor state
+            Should update the hidden status based on both high-charts legend action and control checkboxes.
+    */
+
 
     BaseVis.prototype.update = function() {
       this.clearControls();
       return this.drawControls();
     };
 
+    /*
+        Clear the controls
+            Unbinds control handlers and clears the HTML elements.
+    */
+
+
     BaseVis.prototype.clearControls = function() {
       ($('#controldiv')).find('*').unbind();
       return ($('#controldiv')).innerHTML = '';
     };
 
+    /*
+        Draws controls
+            Derived classes should write control HTML and bind handlers using the methods defined below.
+    */
+
+
     BaseVis.prototype.drawControls = function() {
       return alert('CALLED DRAW CONTROLS STUB IN BASEVIS');
     };
+
+    /*
+        Draws group selection controls
+            This includes a series of checkboxes and a selector for the grouping field.
+            The checkbox text color should correspond to the graph color.
+    */
+
 
     BaseVis.prototype.drawGroupControls = function() {
       var controls, counter, fieldIndex, group, _i, _j, _len, _len1, _ref5, _ref6,
@@ -153,6 +242,12 @@
       });
     };
 
+    /*
+        Draws Field selection controls as checkboxes
+            This includes a series of checkboxes with corresponding symbols from the graph.
+    */
+
+
     BaseVis.prototype.drawFieldChkControls = function() {
       var controls, field, _ref5,
         _this = this;
@@ -181,6 +276,12 @@
         return _this.update();
       });
     };
+
+    /*
+        Draws x axis selection controls
+            This includes a series of radio buttons.
+    */
+
 
     BaseVis.prototype.drawXAxisControls = function() {
       var controls, field,

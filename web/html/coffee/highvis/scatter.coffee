@@ -34,8 +34,9 @@ class window.Scatter extends BaseVis
         super()
         
         @chartOptions.type = "scatter"
-        @chartOptions.title =
-            text: "Scatter"
+        $.extend true, @chartOptions,
+            tite:
+                text: "Scatter"
     
     drawControls: ->
         @drawGroupControls()

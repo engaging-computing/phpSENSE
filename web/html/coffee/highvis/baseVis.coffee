@@ -34,8 +34,17 @@ globals.fieldSelection ?= [] #This needs a sane init value
 globals.xAxis ?= 1 #This needs a sane init value
 
 class window.BaseVis
+    ###
+    Constructor
+        Assigns target canvas name
+    ###
     constructor: (@canvas) ->
 
+    ###
+    Builds Highcharts options object
+        Builds up the options common to all vis types.
+        Subsequent derrived classes should use $.extend to expand upon these agter calling super()
+    ###
     buildOptions: ->
         @chartOptions = 
             chart:
@@ -49,7 +58,7 @@ class window.BaseVis
             #loading: {}
             #plotOptions: {}
             #point: {}
-            #series: [{}]
+            series: []
             #subtitle: {}
             symbols: globals.getSymbols()
             title: {}
@@ -58,10 +67,32 @@ class window.BaseVis
             #yAxis: {}
             #exporting: {}
             #navigation: {}
-    
-    generateColors: ->
-        groups = data.getUnique(globals.groupIndex)
-    
+            
+        groupDummys = for group in data.getUnique globals.groupIndex
+            dummy =
+                data: []
+                marker:
+                    symbol: 'blank'
+                name: group
+
+        count = -1
+        fieldDummys = for field in data.fields when 7 isnt (Number field.typeID) isnt 37
+            count += 1
+            dummy =
+                data: []
+                color: '#000'
+                marker:
+                    symbol: @chartOptions.symbols[count % @chartOptions.symbols.length]
+                name: field.fieldName
+
+        @chartOptions.series = groupDummys.concat fieldDummys
+
+    ###
+    Start sequence used by runtime
+        This is called when the user switched to this vis.
+        Should re-build options and the chart itself to ensure sync with global settings.
+        This method should also be usable as a 'full update' in that it should destroy the current chart if it exists before generating a fresh one.
+    ###
     start: ->
         @buildOptions()
         
@@ -71,22 +102,46 @@ class window.BaseVis
     
         ($ '#' + @canvas).show()
         @update()
-        
+
+    ###
+    End sequence used by runtime
+        This is called when the user switches away from this vis.
+        Should destroy the chart, hide its canvas and remove controls.
+    ###
     end: ->
+        @chart.destroy()
         @clearControls()
         ($ '#' + @canvas).hide()
-        
+
+    ###
+    Update minor state
+        Should update the hidden status based on both high-charts legend action and control checkboxes.
+    ###
     update: ->
         @clearControls()
         @drawControls()
-        
+        # TODO: Update hidden state
+
+    ###
+    Clear the controls
+        Unbinds control handlers and clears the HTML elements.
+    ###
     clearControls: ->
         ($ '#controldiv').find('*').unbind()
         ($ '#controldiv').innerHTML = ''
-        
+
+    ###
+    Draws controls
+        Derived classes should write control HTML and bind handlers using the methods defined below.
+    ###
     drawControls: ->
         alert 'CALLED DRAW CONTROLS STUB IN BASEVIS'
-        
+
+    ###
+    Draws group selection controls
+        This includes a series of checkboxes and a selector for the grouping field.
+        The checkbox text color should correspond to the graph color.
+    ###
     drawGroupControls: ->
         controls = '<div id="groupControl" class="vis_controls">'
         
@@ -133,7 +188,10 @@ class window.BaseVis
                     selection.push @value
             globals.groupSelection = selection
             @update()
-            
+    ###
+    Draws Field selection controls as checkboxes
+        This includes a series of checkboxes with corresponding symbols from the graph.
+    ###
     drawFieldChkControls: ->
         controls = '<div id="fieldControl" class="vis_controls">'
         
@@ -141,6 +199,7 @@ class window.BaseVis
         
         # Populate choices (not time or text)
         # Maybe should allow time here?
+        #TODO: Figure out how to draw the symbols here
         for field of data.fields
             if 7 != (Number data.fields[field].typeID) != 37
                 controls += '<tr><td>'
@@ -163,7 +222,10 @@ class window.BaseVis
                     selection.push @value
             globals.fieldSelection = selection
             @update()
-            
+    ###
+    Draws x axis selection controls
+        This includes a series of radio buttons.
+    ###
     drawXAxisControls: ->
         controls = '<div id="xAxisControl" class="vis_controls">'
         
