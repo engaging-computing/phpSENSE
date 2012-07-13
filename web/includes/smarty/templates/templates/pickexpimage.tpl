@@ -9,11 +9,8 @@
             {if $img.provider_url != $imgurl}
                 <img class="selectexpimage" style="height:120px;width:165px;margin:5px;" src="{$img.provider_url}"/>
             {/if}
-        {/foreach}
-    {else}
-        There are no images associated with this experiment.
+        {/foreach} 
     {/if}
-    {*$test*}
-    
+    <a href="upload-pictures.php?id={$expid}"><img style="height:120px;width:165px;margin:5px;" src="html/img/isenseaddimage.png"/></a>
 </div>
 <input type="hidden" id="storedexpid" value="{$expid}"/>

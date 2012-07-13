@@ -133,63 +133,39 @@ function searchVisualizations($terms, $page = 1, $limit = 10, $sort = "relevancy
 	}
 }
 
-//SEARCH PEOPLE
-function searchPeople($terms, $page = 1, $limit = 10, $sort = "relevancy") {
-	global $db;
-	
-	$sql = "SELECT users.* FROM users 
-			WHERE CONCAT(users.firstname, ' ', users.lastname) LIKE '%{terms}%' 
-			OR users.firstname = '{$terms}' OR users.lastname = '{$terms}' 
-			OR CONCAT(users.firstname, ' ', users.lastname) = '{$terms}'";
-			
-	$results = $db->query($sql);
-	
-	if($db->numOfRows) {
-		if($page != -1) {
-			$offset = ($page - 1) * $limit;
-			$results = array_splice($results, $offset, $limit);
-			
-			for($i = 0; $i < count($results); $i++) {
-				$results[$i]['session_count'] = countNumberOfContributedSessions($results[$i]['user_id']);
-				$results[$i]['experiment_count'] = countNumberOfContributedExperiments($results[$i]['user_id']);
-			}
-			
-			return $results;
-		}
-		else {
-			return count($results);
-		}
-	}
-	
-	return false;
-}
 
-//BROWSE PEOPLE
-function browsePeople($page = 1, $limit = 10, $sort = "") {
-	global $db;
-	
-	$sql = "SELECT users.* FROM users ORDER BY users.lastname ASC, users.firstname ASC";
-	$results = $db->query($sql);
-	
-	if($db->numOfRows) {
-		
-		if($page != -1) {
-			$offset = ($page - 1) * $limit;
-			$results = array_splice($results, $offset, $limit);
+function getPeople($page, $limit, $query = null){
+        global $db;
+        
+        $sql = "Select users.firstname, users.user_id, users.picture FROM users";
+        
+        if($query !=null) {
+            $sql .= " WHERE CONCAT(users.firstname, ' ', users.lastname) LIKE '%{terms}%'
+            OR users.firstname = '{$query}' OR users.lastname = '{$query}'
+            OR CONCAT(users.firstname, ' ', users.lastname) = '{$query}'";
+        }
 
-			for($i = 0; $i < count($results); $i++) {
-				$results[$i]['session_count'] = countNumberOfContributedSessions($results[$i]['user_id']);
-				$results[$i]['experiment_count'] = countNumberOfContributedExperiments($results[$i]['user_id']);
-			}
+        $sql .= " ORDER BY users.lastname ASC, users.firstname ASC";
 
-			return $results;
-		}
-		else {
-			return count($results);
-		}
-	}
-	
-	return false;
+        $results = $db->query($sql);
+
+        if($db->numOfRows) {
+
+        if($page != -1) {
+            $offset = ($page - 1) * $limit;
+            $results = array_splice($results, $offset, $limit);
+
+            for($i = 0; $i < count($results); $i++) {
+                $results[$i]['session_count'] = countNumberOfContributedSessions($results[$i]['user_id']);
+                $results[$i]['experiment_count'] = countNumberOfContributedExperiments($results[$i]['user_id']);
+            }
+
+            return $results;
+        }
+        else {
+            return count($results);
+        }
+    }
 }
 
 ?>

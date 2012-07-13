@@ -186,7 +186,7 @@ $(document).ready(function(){
     }
     
     if($('#session_hidden').length > 0) {
-        $('#session_hidden').click(function(){
+        /*$('#session_hidden').click(function(){
             if($(this).attr("checked")) {
                 // Make Featured
                 $.get('actions/experiments.php', { action:"hideSes", id:$(this).attr('name') }, function(data){
@@ -202,7 +202,7 @@ $(document).ready(function(){
                     }
                 });
             }
-        });
+        });*/
     }
 
 	if($('.star').length > 0) {
@@ -536,7 +536,21 @@ $(document).ready( function() {
                         $("#removeManualRowButton").attr('disabled', 'disabled');
                     }
                 }
-            });
+            }
+		);
+		
+		$(".checkboxformsubmitter").click(function(){
+			
+			$("#browseform").submit();
+			
+		});
+		
+		$(".selectformsubmitter").change(function(){
+			
+			$("#browseform").submit();
+			
+		});
+		
 });
 
 function addLinkRow() {
