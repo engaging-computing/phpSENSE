@@ -85,14 +85,14 @@ function assertValidToken($token) {
 	return false;
 }
 
-function createUser($auth, $confirmed, $firstName, $lastName, $password, $email, $street, $city, $country, $administrator = 0) {
+function createUser($auth, $confirmed, $firstName, $lastName, $password, $email, $street, $city, $country, $private, $administrator = 0) {
 	global $db;
 	
 	$cords = getLatAndLon($street, $city, $country);
 	$lat = $cords[1];
 	$lon = $cords[0];
 	
-	$db->query("INSERT INTO `users` (`auth`, `confirmed`, `firstname`, `lastname`, `password`, `email`, `street`, `city`, `country`, `latitude`, `longitude`, `firstaccess`, `administrator`) VALUES ('{$auth}', '{$confirmed}', '{$firstName}', '{$lastName}', md5('{$password}'), '{$email}', '{$street}', '{$city}', '{$country}', '{$lat}', '{$lon}', NOW(), '{$administrator}')");
+	$db->query("INSERT INTO `users` (`auth`, `confirmed`, `firstname`, `lastname`, `password`, `email`, `street`, `city`, `country`, `latitude`, `longitude`, `firstaccess`, `administrator`, `private`) VALUES ('{$auth}', '{$confirmed}', '{$firstName}', '{$lastName}', md5('{$password}'), '{$email}', '{$street}', '{$city}', '{$country}', '{$lat}', '{$lon}', NOW(), '{$administrator}', '{$private}')");
 
 	if($db->numOfRows) {
 		return $db->lastInsertId();
@@ -138,22 +138,38 @@ function getUserId($email) {
 }
 
 function getPublicProfile($uid) {
-	global $db;
-		
-	$output = $db->query("SELECT 	users.user_id, 
-									users.firstname, 
-									users.lastname, 
-									users.email, 
-									users.firstaccess, 
-									users.administrator 
-									FROM users 
-									WHERE users.user_id = {$uid} LIMIT 0,1");
-									
-	if($db->numOfRows) {
-		return $output[0];
-	}
-	
-	return false;
+    global $db;
+        
+    $result = $db->query("SELECT private FROM users WHERE user_id = {$uid} LIMIT 0,1");
+    $private = $result[0]['private'];
+        
+    unset($result);
+        
+    $result = $db->query("SELECT    users.user_id, 
+                                    users.firstname, 
+                                    users.lastname, 
+                                    users.street, 
+                                    users.city, 
+                                    users.country, 
+                                    users.latitude,
+                                    users.longitude,
+                                    users.email, 
+                                    users.firstaccess, 
+                                    users.administrator 
+                                    FROM users 
+                                    WHERE users.user_id = {$uid} LIMIT 0,1");
+                                    
+    $output = $result[0];
+    
+    if($private) {
+        $output['lastname'] = $output['lastname'][0];
+    }
+    
+    if($db->numOfRows) {
+        return $output;
+    }
+    
+    return false;
 }
 
 /**
@@ -198,22 +214,22 @@ function getUserAvatar($uid) {
 
 function getUserDetails($uid) {
 	global $db;
-			
-	$output = $db->query("SELECT 	users.user_id, 
-	users.firstname, 
-        users.lastname, 
-        users.street, 
-        users.city, 
-        users.country, 
-        users.latitude,
-        users.longitude,
-        users.email, 
-        users.firstaccess, 
-        users.administrator 
-        FROM users 
-        WHERE users.user_id = {$uid} LIMIT 0,1");
-									
-	if($db->numOfRows) {
+	                    
+    $output = $db->query("SELECT    users.user_id, 
+                                    users.firstname, 
+                                    users.lastname, 
+                                    users.street, 
+                                    users.city, 
+                                    users.country, 
+                                    users.latitude,
+                                    users.longitude,
+                                    users.email, 
+                                    users.firstaccess, 
+                                    users.administrator 
+                                    FROM users 
+                                    WHERE users.user_id = {$uid} LIMIT 0,1");
+                                        
+    if($db->numOfRows) {
 		return $output[0];
 	}
 	

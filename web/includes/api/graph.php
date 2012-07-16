@@ -58,6 +58,13 @@ function getFollowers($uid) {
     $sql = "SELECT users.*, graph.* FROM graph, users WHERE graph.followee = {$uid} AND graph.follower = users.user_id AND graph.blocked = 0";
     $results = $db->query($sql);
     
+    //Filter private last names
+    foreach($results as $index => $r) {
+        if($r['private']) {
+            $results[$index]['lastname'] = substr(ucfirst($r['lastname']), 0, 1) . '.';
+        }
+	}
+	
     if($db->numOfRows) {
         return $results;
     }
@@ -72,6 +79,13 @@ function getFollowing($uid) {
     $sql = "SELECT users.*, graph.* FROM graph, users WHERE graph.follower = {$uid} AND graph.followee = users.user_id AND graph.blocked = 0";
     $results = $db->query($sql);
     
+    //Filter private last names
+    foreach($results as $index => $r) {
+        if($r['private']) {
+            $results[$index]['lastname'] = substr(ucfirst($r['lastname']), 0, 1) . '.';
+        }
+	}
+	
     if($db->numOfRows) {
         return $results;
     }
