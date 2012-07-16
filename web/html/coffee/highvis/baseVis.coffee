@@ -67,16 +67,9 @@ class window.BaseVis
             #yAxis: {}
             #exporting: {}
             #navigation: {}
-            
-        groupDummys = for group in data.getUnique globals.groupIndex
-            dummy =
-                data: []
-                marker:
-                    symbol: 'blank'
-                name: group
 
         count = -1
-        fieldDummys = for field in data.fields when 7 isnt (Number field.typeID) isnt 37
+        @chartOptions.series = for field in data.fields when (Number field.typeID) not in [37, 7]
             count += 1
             dummy =
                 data: []
@@ -84,8 +77,6 @@ class window.BaseVis
                 marker:
                     symbol: @chartOptions.symbols[count % @chartOptions.symbols.length]
                 name: field.fieldName
-
-        @chartOptions.series = groupDummys.concat fieldDummys
 
     ###
     Start sequence used by runtime

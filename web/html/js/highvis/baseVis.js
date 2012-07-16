@@ -72,7 +72,7 @@
 
 
     BaseVis.prototype.buildOptions = function() {
-      var count, dummy, field, fieldDummys, group, groupDummys;
+      var count, dummy, field;
       this.chartOptions = {
         chart: {
           renderTo: this.canvas
@@ -85,30 +85,14 @@
         symbols: globals.getSymbols(),
         title: {}
       };
-      groupDummys = (function() {
-        var _i, _len, _ref5, _results;
-        _ref5 = data.getUnique(globals.groupIndex);
-        _results = [];
-        for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
-          group = _ref5[_i];
-          _results.push(dummy = {
-            data: [],
-            marker: {
-              symbol: 'blank'
-            },
-            name: group
-          });
-        }
-        return _results;
-      })();
       count = -1;
-      fieldDummys = (function() {
+      return this.chartOptions.series = (function() {
         var _i, _len, _ref5, _ref6, _results;
         _ref5 = data.fields;
         _results = [];
         for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
           field = _ref5[_i];
-          if (!((7 !== (_ref6 = Number(field.typeID)) && _ref6 !== 37))) {
+          if (!((_ref6 = Number(field.typeID)) !== 37 && _ref6 !== 7)) {
             continue;
           }
           count += 1;
@@ -123,7 +107,6 @@
         }
         return _results;
       }).call(this);
-      return this.chartOptions.series = groupDummys.concat(fieldDummys);
     };
 
     /*
