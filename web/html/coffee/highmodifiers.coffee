@@ -27,6 +27,19 @@
  *
 ###
 
+data.xySelector = (xIndex, yIndex, filterFunc = ((dp) -> true)) ->
+    rawData = @dataPoints.filter filterFunc
+
+    mapFunc = (dp) ->
+        obj =
+            x: dp[xIndex]
+            y: dp[yIndex]
+            name: "Temp"
+
+    mapped = rawData.map mapFunc
+    mapped.sort (a, b) -> (a.x - b.x)
+    mapped
+
 ###
 Selects an array of data from the given field index.
 if 'nans' is true then datapoints with NaN values in the given field will be included.
@@ -96,5 +109,23 @@ data.getUnique = (fieldIndex, filterFunc = (dp) -> true) ->
 ###
 Gets a list of text field indicies
 ###
-data.getTextFields = ->
-    (fieldIndex for fieldIndex of @fields).filter ((fi) -> @fields[fi].typeID == 37), this
+data.textFields = for index, field of data.fields when (Number field.typeID) is 37
+    Number index
+
+###
+Gets a list of time field indicies
+###
+data.timeFields = for index, field of data.fields when (Number field.typeID) is 7
+    Number index
+
+###
+Gets a list of non-text, non-time field indicies
+###
+data.normalFields = for index, field of data.fields when (Number field.typeID) not in [37, 7]
+    Number index
+
+###
+Gets a list of non-text field indicies
+###
+data.numericFields = for index, field of data.fields when (Number field.typeID) not in [37]
+    Number index

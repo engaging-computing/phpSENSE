@@ -30,8 +30,8 @@
 window.globals ?= {}
 globals.groupIndex ?= 0
 globals.groupSelection ?= data.getUnique(globals.groupIndex)
-globals.fieldSelection ?= [] #This needs a sane init value
-globals.xAxis ?= 1 #This needs a sane init value
+globals.fieldSelection ?= data.normalFields[0..0]
+globals.xAxis ?= data.numericFields[0]
 
 class window.BaseVis
     ###
@@ -56,7 +56,17 @@ class window.BaseVis
             #labels: {}
             #legend: {}
             #loading: {}
-            #plotOptions: {}
+            plotOptions:
+                series:
+                    events:
+                        legendItemClick: (event) =>
+                            index = data.normalFields[event.target.index]
+
+                            if event.target.visible
+                                arrayRemove(globals.fieldSelection, index)
+                            else
+                                globals.fieldSelection.push(index)
+                            @update()
             #point: {}
             series: []
             #subtitle: {}
@@ -90,10 +100,35 @@ class window.BaseVis
         if @chart?
             @chart.destroy()
         @chart = new Highcharts.Chart @chartOptions
+
+        #Build data structures
+        @buildSeries()
+
+        #Sync hidden state from globals
+        for ser in @chart.series
+            index = data.normalFields[ser.index]
+            if index in globals.fieldSelection
+                ser.show()
+            else
+                ser.hide()
     
         ($ '#' + @canvas).show()
         @update()
 
+    ###
+    Build the series structures and add them to the chart.
+        This needs to be done by the specific chart based on its own needs.
+    ###
+    buildSeries: ->
+        console.log console.trace()
+        alert   """
+                BAD IMPLEMENTATION ALERT!
+                
+                Called: 'BaseVis.buildSeries'
+                
+                See logged stack trace in console.
+                """
+        
     ###
     End sequence used by runtime
         This is called when the user switches away from this vis.
@@ -119,14 +154,21 @@ class window.BaseVis
     ###
     clearControls: ->
         ($ '#controldiv').find('*').unbind()
-        ($ '#controldiv').innerHTML = ''
+        ($ '#controldiv').html('')
 
     ###
     Draws controls
         Derived classes should write control HTML and bind handlers using the methods defined below.
     ###
     drawControls: ->
-        alert 'CALLED DRAW CONTROLS STUB IN BASEVIS'
+        console.log console.trace()
+        alert   """
+                BAD IMPLEMENTATION ALERT!
+
+                Called: 'BaseVis.drawControls'
+
+                See logged stack trace in console.
+                """
 
     ###
     Draws group selection controls
@@ -142,7 +184,7 @@ class window.BaseVis
         controls += '<tr><td><div class="vis_control_table_div">'
         controls += '<select class="group_selector">'
         
-        for fieldIndex in data.getTextFields()
+        for fieldIndex in data.textFields
             controls += "<option value=\"#{fieldIndex}\">#{data.fields[fieldIndex].fieldName}</option>"
         
         controls += "</select></div></td></tr>"
@@ -228,7 +270,7 @@ class window.BaseVis
                 controls += '<tr><td>'
                 controls += '<div class="vis_control_table_div">'
                 
-                controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{field}\" #{if field in globals.fieldSelection then "checked" else ""}></input>&nbsp"
+                controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{field}\" #{if (Number field) == globals.xAxis then "checked" else ""}></input>&nbsp"
                 controls += "#{data.fields[field].fieldName}&nbsp"
                 controls += "</div></td></tr>"
         
@@ -245,4 +287,7 @@ class window.BaseVis
                     selection = @value
             globals.xAxis = selection
             @update()
+
+    groupFilter: (dp) ->
+        String(dp[globals.groupIndex]).toLowerCase() in globals.groupSelection
         

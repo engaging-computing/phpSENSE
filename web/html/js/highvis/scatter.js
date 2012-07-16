@@ -46,16 +46,39 @@
       Scatter.__super__.buildOptions.call(this);
       this.chartOptions.type = "scatter";
       return $.extend(true, this.chartOptions, {
-        tite: {
+        title: {
           text: "Scatter"
         }
       });
     };
 
+    Scatter.prototype.buildSeries = function() {
+      var fieldIndex, group, options, _i, _len, _ref, _results;
+      _ref = data.getUnique(globals.groupIndex);
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        group = _ref[_i];
+        _results.push((function() {
+          var _j, _len1, _ref1, _results1;
+          _ref1 = data.normalFields;
+          _results1 = [];
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            fieldIndex = _ref1[_j];
+            options = {
+              data: data.xySelector(globals.xAxis, fieldIndex, this.groupFilter),
+              showInLegend: false
+            };
+            _results1.push(this.chart.addSeries(options));
+          }
+          return _results1;
+        }).call(this));
+      }
+      return _results;
+    };
+
     Scatter.prototype.drawControls = function() {
       this.drawGroupControls();
-      this.drawXAxisControls();
-      return this.drawFieldChkControls();
+      return this.drawXAxisControls();
     };
 
     return Scatter;

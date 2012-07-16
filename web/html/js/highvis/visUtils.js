@@ -38,6 +38,21 @@
   }
 
   /*
+  Removes 'item' from the array 'arr'
+  Returns the modified (or unmodified) arr.
+  */
+
+
+  window.arrayRemove = function(arr, item) {
+    var index;
+    index = arr.indexOf(item);
+    if (index !== -1) {
+      arr.splice(index, 1);
+    }
+    return arr;
+  };
+
+  /*
   Generated using http://jiminy.medialab.sciences-po.fr/tools/palettes/palettes.php
   Colors: 30
   Hue:       0.0 - 360.00

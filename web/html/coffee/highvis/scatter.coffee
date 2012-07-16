@@ -35,12 +35,21 @@ class window.Scatter extends BaseVis
         
         @chartOptions.type = "scatter"
         $.extend true, @chartOptions,
-            tite:
+            title:
                 text: "Scatter"
+
+                #TODO: MOVE THIS TO BUILDOPTIONS
+    buildSeries: ->
+        for group in data.getUnique(globals.groupIndex)
+            for fieldIndex in data.normalFields
+                options =
+                    data: data.xySelector(globals.xAxis, fieldIndex, @groupFilter)
+                    showInLegend: false
+
+                @chart.addSeries options
     
     drawControls: ->
         @drawGroupControls()
         @drawXAxisControls()
-        @drawFieldChkControls()
 
 globals.scatter = new Scatter 'scatter_canvas'

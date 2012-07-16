@@ -30,14 +30,38 @@
 */
 
 
-/*
-Selects an array of data from the given field index.
-if 'nans' is true then datapoints with NaN values in the given field will be included.
-'filterFunc' is a boolean filter that must be passed (true) for a datapoint to be included.
-*/
-
-
 (function() {
+  var field, index;
+
+  data.xySelector = function(xIndex, yIndex, filterFunc) {
+    var mapFunc, mapped, rawData;
+    if (filterFunc == null) {
+      filterFunc = (function(dp) {
+        return true;
+      });
+    }
+    rawData = this.dataPoints.filter(filterFunc);
+    mapFunc = function(dp) {
+      var obj;
+      return obj = {
+        x: dp[xIndex],
+        y: dp[yIndex],
+        name: "Temp"
+      };
+    };
+    mapped = rawData.map(mapFunc);
+    mapped.sort(function(a, b) {
+      return a.x - b.x;
+    });
+    return mapped;
+  };
+
+  /*
+  Selects an array of data from the given field index.
+  if 'nans' is true then datapoints with NaN values in the given field will be included.
+  'filterFunc' is a boolean filter that must be passed (true) for a datapoint to be included.
+  */
+
 
   data.selector = function(fieldIndex, nans, filterFunc) {
     var newFilterFunc, rawData;
@@ -171,18 +195,71 @@ if 'nans' is true then datapoints with NaN values in the given field will be inc
   */
 
 
-  data.getTextFields = function() {
-    var fieldIndex;
-    return ((function() {
-      var _results;
-      _results = [];
-      for (fieldIndex in this.fields) {
-        _results.push(fieldIndex);
+  data.textFields = (function() {
+    var _ref, _results;
+    _ref = data.fields;
+    _results = [];
+    for (index in _ref) {
+      field = _ref[index];
+      if ((Number(field.typeID)) === 37) {
+        _results.push(Number(index));
       }
-      return _results;
-    }).call(this)).filter((function(fi) {
-      return this.fields[fi].typeID === 37;
-    }), this);
-  };
+    }
+    return _results;
+  })();
+
+  /*
+  Gets a list of time field indicies
+  */
+
+
+  data.timeFields = (function() {
+    var _ref, _results;
+    _ref = data.fields;
+    _results = [];
+    for (index in _ref) {
+      field = _ref[index];
+      if ((Number(field.typeID)) === 7) {
+        _results.push(Number(index));
+      }
+    }
+    return _results;
+  })();
+
+  /*
+  Gets a list of non-text, non-time field indicies
+  */
+
+
+  data.normalFields = (function() {
+    var _ref, _ref1, _results;
+    _ref = data.fields;
+    _results = [];
+    for (index in _ref) {
+      field = _ref[index];
+      if ((_ref1 = Number(field.typeID)) !== 37 && _ref1 !== 7) {
+        _results.push(Number(index));
+      }
+    }
+    return _results;
+  })();
+
+  /*
+  Gets a list of non-text field indicies
+  */
+
+
+  data.numericFields = (function() {
+    var _ref, _ref1, _results;
+    _ref = data.fields;
+    _results = [];
+    for (index in _ref) {
+      field = _ref[index];
+      if ((_ref1 = Number(field.typeID)) !== 37) {
+        _results.push(Number(index));
+      }
+    }
+    return _results;
+  })();
 
 }).call(this);

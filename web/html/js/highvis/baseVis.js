@@ -47,11 +47,11 @@
   }
 
   if ((_ref3 = globals.fieldSelection) == null) {
-    globals.fieldSelection = [];
+    globals.fieldSelection = data.normalFields.slice(0, 1);
   }
 
   if ((_ref4 = globals.xAxis) == null) {
-    globals.xAxis = 1;
+    globals.xAxis = data.numericFields[0];
   }
 
   window.BaseVis = (function() {
@@ -72,7 +72,8 @@
 
 
     BaseVis.prototype.buildOptions = function() {
-      var count, dummy, field;
+      var count, dummy, field,
+        _this = this;
       this.chartOptions = {
         chart: {
           renderTo: this.canvas
@@ -80,6 +81,22 @@
         colors: globals.getColors(),
         credits: {
           enabled: false
+        },
+        plotOptions: {
+          series: {
+            events: {
+              legendItemClick: function(event) {
+                var index;
+                index = data.normalFields[event.target.index];
+                if (event.target.visible) {
+                  arrayRemove(globals.fieldSelection, index);
+                } else {
+                  globals.fieldSelection.push(index);
+                }
+                return _this.update();
+              }
+            }
+          }
         },
         series: [],
         symbols: globals.getSymbols(),
@@ -118,13 +135,36 @@
 
 
     BaseVis.prototype.start = function() {
+      var index, ser, _i, _len, _ref5;
       this.buildOptions();
       if (this.chart != null) {
         this.chart.destroy();
       }
       this.chart = new Highcharts.Chart(this.chartOptions);
+      this.buildSeries();
+      _ref5 = this.chart.series;
+      for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+        ser = _ref5[_i];
+        index = data.normalFields[ser.index];
+        if (__indexOf.call(globals.fieldSelection, index) >= 0) {
+          ser.show();
+        } else {
+          ser.hide();
+        }
+      }
       ($('#' + this.canvas)).show();
       return this.update();
+    };
+
+    /*
+        Build the series structures and add them to the chart.
+            This needs to be done by the specific chart based on its own needs.
+    */
+
+
+    BaseVis.prototype.buildSeries = function() {
+      console.log(console.trace());
+      return alert("BAD IMPLEMENTATION ALERT!\n\nCalled: 'BaseVis.buildSeries'\n\nSee logged stack trace in console.");
     };
 
     /*
@@ -159,7 +199,7 @@
 
     BaseVis.prototype.clearControls = function() {
       ($('#controldiv')).find('*').unbind();
-      return ($('#controldiv')).innerHTML = '';
+      return ($('#controldiv')).html('');
     };
 
     /*
@@ -169,7 +209,8 @@
 
 
     BaseVis.prototype.drawControls = function() {
-      return alert('CALLED DRAW CONTROLS STUB IN BASEVIS');
+      console.log(console.trace());
+      return alert("BAD IMPLEMENTATION ALERT!\n\nCalled: 'BaseVis.drawControls'\n\nSee logged stack trace in console.");
     };
 
     /*
@@ -186,7 +227,7 @@
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Groups:</tr></td>';
       controls += '<tr><td><div class="vis_control_table_div">';
       controls += '<select class="group_selector">';
-      _ref5 = data.getTextFields();
+      _ref5 = data.textFields;
       for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
         fieldIndex = _ref5[_i];
         controls += "<option value=\"" + fieldIndex + "\">" + data.fields[fieldIndex].fieldName + "</option>";
@@ -275,7 +316,7 @@
         if ((Number(data.fields[field].typeID)) !== 37) {
           controls += '<tr><td>';
           controls += '<div class="vis_control_table_div">';
-          controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"" + field + "\" " + (__indexOf.call(globals.fieldSelection, field) >= 0 ? "checked" : "") + "></input>&nbsp";
+          controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"" + field + "\" " + ((Number(field)) === globals.xAxis ? "checked" : "") + "></input>&nbsp";
           controls += "" + data.fields[field].fieldName + "&nbsp";
           controls += "</div></td></tr>";
         }
@@ -293,6 +334,11 @@
         globals.xAxis = selection;
         return _this.update();
       });
+    };
+
+    BaseVis.prototype.groupFilter = function(dp) {
+      var _ref5;
+      return _ref5 = String(dp[globals.groupIndex]).toLowerCase(), __indexOf.call(globals.groupSelection, _ref5) >= 0;
     };
 
     return BaseVis;
