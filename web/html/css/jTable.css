@@ -1,0 +1,213 @@
+#edit_table {
+	width: 100%;
+	min-height: 80%;
+	border: solid 1px black;
+}
+	
+.edit_table { 
+	width:100%;
+	height:100%;
+	border-top: solid 1px black;
+}
+
+.edit_table tr {
+    height:40px;
+}
+
+.jTable_head {
+	background-color: #999;
+}
+
+.jTable_header *:hover {
+
+}
+
+.jTable_rotate_left {
+    -webkit-transform: rotate(-90deg); 
+    -moz-transform: rotate(-90deg);
+}
+
+.jTable_rotate_right {
+    -webkit-transform: rotate(90deg); 
+    -moz-transform: rotate(90deg);
+}
+
+.jTable_header {
+    height : 2em;
+	text-align : center;
+}
+
+.row_even {
+	background-color: #CCC;
+}
+
+.row_even * {
+	padding : 0px;
+	text-align: center;
+
+}
+
+.row_odd {
+	background-color: #EEE;
+}
+
+.row_odd * {
+	text-align: center;
+}
+
+.jTable_highlight_top * { 
+	border-top: 3px solid #89f;
+}
+
+.jTable_highlight_bot * { 
+	border-bottom: 3px solid #89f;
+}
+
+.drag_target * {
+	background-color: #89f;
+}
+
+.edit_controls {
+	height : 2.5em;
+    float:left;
+}
+
+.edit_controls * {
+	margin : 1em;
+	height : 2em;
+	width : 7em;
+	border: solid 1px black;
+}
+
+.new_row_active {
+    margin-left:2em;
+	background-color:#EEE;
+	color: black;
+}
+
+.edit_row_active {
+	background-color:#EEE;
+	color: black;
+}
+
+.delete_row_active {
+	background-color:#EEE;
+	color: black;
+}
+
+.new_row_active :hover {
+	background-color: #CCC;
+}
+
+.edit_row_active:hover {
+	background-color: #CCC;
+}
+
+.delete_row_active:hover {
+	background-color: #CCC;
+}
+
+.new_row_not{
+	color: #CCC;
+	border: solid 1px #CCC;
+}
+
+.edit_row_not {
+	color: #CCC;
+	border: solid 1px #CCC;
+}
+
+.delete_row_not {
+	color: #CCC;
+	border: solid 1px #CCC;
+}
+
+.jTable_save {
+	margin : 1em;
+	height : 2em;
+	width : 7em;
+	border: solid 1px black;
+	position:relative;
+	left:50%;
+}
+
+.jTable_selected {
+	background-color : #89f;
+}
+
+.jTable_lightbox_veil {
+	position: absolute;
+	top : 0px;
+	left : 0px;
+	height : 100%;
+	width : 100%;
+	background-color: black;
+	padding:auto;
+	opacity:.80;
+}
+
+.jTable_lightbox_body {
+	text-align: center;
+	position:absolute;
+	top: 25%;
+	left: 10%;
+	min-height: 50%;
+	width : 80%;
+	background-color: white;
+}
+
+.round_10 {
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+}
+
+.jTable_lightbox_body table {
+
+	width: 100%;
+	height: 100%;
+	border-top: solid 1px black;
+}
+
+.jTable_lightbox_body {
+	background-color :#FFF;
+}
+
+.jTable_lightbox_body_table_wrap {
+    overflow-x:scroll;
+    width:90%;
+    margin-left:5%;
+}
+
+.jTable_lightbox_body table * {
+	background-color: #EEE;
+	padding: 10px;	
+}
+
+.jTable_lightbox_body table tr td input {
+    padding:5px;
+}
+
+.jTable_lightbox_body table tr td {
+    padding-right: 20px;
+}
+
+.jTable_lightbox_body input {
+	background-color: white;
+	width: 100%;
+}
+
+.jTable_lightbox_body span h2{
+	margin-top: 20px;
+}
+
+.jTable_lightbox_buttons {
+    margin-top: 20px;
+}
+
+.jTable_lightbox_buttons button {
+	padding: 1em;
+	min-width:7em;
+	margin-right:20px;
+	border: solid 1px black;
+}

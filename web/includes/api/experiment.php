@@ -62,13 +62,20 @@ function createExperiment($token, $name, $description, $fields, $req_name=1, $re
 
 function getExperiment($eid) {
 	global $db;
-										
+	
+	$result = $db->query("SELECT private FROM users WHERE user_id = {$eid} LIMIT 0,1");
+    
 	$output = $db->query("SELECT experiments.*, 
                                  users.firstname, 
                                  users.lastname 
                                  FROM experiments, 
                                  users 
                                  WHERE experiments.owner_id = users.user_id AND experiments.experiment_id = {$eid}");
+	
+	//Filter private last names
+	if($result[0]['private']) {
+        $output[0]['lastname'] = substr(ucfirst($output[0]['lastname']), 0, 1) . '.';
+	}
 	
 	if($db->numOfRows) {
 		return $output[0];
@@ -323,36 +330,31 @@ function experimentHasTime($eid) {
 }
 
 function packageBrowseExperimentResults($results, $page = 1, $limit = 10, $override = false) {
-	
-	$output = array();
-	
-	if($page != -1) {
-		$offset = ($page - 1) * $limit;
-		$results =  array_splice($results, $offset, $limit);
+    
+    $output = array();
 
-		if(!$override) {
-			foreach($results as $result) {
-			    $sessioncount = countNumberOfSessions($result['experiment_id']);
-				$contribcount = countNumberOfContributors($result['experiment_id']);
-			    
-				$output[$result['experiment_id']] = array("meta" => $result, "tags" => array(), "relevancy" => 0, 'session_count' => $sessioncount, 'contrib_count' => $contribcount);
-			}
-		}
-		else {
-			foreach($results as $result) {
-				
-				$contribcount = (isset($result['contrib_count'])) ? $result['contrib_count'] : countNumberOfContributors($result['experiment_id']);
-				$sessioncount = (isset($result['session_count'])) ? $result['session_count'] : countNumberOfContributors($result['experiment_id']);
-			    
-				$output[] = array("meta" => $result, "tags" => array(), "relevancy" => 0, 'session_count' => $sessioncount, 'contrib_count' => $contribcount);
-			}
-		}
-		
-		return $output;
-	}
-	else {
-		return count($results);
-	}
+    foreach($results as $result) {
+        $sessioncount = countNumberOfSessions($result['experiment_id']);
+        $contribcount = countNumberOfContributors($result['experiment_id']);
+
+        $output[$result['experiment_id']] = array("meta" => $result, "tags" => array(), "relevancy" => 0, 'session_count' => $sessioncount, 'contrib_count' => $contribcount);
+    }
+
+    return $output;
+}
+
+function pagifyBrowseExperimentResults($results, $page = 1, $limit = 10, $override = false) {
+
+    $output = array();
+
+    if($page != -1) {
+        $offset = ($page - 1) * $limit;
+        $results =  array_splice($results, $offset, $limit);
+        return $results;
+    }
+    else {
+        return count($results);
+    }
 }
 
 function browseExperimentsByRecent($page = 1, $limit = 10, $override = false) {
@@ -365,8 +367,10 @@ function browseExperimentsByRecent($page = 1, $limit = 10, $override = false) {
 						FROM experiments 
 						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
 						WHERE experiments.hidden = 0
-						AND experiments.activity = 0
-						ORDER BY experiments.timemodified DESC";
+						AND experiments.activity = 0";
+
+
+	$sqlCmd.= " ORDER BY experiments.timemodified DESC";
 	
 	$output = $db->query($sqlCmd);
 
@@ -732,6 +736,134 @@ function getExperimentOwner($eid){
 
     return false;
 
+}
+
+function updateExperimentImage($url,$eid){
+    global $db;
+    
+    $sql = "UPDATE experiments SET exp_image='{$url}' WHERE experiment_id={$eid}";
+
+    $output = $db->query($sql);
+
+    return true;
+}
+
+//Promote an experiment as iSENSE recommended.
+function recommendExperiment($eid){
+    global $db;
+
+    $sql = "UPDATE experiments SET recommended=1 WHERE experiment_id={$eid}";
+
+    $output = $db->query($sql);
+
+    return true;
+}
+
+//Demote an experiment from iSENSE recommended status.
+function unrecommendExperiment($eid){
+    global $db;
+
+    $sql = "UPDATE experiments SET recommended=0 WHERE experiment_id={$eid}";
+
+    $output = $db->query($sql);
+
+    return true;
+}
+
+
+//One function to rule them all
+function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recommended="off", $tags= null, $sort = "recent"){
+    global $db;
+
+    $result = array();
+
+
+    $sql = "SELECT DISTINCT experiments.*,
+            (experiments.rating/experiments.rating_votes) as rating_comp,
+            users.firstname
+            FROM experiments
+            LEFT JOIN users on experiments.owner_id = users.user_id";
+
+
+    if($tags){
+        $sql .= ", tagExperimentMap, tagIndex";
+    }
+
+    $sql .= " WHERE experiments.hidden = {$hidden} ";
+
+    if($featured == 'on'){
+        $sql .= " AND experiments.featured=1 ";
+    }
+
+    if($recommended == 'on'){
+        $sql .= " AND experiments.recommended=1";
+    }
+
+    if($tags){
+
+        $sql .= " AND ( ";
+
+        //If there are tags we want to search by each of them.
+        $tags = explode(" ", $tags);
+
+        for($i=0;$i<count($tags);$i++){
+
+            $sql .= " (tagIndex.value like '%{$tags[$i]}%'
+            AND tagIndex.tag_id = tagExperimentMap.tag_id
+            AND experiments.experiment_id = tagExperimentMap.experiment_id
+            AND tagIndex.weight=1)";
+
+            if($i < count($tags) -1){
+                $sql .= " OR ";
+            }
+        }
+
+        $sql .= " )";
+    }
+
+    if($sort == "rating"){
+        $sql .= " ORDER BY experiments.rating/experiments.rating_votes DESC";
+    } else if ($sort == "recent"){
+        $sql .= " ORDER BY experiments.timecreated DESC";
+    }
+
+
+
+    $result = $db->query($sql);
+
+    $keys = array();
+    $tmp = array();
+
+    for($i = 0; $i < count($result); $i++) {
+        $tmpKey = $result[$i]['experiment_id'];
+        if (in_array($tmpKey,$keys)){
+        } else {
+            $keys[count($keys)] = $tmpKey;
+            $tmp[count($tmp)] = $result[$i];
+        }
+    }
+
+    $packaged =  packageBrowseExperimentResults($tmp, $page,$limit,false);
+
+    if($sort == "popularity"){
+        usort($packaged,'popularitySort');
+    } else if ($sort == "activity"){
+        usort($packaged,'activitySort');
+    }
+
+    
+    return pagifyBrowseExperimentResults($packaged, $page,$limit,false);
+
+
+
+}
+
+function popularitySort($a,$b){
+    return  $b["contrib_count"] - $a["contrib_count"];
+}
+
+function activitySort($a,$b){
+    return  $b["session_count"] - $a["session_count"];
 }
 
 ?>

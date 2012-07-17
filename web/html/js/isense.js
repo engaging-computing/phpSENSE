@@ -29,6 +29,22 @@ $(document).ready(function(){
         });
     }
 
+
+    
+    if($('img.selectexpimage').length > 0){
+        $('img.selectexpimage').click(function(){
+            $('img.selectexpimage').css( 'border', '0px none #fff' );
+            $('img.selectexpimage').css( 'margin', '5px' );
+            $('img.selectexpimage').css( 'padding', '0px')
+            $(this).css( 'border', '4px solid #2396e6' );
+            $(this).css( 'padding', '1px' );
+            $(this).css( 'margin', '0px' );
+            $(this).css( 'background', '#fff');
+            //alert( "URL: " + $(this).attr("src") + "\nEXP ID: " + $('#storedexpid').val() );
+            $.get('actions/experiments.php', { action:"changeimage", purl:$(this).attr("src"), eid:$('#storedexpid').val() }, function(data){});
+        });
+    }
+    
     if($('input.feature_experiment').length > 0) {
         $('input.feature_experiment').click(function(){
             //$('input.feature_experiment').hide();			This stuff is commented out because it
@@ -146,21 +162,47 @@ $(document).ready(function(){
             }
         });
     }
+
+    if($('#recommend_experiment').length>0){
+        $('#recommend_experiment').click(function(){
+            $('#recommend_experiment').hide();
+            $('#recommend_loading_msg').show();
+
+            if($(this).attr("checked")) {
+                // Recommend the experiment
+                $.get('actions/experiments.php', { action:"recommend", id:$(this).val() }, function(data){
+                    $('#recommend_experiment').show();
+                    $('#recommend_loading_msg').hide();
+                });
+            }
+            else {
+                // Unrecommend the experiment
+                $.get('actions/experiments.php', { action:"unrecommend", id:$(this).val() }, function(data){
+                    $('#recommend_experiment').show();
+                    $('#recommend_loading_msg').hide();
+                });
+            }
+        });
+    }
     
     if($('#session_hidden').length > 0) {
-        $('#session_hidden').click(function(){
+        /*$('#session_hidden').click(function(){
             if($(this).attr("checked")) {
                 // Make Featured
                 $.get('actions/experiments.php', { action:"hideSes", id:$(this).attr('name') }, function(data){
-                    alert(data);
+                    if (typeof console == "object") {
+                        console.log(data);
+                    }
                 });
             } else {
                 // Remove Feature
                 $.get('actions/experiments.php', { action:"unhideSes", id:$(this).attr('name') }, function(data){
-                    alert(data);
+                    if (typeof console == "object") {
+                        console.log(data);
+                    }
                 });
             }
-        });
+        });*/
     }
 
 	if($('.star').length > 0) {
@@ -494,7 +536,21 @@ $(document).ready( function() {
                         $("#removeManualRowButton").attr('disabled', 'disabled');
                     }
                 }
-            });
+            }
+		);
+		
+		$(".checkboxformsubmitter").click(function(){
+			
+			$("#browseform").submit();
+			
+		});
+		
+		$(".selectformsubmitter").change(function(){
+			
+			$("#browseform").submit();
+			
+		});
+		
 });
 
 function addLinkRow() {

@@ -1,0 +1,111 @@
+<html>
+    <h1>API v1.0 Functions</h1>
+        <b>Login</b><br>
+        Description - Takes 'username' and 'password' and returns a session token if successful <br>
+        username - The users username<br>
+        password - The users password<br>
+        Usage - isenseproject.org/ws/api.php?method=login&username=XXX&password=XXX <br>
+        Return - {"status":200,"data":{"uid":"XXX","session":"XXXXXXXXXXX"}}<br><br>
+
+        <b>getExperiment</b><br>
+        Description - Takes 'experiment' and returns the meta data associated with it<br>
+        experiment = The id of the desired experiment.<br>
+        Usage - isenseproject.org/ws/api.php?method=getExperiment&experiment=1<br><br>
+
+        <b>getExperiments</b><br>
+        Description - Takes 'page', 'limit', 'query', 'sort' and returns a list of experiments with their meta data<br>
+        page = The page of size limit, offset into the full list of results, default 1<br>
+        limit = The number of results desired, default 10<br>
+        query = Search terms by tags/name of experiment, default "", example "water"<br>
+        sort = What to sort results by. accepts recent, popularity, activity, rating <br>
+        Usage - isenseproject.org/ws/api.php?method=getExperiments <br><br>
+
+        <b>getPeople</b><br>
+        Description - Takes 'page','limit','status' and returns a list of people with their meta data<br>
+        page = The page of size limit, offset into the full list of results, default 1<br>
+        limit = The number of results desired, default 10<br>
+        query = Search terms by names of people, default "", example "Bob"<br>
+        Usage -  isenseproject.org/ws/api.php?method=getPeople<br><br>
+
+        <b>getSessions</b><br>
+        Description - Takes 'experiment' and returns a list of sessions associated with that experiment and their meta data<br>
+        experiment = The id of the desired experiment.<br>
+        Usage - isenseproject.org/ws/api.php?method=getSessions&experiment=1<br><br>
+
+        <b>getExperimentFields</b><br>
+        Description - Takes 'experiment' and returns a list of fields associated with that experiment<br>
+        experiment = The id of the desired experiment.<br>
+        Usage - isenseproject.org/ws/api.php?method=getExperimentFields&experiment=1<br><br>
+
+
+        <b>getExperimentTags</b><br>
+        Description - Takes 'experiment' and returns a list of tags associated with that experiment<br>
+        experiment = The id of the desired experiment.<br>
+        Usage - isenseproject.org/ws/api.php?method=getExperimentTags&experiment=1<br><br>
+
+        <b>getExperimentVideos</b><br>
+        Description - Takes 'experiment' and returns a list of videos associated with that experiment<br>
+        experiment = The id of the desired experiment.<br>
+        Usage - isenseproject.org/ws/api.php?method=getExperimentVideos&experiment=1<br><br>
+
+        <b>getExperimentImages</b><br>
+        Description - Takes 'experiment' and returns a list of images associated with that experiment<br>
+        experiment = The id of the desired experiment.<br>
+        Usage - isenseproject.org/ws/api.php?method=getExperimentImages&experiment=1<br><br>
+
+        <b>getUserProfile</b><br>
+        Description - Takes 'experiment' and returns a list of images associated with that experiment<br>
+        <font color="red">Requires</font> - session_key, user <br>
+        session_key = The session token returned by a valid login.<br>
+        user = The id of a user. <br>
+        Usage - isenseproject.org/ws/api.php?method=getExperimentImages&experiment=1<br><br>
+
+        <b>getExperimentByUser</b><br>
+        Description - Takes a 'user' and returns the experiments created by that user<br>
+        user = The id of a user. <br>
+        Usage - isenseproject.org/ws/api.php?method=getExperimentByUser&user=1<br><br>
+
+        <b>getSessionsByUser</b><br>
+        Description - Takes a 'user' and returns the sessions created by that user<br>
+        user = The id of a user. <br>
+        Usage - isenseproject.org/ws/api.php?method=getSessionsByUser&user=1<br><br>
+
+        <b>getImagesByUser</b><br>
+        Description - Takes a 'user' and returns the images created by that user<br>
+        user = The id of a user. <br>
+        Usage - isenseproject.org/ws/api.php?method=getImagesByUser&user=1<br><br>
+
+        <b>getVideosByUser</b><br>
+        Description - Takes a 'user' and returns the videos created by that user<br>
+        user = The id of a user. <br>
+        Usage - isenseproject.org/ws/api.php?method=getVideosByUser&user=1<br><br>
+
+        <b>createSession</b><br>
+        Description - Takes 'session_key','eid','description','name','street','city','state'<br>
+        <font color="red">Requires</font> - session_key, eid<br>
+        session_key = The session token returned by a valid login.<br>
+        eid = The id of the desired experiment.<br>
+        description = The text description of the session.<br>
+        name = The name of the session. <br>
+        city/street/state = The parts of the address where the session was created.
+        Usage - isenseproject.org/ws/api.php?method=createSession&eid=1&session_key=XXXXXXXXXXX<br><br>
+        
+        <b>putSessionData/updateSessionData</b><br><br>
+        <b>getDataSince</b><br><br>
+        <b>uploadImageToExperiment</b><br><br>
+        <b>uploadImageToSession</b><br><br>
+        <b>sessiondata</b><br><br>
+
+    
+    <h1>API v1.0 Removed Functions</h1>
+        <b>getVisualizations</b><br><br>
+        <b>getExperimentVisualizations</b><br><br>
+        <b>getVisByUser</b><br><br>
+        <b>whatsMyIp</b><br><br>
+        <b>getFileChecksum</b><br>
+
+    <h1>Updates</h1>
+    A valid session_key is now required to getUserProfile, createSessions, putSessionData, updateSessionData.
+    <br><br>
+    Functions that require parameters return {{"status":551,"data":{"msg":"Missing XXX"}} if a param is missing.
+</html>
