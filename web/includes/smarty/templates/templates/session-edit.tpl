@@ -62,7 +62,7 @@
 	{ else }
 	    <fieldset id="basic-info">
 			<legend>You've successfully edited your session!</legend>
-			<p>Capital job, you've successfully edited your session! Click <a href="vis.php?sessions={ $sid }">here</a> to view it.
+			<p>Capital job, you've successfully edited your session! Click { if $hide }<a href="vis.php?sessions={ $sid }">here</a> to view it.{ else }<a href="experiment.php?id={ $id }">here</a> to return to the experiment.{ /if }
 		</fieldset>
 	{ /if }
 </div>

@@ -105,6 +105,9 @@ if($images) {
         }   
 }
 
+if(isset($hidden_val)) {
+    $smarty->assign('hide', $hidden_val);
+}
 
 $smarty->assign('pictures',     $image_urls);
 $smarty->assign('sid',		$sid);
