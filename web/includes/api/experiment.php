@@ -336,7 +336,7 @@ function packageBrowseExperimentResults($results, $page = 1, $limit = 10, $overr
     foreach($results as $result) {
         $sessioncount = countNumberOfSessions($result['experiment_id']);
         $contribcount = countNumberOfContributors($result['experiment_id']);
-
+        $tags = getTagsForExperiment($result['experiment_id']);
         $output[$result['experiment_id']] = array("meta" => $result, "tags" => array(), "relevancy" => 0, 'session_count' => $sessioncount, 'contrib_count' => $contribcount);
     }
 
@@ -355,134 +355,6 @@ function pagifyBrowseExperimentResults($results, $page = 1, $limit = 10, $overri
     else {
         return count($results);
     }
-}
-
-function browseExperimentsByRecent($page = 1, $limit = 10, $override = false) {
-	global $db;
-	
-	$sqlCmd = "SELECT 	experiments.*, 
-						(experiments.rating / experiments.rating_votes ) AS rating_comp,
-						users.firstname AS owner_firstname, 
-						users.lastname AS owner_lastname
-						FROM experiments 
-						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-						WHERE experiments.hidden = 0
-						AND experiments.activity = 0";
-
-
-	$sqlCmd.= " ORDER BY experiments.timemodified DESC";
-	
-	$output = $db->query($sqlCmd);
-
-	if($db->numOfRows) {		
-		return packageBrowseExperimentResults($output, $page, $limit, $override);
-	}
-		
-	return false;
-} 
-
-function browseExperimentsByRating($page = 1, $limit = 10, $override = false) {
-	global $db;
-	
-	$sqlCmd = "SELECT 	experiments.*, 
-						(experiments.rating / experiments.rating_votes ) AS rating_comp,
-						users.firstname AS owner_firstname, 
-						users.lastname AS owner_lastname
-						FROM experiments 
-						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-						WHERE experiments.hidden = 0
-						AND experiments.activity = 0
-						ORDER BY (experiments.rating / experiments.rating_votes) DESC, experiments.timemodified DESC";
-	
-	$output = $db->query($sqlCmd);
-
-	if($db->numOfRows) {
-		return packageBrowseExperimentResults($output, $page, $limit, $override);
-	}
-		
-	return false;
-}
-
-function browseExperimentsByFeatured($page = 1, $limit = 10, $override = false) {
-	global $db;
-	
-	$sqlCmd = "SELECT 	experiments.*, 
-						(experiments.rating / experiments.rating_votes ) AS rating_comp,
-						users.firstname AS owner_firstname, 
-						users.lastname AS owner_lastname
-						FROM experiments 
-						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-						WHERE experiments.featured = 1
-						AND experiments.hidden = 0
-						AND experiments.activity = 0
-						ORDER BY experiments.timemodified DESC";
-	
-	$output = $db->query($sqlCmd);
-
-	if($db->numOfRows) {
-		return packageBrowseExperimentResults($output, $page, $limit, $override);
-	}
-		
-	return false;
-}
-
-function browseExperimentsByPopular($page = 1, $limit = 10, $override = false) {
-	global $db;
-	
-	$sqlCmd = "SELECT 	experiments.*, 
-						(experiments.rating / experiments.rating_votes ) AS rating_comp,
-						users.firstname AS owner_firstname, 
-						users.lastname AS owner_lastname
-						FROM experiments 
-						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-						WHERE experiments.hidden = 0
-						AND experiments.activity = 0
-						ORDER BY experiments.timemodified DESC";
-	
-	$output = $db->query($sqlCmd);
-
-	if($db->numOfRows) {
-		for($i = 0; $i < count($output); $i++) {
-			$contrib_count = countNumberOfContributors($output[$i]['experiment_id']);
-			$output[$i]['contrib_count'] = $contrib_count;
-		}
-				
-		uasort($output, 'contrib_cmp');
-		//$output = array_reverse($output);
-		
-		return packageBrowseExperimentResults($output, $page, $limit, $override);
-	}
-		
-	return false;
-}
-
-function browseExperimentsByActivity($page = 1, $limit = 10, $override = false)  {
-	global $db;
-	
-	$sqlCmd = "SELECT 	experiments.*, 
-						(experiments.rating / experiments.rating_votes ) AS rating_comp,
-						users.firstname AS owner_firstname, 
-						users.lastname AS owner_lastname
-						FROM experiments 
-						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-						WHERE experiments.hidden = 0
-						AND experiments.activity = 0";
-	
-	$output = $db->query($sqlCmd);
-
-	if($db->numOfRows) {
-		for($i = 0; $i < count($output); $i++) {
-			$session_count = countNumberOfSessions($output[$i]['experiment_id']);
-			$output[$i]['session_count'] = $session_count;
-		}
-		
-		uasort($output, 'session_cmp');
-		$output = array_reverse($output);
-				
-		return packageBrowseExperimentResults($output, $page, $limit, $override);
-	}
-		
-	return false;
 }
 
 function browseExperimentsByUser($user_id) {
@@ -853,9 +725,6 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
 
     
     return pagifyBrowseExperimentResults($packaged, $page,$limit,false);
-
-
-
 }
 
 function popularitySort($a,$b){
