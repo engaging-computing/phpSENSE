@@ -26,18 +26,6 @@
  * DAMAGE.
  */
 
-function assertUserCanBrowseExperiment($uid, $eid) {
-	global $db;
-		
-	$result = $db->query("SELECT default_read = 1 OR owner_id = {$uid} OR ( experiment_user_permissions.user_id = {$uid} AND experiment_user_permissions.experiment_id = {$eid} AND experiment_user_permissions.read = 1 ) AS `read` FROM experiments LEFT JOIN experiment_user_permissions ON (experiment_user_permissions.experiment_id = {$eid}) WHERE experiments.experiment_id = {$eid}");
-
-	if($db->numOfRows) {
-		return true;
-	}
-	
-	return false;
-}
-
 function assertUserCanJoinExperiement($uid, $eid) {
 	global $db;
 		
@@ -334,6 +322,16 @@ function countNumberOfContributedExperiments($uid) {
 	$output = $db->query("SELECT COUNT(*) AS `count` FROM experiments WHERE experiments.owner_id = {$uid} AND experiments.hidden = 0");
 	
 	return $output[0]['count'];
+}
+
+function updateUserLastLogin($uid){
+    global $db;
+
+    $sql = "UPDATE users SET lastlogin = NOW() WHERE users.user_id = {$uid}";
+
+    $output = $db->query($sql);
+
+    return true;
 }
 
 ?>

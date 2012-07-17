@@ -104,6 +104,8 @@ Class Session {
 				$timeout = (60*60*24*14);
 				$to = $now + $timeout;
 
+                updateUserLastLogin($this->userid);
+				
 				if($remember) {
 					setcookie('isense_login', $this->token, $to, "/");
 				} else {
