@@ -28,65 +28,145 @@
 ###
 
 window.globals ?= {}
-globals.groupIndex ?= 0
-globals.groupSelection ?= data.getUnique(globals.groupIndex)
-globals.fieldSelection ?= [] #This needs a sane init value
-globals.xAxis ?= 1 #This needs a sane init value
+globals.groupSelection ?= for keys of data.groups
+    Number keys
+globals.fieldSelection ?= data.normalFields[0..0]
+globals.xAxis ?= data.numericFields[0]
 
 class window.BaseVis
+    ###
+    Constructor
+        Assigns target canvas name
+    ###
     constructor: (@canvas) ->
 
+    ###
+    Builds Highcharts options object
+        Builds up the options common to all vis types.
+        Subsequent derrived classes should use $.extend to expand upon these agter calling super()
+    ###
     buildOptions: ->
         @chartOptions = 
             chart:
                 renderTo: @canvas
-            colors: globals.getColors()
+            #colors:
             credits:
                 enabled: false
             #global: {}
             #labels: {}
             #legend: {}
             #loading: {}
-            #plotOptions: {}
+            plotOptions:
+                series:
+                    events:
+                        legendItemClick: (event) =>
+                            index = data.normalFields[event.target.index]
+
+                            if event.target.visible
+                                arrayRemove(globals.fieldSelection, index)
+                            else
+                                globals.fieldSelection.push(index)
+                            @update()
             #point: {}
-            #series: [{}]
+            series: []
             #subtitle: {}
-            symbols: globals.getSymbols()
+            #symbols:
             title: {}
             #tooltop: {}
             #xAxis: {}
             #yAxis: {}
             #exporting: {}
             #navigation: {}
-    
-    generateColors: ->
-        groups = data.getUnique(globals.groupIndex)
-    
+
+        count = -1
+        @chartOptions.series = for field in data.fields when (Number field.typeID) not in [37, 7]
+            count += 1
+            dummy =
+                data: []
+                color: '#000'
+                marker:
+                    symbol: globals.symbols[count % globals.symbols.length]
+                name: field.fieldName
+
+    ###
+    Start sequence used by runtime
+        This is called when the user switched to this vis.
+        Should re-build options and the chart itself to ensure sync with global settings.
+        This method should also be usable as a 'full update' in that it should destroy the current chart if it exists before generating a fresh one.
+    ###
     start: ->
         @buildOptions()
         
         if @chart?
             @chart.destroy()
         @chart = new Highcharts.Chart @chartOptions
+
+        #Sync hidden state from globals
+        for ser in @chart.series[0...data.normalFields.length]
+            index = data.normalFields[ser.index]
+            if index in globals.fieldSelection
+                ser.show()
+            else
+                ser.hide()
     
         ($ '#' + @canvas).show()
         @update()
         
+    ###
+    End sequence used by runtime
+        This is called when the user switches away from this vis.
+        Should destroy the chart, hide its canvas and remove controls.
+    ###
     end: ->
+        @chart.destroy()
         @clearControls()
         ($ '#' + @canvas).hide()
-        
+
+    ###
+    Update minor state
+        Should update the hidden status based on both high-charts legend action and control checkboxes.
+    ###
     update: ->
         @clearControls()
         @drawControls()
-        
+
+        #Update hidden state
+        for index in [0...@chart.series.length - data.normalFields.length]
+            fieldIndex = data.normalFields[index % data.normalFields.length]
+            groupIndex = Math.floor (index / data.normalFields.length)
+            
+            if (groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection)
+                @chart.series[index + data.normalFields.length].show()
+            else
+                @chart.series[index + data.normalFields.length].hide()
+
+    ###
+    Clear the controls
+        Unbinds control handlers and clears the HTML elements.
+    ###
     clearControls: ->
         ($ '#controldiv').find('*').unbind()
-        ($ '#controldiv').innerHTML = ''
-        
+        ($ '#controldiv').html('')
+
+    ###
+    Draws controls
+        Derived classes should write control HTML and bind handlers using the methods defined below.
+    ###
     drawControls: ->
-        alert 'CALLED DRAW CONTROLS STUB IN BASEVIS'
-        
+        console.log console.trace()
+        alert   """
+                BAD IMPLEMENTATION ALERT!
+
+                Called: 'BaseVis.drawControls'
+
+                See logged stack trace in console.
+                """
+
+    ###
+    Draws group selection controls
+        This includes a series of checkboxes and a selector for the grouping field.
+        The checkbox text color should correspond to the graph color.
+    ###
     drawGroupControls: ->
         controls = '<div id="groupControl" class="vis_controls">'
         
@@ -96,18 +176,18 @@ class window.BaseVis
         controls += '<tr><td><div class="vis_control_table_div">'
         controls += '<select class="group_selector">'
         
-        for fieldIndex in data.getTextFields()
-            controls += "<option value=\"#{fieldIndex}\">#{data.fields[fieldIndex].fieldName}</option>"
+        for fieldIndex in data.textFields
+            controls += "<option value=\"#{Number fieldIndex}\">#{data.fields[fieldIndex].fieldName}</option>"
         
         controls += "</select></div></td></tr>"
         
         # Populate choices
         counter = 0
-        for group in data.getUnique(globals.groupIndex)
+        for gIndex, group of data.groups
             controls += '<tr><td>'
-            controls += "<div class=\"vis_control_table_div\" style=\"color:#{@chartOptions.colors[counter]};\">"
+            controls += "<div class=\"vis_control_table_div\" style=\"color:#{globals.colors[counter]};\">"
             
-            controls += "<input class=\"group_input\" type=\"checkbox\" value=\"#{group}\" #{if group in globals.groupSelection then "checked" else ""}></input>&nbsp"
+            controls += "<input class=\"group_input\" type=\"checkbox\" value=\"#{gIndex}\" #{if (Number gIndex) in globals.groupSelection then "checked" else ""}></input>&nbsp"
             controls += "#{group}&nbsp"
             controls += "</div></td></tr>"
             counter += 1
@@ -119,11 +199,10 @@ class window.BaseVis
         # Make group select handler
         ($ '.group_selector').change (e) =>
             element = e.target or e.srcElement
-            globals.groupIndex = Number element.value
-            
-            # Set up new groups
-            globals.groupSelection = data.getUnique(globals.groupIndex)
-            @init()
+            data.setGroupIndex (Number element.value)
+            globals.groupSelection ?= for keys of data.groups
+                Number keys
+            @start()
             
         # Make group checkbox handler
         ($ '.group_input').click (e) =>
@@ -133,7 +212,10 @@ class window.BaseVis
                     selection.push @value
             globals.groupSelection = selection
             @update()
-            
+    ###
+    Draws Field selection controls as checkboxes
+        This includes a series of checkboxes with corresponding symbols from the graph.
+    ###
     drawFieldChkControls: ->
         controls = '<div id="fieldControl" class="vis_controls">'
         
@@ -141,6 +223,7 @@ class window.BaseVis
         
         # Populate choices (not time or text)
         # Maybe should allow time here?
+        #TODO: Figure out how to draw the symbols here
         for field of data.fields
             if 7 != (Number data.fields[field].typeID) != 37
                 controls += '<tr><td>'
@@ -163,7 +246,10 @@ class window.BaseVis
                     selection.push @value
             globals.fieldSelection = selection
             @update()
-            
+    ###
+    Draws x axis selection controls
+        This includes a series of radio buttons.
+    ###
     drawXAxisControls: ->
         controls = '<div id="xAxisControl" class="vis_controls">'
         
@@ -175,7 +261,7 @@ class window.BaseVis
                 controls += '<tr><td>'
                 controls += '<div class="vis_control_table_div">'
                 
-                controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{field}\" #{if field in globals.fieldSelection then "checked" else ""}></input>&nbsp"
+                controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{field}\" #{if (Number field) == globals.xAxis then "checked" else ""}></input>&nbsp"
                 controls += "#{data.fields[field].fieldName}&nbsp"
                 controls += "</div></td></tr>"
         
@@ -190,6 +276,10 @@ class window.BaseVis
             ($ '.xAxis_input').each ()->
                 if @checked
                     selection = @value
-            globals.xAxis = selection
-            @update()
+            globals.xAxis = Number selection
+            @start()
+
+    groupFilter: (dp) ->
+        groups = globals.groupSelection.map (index) -> data.groups[index]
+        (String dp[data.groupIndex]).toLowerCase() in groups
         
