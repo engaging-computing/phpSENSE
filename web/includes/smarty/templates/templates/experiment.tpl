@@ -182,18 +182,24 @@
                                         { /foreach }
                                     </div>
                                     
-                                    {if $user.administrator == 1 or $session.owner_id == $user.user_id}
+                                    {if $user.administrator == 1 or $meta.owner_id == $user.user_id or $session.owner_id == $user.user_id}
                                         <div id="experiment_control_panel">
                                             <div class="add_img">
-                                                <a href="session-upload-pictures.php?sid={ $session.session_id }&id={ $id }">Add Image</a>
+                                                {if $user.administrator == 1 or $meta.owner_id == $user.user_id or $session.owner_id == $user.user_id}
+                                                    <a href="session-upload-pictures.php?sid={ $session.session_id }&id={ $id }">Add Image</a>
+                                                { /if }
                                             </div>
                                             
                                             <div class="edit_session">
-                                                <a href="javascript:void(0);" onclick="window.location.href='session-edit.php?id={$session.session_id}';">Edit Session</a>
+                                                { if $user.administrator == 1 or $meta.owner_id == $user.user_id or $session.owner_id == $user.user_id}
+                                                    <a href="javascript:void(0);" onclick="window.location.href='session-edit.php?id={$session.session_id}';">Edit Session</a>
+                                                { /if }
                                             </div>
                                             
                                             <div class="edit_data">
-                                                <a href-"javasript:void(0)" onclick="window.location.href='/edit.php?exp={$session.experiment_id}&ses={$session.session_id}';">Edit Data</a>
+                                                {if $user.administrator == 1 or $session.owner_id == $user.user_id}
+                                                    <a href-"javasript:void(0)" onclick="window.location.href='/edit.php?exp={$session.experiment_id}&ses={$session.session_id}';">Edit Data</a>
+                                                { /if }
                                             </div>
                                         </div>
                                     {/if}
