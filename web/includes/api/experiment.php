@@ -347,14 +347,12 @@ function pagifyBrowseExperimentResults($results, $page = 1, $limit = 10, $overri
 
     $output = array();
 
-    if($page != -1) {
+   
         $offset = ($page - 1) * $limit;
         $results =  array_splice($results, $offset, $limit);
         return $results;
-    }
-    else {
-        return count($results);
-    }
+    
+
 }
 
 function browseExperimentsByUser($user_id) {
@@ -649,7 +647,6 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
 
     $result = array();
 
-
     $sql = "SELECT DISTINCT experiments.*,
             (experiments.rating/experiments.rating_votes) as rating_comp,
             users.firstname
@@ -699,9 +696,9 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
         $sql .= " ORDER BY experiments.timecreated DESC";
     }
 
-
-
     $result = $db->query($sql);
+
+    $total = count($result);
 
     $keys = array();
     $tmp = array();
@@ -724,7 +721,7 @@ function browseExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recomm
     }
 
     
-    return pagifyBrowseExperimentResults($packaged, $page,$limit,false);
+    return array('count'=>$total,'data'=>pagifyBrowseExperimentResults($packaged, $page,$limit,false));
 }
 
 function popularitySort($a,$b){
