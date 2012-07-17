@@ -43,32 +43,33 @@
     }
 
     Scatter.prototype.buildOptions = function() {
+      var fieldIndex, groupIndex, options, symbolIndex, _results;
       Scatter.__super__.buildOptions.call(this);
-      this.chartOptions.type = "scatter";
-      return $.extend(true, this.chartOptions, {
+      this.chartOptions;
+      $.extend(true, this.chartOptions, {
+        chart: {
+          type: "line"
+        },
         title: {
           text: "Scatter"
         }
       });
-    };
-
-    Scatter.prototype.buildSeries = function() {
-      var fieldIndex, group, options, _i, _len, _ref, _results;
-      _ref = data.getUnique(globals.groupIndex);
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        group = _ref[_i];
+      for (groupIndex in data.groups) {
         _results.push((function() {
-          var _j, _len1, _ref1, _results1;
-          _ref1 = data.normalFields;
+          var _ref, _results1;
+          _ref = data.normalFields;
           _results1 = [];
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            fieldIndex = _ref1[_j];
+          for (symbolIndex in _ref) {
+            fieldIndex = _ref[symbolIndex];
             options = {
-              data: data.xySelector(globals.xAxis, fieldIndex, this.groupFilter),
-              showInLegend: false
+              data: data.xySelector(globals.xAxis, fieldIndex, groupIndex),
+              showInLegend: false,
+              color: globals.colors[groupIndex % globals.colors.length],
+              symbol: globals.symbols[symbolIndex % globals.symbols.length]
             };
-            _results1.push(this.chart.addSeries(options));
+            console.log([symbolIndex, fieldIndex]);
+            _results1.push(this.chartOptions.series.push(options));
           }
           return _results1;
         }).call(this));

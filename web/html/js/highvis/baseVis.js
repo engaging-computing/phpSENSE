@@ -31,26 +31,29 @@
 
 
 (function() {
-  var _ref, _ref1, _ref2, _ref3, _ref4,
+  var keys, _ref, _ref1, _ref2, _ref3,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   if ((_ref = window.globals) == null) {
     window.globals = {};
   }
 
-  if ((_ref1 = globals.groupIndex) == null) {
-    globals.groupIndex = 0;
+  if ((_ref1 = globals.groupSelection) == null) {
+    globals.groupSelection = (function() {
+      var _results;
+      _results = [];
+      for (keys in data.groups) {
+        _results.push(Number(keys));
+      }
+      return _results;
+    })();
   }
 
-  if ((_ref2 = globals.groupSelection) == null) {
-    globals.groupSelection = data.getUnique(globals.groupIndex);
-  }
-
-  if ((_ref3 = globals.fieldSelection) == null) {
+  if ((_ref2 = globals.fieldSelection) == null) {
     globals.fieldSelection = data.normalFields.slice(0, 1);
   }
 
-  if ((_ref4 = globals.xAxis) == null) {
+  if ((_ref3 = globals.xAxis) == null) {
     globals.xAxis = data.numericFields[0];
   }
 
@@ -78,7 +81,6 @@
         chart: {
           renderTo: this.canvas
         },
-        colors: globals.getColors(),
         credits: {
           enabled: false
         },
@@ -99,17 +101,16 @@
           }
         },
         series: [],
-        symbols: globals.getSymbols(),
         title: {}
       };
       count = -1;
       return this.chartOptions.series = (function() {
-        var _i, _len, _ref5, _ref6, _results;
-        _ref5 = data.fields;
+        var _i, _len, _ref4, _ref5, _results;
+        _ref4 = data.fields;
         _results = [];
-        for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
-          field = _ref5[_i];
-          if (!((_ref6 = Number(field.typeID)) !== 37 && _ref6 !== 7)) {
+        for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
+          field = _ref4[_i];
+          if (!((_ref5 = Number(field.typeID)) !== 37 && _ref5 !== 7)) {
             continue;
           }
           count += 1;
@@ -117,13 +118,13 @@
             data: [],
             color: '#000',
             marker: {
-              symbol: this.chartOptions.symbols[count % this.chartOptions.symbols.length]
+              symbol: globals.symbols[count % globals.symbols.length]
             },
             name: field.fieldName
           });
         }
         return _results;
-      }).call(this);
+      })();
     };
 
     /*
@@ -135,16 +136,15 @@
 
 
     BaseVis.prototype.start = function() {
-      var index, ser, _i, _len, _ref5;
+      var index, ser, _i, _len, _ref4;
       this.buildOptions();
       if (this.chart != null) {
         this.chart.destroy();
       }
       this.chart = new Highcharts.Chart(this.chartOptions);
-      this.buildSeries();
-      _ref5 = this.chart.series;
-      for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
-        ser = _ref5[_i];
+      _ref4 = this.chart.series.slice(0, data.normalFields.length);
+      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
+        ser = _ref4[_i];
         index = data.normalFields[ser.index];
         if (__indexOf.call(globals.fieldSelection, index) >= 0) {
           ser.show();
@@ -154,17 +154,6 @@
       }
       ($('#' + this.canvas)).show();
       return this.update();
-    };
-
-    /*
-        Build the series structures and add them to the chart.
-            This needs to be done by the specific chart based on its own needs.
-    */
-
-
-    BaseVis.prototype.buildSeries = function() {
-      console.log(console.trace());
-      return alert("BAD IMPLEMENTATION ALERT!\n\nCalled: 'BaseVis.buildSeries'\n\nSee logged stack trace in console.");
     };
 
     /*
@@ -187,8 +176,20 @@
 
 
     BaseVis.prototype.update = function() {
+      var fieldIndex, groupIndex, index, _i, _ref4, _results;
       this.clearControls();
-      return this.drawControls();
+      this.drawControls();
+      _results = [];
+      for (index = _i = 0, _ref4 = this.chart.series.length - data.normalFields.length; 0 <= _ref4 ? _i < _ref4 : _i > _ref4; index = 0 <= _ref4 ? ++_i : --_i) {
+        fieldIndex = data.normalFields[index % data.normalFields.length];
+        groupIndex = Math.floor(index / data.normalFields.length);
+        if ((__indexOf.call(globals.groupSelection, groupIndex) >= 0) && (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0)) {
+          _results.push(this.chart.series[index + data.normalFields.length].show());
+        } else {
+          _results.push(this.chart.series[index + data.normalFields.length].hide());
+        }
+      }
+      return _results;
     };
 
     /*
@@ -221,25 +222,25 @@
 
 
     BaseVis.prototype.drawGroupControls = function() {
-      var controls, counter, fieldIndex, group, _i, _j, _len, _len1, _ref5, _ref6,
+      var controls, counter, fieldIndex, gIndex, group, _i, _len, _ref4, _ref5, _ref6,
         _this = this;
       controls = '<div id="groupControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Groups:</tr></td>';
       controls += '<tr><td><div class="vis_control_table_div">';
       controls += '<select class="group_selector">';
-      _ref5 = data.textFields;
-      for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
-        fieldIndex = _ref5[_i];
-        controls += "<option value=\"" + fieldIndex + "\">" + data.fields[fieldIndex].fieldName + "</option>";
+      _ref4 = data.textFields;
+      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
+        fieldIndex = _ref4[_i];
+        controls += "<option value=\"" + (Number(fieldIndex)) + "\">" + data.fields[fieldIndex].fieldName + "</option>";
       }
       controls += "</select></div></td></tr>";
       counter = 0;
-      _ref6 = data.getUnique(globals.groupIndex);
-      for (_j = 0, _len1 = _ref6.length; _j < _len1; _j++) {
-        group = _ref6[_j];
+      _ref5 = data.groups;
+      for (gIndex in _ref5) {
+        group = _ref5[gIndex];
         controls += '<tr><td>';
-        controls += "<div class=\"vis_control_table_div\" style=\"color:" + this.chartOptions.colors[counter] + ";\">";
-        controls += "<input class=\"group_input\" type=\"checkbox\" value=\"" + group + "\" " + (__indexOf.call(globals.groupSelection, group) >= 0 ? "checked" : "") + "></input>&nbsp";
+        controls += "<div class=\"vis_control_table_div\" style=\"color:" + globals.colors[counter] + ";\">";
+        controls += "<input class=\"group_input\" type=\"checkbox\" value=\"" + gIndex + "\" " + ((_ref6 = Number(gIndex), __indexOf.call(globals.groupSelection, _ref6) >= 0) ? "checked" : "") + "></input>&nbsp";
         controls += "" + group + "&nbsp";
         controls += "</div></td></tr>";
         counter += 1;
@@ -247,11 +248,20 @@
       controls += '</table></div>';
       ($('#controldiv')).html(($('#controldiv')).html() + controls);
       ($('.group_selector')).change(function(e) {
-        var element;
+        var element, _ref7;
         element = e.target || e.srcElement;
-        globals.groupIndex = Number(element.value);
-        globals.groupSelection = data.getUnique(globals.groupIndex);
-        return _this.init();
+        data.setGroupIndex(Number(element.value));
+        if ((_ref7 = globals.groupSelection) == null) {
+          globals.groupSelection = (function() {
+            var _results;
+            _results = [];
+            for (keys in data.groups) {
+              _results.push(Number(keys));
+            }
+            return _results;
+          })();
+        }
+        return _this.start();
       });
       return ($('.group_input')).click(function(e) {
         var selection;
@@ -273,12 +283,12 @@
 
 
     BaseVis.prototype.drawFieldChkControls = function() {
-      var controls, field, _ref5,
+      var controls, field, _ref4,
         _this = this;
       controls = '<div id="fieldControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Fields:</tr></td>';
       for (field in data.fields) {
-        if ((7 !== (_ref5 = Number(data.fields[field].typeID)) && _ref5 !== 37)) {
+        if ((7 !== (_ref4 = Number(data.fields[field].typeID)) && _ref4 !== 37)) {
           controls += '<tr><td>';
           controls += '<div class="vis_control_table_div">';
           controls += "<input class=\"field_input\" type=\"checkbox\" value=\"" + field + "\" " + (__indexOf.call(globals.fieldSelection, field) >= 0 ? "checked" : "") + "></input>&nbsp";
@@ -331,14 +341,17 @@
             return selection = this.value;
           }
         });
-        globals.xAxis = selection;
-        return _this.update();
+        globals.xAxis = Number(selection);
+        return _this.start();
       });
     };
 
     BaseVis.prototype.groupFilter = function(dp) {
-      var _ref5;
-      return _ref5 = String(dp[globals.groupIndex]).toLowerCase(), __indexOf.call(globals.groupSelection, _ref5) >= 0;
+      var groups, _ref4;
+      groups = globals.groupSelection.map(function(index) {
+        return data.groups[index];
+      });
+      return _ref4 = (String(dp[data.groupIndex])).toLowerCase(), __indexOf.call(groups, _ref4) >= 0;
     };
 
     return BaseVis;

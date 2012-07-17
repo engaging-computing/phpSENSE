@@ -28,8 +28,8 @@
 ###
 
 window.globals ?= {}
-globals.groupIndex ?= 0
-globals.groupSelection ?= data.getUnique(globals.groupIndex)
+globals.groupSelection ?= for keys of data.groups
+    Number keys
 globals.fieldSelection ?= data.normalFields[0..0]
 globals.xAxis ?= data.numericFields[0]
 
@@ -49,7 +49,7 @@ class window.BaseVis
         @chartOptions = 
             chart:
                 renderTo: @canvas
-            colors: globals.getColors()
+            #colors:
             credits:
                 enabled: false
             #global: {}
@@ -70,7 +70,7 @@ class window.BaseVis
             #point: {}
             series: []
             #subtitle: {}
-            symbols: globals.getSymbols()
+            #symbols:
             title: {}
             #tooltop: {}
             #xAxis: {}
@@ -85,7 +85,7 @@ class window.BaseVis
                 data: []
                 color: '#000'
                 marker:
-                    symbol: @chartOptions.symbols[count % @chartOptions.symbols.length]
+                    symbol: globals.symbols[count % globals.symbols.length]
                 name: field.fieldName
 
     ###
@@ -101,11 +101,8 @@ class window.BaseVis
             @chart.destroy()
         @chart = new Highcharts.Chart @chartOptions
 
-        #Build data structures
-        @buildSeries()
-
         #Sync hidden state from globals
-        for ser in @chart.series
+        for ser in @chart.series[0...data.normalFields.length]
             index = data.normalFields[ser.index]
             if index in globals.fieldSelection
                 ser.show()
@@ -114,20 +111,6 @@ class window.BaseVis
     
         ($ '#' + @canvas).show()
         @update()
-
-    ###
-    Build the series structures and add them to the chart.
-        This needs to be done by the specific chart based on its own needs.
-    ###
-    buildSeries: ->
-        console.log console.trace()
-        alert   """
-                BAD IMPLEMENTATION ALERT!
-                
-                Called: 'BaseVis.buildSeries'
-                
-                See logged stack trace in console.
-                """
         
     ###
     End sequence used by runtime
@@ -146,7 +129,16 @@ class window.BaseVis
     update: ->
         @clearControls()
         @drawControls()
-        # TODO: Update hidden state
+
+        #Update hidden state
+        for index in [0...@chart.series.length - data.normalFields.length]
+            fieldIndex = data.normalFields[index % data.normalFields.length]
+            groupIndex = Math.floor (index / data.normalFields.length)
+            
+            if (groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection)
+                @chart.series[index + data.normalFields.length].show()
+            else
+                @chart.series[index + data.normalFields.length].hide()
 
     ###
     Clear the controls
@@ -185,17 +177,17 @@ class window.BaseVis
         controls += '<select class="group_selector">'
         
         for fieldIndex in data.textFields
-            controls += "<option value=\"#{fieldIndex}\">#{data.fields[fieldIndex].fieldName}</option>"
+            controls += "<option value=\"#{Number fieldIndex}\">#{data.fields[fieldIndex].fieldName}</option>"
         
         controls += "</select></div></td></tr>"
         
         # Populate choices
         counter = 0
-        for group in data.getUnique(globals.groupIndex)
+        for gIndex, group of data.groups
             controls += '<tr><td>'
-            controls += "<div class=\"vis_control_table_div\" style=\"color:#{@chartOptions.colors[counter]};\">"
+            controls += "<div class=\"vis_control_table_div\" style=\"color:#{globals.colors[counter]};\">"
             
-            controls += "<input class=\"group_input\" type=\"checkbox\" value=\"#{group}\" #{if group in globals.groupSelection then "checked" else ""}></input>&nbsp"
+            controls += "<input class=\"group_input\" type=\"checkbox\" value=\"#{gIndex}\" #{if (Number gIndex) in globals.groupSelection then "checked" else ""}></input>&nbsp"
             controls += "#{group}&nbsp"
             controls += "</div></td></tr>"
             counter += 1
@@ -207,11 +199,10 @@ class window.BaseVis
         # Make group select handler
         ($ '.group_selector').change (e) =>
             element = e.target or e.srcElement
-            globals.groupIndex = Number element.value
-            
-            # Set up new groups
-            globals.groupSelection = data.getUnique(globals.groupIndex)
-            @init()
+            data.setGroupIndex (Number element.value)
+            globals.groupSelection ?= for keys of data.groups
+                Number keys
+            @start()
             
         # Make group checkbox handler
         ($ '.group_input').click (e) =>
@@ -285,9 +276,10 @@ class window.BaseVis
             ($ '.xAxis_input').each ()->
                 if @checked
                     selection = @value
-            globals.xAxis = selection
-            @update()
+            globals.xAxis = Number selection
+            @start()
 
     groupFilter: (dp) ->
-        String(dp[globals.groupIndex]).toLowerCase() in globals.groupSelection
+        groups = globals.groupSelection.map (index) -> data.groups[index]
+        (String dp[data.groupIndex]).toLowerCase() in groups
         

@@ -33,20 +33,24 @@ class window.Scatter extends BaseVis
     buildOptions: ->
         super()
         
-        @chartOptions.type = "scatter"
+        @chartOptions
         $.extend true, @chartOptions,
+            chart:
+                type: "line"
             title:
                 text: "Scatter"
 
-                #TODO: MOVE THIS TO BUILDOPTIONS
-    buildSeries: ->
-        for group in data.getUnique(globals.groupIndex)
-            for fieldIndex in data.normalFields
+        
+        for groupIndex of data.groups
+            for symbolIndex, fieldIndex of data.normalFields
                 options =
-                    data: data.xySelector(globals.xAxis, fieldIndex, @groupFilter)
+                    data: data.xySelector(globals.xAxis, fieldIndex, groupIndex)
                     showInLegend: false
-
-                @chart.addSeries options
+                    color: globals.colors[groupIndex % globals.colors.length]
+                    symbol: globals.symbols[symbolIndex % globals.symbols.length]
+                console.log [symbolIndex, fieldIndex]
+                    
+                @chartOptions.series.push options
     
     drawControls: ->
         @drawGroupControls()

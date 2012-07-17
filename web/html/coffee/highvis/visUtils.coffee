@@ -47,15 +47,13 @@ Chroma:    0.0 -   1.70
 Lightness: 0.3 -   0.95
 K-means
 ###
-globals.getColors = ->
-    ['#5E5A83', '#609B36', '#DC644F', '#9A8867', '#DA6694', '#40938C', '#A78E20', '#884646', '#546222', '#688CCF', '#529F69', '#415B62', '#AE8188', '#D1762F', '#408FB2', '#B18347', '#944B70', '#9F7FBC', '#C77967', '#914C2A', '#396B43', '#625744', '#C25562', '#735521', '#7D9080', '#715365', '#8A9044', '#C573B2', '#788AA2', '#EC5D7A']
+globals.colors = ['#5E5A83', '#609B36', '#DC644F', '#9A8867', '#DA6694', '#40938C', '#A78E20', '#884646', '#546222', '#688CCF', '#529F69', '#415B62', '#AE8188', '#D1762F', '#408FB2', '#B18347', '#944B70', '#9F7FBC', '#C77967', '#914C2A', '#396B43', '#625744', '#C25562', '#735521', '#7D9080', '#715365', '#8A9044', '#C573B2', '#788AA2', '#EC5D7A']
  
 ###
 This function should return a list of strings corisponding to the symbols.
 Currently it returns the list of default symbols in Highcharts.
 ###
-globals.getSymbols = ->
-    ['circle', 'square', 'triangle', 'diamond', 'triangle-down']
+globals.symbols = ['circle', 'square', 'triangle', 'diamond', 'triangle-down']
     
     
     
@@ -63,45 +61,3 @@ globals.getSymbols = ->
 Eric - You should put your symbol generation code here, then fill in the
        globals.getSymbols function above with the correct strings.
 ###
-
-addRadialMarkerStyle = (name, points, phase=0.0, magnitudes=[1]) ->
-
-    extension = {}
-
-    extension[name] = (x, y, w, h) ->
-
-        svg = Array()
-
-        verticies = Array()
-
-        offset = phase*2*Math.PI
-
-        modpoints = points * magnitudes.length
-
-        for i in [0..modpoints]
-
-            tx = (Math.sin 2*Math.PI*i/modpoints+offset) * magnitudes[i % magnitudes.length]
-            ty = (Math.cos 2*Math.PI*i/modpoints+offset) * magnitudes[i % magnitudes.length]
-
-            tx = tx/2+0.5
-            ty = ty/2+0.5
-
-            verticies.push [tx*w+x, ty*h+y]
-
-        svg.push "M"
-        svg.push verticies[0][0]
-        svg.push verticies[0][1]
-        svg.push "L"
-
-        for [vx, vy] in verticies
-
-            svg.push vx
-            svg.push vy
-
-        svg.push "Z"
-
-        svg
-
-    Highcharts.extend Highcharts.Renderer.prototype.symbols, extension
-
-addRadialMarkerStyle('blank', 0)

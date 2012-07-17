@@ -33,22 +33,31 @@
 (function() {
   var field, index;
 
-  data.xySelector = function(xIndex, yIndex, filterFunc) {
-    var mapFunc, mapped, rawData;
-    if (filterFunc == null) {
-      filterFunc = (function(dp) {
-        return true;
-      });
-    }
-    rawData = this.dataPoints.filter(filterFunc);
-    mapFunc = function(dp) {
-      var obj;
-      return obj = {
-        x: dp[xIndex],
-        y: dp[yIndex],
-        name: "Temp"
+  data.xySelector = function(xIndex, yIndex, gIndex) {
+    var mapFunc, mapped, rawData,
+      _this = this;
+    rawData = this.dataPoints.filter(function(dp) {
+      return (String(dp[_this.groupIndex])).toLowerCase() === _this.groups[gIndex];
+    });
+    if ((Number(this.fields[xIndex].typeID)) === 7) {
+      mapFunc = function(dp) {
+        var obj;
+        return obj = {
+          x: new Date(dp[xIndex]),
+          y: dp[yIndex],
+          name: "Temp"
+        };
       };
-    };
+    } else {
+      mapFunc = function(dp) {
+        var obj;
+        return obj = {
+          x: dp[xIndex],
+          y: dp[yIndex],
+          name: "Temp"
+        };
+      };
+    }
     mapped = rawData.map(mapFunc);
     mapped.sort(function(a, b) {
       return a.x - b.x;
@@ -168,15 +177,20 @@
   */
 
 
-  data.getUnique = function(fieldIndex, filterFunc) {
+  data.setGroupIndex = function(index) {
+    this.groupIndex = index;
+    return this.groups = this.makeGroups();
+  };
+
+  /*
+  Gets a list of unique, non-null, stringified vals from the group field index.
+  */
+
+
+  data.makeGroups = function() {
     var dat, keys, rawData, result, _i, _len, _results;
-    if (filterFunc == null) {
-      filterFunc = function(dp) {
-        return true;
-      };
-    }
-    rawData = this.selector(fieldIndex, true, function(dp) {
-      return (filterFunc(dp)) && dp[fieldIndex] !== null;
+    rawData = this.selector(this.groupIndex, true, function(dp) {
+      return dp[this.groupIndex] !== null;
     });
     result = {};
     for (_i = 0, _len = rawData.length; _i < _len; _i++) {
@@ -261,5 +275,9 @@
     }
     return _results;
   })();
+
+  data.groupIndex = 0;
+
+  data.groups = data.makeGroups();
 
 }).call(this);

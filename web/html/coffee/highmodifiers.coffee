@@ -27,14 +27,23 @@
  *
 ###
 
-data.xySelector = (xIndex, yIndex, filterFunc = ((dp) -> true)) ->
-    rawData = @dataPoints.filter filterFunc
+data.xySelector = (xIndex, yIndex, gIndex) ->
 
-    mapFunc = (dp) ->
-        obj =
-            x: dp[xIndex]
-            y: dp[yIndex]
-            name: "Temp"
+    rawData = @dataPoints.filter (dp) =>
+        (String dp[@groupIndex]).toLowerCase() == @groups[gIndex]
+
+    if (Number @fields[xIndex].typeID) == 7
+        mapFunc = (dp) ->
+            obj =
+                x: new Date(dp[xIndex])
+                y: dp[yIndex]
+                name: "Temp"
+    else
+        mapFunc = (dp) ->
+            obj =
+                x: dp[xIndex]
+                y: dp[yIndex]
+                name: "Temp"
 
     mapped = rawData.map mapFunc
     mapped.sort (a, b) -> (a.x - b.x)
@@ -92,13 +101,20 @@ data.getMedian = (fieldIndex, filterFunc = (dp) -> true) ->
         return rawData[mid]
     else
         return (rawData[mid - 1] + rawData[mid]) / 2.0
-      
+        
 ###
 Gets a list of unique, non-null, stringified vals from the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
 ###
-data.getUnique = (fieldIndex, filterFunc = (dp) -> true) ->
-    rawData = @selector fieldIndex, true, (dp) -> (filterFunc dp) and dp[fieldIndex] isnt null
+data.setGroupIndex = (index) ->
+    @groupIndex = index
+    @groups = @makeGroups()
+
+###
+Gets a list of unique, non-null, stringified vals from the group field index.
+###
+data.makeGroups =  ->
+    rawData = @selector @groupIndex, true, (dp) -> dp[@groupIndex] isnt null
     result = {}
     
     for dat in rawData
@@ -129,3 +145,9 @@ Gets a list of non-text field indicies
 ###
 data.numericFields = for index, field of data.fields when (Number field.typeID) not in [37]
     Number index
+
+
+#Field index of grouping field
+data.groupIndex = 0
+#Array of current groups
+data.groups = data.makeGroups()
