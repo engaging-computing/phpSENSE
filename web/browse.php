@@ -67,8 +67,9 @@ $featured = $params['featured'];
 $sorttype = $params['sorttype'];
 
 if($type=="experiments"){
-    $results = browseExperiments($page, $limit,0, $featured, $recommended, $query, $sorttype);
-    $count = browseExperiments(-1, $limit, 0, $featured, $recommended, $query, $sorttype);
+    $response = browseExperiments($page, $limit,0, $featured, $recommended, $query, $sorttype);
+    $results = $response['data'];
+    $count = $response['count'];  
 } elseif ($type == "people") {
     $results = getPeople($page, $limit,$query);
     $count = getPeople(-1, $limit, $query);

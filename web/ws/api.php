@@ -96,8 +96,8 @@ if(isset($_REQUEST['method'])) {
 			$limit = $params['limit'];
 			$sort = $params['sort'];
 
-			$data = browseExperiments($page,$limit,0,"off","off",$query,$sort);
-
+			$response = browseExperiments($page,$limit,0,"off","off",$query,$sort);
+            $data = $response['data'];
 			if(count($data) > 0) {
 
 				for($i = 0; $i < count($data); $i++) {
