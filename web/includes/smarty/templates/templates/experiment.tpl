@@ -208,8 +208,9 @@
 
 <div id="sidebar">
 	<div class="module">
-		<h1>Session Map</h1>
-		<div id="minimap"><div id="map_canvas" style="margin:4px 0px 0px 0px; width:240px; height:240px; overflow:hidden;"></div></div>
+		<h1>QR Code</h1>
+
+		<div id="qrcode" style="text-align: center;"><img src="{$qrcode}" /><div id="qrcode" style="margin:4px 0px 0px 0px;  overflow:hidden;"></div></div>
 	</div>
 	
 	<div class="module">
