@@ -38,21 +38,22 @@ $tmp = array("water", "quality");
 
 // Setup the default params
 $params = array(
-				"page" => 1,
-				"limit" => 10,
-				"query" => "",
-				"sort" => "default",
-				"action" => "browse",
-				"type" => "experiments",
-				"recommended" => "off",
-				"sorttype" => "recent"
-				);
+                "page" => 1,
+                "limit" => 10,
+                "query" => "",
+                "sort" => "default",
+                "action" => "browse",
+                "type" => "experiments",
+                "recommended" => "off",
+                "sorttype" => "recent",
+                "featured" => "off"
+                );
 
 // Check to see if values are set, overwrite defaults if set
 foreach($params as $k => $v) {
-	if(isset($_REQUEST[$k])) {
-		$params[$k] = strtolower(safeString($_REQUEST[$k]));
-	}
+    if(isset($_REQUEST[$k])) {
+        $params[$k] = strtolower(safeString($_REQUEST[$k]));
+    }
 }
 
 $action = $params['action'];
@@ -62,11 +63,13 @@ $page = $params['page'];
 $limit = $params['limit'];
 $sort = $params['sort'];
 $recommended = $params['recommended'];
+$featured = $params['featured'];
 $sorttype = $params['sorttype'];
 
 if($type=="experiments"){
-    $results = browseExperiments($page, $limit,0, $featured, $recommended, $query, $sorttype);
-    $count = browseExperiments(-1, $limit, 0, $featured, $recommended, $query, $sorttype);
+    $response = browseExperiments($page, $limit,0, $featured, $recommended, $query, $sorttype);
+    $results = $response['data'];
+    $count = $response['count'];  
 } elseif ($type == "people") {
     $results = getPeople($page, $limit,$query);
     $count = getPeople(-1, $limit, $query);
@@ -83,21 +86,21 @@ if($type=="experiments"){
 // Determine sort text
 $sorttext = "by the date each were created";
 if($sorttype == "popularity") {
-	$sorttext = "by the number of contributors each contains";
+    $sorttext = "by the number of contributors each contains";
 }
 else if($sorttype == "activity") {
-	$sorttext = "by the number of sessions each has";
+    $sorttext = "by the number of sessions each has";
 }
 else if($sorttype == "rating") {
-	$sorttext = "by each experiments user rating on a five-point scale";
+    $sorttext = "by each experiments user rating on a five-point scale";
 }
 else if($type == "people") {
     $sorttext = "alphabetically by last name, then first name";
 }
 
-// Package the params as 
+// Package the params as
 foreach($params as $k => $v) {
-	$smarty->assign($k, $v);
+    $smarty->assign($k, $v);
 }
 
 $pages = round(($count / $limit), 2);
@@ -110,28 +113,28 @@ $navbarpages = array();
 
 for( $i = 1; $i < 10; $i++ ) {
 
-	if( $page + $i - 4 > 0 && $page + $i - 4 <= $numpages ) {
+    if( $page + $i - 4 > 0 && $page + $i - 4 <= $numpages ) {
 
-		$navbarpages[$i] = $page + $i - 4;
+        $navbarpages[$i] = $page + $i - 4;
 
-	}
+    }
 
 }
 
 
 // Assign params to Smarty
-$smarty->assign('title',		ucwords($action . ' ' . $type));
-$smarty->assign('marker',		$type);
-$smarty->assign('errors',		$errors);
-$smarty->assign('params',		$params);
-$smarty->assign('results',		$results);
-$smarty->assign('sorttext',		$sorttext);
-$smarty->assign('next',			$next);
-$smarty->assign('navbarpages',	$navbarpages);
-$smarty->assign('numpages',		$numpages);
+$smarty->assign('title',        ucwords($action . ' ' . $type));
+$smarty->assign('marker',       $type);
+$smarty->assign('errors',       $errors);
+$smarty->assign('params',       $params);
+$smarty->assign('results',      $results);
+$smarty->assign('sorttext',     $sorttext);
+$smarty->assign('next',         $next);
+$smarty->assign('navbarpages',  $navbarpages);
+$smarty->assign('numpages',     $numpages);
 $smarty->assign('sorttype',     $sorttype);
-$smarty->assign('user', 		$session->getUser());
-$smarty->assign('content', 		$smarty->fetch('browse.tpl'));
+$smarty->assign('user',         $session->getUser());
+$smarty->assign('content',      $smarty->fetch('browse.tpl'));
 $smarty->display('skeleton.tpl');
 
 ?>

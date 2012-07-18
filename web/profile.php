@@ -63,10 +63,15 @@ else {
 
 $data['activity_responses'] = getResponsesFromUser($id);
 
+foreach($data['experiment'] as &$exp){
+    $exp['session_count'] = countNumberOfSessions($exp['experiment_id']);
+} 
+
 // Compile the user's media
 foreach($data as $key => $value) {
 	if(is_array($value)) {
 		foreach($value as $v) {
+            
 			$v['type'] = $key;
 			$output[] = $v;
 		}

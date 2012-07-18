@@ -96,8 +96,8 @@ if(isset($_REQUEST['method'])) {
 			$limit = $params['limit'];
 			$sort = $params['sort'];
 
-			$data = browseExperiments($page,$limit,0,"off","off",$query,$sort);
-
+			$response = browseExperiments($page,$limit,0,"off","off",$query,$sort);
+            $data = $response['data'];
 			if(count($data) > 0) {
 
 				for($i = 0; $i < count($data); $i++) {
@@ -468,172 +468,152 @@ if(isset($_REQUEST['method'])) {
 	        }
 	        break;
 
-        	    case "uploadImageToExperiment":
-        	        $file = (isset($_FILES['image']));
-        	        $eid = (isset($_POST['eid']) ? $_POST['eid'] : null);
-        	        $img_name = (isset($_POST['img_name']) ? $_POST['img_name'] : null);
-        	        $img_desc = (isset($_POST['img_description']) ? $_POST['img_description'] : null);
-        	        $session_key = (isset($_POST['session_key']) ? $_POST['session_key'] : null);
+        case "uploadImageToExperiment":
+            $file = (isset($_FILES['image']));
+            $eid = (isset($_REQUEST['eid']) ? $_REQUEST['eid'] : null);
+            $img_name = (isset($_REQUEST['img_name']) ? $_REQUEST['img_name'] : null);
+            $img_desc = (isset($_REQUEST['img_description']) ? $_REQUEST['img_description'] : null);
+            $session_key = (isset($_REQUEST['session_key']) ? $_REQUEST['session_key'] : null);
 
-        	        if($eid == null) {
-        	            $data = array("msg" => "Missing experiment parameter");
-        	            $status = 551;
-        	        }
-        	        else if($img_name == null) {
-        	            $data = array("msg" => "Missing name parameter");
-        	            $status = 551;
-        	        }
-        	        else if($img_desc == null) {
-        	            $data = array("msg" => "Missing description parameter");
-        	            $status = 551;
-        	        }
-        	  //      else if($file == false) {
-        	//            $data = array("msg" => "Missing image parameter");
-        	 //           $status = 551;
-        	//        }
-        	        else if($session_key == null) {
-        	            $data = array("msg" => "Missing session key parameter");
-        	            $status = 551;
-        	        }
-        	        else {
+            if($eid == null) {
+                $data = array("msg" => "Missing experiment parameter");
+                $status = 551;
+            } else if($img_name == null) {
+                $data = array("msg" => "Missing name parameter");
+                $status = 551;
+            } else if($img_desc == null) {
+                $data = array("msg" => "Missing description parameter");
+                $status = 551;
+            } else if($session_key == null) {
+                $data = array("msg" => "Missing session key parameter");
+                $status = 551;
+            } else {
+                require_once LIB_DIR . 'S3.php';
+                $s3 = new S3(AWS_ACCESS_KEY, AWS_SECRET_KEY);
+                $url = "http://s3.amazonaws.com/" . AWS_IMG_BUCKET;
 
-        	            require_once LIB_DIR . 'S3.php';
-        	            $s3 = new S3(AWS_ACCESS_KEY, AWS_SECRET_KEY);
-        	            $url = "http://s3.amazonaws.com/" . AWS_IMG_BUCKET;
+                $target_path = '/tmp/';
+                $target_path = $target_path . basename($_FILES['image']['name']);
 
-        	            $target_path = '/tmp/';
-        				$target_path = $target_path . basename($_FILES['image']['name']);
+                // Mime Type Check
+                $mime = mime_content_type($_FILES['image']['tmp_name']);
 
-        				// Mime Type Check
-        				$mime = mime_content_type($_FILES['image']['tmp_name']);
+                $accepted_mimes = array(
+                    'image/jpeg',
+                    'image/gif',
+                    'image/png',
+                 );
 
-        				$accepted_mimes = array(
-        										'image/jpeg',
-        										'image/gif',
-        										'image/png',
-        									);
+                 if(!in_array($mime, $accepted_mimes)) {
+                    $data = array("msg" => "The image type you attempted to upload is not supported");
+                    $status = 552;
 
-        				if(!in_array($mime, $accepted_mimes)) {
-        					$data = array("msg" => "The image type you attempted to upload is not supported");
-        					$status = 552;
+                    unlink($_FILES['image']['tmp_name']);
+                 } else {
+                    if(move_uploaded_file($_FILES['image']['tmp_name'], $target_path)) {
 
-        					unlink($_FILES['image']['tmp_name']);
-        				}
-                        else {
+                            $uid = getUserIdFromSessionToken($session_key);
 
-                            if(move_uploaded_file($_FILES['image']['tmp_name'], $target_path)) {
+                            $ext = substr($target_path, strpos($target_path, ".")+1);
+                            $ext = str_replace(".", "", $ext);
 
-                                $uid = getUserIdFromSessionToken($session_key);
+                            $name = $eid . '_' . $uid . '_' . time() . '_1.' . $ext;
+                            $s3->putObjectFile($target_path, AWS_IMG_BUCKET, $name, S3::ACL_PUBLIC_READ);
+                            $provider_url = $url . '/' . $name;
 
-        						$ext = substr($target_path, strpos($target_path, ".")+1);
-        						$ext = str_replace(".", "", $ext);
+                            createImageItem($session->userid, $eid, $img_name, $img_desc, 'Amazon S3', $name, $provider_url, AWS_IMG_BUCKET, 1);
 
-        						$name = $eid . '_' . $uid . '_' . time() . '_1.' . $ext;
-        						$s3->putObjectFile($target_path, AWS_IMG_BUCKET, $name, S3::ACL_PUBLIC_READ);
-        						$provider_url = $url . '/' . $name;
+                            $data = array("msg" => "Image upload successful!");
+                            $status = 200;
+                        } else {
+                            unlink($_FILES['image']['tmp_name']);
 
-        						createImageItem($session->userid, $eid, $img_name, $img_desc, 'Amazon S3', $name, $provider_url, AWS_IMG_BUCKET, 1);
-
-        						$data = array("msg" => "Image upload successful!");
-        						$status = 200;
-        					}
-        					else {
-        					    unlink($_FILES['image']['tmp_name']);
-
-        					    $data = array("msg" => "There was an error uploading your image");
-        						$status = 553;
-        					}
+                            $data = array("msg" => "There was an error uploading your image");
+                            $status = 553;
                         }
-        	        }
-        	        break;
+                 }
+             }
+             break;
 
 
-        	            case "uploadImageToSession":
-                	        $file = (isset($_FILES['image']));
-                	        $eid = (isset($_POST['eid']) ? $_POST['eid'] : null);
-                	        $sid = (isset($_POST['sid']) ? $_POST['sid'] : null);
-                	        $img_name = (isset($_POST['img_name']) ? $_POST['img_name'] : null);
-                	        $img_desc = (isset($_POST['img_description']) ? $_POST['img_description'] : null);
-                	        $session_key = (isset($_POST['session_key']) ? $_POST['session_key'] : null);
+        case "uploadImageToSession":
+            $file = (isset($_FILES['image']));
+            $eid = (isset($_REQUEST['eid']) ? $_REQUEST['eid'] : null);
+            $sid = (isset($_REQUEST['sid']) ? $_REQUEST['sid'] : null);
+            $img_name = (isset($_REQUEST['img_name']) ? $_REQUEST['img_name'] : null);
+            $img_desc = (isset($_REQUEST['img_description']) ? $_REQUEST['img_description'] : null);
+            $session_key = (isset($_REQUEST['session_key']) ? $_REQUEST['session_key'] : null);
 
-                	        if($eid == null) {
-                	            $data = array("msg" => "Missing experiment id parameter");
-                	            $status = 551;
-                	        }
-							else if($sid == null) {
-                	            $data = array("msg" => "Missing session id parameter");
-                	            $status = 551;
-                	        }
-                	        else if($img_name == null) {
-                	            $data = array("msg" => "Missing name parameter");
-                	            $status = 551;
-                	        }
-                	        else if($img_desc == null) {
-                	            $data = array("msg" => "Missing description parameter");
-                	            $status = 551;
-                	        }
-                	  //      else if($file == false) {
-                	//            $data = array("msg" => "Missing image parameter");
-                	 //           $status = 551;
-                	//        }
-                	        else if($session_key == null) {
-                	            $data = array("msg" => "Missing session key parameter");
-                	            $status = 551;
-                	        }
-                	        else {
+            if($eid == null) {
+                $data = array("msg" => "Missing experiment id parameter");
+                $status = 551;
+            } else if($sid == null) {
+                $data = array("msg" => "Missing session id parameter");
+                $status = 551;
+            } else if($img_name == null) {
+                $data = array("msg" => "Missing name parameter");
+                $status = 551;
+            } else if($img_desc == null) {
+                $data = array("msg" => "Missing description parameter");
+                $status = 551;
+            } else if($session_key == null) {
+                    $data = array("msg" => "Missing session key parameter");
+                    $status = 551;
+            } else {
 
-                	            require_once LIB_DIR . 'S3.php';
-                	            $s3 = new S3(AWS_ACCESS_KEY, AWS_SECRET_KEY);
-                	            $url = "http://s3.amazonaws.com/" . AWS_IMG_BUCKET;
+                require_once LIB_DIR . 'S3.php';
+                $s3 = new S3(AWS_ACCESS_KEY, AWS_SECRET_KEY);
+                $url = "http://s3.amazonaws.com/" . AWS_IMG_BUCKET;
 
-                	            $target_path = '/tmp/';
-                				$target_path = $target_path . basename($_FILES['image']['name']);
+                $target_path = '/tmp/';
+                $target_path = $target_path . basename($_FILES['image']['name']);
 
-                				// Mime Type Check
-                				$mime = mime_content_type($_FILES['image']['tmp_name']);
+                // Mime Type Check
+                $mime = mime_content_type($_FILES['image']['tmp_name']);
 
-                				$accepted_mimes = array(
-                										'image/jpeg',
-                										'image/gif',
-                										'image/png',
-                									);
+                $accepted_mimes = array(
+                    'image/jpeg',
+                    'image/gif',
+                    'image/png',
+                    );
 
-                				if(!in_array($mime, $accepted_mimes)) {
-                					$data = array("msg" => "The image type you attempted to upload is not supported");
-                					$status = 552;
+                    if(!in_array($mime, $accepted_mimes)) {
+                        $data = array("msg" => "The image type you attempted to upload is not supported");
+                        $status = 552;
 
-                					unlink($_FILES['image']['tmp_name']);
-                				}
-                                else {
+                        unlink($_FILES['image']['tmp_name']);
+                    }
+                    else {
 
-                                    if(move_uploaded_file($_FILES['image']['tmp_name'], $target_path)) {
+                        if(move_uploaded_file($_FILES['image']['tmp_name'], $target_path)) {
 
-                                        $uid = getUserIdFromSessionToken($session_key);
+                            $uid = getUserIdFromSessionToken($session_key);
 
-                						$ext = substr($target_path, strpos($target_path, ".")+1);
-                						$ext = str_replace(".", "", $ext);
+                            $ext = substr($target_path, strpos($target_path, ".")+1);
+                            $ext = str_replace(".", "", $ext);
 
-                						$name = $sid . '_' . $uid . '_' . time() . '_1.' . $ext;
-                						$s3->putObjectFile($target_path, AWS_IMG_BUCKET, $name, S3::ACL_PUBLIC_READ);
-                						$provider_url = $url . '/' . $name;
+                            $name = $sid . '_' . $uid . '_' . time() . '_1.' . $ext;
+                            $s3->putObjectFile($target_path, AWS_IMG_BUCKET, $name, S3::ACL_PUBLIC_READ);
+                            $provider_url = $url . '/' . $name;
 
-                						createImageItemSes($session->userid, $eid, $sid, $img_name, $img_desc, 'Amazon S3', $name, $provider_url, AWS_IMG_BUCKET, 1);
+                            createImageItemSes($session->userid, $eid, $sid, $img_name, $img_desc, 'Amazon S3', $name, $provider_url, AWS_IMG_BUCKET, 1);
 
-                						$data = array("msg" => "Image upload successful!");
-                						$status = 200;
-                					}
-                					else {
-                					    unlink($_FILES['image']['tmp_name']);
+                            $data = array("msg" => "Image upload successful!");
+                            $status = 200;
+                        }
+                        else {
+                            unlink($_FILES['image']['tmp_name']);
 
-                					    $data = array("msg" => "There was an error uploading your image");
-                						$status = 553;
-                					}
-                                }
-                	        }
-                	        break;
-	}
+                            $data = array("msg" => "There was an error uploading your image");
+                            $status = 553;
+                        }
+                    }
+            }
+            break;
+    }
 }
 
 echo json_encode(array('status' => $status, 'data' => $data));
 
 ?>
+                            
