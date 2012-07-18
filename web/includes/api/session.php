@@ -227,6 +227,7 @@ function getSessionTitles($sids){
 
 
     $result = array();
+    
     foreach ($output as $tmp){
         $result[$tmp['session_id']]=$tmp['name'];
     }
