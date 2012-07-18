@@ -120,7 +120,7 @@ if(isset($_REQUEST['sessions'])) {
     foreach( $sessions as $index=>$ses ) {
 
         //Make Session ID-Name value
-        $idName = "" . $ses . "-" . $sessions[$ses] . "";
+        $idName = "" . $ses . "-" . $sessionNames[$ses] . "";
         
         //Add Session ID-Name field to data
         $tmpData = getData($data->experimentID, $ses);
