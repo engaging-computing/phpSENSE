@@ -73,6 +73,9 @@ if(isset($_POST['submit'])) {
 	if(isset($_POST['country'])) { $country = safeString($_POST['country']); }
 	if($country == "") { array_push($errors, 'Country can not be blank.'); }
 	
+    //Need to add a private checkbox, for now everyone is private
+    $private = 1;
+	
 	if($password != $confirm_password) { array_push($errors, 'Passwords do not match'); }
 	
 	$resp = recaptcha_check_answer(	RECAPTCHA_PRIVATE,
@@ -81,7 +84,7 @@ if(isset($_POST['submit'])) {
                                     $_POST["recaptcha_response_field"]);
 	if ($resp->is_valid) {
 		if(count($errors) == 0) {
-			if(register($email, $first_name, $last_name, $password, $street, $city_state, $country)) {
+			if(register($email, $first_name, $last_name, $password, $street, $city_state, $country, $private)) {
 				$registered = true;
 			} elseif (!assertUserDoesNotExists($email)) 
 			{

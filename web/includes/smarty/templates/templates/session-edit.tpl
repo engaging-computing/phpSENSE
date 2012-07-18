@@ -41,15 +41,15 @@
     			<fieldset id="basic-info">
     			    <legend>Step 1: Make Your Changes</legend>
     		    	<p>Your session will be created with the following information.</p>
-    				<label for="session_name">Name:</label><input type="text" name="session_name" value="{ $values.name }"/><br/>
+    				<label for="session_name">Name:</label><input type="text" name="session_name" value="{ $values.name }" { if $user.user_id == $owner and $user.administrator }{ else }disabled="disabled"{ /if } /><br/>
     		    	<span class="hint">Example: "Northern River Afternoon Test"</span><br/>
-    		    	<label for="session_description">Procedure:</label><textarea name="session_description">{ $values.description }</textarea><br/>
+    		    	<label for="session_description">Procedure:</label><textarea name="session_description" { if $user.user_id == $owner and $user.administrator }{ else }disabled="disabled"{ /if } >{ $values.description }</textarea><br/>
     		    	<span class="hint">Describe the session procedure and other details.</span><br/>
-    				<label for="session_street">Street:</label><input type="text" name="session_street" value="{ $values.street }"/><br/>
+    				<label for="session_street">Street:</label><input type="text" name="session_street" value="{ $values.street }" { if $user.user_id == $owner and $user.administrator }{ else }disabled="disabled"{ /if } /><br/>
     				<span class="hint">Example: "4 Yawkey Way"</span><br/>
-    				<label for="session_citystate">City, State:</label><input type="text" name="session_citystate" value="{ $values.city }"/><br/>
+    				<label for="session_citystate">City, State:</label><input type="text" name="session_citystate" value="{ $values.city }" { if $user.user_id == $owner and $user.administrator }{ else }disabled="disabled"{ /if } /><br/>
     				<span class="hint">Example: "Boston, Ma"</span><br/>
-    				    <label for="session_hidden">Hidden:</label><input type="checkbox" id="session_hidden" name='{$values.session_id}' { if $values.finalized == 0 } checked="checked" { /if } ><br/>
+    				    <label for="session_hidden">Hidden:</label><input type="checkbox" id="session_hidden" name='{$values.session_id}' <br/>
     			</fieldset>
     			<fieldset>
 			    	<legend>Step 2: Review and Finish</legend>
@@ -62,7 +62,7 @@
 		{ else }
 		    <fieldset id="basic-info">
 				<legend>You've successfully edited your session!</legend>
-				<p>Capital job, you've successfully edited your session! Click <a href="vis.php?sessions={ $sid }">here</a> to view it.
+				<p>Congratulations, you've successfully edited your session! Click <a href="vis.php?sessions={ $sid }">here</a> to view it.
 			</fieldset>
 		{ /if }
 	</div>

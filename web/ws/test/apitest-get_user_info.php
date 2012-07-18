@@ -1,6 +1,7 @@
-<?php
-
+    <?php
+$session_key= "500438cc6b240";
 function getExperimentByUserTest($id){
+    global $session_key;
     //The target for this test
     $target = "localhost/ws/api.php?method=getExperimentByUser";
     
@@ -21,29 +22,6 @@ function getExperimentByUserTest($id){
         //Parse the response to an associative array
         //echo "<br>".$result."<br>";
         return json_decode($result,true);
-}
-
-function getVisByUserTest($id){
-    //The target for this test
-    $target = "localhost/ws/api.php?method=getVisByUser";
-    
-    //Curl crap that will mostly stay the same
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $target);
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' => $id
-        )); 
-        
-        //Run curl to get the response
-        $result = curl_exec($ch);
-        //Close curl
-
-        curl_close($ch);
-        //Parse the response to an associative array
-        return json_decode($result,true);       
 }
 
 function getImagesByUserTest($id){
@@ -93,6 +71,7 @@ function getVideosByUserTest($id){
 }
 
 function getUserProfileTest($id){
+    global $session_key;
     //The target for this test
     $target =  "localhost/ws/api.php?method=getUserProfile";
     
@@ -103,7 +82,8 @@ function getUserProfileTest($id){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' => $id
+        'user' => $id,
+	'session_key' => $session_key
         ));
         
         //Run curl to get the response
@@ -187,47 +167,6 @@ echo "<hr>";
 
 //--------------------------------------------------------------------------------------------------------------------
 
-//Get Vis by User
-echo "<h1>Get Vis by User</h1>";
-
-//Verfies we got Vis by user
-echo "<h2>Tests that we can get visualizations by user...</h2>";
-
-$id = 5;
-$getVisByUser_response = getVisByUserTest($id);
-
-if ($getVisByUser_response['status'] == 200) {
-    echo "<div class='success'>SUCCESS</div>, Able to get visualizations.<br>";
-} else {
-    echo "<div class='failure'>FAILURE</div>, Unable to get visualizations. JSON: ";
-    print_r($getVisByUser_response);
-    echo "<br>";
-}
-
-echo "<br>";
-
-//Verifies that we failed getting Vis by user
-echo "<h2>Tests that we cannot get visualizations by user...</h2>";
-
-$id = -1;
-$getVisByUser_response = getVisByUserTest($id);
-
-if ($getVisByUser_response['status'] == 600) {
-    echo "<div class='success'>SUCCESS</div>, Unable to get vis from user.<br>";
-} elseif ($getVisByUser_response['status'] == 200) {
-    echo "<div class='failure'>FAILURE</div>, Got vis from user. JSON: ";
-    print_r($getVisByUser_response);
-    echo "<br>";
-} else {
-    echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
-    print_r($getVisByUser_response);
-    echo "<br>";
-}
-
-echo "<hr>";
-
-//--------------------------------------------------------------------------------------------------------------------
-
 //Get Images by User
 echo "<h1>Get Images by User</h1>";
 
@@ -275,7 +214,7 @@ echo "<h1>Get Videos by User Test</h1>";
 // Verifies that we got video(s) from a user that has experiment with videos
 echo "<h2>Tests that we got a video from a user with videos...</h2>";
 
-$id = 3;
+$id = 2;
 $getVideosByUser_response = getVideosByUserTest($id);
 
 if ($getVideosByUser_response['status'] == 200) {
@@ -343,7 +282,7 @@ echo "<h2>Tests that we did not get the user profile...</h2>";
 $id = -1;
 $getUserProfile_response = getUserProfileTest($id);
 
-if ($getUserProfile_response.length == 0) {
+if (count($getUserProfile_response['data']) == 0) {
     echo "<div class='success'>SUCCESS</div>, Unable to get user profile.<br>";
 } else {
     echo "<div class='failure'>FAILURE</div>, You got the user profile. JSON: ";

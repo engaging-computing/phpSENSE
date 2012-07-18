@@ -62,7 +62,9 @@
 								<div class="name" style="font-size:18px;"> <a href="experiment.php?id={ $result.experiment_id }">{ $result.name }</a></div>
         							<div class="description" style="font-size:13px;">{ $result.description }</div>
 								<div class="sub" style="font-size:10px;">
+                                    <span>Session Count { $result.session_count } | </span>
 									<span>Last Modified { $result.timeobj|date_diff }</span>
+									
 									{ if $result.owner_id == $user.user_id or $user.administrator == 1 }
 										<span><a href="javascript:void(0);" onclick="window.location.href='experiment-edit.php?id={ $result.experiment_id }';">
 										Edit</a>
