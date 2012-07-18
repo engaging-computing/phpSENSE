@@ -1,14 +1,14 @@
 <?php
-/*
+
 $session_key= "500438cc6b240";
 
-
+/*
 function uploadImageToExperimentTest($file, $exp){
     global $session_key;
     //The target for this test
     $target = "localhost/ws/api.php?method=uploadImageToExperiment";
     
-    //Curl crap that will mostly stay the sameuploadim
+    //Curl crap that will mostly stay the same
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $target);
     curl_setopt($ch, CURLOPT_HEADER, false);
@@ -31,10 +31,10 @@ function uploadImageToExperimentTest($file, $exp){
 
 
 }
-
+*/
 //--------------------------------------------------------------------------------------------------------------------
 
-
+/*
 //Upload Image to Experiment
 echo "<h1>Upload Image to Experiment Test</h1>";
 
@@ -47,6 +47,5 @@ echo $getUploadImagestoExperiment_response;
 echo "<br>";
 
 echo "<hr>";
-
 */
 ?>

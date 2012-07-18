@@ -27,6 +27,28 @@
  *
 ###
 
+data.xySelector = (xIndex, yIndex, gIndex) ->
+
+    rawData = @dataPoints.filter (dp) =>
+        (String dp[@groupIndex]).toLowerCase() == @groups[gIndex]
+
+    if (Number @fields[xIndex].typeID) == 7
+        mapFunc = (dp) ->
+            obj =
+                x: new Date(dp[xIndex])
+                y: dp[yIndex]
+                name: "Temp"
+    else
+        mapFunc = (dp) ->
+            obj =
+                x: dp[xIndex]
+                y: dp[yIndex]
+                name: "Temp"
+
+    mapped = rawData.map mapFunc
+    mapped.sort (a, b) -> (a.x - b.x)
+    mapped
+
 ###
 Selects an array of data from the given field index.
 if 'nans' is true then datapoints with NaN values in the given field will be included.
@@ -79,13 +101,20 @@ data.getMedian = (fieldIndex, filterFunc = (dp) -> true) ->
         return rawData[mid]
     else
         return (rawData[mid - 1] + rawData[mid]) / 2.0
-      
+        
 ###
 Gets a list of unique, non-null, stringified vals from the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
 ###
-data.getUnique = (fieldIndex, filterFunc = (dp) -> true) ->
-    rawData = @selector fieldIndex, true, (dp) -> (filterFunc dp) and dp[fieldIndex] isnt null
+data.setGroupIndex = (index) ->
+    @groupIndex = index
+    @groups = @makeGroups()
+
+###
+Gets a list of unique, non-null, stringified vals from the group field index.
+###
+data.makeGroups =  ->
+    rawData = @selector @groupIndex, true, (dp) -> dp[@groupIndex] isnt null
     result = {}
     
     for dat in rawData
@@ -96,5 +125,29 @@ data.getUnique = (fieldIndex, filterFunc = (dp) -> true) ->
 ###
 Gets a list of text field indicies
 ###
-data.getTextFields = ->
-    (fieldIndex for fieldIndex of @fields).filter ((fi) -> @fields[fi].typeID == 37), this
+data.textFields = for index, field of data.fields when (Number field.typeID) is 37
+    Number index
+
+###
+Gets a list of time field indicies
+###
+data.timeFields = for index, field of data.fields when (Number field.typeID) is 7
+    Number index
+
+###
+Gets a list of non-text, non-time field indicies
+###
+data.normalFields = for index, field of data.fields when (Number field.typeID) not in [37, 7]
+    Number index
+
+###
+Gets a list of non-text field indicies
+###
+data.numericFields = for index, field of data.fields when (Number field.typeID) not in [37]
+    Number index
+
+
+#Field index of grouping field
+data.groupIndex = 0
+#Array of current groups
+data.groups = data.makeGroups()

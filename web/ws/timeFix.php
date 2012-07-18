@@ -67,9 +67,10 @@ $top = <<<EndOfHTML
     </head>
 EndOfHTML;
 
+if( $tmpusr['administrator'] == 1 ) {
+
 echo $top;
 
-if ($tmpusr['administrator']) {
     if (isset($_REQUEST['eids'])) {        
         
         if (isset($_REQUEST['verify']) && $_REQUEST['verify'] == 'yes') {
@@ -200,6 +201,6 @@ if ($tmpusr['administrator']) {
         echo '<input id="dry_run" type="button" value="Dry run"><br/><br/><h2>Update all:</h2><br/><input id="run_all" type="button" value="Run All"></form>';
     }
 } else {
-    echo 'Silly non-Admin what are you doing here?';
+    header('Location: http://' . $_SERVER['SERVER_NAME'] . '/404.html');
 }
 ?>
