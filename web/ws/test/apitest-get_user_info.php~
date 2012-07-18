@@ -1,6 +1,7 @@
     <?php
-
+$session_key= "500438cc6b240";
 function getExperimentByUserTest($id){
+    global $session_key;
     //The target for this test
     $target = "localhost/ws/api.php?method=getExperimentByUser";
     
@@ -93,6 +94,7 @@ function getVideosByUserTest($id){
 }
 
 function getUserProfileTest($id){
+    global $session_key;
     //The target for this test
     $target =  "localhost/ws/api.php?method=getUserProfile";
     
@@ -103,7 +105,8 @@ function getUserProfileTest($id){
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'user' => $id
+        'user' => $id,
+	'session_key' => $session_key
         ));
         
         //Run curl to get the response
@@ -343,7 +346,7 @@ echo "<h2>Tests that we did not get the user profile...</h2>";
 $id = -1;
 $getUserProfile_response = getUserProfileTest($id);
 
-if ($getUserProfile_response.length == 0) {
+if (count($getUserProfile_response['data']) == 0) {
     echo "<div class='success'>SUCCESS</div>, Unable to get user profile.<br>";
 } else {
     echo "<div class='failure'>FAILURE</div>, You got the user profile. JSON: ";

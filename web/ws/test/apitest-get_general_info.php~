@@ -143,7 +143,7 @@ $result1= Array();
 
 $i=0;
 foreach($getExperiments_response['data'] as $tmp){
-  $result1[$i] = $tmp[$i]['meta']['experiment_id']; 
+  $result1[$i] = $tmp['meta']['experiment_id']; 
   $i++;
 }
 
@@ -178,12 +178,7 @@ $action = "browse";
 
 $getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
 
-$i=0;
-foreach($getExperiments_response['data']['meta'] as $tmp){
-  $i++;
-}
-
-  if($i > $limits){
+  if(count($getExperiments_response['data']) > $limits){
       echo "<div class='failure'>FAILURE</div>, Page 1 does not satisfy the limit requirement.<br>";
   } else{
       echo "<div class='success'>SUCCESS</div>, Page 1 satisfies the limit requirement.<br>";
@@ -199,12 +194,7 @@ $getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $ac
 
 $result1=Array();
 
-$i=0;
-foreach($getExperiments_response['data']['meta'] as $tmp){ 
-  $i++;
-}
-
-  if($i > $limits){
+  if(count($getExperiments_response['data'])  > $limits){
       echo "<div class='failure'>FAILURE</div>, Page 2 does not satisfy the limit requirement.<br>";
   } else{
       echo "<div class='success'>SUCCESS</div>, Page 2 satisfies the limit requirement.<br>";
@@ -252,8 +242,8 @@ $action = "browse";
 $getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
 
 for($j=0; $j<$limits; $j++){
-  $newest = $getExperiments_response['data'][$j]['meta']['session_count'];
-  $next =  $getExperiments_response['data'][$j++]['meta']['session_count'];
+  $newest = $getExperiments_response['data'][$j]['session_count'];
+  $next =  $getExperiments_response['data'][$j++]['session_count'];
   if($newest < $next){
       $successflag = 0;
       break;   
@@ -279,9 +269,9 @@ $action = "browse";
 
 $getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
 
-for($j=0; $j<$limits; $j++){
-  $newest = $getExperiments_response['data'][$j]['meta']['contrib_count'];
-  $next =  $getExperiments_response['data'][$j++]['meta']['contrib_count'];
+for($j=1; $j<count($getExperiments_response['data']); $j++){
+  $newest = $getExperiments_response['data'][$j-1]['contrib_count'];
+  $next =  $getExperiments_response['data'][$j]['contrib_count'];
   if($newest < $next){
       $successflag = 0;
       break;   
@@ -307,12 +297,15 @@ $sort = "recent";
 $action = "browse";
 
 $getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $action);
-for($j=0; $j<$limits; $j++){
-  $date1 = date($getExperiment_response['data'][$j]['meta']['timecreated']);
-  $date2 =  date($getExperiment_response['data'][$j++]['meta']['timecreated']);
-  echo $date1;
-  echo $date2;
-  if($date2 < $date1){
+
+for($j=1; $j<count($getExperiments_response['data']); $j++){
+
+  $date1 = date($getExperiments_response['data'][$j-1]['meta']['timecreated']);
+  $date2 =  date($getExperiments_response['data'][$j]['meta']['timecreated']);
+  print_r($date1);
+  echo "<br>";
+  print_r($date2);
+  if($date2 > $date1){
       $successflag = 0;
       break;   
   }
@@ -344,8 +337,9 @@ $getPeople_response = getPeopleTest($page, $limits, $query, $sort, $action);
 $result1= Array();
 
 $i=0;
+
 foreach($getPeople_response['data'] as $tmp){
-  $result1[$i] = $tmp[$i]['meta']['experiment_id']; 
+  $result1[$i] = $tmp['user_id']; 
   $i++;
 }
 
@@ -353,7 +347,7 @@ $page = 2;
 $getPeople_response = getPeopleTest($page, $limits, $query, $sort, $action);
 
 foreach($getPeople_response['data'] as $tmp){
-  if(in_array($tmp,$result1 )) {
+  if(in_array($tmp['user_id'],$result1 )) {
       $successflag = 0;
   }else{
       $successflag = 1;
@@ -379,12 +373,7 @@ $action = "browse";
 
 $getPeople_response = getPeopleTest($page, $limits, $query, $sort, $action);
 
-$i=0;
-foreach($getPeople_response['data']['meta'] as $tmp){
-  $i++;
-}
-
-  if($i > $limits){
+  if(count($getPeople_response['data']) > $limits){
       echo "<div class='failure'>FAILURE</div>, Page 1 does not satisfy the limit requirement.<br>";
   } else{
       echo "<div class='success'>SUCCESS</div>, Page 1 satisfies the limit requirement.<br>";
@@ -398,12 +387,11 @@ $action = "browse";
 
 $getPeople_response = getPeopleTest($page, $limits, $query, $sort, $action);
 
-$i=0;
-foreach($getPeople_response['data']['meta'] as $tmp){
-  $i++;
-}
 
-  if($i > $limits){
+
+
+
+  if(count($getPeople_response['data']) > $limits){
       echo "<div class='failure'>FAILURE</div>, Page 2 does not satisfy the limit requirement.<br>";
   } else{
       echo "<div class='success'>SUCCESS</div>, Page 2 satisfies the limit requirement.<br>";
