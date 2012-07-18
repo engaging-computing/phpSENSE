@@ -47,10 +47,13 @@ class window.Scatter extends BaseVis
                     data: data.xySelector(globals.xAxis, fieldIndex, groupIndex)
                     showInLegend: false
                     color: globals.colors[groupIndex % globals.colors.length]
-                    symbol: globals.symbols[symbolIndex % globals.symbols.length]
-                console.log [symbolIndex, fieldIndex]
+                    marker:
+                        symbol: globals.symbols[symbolIndex % globals.symbols.length]
+                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
+                console.log [options.marker.symbol, options.name]
                     
                 @chartOptions.series.push options
+                console.log @chartOptions.series[@chartOptions.series.length - 1].marker.symbol
     
     drawControls: ->
         @drawGroupControls()
