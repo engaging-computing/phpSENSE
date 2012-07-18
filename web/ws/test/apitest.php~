@@ -99,9 +99,9 @@ echo "<div class=\"testheading\">Starting login test....<br></div>";
 
 require_once('apitest-login.php');
 
-//echo "<div class=\"testheading\">Starting Experiment Test...<br></div>";
+echo "<div class=\"testheading\">Starting Experiment Test...<br></div>";
 
-//require_once('apitest-experiment.php');
+require_once('apitest-experiment.php');
 
 echo "<div class=\"testheading\">Starting Session Test...<br></div>";
 

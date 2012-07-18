@@ -302,6 +302,9 @@ for($j=1; $j<count($getExperiments_response['data']); $j++){
 
   $date1 = date($getExperiments_response['data'][$j-1]['meta']['timecreated']);
   $date2 =  date($getExperiments_response['data'][$j]['meta']['timecreated']);
+  print_r($date1);
+  echo "<br>";
+  print_r($date2);
   if($date2 > $date1){
       $successflag = 0;
       break;   
