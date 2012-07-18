@@ -96,7 +96,7 @@ if(isset($_REQUEST['method'])) {
 			$limit = $params['limit'];
 			$sort = $params['sort'];
 
-			$response = browseExperiments($page,$limit,0,"off","off",$query,$sort);
+			$response = getExperiments($page,$limit,0,"off","off",$query,$sort);
             $data = $response['data'];
 			if(count($data) > 0) {
 
@@ -133,8 +133,10 @@ if(isset($_REQUEST['method'])) {
 		    $page = $params['page'];
 		    $limit = $params['limit'];
 
-		    $data = getPeople($page, $limit, $query);
-
+		    $response = getPeople($page, $limit, $query);
+		    
+            $data = $response['data'];
+            
 		    $status = 200;
 		    break;
 
