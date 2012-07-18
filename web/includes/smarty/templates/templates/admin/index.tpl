@@ -64,7 +64,14 @@
 				<a href="admin.php?action=faqmanage">Manage FAQs</a><br/>
 				<a href="admin.php?action=faqadd">Create New FAQ</a><br/>
 			</td>
-			<td colspan="4">&nbsp;</td>
+			
+			<td style="border-left:1px solid #CCC;">&nbsp;</td>
+			<td valign="top">
+                               <h2>Testing</h2>
+                               <a href="ws/test/apitest.php">Public Api Test</a><br/>
+                       </td>
+                       <td colspan="4">&nbsp;</td>
 		</tr>
 	</table>
 </div>
+<!--ws/test/apitest.php-->
