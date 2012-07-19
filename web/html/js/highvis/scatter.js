@@ -48,10 +48,14 @@
       this.chartOptions;
       $.extend(true, this.chartOptions, {
         chart: {
-          type: "line"
+          type: "line",
+          zoomType: "xy"
         },
         title: {
           text: "Scatter"
+        },
+        xAxis: {
+          type: (Number(data.fields[globals.xAxis].typeID)) === 7 ? 'datetime' : 'linear'
         }
       });
       _results = [];
@@ -71,9 +75,7 @@
               },
               name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
             };
-            console.log([options.marker.symbol, options.name]);
-            this.chartOptions.series.push(options);
-            _results1.push(console.log(this.chartOptions.series[this.chartOptions.series.length - 1].marker.symbol));
+            _results1.push(this.chartOptions.series.push(options));
           }
           return _results1;
         }).call(this));

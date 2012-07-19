@@ -58,6 +58,9 @@ class window.BaseVis
             #loading: {}
             plotOptions:
                 series:
+                    marker:
+                        lineWidth:1
+                        radius:8
                     events:
                         legendItemClick: (event) =>
                             index = data.normalFields[event.target.index]
@@ -162,6 +165,7 @@ class window.BaseVis
                 See logged stack trace in console.
                 """
 
+                
     ###
     Draws group selection controls
         This includes a series of checkboxes and a selector for the grouping field.
@@ -187,14 +191,14 @@ class window.BaseVis
             controls += '<tr><td>'
             controls += "<div class=\"vis_control_table_div\" style=\"color:#{globals.colors[counter]};\">"
             
-            controls += "<input class=\"group_input\" type=\"checkbox\" value=\"#{gIndex}\" #{if (Number gIndex) in globals.groupSelection then "checked" else ""}></input>&nbsp"
+            controls += "<input class='group_input' type='checkbox' value='#{gIndex}' #{if (Number gIndex) in globals.groupSelection then "checked" else ""}/>&nbsp"
             controls += "#{group}&nbsp"
             controls += "</div></td></tr>"
             counter += 1
         controls += '</table></div>'
         
         # Write HTML
-        (($ '#controldiv').html ($ '#controldiv').html() + controls)
+        ($ '#controldiv').append controls
         
         # Make group select handler
         ($ '.group_selector').change (e) =>
@@ -203,49 +207,20 @@ class window.BaseVis
             globals.groupSelection ?= for keys of data.groups
                 Number keys
             @start()
-            
+        
         # Make group checkbox handler
         ($ '.group_input').click (e) =>
             selection = []
             ($ '.group_input').each ()->
                 if @checked
+                    console.log 'checked'
                     selection.push @value
+                else
+                    console.log 'unchecked'
             globals.groupSelection = selection
             @update()
-    ###
-    Draws Field selection controls as checkboxes
-        This includes a series of checkboxes with corresponding symbols from the graph.
-    ###
-    drawFieldChkControls: ->
-        controls = '<div id="fieldControl" class="vis_controls">'
-        
-        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Fields:</tr></td>'
-        
-        # Populate choices (not time or text)
-        # Maybe should allow time here?
-        #TODO: Figure out how to draw the symbols here
-        for field of data.fields
-            if 7 != (Number data.fields[field].typeID) != 37
-                controls += '<tr><td>'
-                controls += '<div class="vis_control_table_div">'
-                
-                controls += "<input class=\"field_input\" type=\"checkbox\" value=\"#{field}\" #{if field in globals.fieldSelection then "checked" else ""}></input>&nbsp"
-                controls += "#{data.fields[field].fieldName}&nbsp"
-                controls += "</div></td></tr>"
-        
-        controls += '</table></div>'
-        
-        # Write HTML
-        (($ '#controldiv').html ($ '#controldiv').html() + controls)
             
-        # Make field checkbox handler
-        ($ '.field_input').click (e) =>
-            selection = []
-            ($ '.field_input').each ()->
-                if @checked
-                    selection.push @value
-            globals.fieldSelection = selection
-            @update()
+
     ###
     Draws x axis selection controls
         This includes a series of radio buttons.
@@ -268,7 +243,7 @@ class window.BaseVis
         controls += '</table></div>'
         
         # Write HTML
-        (($ '#controldiv').html ($ '#controldiv').html() + controls)
+        ($ '#controldiv').append controls
             
         # Make xAxis radio handler
         ($ '.xAxis_input').click (e) =>
