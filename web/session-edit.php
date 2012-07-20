@@ -59,7 +59,7 @@ if(isset($_POST['session_create'])) {
     
     //$hidden_val = isSessionHidden($sid);
     
-    if(strtolower($_POST['session_hidden']) == 'on'){
+    if(isset($_POST['session_hidden']) && strtolower($_POST['session_hidden']) == 'on'){
         $hidden_val = 0;
     } else {
         $hidden_val = 1;
@@ -81,6 +81,8 @@ if(isset($_POST['session_create'])) {
 		$values['latitude'] = $lat;
 		$values['longitude'] = $lon;
     }
+    
+    $smarty->assign('debug_info', $values);
     
     updateSession($sid, $values);
 
