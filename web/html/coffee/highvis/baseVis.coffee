@@ -49,6 +49,7 @@ class window.BaseVis
         @chartOptions = 
             chart:
                 renderTo: @canvas
+                animation: false
             #colors:
             credits:
                 enabled: false
@@ -60,7 +61,7 @@ class window.BaseVis
                 series:
                     marker:
                         lineWidth:1
-                        radius:8
+                        radius:5
                     events:
                         legendItemClick: (event) =>
                             index = data.normalFields[event.target.index]
@@ -139,16 +140,18 @@ class window.BaseVis
             groupIndex = Math.floor (index / data.normalFields.length)
             
             if (groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection)
-                @chart.series[index + data.normalFields.length].show()
+                @chart.series[index + data.normalFields.length].setVisible(true, false)
             else
-                @chart.series[index + data.normalFields.length].hide()
+                @chart.series[index + data.normalFields.length].setVisible(false, false)
+            @chart.redraw()
+                
 
     ###
     Clear the controls
         Unbinds control handlers and clears the HTML elements.
     ###
     clearControls: ->
-        ($ '#controldiv').find('*').unbind()
+        #($ '#controldiv').find('*').unbind()
         ($ '#controldiv').html('')
 
     ###
@@ -214,7 +217,7 @@ class window.BaseVis
             ($ '.group_input').each ()->
                 if @checked
                     console.log 'checked'
-                    selection.push @value
+                    selection.push Number @value
                 else
                     console.log 'unchecked'
             globals.groupSelection = selection

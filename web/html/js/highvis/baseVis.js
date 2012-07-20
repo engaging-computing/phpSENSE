@@ -79,7 +79,8 @@
         _this = this;
       this.chartOptions = {
         chart: {
-          renderTo: this.canvas
+          renderTo: this.canvas,
+          animation: false
         },
         credits: {
           enabled: false
@@ -88,7 +89,7 @@
           series: {
             marker: {
               lineWidth: 1,
-              radius: 8
+              radius: 5
             },
             events: {
               legendItemClick: function(event) {
@@ -188,10 +189,11 @@
         fieldIndex = data.normalFields[index % data.normalFields.length];
         groupIndex = Math.floor(index / data.normalFields.length);
         if ((__indexOf.call(globals.groupSelection, groupIndex) >= 0) && (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0)) {
-          _results.push(this.chart.series[index + data.normalFields.length].show());
+          this.chart.series[index + data.normalFields.length].setVisible(true, false);
         } else {
-          _results.push(this.chart.series[index + data.normalFields.length].hide());
+          this.chart.series[index + data.normalFields.length].setVisible(false, false);
         }
+        _results.push(this.chart.redraw());
       }
       return _results;
     };
@@ -203,7 +205,6 @@
 
 
     BaseVis.prototype.clearControls = function() {
-      ($('#controldiv')).find('*').unbind();
       return ($('#controldiv')).html('');
     };
 
@@ -273,7 +274,7 @@
         ($('.group_input')).each(function() {
           if (this.checked) {
             console.log('checked');
-            return selection.push(this.value);
+            return selection.push(Number(this.value));
           } else {
             return console.log('unchecked');
           }
