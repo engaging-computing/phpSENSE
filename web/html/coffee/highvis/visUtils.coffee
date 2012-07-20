@@ -50,14 +50,116 @@ K-means
 globals.colors = ['#5E5A83', '#609B36', '#DC644F', '#9A8867', '#DA6694', '#40938C', '#A78E20', '#884646', '#546222', '#688CCF', '#529F69', '#415B62', '#AE8188', '#D1762F', '#408FB2', '#B18347', '#944B70', '#9F7FBC', '#C77967', '#914C2A', '#396B43', '#625744', '#C25562', '#735521', '#7D9080', '#715365', '#8A9044', '#C573B2', '#788AA2', '#EC5D7A']
  
 ###
+Generate a list of symbols and symbol rendering routines and then add them
+in an order that is clear and easy to read. 
+###
+
+fanMagList				= [1, 1, 15/16, 7/8, 3/4, 1/4, 1/4, 3/4, 7/8, 15/16, 1]
+windmillLeftMagList		= [1, 1/2, 1/3, 1/4]
+windmillRightMagList	= [1/4, 1/3, 1/2, 1]
+pieMagList				= [1,1,1,1,1,1,1,1,1,1,1,1,1,0]
+halfmoonMagList			= [1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0]
+
+tempSymbolsMatrix		= []
+symbolList				= []
+
+tempSymbolsMatrix[tempSymbolsMatrix.length] = ['circle', 'square', 'triangle', 'diamond', 'triangle-down' ]
+
+tempSymbolsMatrix[tempSymbolsMatrix.length] = []
+for i in [2,3,4,6,10]
+	addMarkerStyle "#{i}-fan", 3, 0, fanMagList
+	tempSymbolsMatrix[tempSymbolsMatrix.length-1].push "#{i}-fan"
+
+tempSymbolsMatrix[tempSymbolsMatrix.length] = []
+for [phase, direction] in [[0, "down"],[1/4, "right"],[2/4, "up"],[3/4, "left"]]
+	addMarkerStyle "#{direction}-tri", 3, phase
+	tempSymbolsMatrix[tempSymbolsMatrix.length-1].push "#{direction}-tri"
+
+tempSymbolsMatrix[tempSymbolsMatrix.length] = []
+for i in [2,3,4,6]
+	addMarkerStyle "#{i}-windmillLeft", i, 0, windmillLeftMagList
+	tempSymbolsMatrix[tempSymbolsMatrix.length-1].push "#{i}-windmillLeft"
+
+tempSymbolsMatrix[tempSymbolsMatrix.length] = []
+for i in [1,2,3,4,5,6,10,20]
+	addMarkerStyle "#{i}-pie", i, 0, pieMagList
+	tempSymbolsMatrix[tempSymbolsMatrix.length-1].push "#{i}-pie"
+	
+tempSymbolsMatrix[tempSymbolsMatrix.length] = []
+for [phase, direction] in[[0, "right"],[1/4, "up"],[2/4, "left"],[3/4, "down"]]
+	addMarkerStyle "#{direction}-halfmoon", 1, phase, halfmoonMagList
+	tempSymbolsMatrix[tempSymbolsMatrix.length-1].push "#{direction}-halfmoon"
+
+tempSymbolsMatrix[tempSymbolsMatrix.length] = []
+for i in [2,3,4,6]
+	addMarkerStyle "#{i}-windmillRight", i, 0, windmillRightMagList
+	tempSymbolsMatrix[tempSymbolsMatrix.length-1].push "#{i}-windmillRight"
+
+while tempSymbolsMatrixCount != 0
+    tempSymbolsMatrixCount = tempSymbolsMatrix.length
+    for index in [0...tempSymbolsMatrix.length]
+	    if tempSymbolsMatrix[index].length == 0
+            tempSymbolsMatrixCount -= 1
+        else
+            symbolList.push tempSymbolsMatrix[index][0]
+            tempSymbolsMatrix[index].splice 0, 1
+
+
+###
 This function should return a list of strings corisponding to the symbols.
 Currently it returns the list of default symbols in Highcharts.
 ###
-globals.symbols = ['circle', 'square', 'triangle', 'diamond', 'triangle-down']
-    
-    
-    
+
+globals.getSymbols = ->
+    symbolList
+
 ###
-Eric - You should put your symbol generation code here, then fill in the
-       globals.getSymbols function above with the correct strings.
+This function adds a parameterizable radial marker to Highchart's list of
+marker styles.
 ###
+
+addRadialMarkerStyle = (name, points, phase, magnitudes=[1]) ->
+    
+    extension = {}
+    
+    extension[name] = (x, y, w, h) ->
+                
+        svg = Array()
+        
+        verticies = Array()
+        
+        offset = phase*2*Math.PI
+        
+        modpoints = points * magnitudes.length
+            
+        for i in [0..modpoints]
+                
+            tx = (Math.sin 2*Math.PI*i/modpoints+offset) * magnitudes[i % magnitudes.length]
+            ty = (Math.cos 2*Math.PI*i/modpoints+offset) * magnitudes[i % magnitudes.length]
+            
+            #console.log [tx, ty, magnitudes[i % magnitudes.length]]
+            
+            tx = tx/2+0.5
+            ty = ty/2+0.5
+            
+            verticies.push [tx*w+x, ty*h+y]
+        
+        svg.push "M"
+        svg.push verticies[0][0]
+        svg.push verticies[0][1]
+        svg.push "L"
+        
+        for [vx, vy] in verticies
+            
+            svg.push vx
+            svg.push vy
+        
+        svg.push "Z"
+        
+        svg
+    
+    Highcharts.extend Highcharts.Renderer.prototype.symbols, extension
+
+
+
+

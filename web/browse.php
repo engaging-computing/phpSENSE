@@ -67,16 +67,18 @@ $featured = $params['featured'];
 $sorttype = $params['sorttype'];
 
 if($type=="experiments"){
-    $response = browseExperiments($page, $limit,0, $featured, $recommended, $query, $sorttype);
+    $response = getExperiments($page, $limit,0, $featured, $recommended, $query, $sorttype);
     $results = $response['data'];
     $count = $response['count'];  
 } elseif ($type == "people") {
-    $results = getPeople($page, $limit,$query);
-    $count = getPeople(-1, $limit, $query);
+    $response = getPeople($page, $limit,$query);
+    $results = $response['data'];
+    $count = $response['count'];  
 } elseif ($type == "visualizations"){
     if($action == "search"){
-        $results = searchVisualizations($query, $page, $limit, $sort);
-        $count = searchVisualizations($query, -1, $limit, $sort);
+        $response = getVisualizations($query, $page, $limit, $sort);
+        $results = $response['data'];
+        $count = $response['count'];  
     } else {
         $results = browseVisualizationsByTimeCreated($page, $limit);
         $count = browseVisualizationsByTimeCreated(-1, $limit);
@@ -123,7 +125,7 @@ for( $i = 1; $i < 10; $i++ ) {
 
 
 // Assign params to Smarty
-$smarty->assign('title',        ucwords($action . ' ' . $type));
+$smarty->assign('title',        $type);
 $smarty->assign('marker',       $type);
 $smarty->assign('errors',       $errors);
 $smarty->assign('params',       $params);
