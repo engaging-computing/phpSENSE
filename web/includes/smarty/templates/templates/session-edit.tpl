@@ -49,7 +49,7 @@
     				<span class="hint">Example: "4 Yawkey Way"</span><br/>
     				<label for="session_citystate">City, State:</label><input type="text" name="session_citystate" value="{ $values.city }" { if $user.user_id != $values.owner_id and !$user.administrator }disabled="disabled"{ /if } /><br/>
     				<span class="hint">Example: "Boston, Ma"</span><br/>
-    				    <label for="session_hidden">Hidden:</label><input type="checkbox" id="session_hidden" name='session_hidden' <br/>
+    				    <label for="session_hidden">Hidden:</label><input type="checkbox" id="session_hidden" name='session_hidden' { if $hideme }checked="checked"{ /if }/><br/>
     			</fieldset>
     			<fieldset>
 			    	<legend>Step 2: Review and Finish</legend>
@@ -62,9 +62,12 @@
 		{ else }
 		    <fieldset id="basic-info">
 				<legend>You've successfully edited your session!</legend>
-				<p>Congratulations, you've successfully edited your session! Click <a href="vis.php?sessions={ $sid }">here</a> to view it.
+				{ if !$hide }
+				    <p>Congratulations, you've successfully hidden your session! <a href="experiment.php?id={ $id }">Click here to return to the experiment</a>.
+				{ else }
+				    <p>Congratulations, you've successfully edited your session! <a href="vis.php?sessions={ $sid }">View your session</a> or <a href="experiment.php?id={ $id }">return to the experiment</a>.
+				{ /if }
 			</fieldset>
-    		
 		{ /if }
 	</div>
 { /if }
