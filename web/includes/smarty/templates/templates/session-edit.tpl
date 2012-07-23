@@ -29,7 +29,7 @@
 <div id="main-full">
 	<div>Guests do not have access to contribute to experiments. If you already have an account, click <a href="login.php">here</a> to login. If not, click <a href="register.php">here</a> to register for an account.</div>
 </div>
-{ elseif $user.user_id != $values.owner_id and $user.user_id != $owner  }
+{ elseif $user.user_id != $values.owner_id and $user.user_id != $owner and !$user.administrator }
     <div id="main-full">
 		<div>Sorry, you are not the owner of this session so you are not allowed to edit it.</div>
 	</div>
@@ -41,15 +41,15 @@
     			<fieldset id="basic-info">
     			    <legend>Step 1: Make Your Changes</legend>
     		    	<p>Your session will be created with the following information.</p>
-    				<label for="session_name">Name:</label><input type="text" name="session_name" value="{ $values.name }" { if $user.user_id == $owner and $user.administrator }{ else }disabled="disabled"{ /if } /><br/>
+    				<label for="session_name">Name:</label><input type="text" name="session_name" value="{ $values.name }" { if $user.user_id != $values.owner_id and !$user.administrator }disabled="disabled"{ /if } /><br/>
     		    	<span class="hint">Example: "Northern River Afternoon Test"</span><br/>
-    		    	<label for="session_description">Procedure:</label><textarea name="session_description" { if $user.user_id == $owner and $user.administrator }{ else }disabled="disabled"{ /if } >{ $values.description }</textarea><br/>
+    		    	<label for="session_description">Procedure:</label><textarea name="session_description" { if $user.user_id != $values.owner_id and !$user.administrator }disabled="disabled"{ /if } >{ $values.description }</textarea><br/>
     		    	<span class="hint">Describe the session procedure and other details.</span><br/>
-    				<label for="session_street">Street:</label><input type="text" name="session_street" value="{ $values.street }" { if $user.user_id == $owner and $user.administrator }{ else }disabled="disabled"{ /if } /><br/>
+    				<label for="session_street">Street:</label><input type="text" name="session_street" value="{ $values.street }" { if $user.user_id != $values.owner_id and !$user.administrator }disabled="disabled"{ /if } /><br/>
     				<span class="hint">Example: "4 Yawkey Way"</span><br/>
-    				<label for="session_citystate">City, State:</label><input type="text" name="session_citystate" value="{ $values.city }" { if $user.user_id == $owner and $user.administrator }{ else }disabled="disabled"{ /if } /><br/>
+    				<label for="session_citystate">City, State:</label><input type="text" name="session_citystate" value="{ $values.city }" { if $user.user_id != $values.owner_id and !$user.administrator }disabled="disabled"{ /if } /><br/>
     				<span class="hint">Example: "Boston, Ma"</span><br/>
-    				    <label for="session_hidden">Hidden:</label><input type="checkbox" id="session_hidden" name='{$values.session_id}' <br/>
+    				    <label for="session_hidden">Hidden:</label><input type="checkbox" id="session_hidden" name='session_hidden' { if $hideme }checked="checked"{ /if }/><br/>
     			</fieldset>
     			<fieldset>
 			    	<legend>Step 2: Review and Finish</legend>
@@ -62,7 +62,11 @@
 		{ else }
 		    <fieldset id="basic-info">
 				<legend>You've successfully edited your session!</legend>
-				<p>Congratulations, you've successfully edited your session! Click <a href="vis.php?sessions={ $sid }">here</a> to view it.
+				{ if !$hide }
+				    <p>Congratulations, you've successfully hidden your session! <a href="experiment.php?id={ $id }">Click here to return to the experiment</a>.
+				{ else }
+				    <p>Congratulations, you've successfully edited your session! <a href="vis.php?sessions={ $sid }">View your session</a> or <a href="experiment.php?id={ $id }">return to the experiment</a>.
+				{ /if }
 			</fieldset>
 		{ /if }
 	</div>
