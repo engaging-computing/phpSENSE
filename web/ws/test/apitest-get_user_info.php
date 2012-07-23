@@ -1,5 +1,5 @@
     <?php
-$session_key= "500438cc6b240";
+require_once('apitest-login.php') ;
 function getExperimentByUserTest($id){
     global $session_key;
     //The target for this test

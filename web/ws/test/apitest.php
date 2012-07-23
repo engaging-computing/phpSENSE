@@ -51,8 +51,6 @@
 // ***apitest-experiment.php***
 // uploadImageToExperiment
 
-// Note to Jim: Need to fix mysql error - user -1 has images, otherwise Get Images By User Test fails
-
 require_once('../../includes/config.php');
 
 //Log in token used to authenticate a user
@@ -97,7 +95,7 @@ echo "<hr>";
 
 echo "<div class=\"testheading\">Starting login test....<br></div>";
 
-require_once('apitest-login.php');
+require('apitest-login.php');
 
 //echo "<div class=\"testheading\">Starting Experiment Test...<br></div>";
 
