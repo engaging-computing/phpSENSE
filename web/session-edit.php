@@ -44,7 +44,7 @@ if(isset($_GET['id'])) {
     
     $exp = getExperimentNameFromSession($sid);
     
-    $title = "Edit Session > <a href='experiment.php?id={$exp['experiment_id']}'>{$exp['name']}</a> > {$values['name']}";
+    $title = "Edit Session > {$exp['name']} > {$values['name']}";
     
     // Output to view
     $smarty->assign('values', $values);
