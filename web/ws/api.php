@@ -394,7 +394,10 @@ if(isset($_REQUEST['method'])) {
                 } else if ($uid == null){ //Cannot create session without valid credentials
                     $status=400;
                     $data = array('msg'=>"Not logged in");
-                } else { //Try and create a session
+                } else if (getExperiment($eid) == null){
+                    $status=400;
+                    $data = array('msg'=>"Invalid Experiment ID");
+                }else { //Try and create a session
                     if($sid = createSession(array('uid' => $uid, 'session' => $session_key), $eid, $name, $description, $street, $city, $country, $default_read, $default_contribute, $finalized)) {
                         $status = 200;
                         $data = array('sessionId' => $sid ."");
@@ -411,7 +414,7 @@ if(isset($_REQUEST['method'])) {
 	    case "updateSessionData":
 
 	        $params = array("sid", "eid", "session_key", "data");
-	        $msg = "Hooray!";
+	        $msg = "";
 	        $req = $_REQUEST;
 	        $pass = true;
 
@@ -441,7 +444,13 @@ if(isset($_REQUEST['method'])) {
     	        } else if ($uid == null) { //Cannot add data without valid credentials.
                     $status=400;
                     $data = array('msg'=>"Not logged in");
-    	        } else { //Try and put data.
+    	        } else if(getExperiment($eid)!=null){ //Cannot add data to invalid experiment.
+                    $status=400;
+                    $data = array('msg'=>"Invalid experiment");
+    	        } else if (getSession($sid)==null){ //Cannot add data to invalid session.
+                    $status=400;
+                    $data = array('msg'=>"Invalid session");
+    	        }else{ //Try and put data.
                     if(($count = putData($eid, $sid, $proc_data)) > 0) {
                         $data = array("msg" => "worked");
                         $status = 200;

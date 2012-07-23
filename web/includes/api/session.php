@@ -293,7 +293,7 @@ function isSessionHidden( $ses ) {
     
     $output = $db->query('SELECT finalized FROM sessions WHERE session_id = ' . $ses . ';');
     
-    return $output[0]['finalized'];
+    return !$output[0]['finalized'];
 
 }
 
