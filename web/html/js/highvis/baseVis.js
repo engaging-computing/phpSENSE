@@ -79,13 +79,18 @@
         _this = this;
       this.chartOptions = {
         chart: {
-          renderTo: this.canvas
+          renderTo: this.canvas,
+          animation: false
         },
         credits: {
           enabled: false
         },
         plotOptions: {
           series: {
+            marker: {
+              lineWidth: 1,
+              radius: 5
+            },
             events: {
               legendItemClick: function(event) {
                 var index;
@@ -184,10 +189,11 @@
         fieldIndex = data.normalFields[index % data.normalFields.length];
         groupIndex = Math.floor(index / data.normalFields.length);
         if ((__indexOf.call(globals.groupSelection, groupIndex) >= 0) && (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0)) {
-          _results.push(this.chart.series[index + data.normalFields.length].show());
+          this.chart.series[index + data.normalFields.length].setVisible(true, false);
         } else {
-          _results.push(this.chart.series[index + data.normalFields.length].hide());
+          this.chart.series[index + data.normalFields.length].setVisible(false, false);
         }
+        _results.push(this.chart.redraw());
       }
       return _results;
     };
@@ -199,7 +205,6 @@
 
 
     BaseVis.prototype.clearControls = function() {
-      ($('#controldiv')).find('*').unbind();
       return ($('#controldiv')).html('');
     };
 
@@ -240,13 +245,13 @@
         group = _ref5[gIndex];
         controls += '<tr><td>';
         controls += "<div class=\"vis_control_table_div\" style=\"color:" + globals.colors[counter] + ";\">";
-        controls += "<input class=\"group_input\" type=\"checkbox\" value=\"" + gIndex + "\" " + ((_ref6 = Number(gIndex), __indexOf.call(globals.groupSelection, _ref6) >= 0) ? "checked" : "") + "></input>&nbsp";
+        controls += "<input class='group_input' type='checkbox' value='" + gIndex + "' " + ((_ref6 = Number(gIndex), __indexOf.call(globals.groupSelection, _ref6) >= 0) ? "checked" : "") + "/>&nbsp";
         controls += "" + group + "&nbsp";
         controls += "</div></td></tr>";
         counter += 1;
       }
       controls += '</table></div>';
-      ($('#controldiv')).html(($('#controldiv')).html() + controls);
+      ($('#controldiv')).append(controls);
       ($('.group_selector')).change(function(e) {
         var element, _ref7;
         element = e.target || e.srcElement;
@@ -268,45 +273,13 @@
         selection = [];
         ($('.group_input')).each(function() {
           if (this.checked) {
-            return selection.push(this.value);
+            console.log('checked');
+            return selection.push(Number(this.value));
+          } else {
+            return console.log('unchecked');
           }
         });
         globals.groupSelection = selection;
-        return _this.update();
-      });
-    };
-
-    /*
-        Draws Field selection controls as checkboxes
-            This includes a series of checkboxes with corresponding symbols from the graph.
-    */
-
-
-    BaseVis.prototype.drawFieldChkControls = function() {
-      var controls, field, _ref4,
-        _this = this;
-      controls = '<div id="fieldControl" class="vis_controls">';
-      controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Fields:</tr></td>';
-      for (field in data.fields) {
-        if ((7 !== (_ref4 = Number(data.fields[field].typeID)) && _ref4 !== 37)) {
-          controls += '<tr><td>';
-          controls += '<div class="vis_control_table_div">';
-          controls += "<input class=\"field_input\" type=\"checkbox\" value=\"" + field + "\" " + (__indexOf.call(globals.fieldSelection, field) >= 0 ? "checked" : "") + "></input>&nbsp";
-          controls += "" + data.fields[field].fieldName + "&nbsp";
-          controls += "</div></td></tr>";
-        }
-      }
-      controls += '</table></div>';
-      ($('#controldiv')).html(($('#controldiv')).html() + controls);
-      return ($('.field_input')).click(function(e) {
-        var selection;
-        selection = [];
-        ($('.field_input')).each(function() {
-          if (this.checked) {
-            return selection.push(this.value);
-          }
-        });
-        globals.fieldSelection = selection;
         return _this.update();
       });
     };
@@ -332,7 +305,7 @@
         }
       }
       controls += '</table></div>';
-      ($('#controldiv')).html(($('#controldiv')).html() + controls);
+      ($('#controldiv')).append(controls);
       return ($('.xAxis_input')).click(function(e) {
         var selection;
         selection = null;
