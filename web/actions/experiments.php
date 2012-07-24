@@ -28,8 +28,8 @@
 
 require_once '../includes/config.php';
 
+
 if(isset($_GET['action'])) {
-	
 	switch($_GET['action']) {
 		case "addfeature":
 			addFeaturedExperiment($_GET['id']);
@@ -46,23 +46,88 @@ if(isset($_GET['action'])) {
 			echo "worked!";
 			break;
 		
-		case "hide";
-			$user  = $session->getUser();
-			echo $user['administrator'];
-			if($user['administrator']) {
-				hideExperiment($_GET['id']);
-			}
-			echo "worked!";
-			break;
-		
-		case "unhide":
-			$user  = $session->getUser();
-			echo $user['administrator'];
-			if($user['administrator']) {
-				unhideExperiment($_GET['id']);
-			}
-			echo "worked!";
-			break;
+    	case "hide":
+    		$user = $session->getUser();
+    		if($user['administrator'] || $user['user_id'] == $owner) {
+    			hideExperiment($_GET['id']);
+    		}
+    		echo "worked!";
+    		break;
+
+    	case "unhide":
+    		$user  = $session->getUser();
+    		if($user['administrator'] || $user['user_id'] == $owner) {
+    			unhideExperiment($_GET['id']);
+    		}
+    		echo "worked!";
+    		break;
+    			
+    	case "hideSes":
+        	$user = $session->getUser();
+        	$owner = getSessionOwner($_GET['id']);
+        	if($user['administrator'] || $user['user_id'] == $owner) {
+        		hideSession($_GET['id']);
+        	}
+        	echo "worked!";
+        	break;
+
+        case "unhideSes":
+        	$user  = $session->getUser();
+        	$owner = getSessionOwner($_GET['id']);
+        	if($user['administrator'] || $user['user_id'] == $owner) {
+        		unhideSession($_GET['id']);
+        	}
+        	echo "worked!";
+        	break;
+
+        case "closeExp":        
+            $user  = $session->getUser();
+            $owner = getExperimentOwner($_GET['id']);
+            if($user['administrator'] || $user['user_id'] == $owner) {
+                closeExperiment($_GET['id']);
+            }
+            echo "worked!";          
+            break;
+
+        case "uncloseExp":
+            $user  = $session->getUser();
+            $owner = getExperimentOwner($_GET['id']);
+            if($user['administrator'] || $user['user_id'] == $owner) {
+                uncloseExperiment($_GET['id']);
+            }
+            echo "worked!";
+            break;
+
+        //Promote an experiment as iSENSE recommended.
+        case "recommend":
+            $user  = $session->getUser();
+            $owner = getExperimentOwner($_GET['id']);
+            if($user['administrator'] || $user['user_id'] == $owner) {
+                recommendExperiment($_GET['id']);
+            }
+            echo "worked!";
+            break;
+            
+        //Demote an experiment from iSENSE recommended status.
+        case "unrecommend":
+            $user  = $session->getUser();
+            $owner = getExperimentOwner($_GET['id']);
+            if($user['administrator'] || $user['user_id'] == $owner) {
+                unrecommendExperiment($_GET['id']);
+            }
+            echo "worked!";
+            break;
+            
+        case "changeimage":
+
+            $user  = $session->getUser();
+            $owner = getExperimentOwner($_GET['eid']);
+            $url = $_GET['purl'];
+            $eid = $_GET['eid'];
+            if($user['administrator'] || $user['user_id'] == $owner) {
+                updateExperimentImage($url,$eid);
+            }
+            break;
 	}
 }
 

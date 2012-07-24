@@ -65,6 +65,8 @@ for( var ses in data.sessions ) {
 		this.visibility = on;
 	}
 	
+	data.sessions[ses].ses = ses;
+	
 	data.sessions[ses].getMaxVal = function( field ) {
 		var max = this.data[0][field];
 		for( var dP in this.data ) {
@@ -92,53 +94,87 @@ for( var ses in data.sessions ) {
 			mean += this.data[dP][field];
 		}
 		
-		return (mean / this.data[dP].length);
+
+		
+		return (mean / this.data.length);
 	}
 	
 	data.sessions[ses].getMedianVal = function( field ) {
 		var sortedData = data;
-		sortedData.qSort(field);
-		
-		if( this.data.length % 2 )
-			return sortedData[this.data.length/2];
-		else
-			return ((sortedData[(this.data.length/2)-.5]+sortedData[(this.data.length/2)+.5])/2)
-		
+		sortedData.qSortFieldNum(field);
+				
+		if( this.data.length % 2 ){
+			return sortedData.sessions[this.ses].data[Math.floor(this.data.length/2)][field];
+		} else {
+			return (sortedData.session[this.ses].data[Math.floor(this.data.length/2)][field]+sortedData.sessions[this.ses][Math.ceil(this.data.length/2)][field])/2;
+		}
+
 	}
 	
 	data.sessions[ses].getModeVal = function( field ) {
 		var tmp = new Array();
 		var max_count = 0;
-		var max = 0;
+		var max_index = null;
 		
+		//Init
 		for( var dP in this.data ) {
-			tmp[''+this.data[dp][field]+''] = 0;
+			
+			tmp[this.data[dP][field].toString()] = 0;
 		}	
 		
+		//Count repeats
 		for( var dP in this.data ) {
-			tmp[''+this.data[dp][field]+'']++;
+
+			tmp[this.data[dP][field].toString()] += 1;
 		}
 		
-		for( var dP in tmp) {
-			if( tmp[dP] > max_count )
-				max = dP;
+		//Pick Best
+		for (var key in tmp) {
+			if (tmp[key] > max_count) {
+				max_index = key;
+				max_count = tmp[key];
+			}
 		}
 		
-		return max;
+		return Number(max_index);
 		
 	}
 	
 }
 
 for( var field in data.fields ) {
-	
+    
 	data.fields[field].is_visible = function() {
-		return this.visibility;
+        if (this.type_id === 37){
+            //Text is always hidden
+            return 0;
+        }
+        else{
+            return this.visibility;
+        }
 	}
 	
 	data.fields[field].set_visiblity = function( on ) {
 		this.visibility = on;
 	}
+}
+
+data.getMedianVal = function( field, session ) {
+	
+	var sorteddata = data.sessions[session].data.sort(function(a,b){
+		
+		a[field]>b[field];
+		
+	});
+	
+	if( sorteddata.length % 2 ){
+		return sorteddata[Math.floor(sorteddata.length/2)][field];
+	} else {
+		return (sorteddata[Math.floor(sorteddata.length/2)][field]+sorteddata[Math.ceil(sorteddata.length/2)][field])/2;
+	}
+	
+	return null;
+
 }
 
 data.getSesMax = function ( field ) {
@@ -300,22 +336,46 @@ data.qSort = function( fieldName ) {
 	
 }
 
-data.avgField = function( fieldName ) {
+data.qSortFieldNum = function( fieldNum ) {
 	
-	var avg = 0;
+	for( field in data.fields )
+		if( field == fieldNum )
+			for( ses in data.sessions )
+				data.sessions[ses].data = quickSort(data.sessions[ses].data, field);
+	
+}
+
+data.avgFieldHelper = function (ses) {
+  var avg = 0;
+  var count = 0;
+
+  for(var dp in this.sessions[ses].data) {
+		avg += this.sessions[ses].data[dp][field];
+		count++;
+	}
+
+  return (avg/count);
+}
+
+data.avgField = function (fieldName,ses){
+    var avg = 0;
 	var count = 0;
 	
-	for(var field in this.fields )
-		if( this.fields[field].name.toLowerCase() == fieldName.toLowerCase() )
-			for(var ses in this.sessions ) {
-				for(var dp in this.sessions[ses].data) {
-					avg += this.sessions[ses].data[dp][field];
-					count++;
-				}
-			}
-	
-	return (avg/count);
-	
+	for(var field in this.fields ){
+		if( this.fields[field].name.toLowerCase() == fieldName.toLowerCase() ){
+      if(!ses) {
+        for(var ses in this.sessions) {
+          avg += this.avgFieldHelper(ses);
+          count++;
+        }
+      }
+      else {
+        return this.avgFieldHelper(ses);
+      }
+    }
+  }  
+  return avg/count;    
+
 }
 
 data.fullSort = function( fieldName ) {
@@ -331,3 +391,90 @@ data.fullSort = function( fieldName ) {
 			return quickSort(returnData, field);
 
 }
+
+/*
+ * Gets the minimum and maximum values for visible non-time data.
+ * 
+ * @return an array of [min, max]
+ */
+data.getVisibleDataBounds = function(zeroBounded) {
+    
+    var min, max;
+    if (zeroBounded){
+        max = 0;
+        min = 0;
+    }
+    else {
+        max = Number.NEGATIVE_INFINITY;
+        min = Number.POSITIVE_INFINITY;
+    }
+    
+    for (var i = 0; i < data.sessions.length; i++) {
+        for (var j = 0; j < data.fields.length; j++) {
+            if (data.fields[j].visibility === 1 && data.sessions[i].visibility === 1 &&
+                data.fields[j].type_id != 7) {
+                max = Math.max(max, Math.max.apply(null, data.getDataFrom(i, j)));
+                min = Math.min(min, Math.min.apply(null, data.getDataFrom(i, j)));
+            }
+        }
+    }
+    
+    return [min, max];
+}
+
+/*
+ * Gets the minimum and maximum values for visible times.
+ * 
+ * @return an array of [min, max]
+ */
+data.getVisibleTimeBounds = function() {
+    var max = 0;
+    var min = Number.POSITIVE_INFINITY;
+    
+    for (var i = 0; i < data.sessions.length; i++) {
+        for (var j = 0; j < data.fields.length; j++) {
+            if (data.fields[j].visibility === 1 && data.sessions[i].visibility === 1 &&
+                data.fields[j].type_id == 7) {
+                max = Math.max(max, Math.max.apply(null, data.getDataFrom(i, j)));
+                min = Math.min(min, Math.min.apply(null, data.getDataFrom(i, j)));
+            }
+        }
+    }
+    
+    return [min, max];
+}
+
+/*
+ * Gets the minimum and maximum values for visible data of the given fields.
+ * 
+ * @param fields an array of field names, eg. ['humidity', 'temperature'].
+ * 
+ * @return an array of [min, max]
+ */
+data.getFieldBounds = function(fields, zeroBounded) {
+    
+    var min, max;
+    if (zeroBounded){
+        max = 0;
+        min = 0;
+    }
+    else {
+        max = Number.NEGATIVE_INFINITY;
+        min = Number.POSITIVE_INFINITY;
+    }
+    
+    for (var i = 0; i < data.sessions.length; i++) {
+        for (var j = 0; j < data.fields.length; j++) {
+            for (f in fields) {
+                if (data.sessions[i].visibility === 1 &&
+                    data.fields[j].name.toLowerCase() === fields[f].toLowerCase()) {
+                    max = Math.max(max, Math.max.apply(null, data.getDataFrom(i, j)));
+                    min = Math.min(min, Math.min.apply(null, data.getDataFrom(i, j)));
+                }
+            }
+        }
+    }
+    
+    return [min, max];
+}
+

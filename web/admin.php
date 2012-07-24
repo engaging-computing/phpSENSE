@@ -204,27 +204,51 @@ switch($action) {
 		
 		if(isset($_POST['create'])) {
 			$etitle = "";
-			if(isset($_POST['title'])) { $etitle = safeString($_POST['title']); }
-			if($etitle == "") { array_push($errors, 'Title can not be blank'); }
+			if(isset($_POST['title'])) { 
+                $etitle = safeString($_POST['title']); 
+            }
+			if($etitle == "") { 
+                array_push($errors, 'Title can not be blank'); 
+            }
 			
 			$description = "";
-			if(isset($_POST['description'])) { $description = safeString($_POST['description']); }
-			if($description == "") { array_push($errors, 'Description can not be blank'); }
+			if(isset($_POST['description'])) { 
+                $description = safeString($_POST['description']); 
+            }
+			if($description == "") { 
+                array_push($errors, 'Description can not be blank'); 
+            }
 			
 			$location = "";
-			if(isset($_POST['location'])) { $location = safeString($_POST['location']); }
-			if($location == "") { array_push($errors, 'Location can not be blank.'); }
+			if(isset($_POST['location'])) { 
+                $location = safeString($_POST['location']); 
+            }
+			if($location == "") { 
+                array_push($errors, 'Location can not be blank.'); 
+            }
 			
 			$start = "";
-			if(isset($_POST['start'])) { $start = safeString($_POST['start']);  } 
-			if($start == "") { array_push($errors, 'Start date can not be blank.'); }
+			if(isset($_POST['start'])) { 
+                $start = safeString($_POST['start']);  
+            } 
+			if($start == "") { 
+                array_push($errors, 'Start date can not be blank.'); 
+            }
 			
 			$end = "";
-			if(isset($_POST['end'])) { $end = safeString($_POST['end']); }
-			if($end == "") { array_push($errors, 'End date can not be blank.'); }
-			
+			if(isset($_POST['end'])) { 
+                $end = safeString($_POST['end']); 
+            }
+			if($end == "") { 
+                array_push($errors, 'End date can not be blank.'); 
+            }
+    
+           $starttime = new DateTime($start);
+           $endtime = new DateTime($end);
+			    
 			if(count($errors) == 0) {
-				createEvent($session->generateSessionToken(), $etitle, $description, $location, $start, $end);
+				createEvent($session->generateSessionToken(), $etitle, $description, $location, 
+                    $starttime->format("Y-m-d H:i:s"), $endtime->format("Y-m-d H:i:s"));
 				$title = 'Successfully Created New Event';
 				$done = true;
 			}
@@ -288,6 +312,36 @@ switch($action) {
 		
 		break;
 	
+    /* Session Actions */
+    case "sessionunhide":
+        $sids = explode(":", $_GET['sid']);
+		foreach( $sids as $sid )
+			unhideSession( $sid );
+
+		break;
+
+    case "sessionmanage":  
+        $title = 'Manage Sessions';
+        $data = adminGetSessions($_GET['id']);
+        $action_template = 'admin/session-manage.tpl';
+		break;
+
+    case "sessionhide":
+        
+		$sids = explode(":", $_GET['sid']);
+		foreach( $sids as $sid )
+			hideSession( $sid );
+
+		break;
+
+    case "sessiondelete":
+		$sids = explode(":", $_GET['sid']);
+		foreach( $sids as $sid )
+			deleteSession( $sid );
+
+		break;
+
+
 	/* Experiment Actions */
 	case "experimentsmanage":
 		$title = 'Manage Experiments';

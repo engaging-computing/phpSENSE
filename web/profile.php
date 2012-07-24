@@ -39,7 +39,7 @@ if(isset($_GET['id'])) {
 	}
 }
 
-$userdata = getUserDetails($id);
+$userdata = getPublicProfile($id);
 
 $data = array();
 $output = array();
@@ -63,10 +63,15 @@ else {
 
 $data['activity_responses'] = getResponsesFromUser($id);
 
+foreach($data['experiment'] as &$exp){
+    $exp['session_count'] = countNumberOfSessions($exp['experiment_id']);
+} 
+
 // Compile the user's media
 foreach($data as $key => $value) {
 	if(is_array($value)) {
 		foreach($value as $v) {
+            
 			$v['type'] = $key;
 			$output[] = $v;
 		}
@@ -107,6 +112,7 @@ else {
     $smarty->assign('title', $userdata['firstname'] . ' ' . $userdata['lastname'] . '\'s Profile');
 }
 
+$smarty->assign('user_avatar', getUserAvatar($id));
 $smarty->assign('userdata', $userdata);
 
 $smarty->assign('user', $session->getUser());

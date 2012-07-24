@@ -1,11 +1,11 @@
-/*! Copyright (c) 2010 Brandon Aaron (http://brandonaaron.net)
+/*! Copyright (c) 2011 Brandon Aaron (http://brandonaaron.net)
  * Licensed under the MIT License (LICENSE.txt).
  *
  * Thanks to: http://adomas.org/javascript-mouse-wheel/ for some pointers.
  * Thanks to: Mathias Bank(http://www.mathias-bank.de) for a scope bug fix.
  * Thanks to: Seamus Leahy for adding deltaX and deltaY
  *
- * Version: 3.0.4
+ * Version: 3.0.6
  * 
  * Requires: 1.2.2+
  */
@@ -13,6 +13,12 @@
 (function($) {
 
 var types = ['DOMMouseScroll', 'mousewheel'];
+
+if ($.event.fixHooks) {
+    for ( var i=types.length; i; ) {
+        $.event.fixHooks[ types[--i] ] = $.event.mouseHooks;
+    }
+}
 
 $.event.special.mousewheel = {
     setup: function() {
@@ -53,8 +59,8 @@ function handler(event) {
     event.type = "mousewheel";
     
     // Old school scrollwheel delta
-    if ( event.wheelDelta ) { delta = event.wheelDelta/120; }
-    if ( event.detail     ) { delta = -event.detail/3; }
+    if ( orgEvent.wheelDelta ) { delta = orgEvent.wheelDelta/120; }
+    if ( orgEvent.detail     ) { delta = -orgEvent.detail/3; }
     
     // New school multidimensional scroll (touchpads) deltas
     deltaY = delta;
@@ -65,26 +71,14 @@ function handler(event) {
         deltaX = -1*delta;
     }
     
-
-    // Webkit    
-    var userAgent = navigator.userAgent.toLowerCase();
-    
-    var wheelDeltaScaleFactor = 1;
-    if (jQuery.browser.msie || (jQuery.browser.webkit && !(/chrome/.test(userAgent)))) {
-      wheelDeltaScaleFactor = 40;
-    }
-
-    if (orgEvent.wheelDeltaY !== undefined) { 
-        deltaY = orgEvent.wheelDeltaY / 120 / wheelDeltaScaleFactor;
-    }
-    if (orgEvent.wheelDeltaX !== undefined) {
-        deltaX = -1*orgEvent.wheelDeltaX / 120 / wheelDeltaScaleFactor;
-    }
+    // Webkit
+    if ( orgEvent.wheelDeltaY !== undefined ) { deltaY = orgEvent.wheelDeltaY/120; }
+    if ( orgEvent.wheelDeltaX !== undefined ) { deltaX = -1*orgEvent.wheelDeltaX/120; }
     
     // Add event and delta to the front of the arguments
     args.unshift(event, delta, deltaX, deltaY);
     
-    return $.event.handle.apply(this, args);
+    return ($.event.dispatch || $.event.handle).apply(this, args);
 }
 
 })(jQuery);

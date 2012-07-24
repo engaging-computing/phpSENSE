@@ -32,12 +32,11 @@ $errors = array();
 $title = "Experiment Not Found";
 $time = false;
 $is_activity = false;
-if(isset($_GET['id'])) {
-		
+if(isset($_GET['id'])) {	
 	$id = (int) safeString($_GET['id']);
 	$meta = getExperiment($id);
 	$is_activity = ($meta['activity'] == 1);
-
+	
 	if(count($meta) > 0) {
 		
 		// Grab some meta data
@@ -89,12 +88,18 @@ if(isset($_GET['id'])) {
 		$smarty->assign('expimages',	$images);
 		$smarty->assign('videos', 	$videos);
 		$smarty->assign('collabs', 	$collabs);
+		
+		//Get user avatars
+                $userAvatars = array();
+                foreach ($sessions as $index=>$ses) {
+                    $sessions[$index]['owner_avatar'] = getUserAvatar($ses['owner_id'], 32);
+                }
 		$smarty->assign('sessions', 	$sessions);
 		
 		$votes = ($meta['rating_votes'] == 0) ? 1 : $meta['rating_votes'];
 		$rating = $meta['rating'] / $votes;
 		$smarty->assign('rating', round($rating, 0));
-		
+		$smarty->assign('newvis',1);
 		
 		
 	}
@@ -106,6 +111,17 @@ else {
 	array_push($errors, "The experiment you're looking for is no longer available.");
 }
 
+//Build the qr codes string
+$qrcode = "http://".$_SERVER['SERVER_NAME']."/experiment.php?id=".$id;
+$filename = "data/qrs/".$id.".png";
+
+//Generate the qr code
+QRcode::png($qrcode,$filename);
+
+//Assign the qr code
+$smarty->assign('qrcode', $filename);
+
+
 $smarty->assign('id',		$id);
 $smarty->assign('activity',	$is_activity);
 $smarty->assign('user', 	$session->getUser());
@@ -113,5 +129,7 @@ $smarty->assign('title', 	$title);
 $smarty->assign('head', 	$smarty->fetch('parts/experiment-head.tpl'));
 $smarty->assign('content', 	$smarty->fetch('experiment.tpl'));
 $smarty->display('skeleton.tpl')
+
+
 
 ?>

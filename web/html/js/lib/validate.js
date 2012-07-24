@@ -25,20 +25,30 @@ $(document).ready( function() {
 			// to be 0.
 			// WARNING: Only attach the tag to fields that contain a value with a 
 			// length property.
-			$(document).find('.required').each(function( i, key ) {
-				if( $(key).attr('value').length == 0)
-					validationFailed = 1;
-			});
+			
+			if( $('#manual_upload').attr('checked') == 'checked' ){
+			    $(document).find('.required').each(function( i, key ) {
+				    if( $(key).attr('value').length == 0)
+					    validationFailed = 1;
+			    });
 		
-			if( validationFailed ) {
-				$('#error_rows').text('Please fill out at least one value from each row').show().css('color', 'red');
-			}		
-			// Only do the following if we are on the Upload page. Otherwise
-			// this doesn't make sense.
-			else if(formID == "#upload_form")
-				readyUploadForm();
-			else 
-				$(document).find('form')[0].submit();
+			    if( validationFailed ) {
+				    $('#error_rows').text('Please fill out at least one value from each row').show().css('color', 'red');
+			    }
+			    
+			    // Only do the following if we are on the Upload page. Otherwise
+    			// this doesn't make sense.
+    			else if(formID == "#upload_form")
+    				readyUploadForm();
+    			else 
+    				$(document).find('form')[0].submit();
+			} else {
+			    if(formID == "#upload_form")
+    				readyUploadForm();
+    			else 
+    				$(document).find('form')[0].submit();
+			}
+
 			},
 			
 		//Overwrite default error function

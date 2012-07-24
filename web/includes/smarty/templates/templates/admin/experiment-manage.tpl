@@ -51,6 +51,7 @@
 			<td>Last Modified</td>
 			<td>Hidden?</td>
 			<td>Featured?</td>
+            <td>Manage Sessions</td>
 		</tr>
 		{ if $data|@count > 0 }
 			{ foreach from=$data item=experiment }
@@ -62,6 +63,7 @@
 					<td>{ $experiment.timemodified }</td>
 					<td class="hidden">{ if $experiment.hidden == 1 }Yes{ else }No{ /if }</td>
 					<td class="featured">{ if $experiment.featured == 1 }Yes{ else }No{ /if }</td>
+                    <td><a href="admin.php?action=sessionmanage&id={$experiment.experiment_id}"><input type="button"  value="Manage"/></a></td>
 				</tr>
 			{ /foreach }
 		{ else }

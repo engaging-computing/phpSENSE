@@ -162,7 +162,7 @@ if(!function_exists('isense_custom_post_box')) {
     }
 }
 
-// Create the global for boxes, because Wordpress is fucking dumb
+// Create the global for boxes, because Wordpress is dumb
 if(!function_exists('isense_save_postdata')) {
     function isense_save_postdata($post_id, $post) {
         global $boxes;

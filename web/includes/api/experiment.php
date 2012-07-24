@@ -26,7 +26,7 @@
  * DAMAGE.
  */
  
-function createExperiment($token, $name, $description, $fields, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
+function createExperiment($token, $name, $description, $fields, $req_name=1, $req_procedure=1, $req_location=1, $name_prefix=null, $location=null, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
 	global $db;
 	
 	$uid = $token['uid'];
@@ -44,7 +44,7 @@ function createExperiment($token, $name, $description, $fields, $defaultJoin = t
 		return false;
 	}
 	
-	$db->query("INSERT INTO experiments ( experiment_id, owner_id, name, description, timecreated, timemodified, default_read, default_join) VALUES ( NULL, {$uid}, '{$name}', '{$description}', NOW(), NOW(), {$defaultBrowse}, {$defaultJoin})");
+	$db->query("INSERT INTO experiments ( experiment_id, owner_id, name, description, timecreated, timemodified, default_read, default_join ,req_name, req_procedure, req_location, name_prefix, location) VALUES ( NULL, {$uid}, '{$name}', '{$description}', NOW(), NOW(), {$defaultBrowse}, {$defaultJoin}, '{$req_name}', '{$req_procedure}', '{$req_location}', '{$name_prefix}', '{$location}')");
 
 	if($db->numOfRows) {
 		
@@ -61,15 +61,24 @@ function createExperiment($token, $name, $description, $fields, $defaultJoin = t
 }
 
 function getExperiment($eid) {
-	global $db;
-										
-	$output = $db->query("SELECT experiments.*, users.firstname, users.lastname FROM experiments, users WHERE experiments.owner_id = users.user_id AND experiments.experiment_id = {$eid}");
-	
-	if($db->numOfRows) {
-		return $output[0];
-	}
-	
-	return false;
+    global $db;
+
+    $result = $db->query("SELECT private FROM users WHERE user_id = {$eid} LIMIT 0,1");
+
+    $output = $db->query("SELECT experiments.*,
+        users.firstname,
+        users.lastname
+        FROM experiments,
+        users
+        WHERE experiments.owner_id = users.user_id AND experiments.experiment_id = {$eid}");
+
+    //Filter private last names
+    if($result[0]['private']) {
+        $output[0]['lastname'] = substr(ucfirst($output[0]['lastname']), 0, 1) . '.';
+    }
+
+
+    return $output[0];
 }
 
 function updateExperiment($eid, $values) {
@@ -216,6 +225,18 @@ function getExperimentNameFromSession($sid) {
 	return 'Visualization';
 }
 
+function getNameFromEid( $eid ) {
+    global $db;
+    
+    $output = $db->query("SELECT name FROM experiments WHERE experiment_id = {$eid}");
+    
+	if($db->numOfRows) {
+		return $output[0]['name'];
+	}
+
+	return 'Visualization';
+}
+
 function getExperimentsByTag($tag) {
 	global $db;
 	
@@ -225,11 +246,14 @@ function getExperimentsByTag($tag) {
 					users.lastname AS owner_lastname
 	                FROM tagIndex, tagExperimentMap, experiments
 	                LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-	                WHERE tagIndex.value = '{$tag}' 
+	                WHERE tagIndex.value LIKE '%{$tag}%' 
 	                AND tagIndex.tag_id = tagExperimentMap.tag_id 
 	                AND experiments.experiment_id = tagExperimentMap.experiment_id 
-	                AND tagIndex.weight = 1";
-	                
+	                AND tagIndex.weight = 1
+                    ORDER BY experiments.timemodified DESC";           
+	          
+
+      
 	$output = $db->query($sql);
 	
 	if($db->numOfRows) {
@@ -237,6 +261,27 @@ function getExperimentsByTag($tag) {
 	}
 	
 	return false;
+}
+
+function getExperimentsByName($tags){
+	global $db;
+	
+    $sql = "SELECT DISTINCT experiments.* FROM experiments where experiments.name LIKE '{$tags}'";
+    for($i=0; $i<count($tags);$i++){
+            $sql .= "OR experiments.name LIKE '{$tags[$i]}%'";       
+    }
+
+    
+    
+   	$output = $db->query($sql);
+  
+	if($db->numOfRows) {
+		return $output;
+	}
+	 
+	return false;
+          
+
 }
 
 function getFields($eid) {
@@ -282,162 +327,29 @@ function experimentHasTime($eid) {
 }
 
 function packageBrowseExperimentResults($results, $page = 1, $limit = 10, $override = false) {
-	
-	$output = array();
-	
-	if($page != -1) {
-		$offset = ($page - 1) * $limit;
-		$results =  array_splice($results, $offset, $limit);
+    
+    $output = array();
 
-		if(!$override) {
-			foreach($results as $result) {
-			    $sessioncount = countNumberOfSessions($result['experiment_id']);
-				$contribcount = countNumberOfContributors($result['experiment_id']);
-			    
-				$output[$result['experiment_id']] = array("meta" => $result, "tags" => array(), "relevancy" => 0, 'session_count' => $sessioncount, 'contrib_count' => $contribcount);
-			}
-		}
-		else {
-			foreach($results as $result) {
-				
-				$contribcount = (isset($result['contrib_count'])) ? $result['contrib_count'] : countNumberOfContributors($result['experiment_id']);
-				$sessioncount = (isset($result['session_count'])) ? $result['session_count'] : countNumberOfContributors($result['experiment_id']);
-			    
-				$output[] = array("meta" => $result, "tags" => array(), "relevancy" => 0, 'session_count' => $sessioncount, 'contrib_count' => $contribcount);
-			}
-		}
-		
-		return $output;
-	}
-	else {
-		return count($results);
-	}
+    foreach($results as $result) {
+        $sessioncount = countNumberOfSessions($result['experiment_id']);
+        $contribcount = countNumberOfContributors($result['experiment_id']);
+        $tags = getTagsForExperiment($result['experiment_id']);
+        $output[$result['experiment_id']] = array("meta" => $result, "tags" => array(), "relevancy" => 0, 'session_count' => $sessioncount, 'contrib_count' => $contribcount);
+    }
+
+    return $output;
 }
 
-function browseExperimentsByRecent($page = 1, $limit = 10, $override = false) {
-	global $db;
-	
-	$sqlCmd = "SELECT 	experiments.*, 
-						(experiments.rating / experiments.rating_votes ) AS rating_comp,
-						users.firstname AS owner_firstname, 
-						users.lastname AS owner_lastname
-						FROM experiments 
-						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-						WHERE experiments.hidden = 0
-						AND experiments.activity = 0
-						ORDER BY experiments.timemodified DESC";
-	
-	$output = $db->query($sqlCmd);
+function pagifyBrowseExperimentResults($results, $page = 1, $limit = 10, $override = false) {
 
-	if($db->numOfRows) {		
-		return packageBrowseExperimentResults($output, $page, $limit, $override);
-	}
-		
-	return false;
-} 
+    $output = array();
 
-function browseExperimentsByRating($page = 1, $limit = 10, $override = false) {
-	global $db;
-	
-	$sqlCmd = "SELECT 	experiments.*, 
-						(experiments.rating / experiments.rating_votes ) AS rating_comp,
-						users.firstname AS owner_firstname, 
-						users.lastname AS owner_lastname
-						FROM experiments 
-						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-						WHERE experiments.hidden = 0
-						AND experiments.activity = 0
-						ORDER BY (experiments.rating / experiments.rating_votes) DESC, experiments.timemodified DESC";
-	
-	$output = $db->query($sqlCmd);
+   
+        $offset = ($page - 1) * $limit;
+        $results =  array_splice($results, $offset, $limit);
+        return $results;
+    
 
-	if($db->numOfRows) {
-		return packageBrowseExperimentResults($output, $page, $limit, $override);
-	}
-		
-	return false;
-}
-
-function browseExperimentsByFeatured($page = 1, $limit = 10, $override = false) {
-	global $db;
-	
-	$sqlCmd = "SELECT 	experiments.*, 
-						(experiments.rating / experiments.rating_votes ) AS rating_comp,
-						users.firstname AS owner_firstname, 
-						users.lastname AS owner_lastname
-						FROM experiments 
-						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-						WHERE experiments.featured = 1
-						AND experiments.hidden = 0
-						AND experiments.activity = 0
-						ORDER BY experiments.timemodified DESC";
-	
-	$output = $db->query($sqlCmd);
-
-	if($db->numOfRows) {
-		return packageBrowseExperimentResults($output, $page, $limit, $override);
-	}
-		
-	return false;
-}
-
-function browseExperimentsByPopular($page = 1, $limit = 10, $override = false) {
-	global $db;
-	
-	$sqlCmd = "SELECT 	experiments.*, 
-						(experiments.rating / experiments.rating_votes ) AS rating_comp,
-						users.firstname AS owner_firstname, 
-						users.lastname AS owner_lastname
-						FROM experiments 
-						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-						WHERE experiments.hidden = 0
-						AND experiments.activity = 0
-						ORDER BY experiments.timemodified DESC";
-	
-	$output = $db->query($sqlCmd);
-
-	if($db->numOfRows) {
-		for($i = 0; $i < count($output); $i++) {
-			$contrib_count = countNumberOfContributors($output[$i]['experiment_id']);
-			$output[$i]['contrib_count'] = $contrib_count;
-		}
-				
-		uasort($output, 'contrib_cmp');
-		//$output = array_reverse($output);
-		
-		return packageBrowseExperimentResults($output, $page, $limit, $override);
-	}
-		
-	return false;
-}
-
-function browseExperimentsByActivity($page = 1, $limit = 10, $override = false)  {
-	global $db;
-	
-	$sqlCmd = "SELECT 	experiments.*, 
-						(experiments.rating / experiments.rating_votes ) AS rating_comp,
-						users.firstname AS owner_firstname, 
-						users.lastname AS owner_lastname
-						FROM experiments 
-						LEFT JOIN ( users ) ON ( users.user_id = experiments.owner_id ) 
-						WHERE experiments.hidden = 0
-						AND experiments.activity = 0";
-	
-	$output = $db->query($sqlCmd);
-
-	if($db->numOfRows) {
-		for($i = 0; $i < count($output); $i++) {
-			$session_count = countNumberOfSessions($output[$i]['experiment_id']);
-			$output[$i]['session_count'] = $session_count;
-		}
-		
-		uasort($output, 'session_cmp');
-		$output = array_reverse($output);
-				
-		return packageBrowseExperimentResults($output, $page, $limit, $override);
-	}
-		
-	return false;
 }
 
 function browseExperimentsByUser($user_id) {
@@ -588,5 +500,141 @@ function getAllExperiments() {
     return false;
 }
 
+function isNameRequired($eid){
+    global $db;
+    $sql = "SELECT req_name FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]["req_name"];
+}
+
+function isLocationRequired($eid){
+    global $db;
+    $sql = "SELECT req_location FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]["req_location"];
+}
+
+function isProcedureRequired($eid){
+    global $db;
+    $sql = "SELECT req_procedure FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]['req_procedure'];
+}
+
+function getSessionPrefix($eid){
+    global $db;
+    $sql = "SELECT name_prefix FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]['name_prefix'];
+}
+
+function getExperimentLocation($eid){
+    global $db;
+    $sql = "SELECT location FROM experiments WHERE experiments.experiment_id={$eid}";
+    $query = $db->query($sql);
+    return $query[0]['location'];
+}
+
+function getSessionOffset($eid) {
+    global $db;
+    $sql = "SELECT DISTINCT COUNT(*) FROM experimentSessionMap WHERE experiment_id={$eid};";
+    $query = $db->query($sql);
+    return $query[0]['COUNT(*)'];
+}
+
+function getExpOwner($sid) {
+    global $db;
+    
+    $sql = "SELECT owner_id FROM experiments WHERE experiment_id=( SELECt experiment_id FROM experimentSessionMap WHERE session_id={$sid} )";
+    $query = $db->query($sql);
+    
+    if($db->numOfRows) {
+        return $query;
+    }
+    
+    return false;
+}
+
+function closeExperiment($eid){
+    global $db;
+    
+    $sql = "UPDATE experiments SET closed=1 where experiment_id={$eid}";
+
+    $query = $db->query($sql);
+
+    return true;
+    
+}
+
+function uncloseExperiment($eid){
+    global $db;
+    $sql = "UPDATE experiments SET closed=0 where experiment_id={$eid}";
+
+    $query = $db->query($sql);
+
+    return true;
+}
+
+function experimentClosed($eid){
+    global $db;
+    
+    $sql = "SELECT closed FROM experiments WHERE experiment_id={$eid}";
+    $query = $db->query($sql);
+    
+    if($query[0]['closed'] == 1){
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+function getExperimentOwner($eid){
+
+    global $db;
+    
+    $sql = "SELECT owner_id FROM experiments WHERE experiment_id={$eid} LIMIT 0,1";
+    
+    $output = $db->query($sql);
+
+    if($db->numOfRows) {
+        return $output[0]['owner_id'];
+    }
+
+    return false;
+
+}
+
+function updateExperimentImage($url,$eid){
+    global $db;
+    
+    $sql = "UPDATE experiments SET exp_image='{$url}' WHERE experiment_id={$eid}";
+
+    $output = $db->query($sql);
+
+    return true;
+}
+
+//Promote an experiment as iSENSE recommended.
+function recommendExperiment($eid){
+    global $db;
+
+    $sql = "UPDATE experiments SET recommended=1 WHERE experiment_id={$eid}";
+
+    $output = $db->query($sql);
+
+    return true;
+}
+
+//Demote an experiment from iSENSE recommended status.
+function unrecommendExperiment($eid){
+    global $db;
+
+    $sql = "UPDATE experiments SET recommended=0 WHERE experiment_id={$eid}";
+
+    $output = $db->query($sql);
+
+    return true;
+}
 
 ?>

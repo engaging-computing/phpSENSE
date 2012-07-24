@@ -67,6 +67,7 @@ function getVisByUser($uid) {
 									visualizations.url_params,
 									visualizations.hidden, 
 									visualizations.timecreated,
+									visualizations.description,
 									visualizations.timecreated AS `timeobj`,
 									experiments.name AS `experiment_name`, 
 									experiments.description  AS `experiment_description`,
@@ -201,37 +202,6 @@ function getNumberOfVisualizations() {
 	$output = $db->query("SELECT COUNT(*) AS `count` FROM visualizations WHERE visualizations.is_activity = 0");
 	
 	return $output[0]['count'];
-}
-
-function packageBrowseVisualizationsResults($results, $page = 1, $limit = 10) {
-	
-	if($page != -1) {
-		$output = array();
-		$offset = ($page - 1) * $limit;
-		$results =  array_splice($results, $offset, $limit);
-
-		foreach($results as $result) {
-			$output[$result['vis_id']] = array("meta" => $result, "tags" => array(), "relevancy" => 0);
-		}
-
-		return $output;
-	}
-	else {
-		return count($results);
-	}
-}
-
-function browseVisualizationsByTimeCreated($page = 1, $limit = 10) {
-	global $db;
-	
-	$sql = "SELECT visualizations.*, users.firstname, users.lastname FROM visualizations, users WHERE visualizations.owner_id = users.user_id AND visualizations.is_activity = 0 ORDER BY visualizations.timecreated DESC";
-	$results = $db->query($sql);
-	
-	if($db->numOfRows) {
-		return packageBrowseVisualizationsResults($results, $page, $limit);
-	}
-	
-	return false;
 }
 
 function updateTimeModifiedForVis($vid) {

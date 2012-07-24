@@ -118,6 +118,18 @@ function getSession($sid) {
 	return false;
 }
 
+function getSessionPictures($sid){
+    global $db;
+
+    return $db->query("SELECT pictures.provider_url,
+                              pictures.description
+                       FROM pictures 
+                       WHERE pictures.session_id = {$sid}");
+
+   return $output;
+}
+
+
 function updateSession($sid, $values) {
     global $db;
     
@@ -157,35 +169,71 @@ function addFieldToSession($token, $sid, $name, $type_id, $unit_id = 1) {
 
 function getSessionsForExperiment($eid) {
 	global $db;
-	
+		
 	$sql = "SELECT 	sessions.session_id, 
-									sessions.owner_id, 
-									sessions.name, 
-									sessions.description, 
-					 				experimentSessionMap.experiment_id,
-									sessions.street, 
-									sessions.city, 
-									sessions.country,
-									sessions.latitude,
-									sessions.longitude, 
-									sessions.timecreated, 
-									sessions.timemodified,
-									sessions.debug_data, 
-									users.firstname, 
-									users.lastname 
-									FROM users, experimentSessionMap, sessions
-									WHERE experimentSessionMap.experiment_id = {$eid}
-									AND sessions.session_id = experimentSessionMap.session_id
-									AND sessions.finalized = 1
-									AND users.user_id = sessions.owner_id
-									ORDER BY sessions.timecreated DESC";	
-	$output = $db->query($sql);
-										
+                    sessions.owner_id, 
+                    sessions.name, 
+                    sessions.description, 
+                    experimentSessionMap.experiment_id,
+                    sessions.street, 
+                    sessions.city, 
+                    sessions.country,
+                    sessions.latitude,
+                    sessions.longitude, 
+                    sessions.timecreated, 
+                    sessions.timemodified,
+                    sessions.debug_data, 
+                    users.firstname, 
+                    users.lastname,
+                    users.private
+                    FROM users, experimentSessionMap, sessions
+                    WHERE experimentSessionMap.experiment_id = {$eid}
+                    AND sessions.session_id = experimentSessionMap.session_id
+                    AND sessions.finalized = 1
+                    AND users.user_id = sessions.owner_id
+                    ORDER BY sessions.timecreated DESC";	
+	$result = $db->query($sql);
+	
+	//Filter private last names
+	foreach($result as $index => $r) {
+        if($r['private']) {
+            $result[$index]['lastname'] = substr(ucfirst($r['lastname']), 0, 1) . '.';
+        }
+	}
+	
+	$output = $result;
+		
 	if($db->numOfRows) {
 		return $output;
 	}
 	
 	return false;	
+}
+
+function getSessionTitles($sids){
+    global $db;
+
+    $sql = "SELECT name,session_id FROM sessions WHERE session_id = ";
+    foreach($sids as $index=>$sid) {
+        if( $index == 0 )
+            $sql .= $sid . ' ';
+        else
+            $sql .= ' OR session_id = ' . $sid;
+    }
+
+    $sql .= ' AND finalized = 1 ORDER BY session_id ASC';
+
+    $output = $db->query($sql);
+
+
+    $result = array();
+    
+    foreach ($output as $tmp){
+        $result[$tmp['session_id']]=$tmp['name'];
+    }
+
+    return $result;
+   
 }
 
 function getSessionOwner($sid) {
@@ -223,8 +271,9 @@ function browseMySessions($uid) {
 									sessions.timecreated, 
 									sessions.timemodified,
 									sessions.timemodified AS `timeobj`,
+									sessions.owner_id,
 									experiments.experiment_id,
-									experiments.name AS `experiment_name` 
+									experiments.name AS `experiment_name`
 									FROM sessions, experimentSessionMap, experiments 
 									WHERE sessions.owner_id = {$uid} 
 									AND experimentSessionMap.session_id = sessions.session_id
@@ -237,6 +286,15 @@ function browseMySessions($uid) {
 	}
 	
 	return false;
+}
+
+function isSessionHidden( $ses ) {
+    global $db;
+    
+    $output = $db->query('SELECT finalized FROM sessions WHERE session_id = ' . $ses . ';');
+    
+    return !$output[0]['finalized'];
+
 }
 
 function getNumberOfSessions() {
@@ -273,44 +331,52 @@ function updateTimeModifiedForSession($sid) {
 function putData($eid, $sid, $data) {
 	global $db, $mdb;
 	
+    //pull meta from experiment
 	$fields = getFields($eid);
 	$field_names = array();
 	$row_count = 0;
 	
+    //fill field_names[] from experiment meta data
 	foreach($fields as $field) {
 		$field_names[] = $field['field_name'];
 	}
 			
+    //i think this is a nasty version of if( isset($data) )
 	if(($count = count($data)) > 0) {
+        //for each data point (datum)
 	    foreach($data as $datum) {
 
+            //associatiave array that holds data to be entered
     		$row = array();
 
     		for($i = 0; $i < count($field_names); $i++) {
     			$value = $datum[$i];
 
-    			if(is_numeric($value) && (strcasecmp($field_names[$i], "time") != 0)) {
+                //hackey mongo wierdness
+    			if(is_numeric($value) ) {
     				$value = $value + 0;
     			}
 
+                //fill row with values to enter into mongo
     			$row[str_replace(".", "", $field_names[$i])] = $value;
     		}
 
     		$row['experiment'] = (int) $eid;
     		$row['session'] = (int) $sid;
 
+            //insert row of data into mongo
     		$mdb->insert("e{$eid}", $row);
 
     		$row_count++;	
     	}
 	}
 
-	
+	//if successful
 	if($row_count > 0) {
 	    $dbname = MDB_DATABASE;
     	$filename = "mongodb://localhost/{$dbname}/{$eid}/session:{$sid}";
 
-
+        //post meta data
     	$db->query("INSERT INTO data (`session_id`, `format`, `uri`) VALUES({$sid}, 'local_csv', '{$filename}')");
     	updateTimeModifiedForSession($sid);
 	}
@@ -321,12 +387,14 @@ function putData($eid, $sid, $data) {
 function getData($eid, $sid, $get_header = false, $strip_keys = true) {
     global $mdb;
 
-    $excluded = array("session", "experiment", "_id");
+    $excluded = array("session", "experiment");
+
+    $fields = getFields($eid);
     $data = array();
     
     // Get the data from MongoDB
 	$results = $mdb->find("e{$eid}", array("session" => (int)$sid));
-	
+
 	if(count($results) > 0) {
 	    if($get_header) {
     	    $header = array();
@@ -339,6 +407,17 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
         	$data[] = $header;
     	}
 
+        //print_r($results);
+
+    	foreach($results as $i => $r) {
+    	    foreach($fields as $f) {
+    	        $data[$i][$f['field_name']] = $r[$f['field_name']];
+    	    }
+    	}
+    	    	
+    	$results = $data;
+    	unset($data);
+
     	if($strip_keys) {
     	    // Package the data so it makes sense
         	foreach($results as $result) {
@@ -349,7 +428,7 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
         		}
 
         		$data[] = $row;
-        	}
+        	}        	
     	}
     	else {
     	    foreach($results as $result) { 
@@ -363,7 +442,8 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
         	}
     	}
 	}
-	
+
+
 	return $data;
 }
 
@@ -402,6 +482,41 @@ function getDataSince($eid, $sid, $since) {
 	}
 	
 	return $output;
+}
+
+function deleteSession($sid){
+    global $db;
+    $output = $db->query("DELETE FROM sessions where session_id={$sid}");
+    $output = $db->query("DELETE FROM experimentSessionMap where session_id={$sid}");
+	if($db->numOfRows) {
+		return true;
+	}
+	
+	return false;
+}
+
+function hideSession($sid) {
+	global $db;
+	
+	$output = $db->query("UPDATE sessions SET sessions.finalized = 0 WHERE sessions.session_id = {$sid}");
+	
+	if($db->numOfRows) {
+		return true;
+	}
+	
+	return false;
+}
+
+function unhideSession($sid) {
+	global $db;
+	
+	$output = $db->query("UPDATE sessions SET sessions.finalized = 1 WHERE sessions.session_id = {$sid}");
+	
+	if($db->numOfRows) {
+		return true;
+	}
+	
+	return false;
 }
 
 /*

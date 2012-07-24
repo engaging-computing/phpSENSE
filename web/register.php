@@ -65,13 +65,16 @@ if(isset($_POST['submit'])) {
 	if($last_name == "") { array_push($errors, 'Last name can not be blank.'); }
 
 	if(isset($_POST['street'])) { $street = safeString($_POST['street']); }
-	if($street == "") { array_push($errors, 'Street can not be blank.'); }
+	//if($street == "") { array_push($errors, 'Street can not be blank.'); }
 
 	if(isset($_POST['citystate'])) { $city_state = safeString($_POST['citystate']); }
 	if($city_state == "") { array_push($errors, 'City and state can not be blank.'); }
 
 	if(isset($_POST['country'])) { $country = safeString($_POST['country']); }
 	if($country == "") { array_push($errors, 'Country can not be blank.'); }
+	
+    //Need to add a private checkbox, for now everyone is private
+    $private = 1;
 	
 	if($password != $confirm_password) { array_push($errors, 'Passwords do not match'); }
 	
@@ -81,7 +84,7 @@ if(isset($_POST['submit'])) {
                                     $_POST["recaptcha_response_field"]);
 	if ($resp->is_valid) {
 		if(count($errors) == 0) {
-			if(register($email, $first_name, $last_name, $password, $street, $city_state, $country)) {
+			if(register($email, $first_name, $last_name, $password, $street, $city_state, $country, $private)) {
 				$registered = true;
 			} elseif (!assertUserDoesNotExists($email)) 
 			{
@@ -99,6 +102,8 @@ if(!$registered) {
 }
 else {
 	$session->login($email, $password);
+    echo '<META HTTP-EQUIV="Refresh" Content="0; URL=index.php">';    
+    exit;   
 }
 
 $smarty->assign('errors', $errors);

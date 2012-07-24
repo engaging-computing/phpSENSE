@@ -152,20 +152,18 @@ function sort_relevancy($a, $b) {
 	return ($a['relevancy'] < $b['relevancy']);
 }
 
-function sort_exp_popularity($a, $b) {
-	if($a['contrib_count'] == $b['contrib_count']) {
-		return 0;
-	}
-	
-	return ($a['contrib_count'] < $b['contrib_count']);
+function getVersionNumber(){
+    return exec('git describe --tags');
 }
 
-function sort_exp_activity($a, $b) {
-	if($a['session_count'] == $b['session_count']) {
-		return 0;
-	}
-	
-	return ($a['session_count'] < $b['session_count']);
+//Sort experiments by popularity
+function exp_popularitySort($a,$b){
+    return  $b["contrib_count"] - $a["contrib_count"];
+}
+
+//Sort experiments by activity
+function exp_activitySort($a,$b){
+    return  $b["session_count"] - $a["session_count"];
 }
 
 function dateDifference($day_1, $day_2) {

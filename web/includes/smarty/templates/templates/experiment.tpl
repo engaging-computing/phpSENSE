@@ -76,6 +76,13 @@
 							<span id="loading_msg" style="display:none;">Loading...</span>
 						</td>
 					</tr>
+                    <tr>
+                        <td class="heading" valign="top">Recommend:</td>
+                        <td>
+                            <input type="checkbox" id="recommend_experiment" name="recommend_experiment" value="{$meta.experiment_id}" {if $meta.recommended == 1}checked{/if}/>
+                            <span id="recommended_loading_msg" style="display:none;">Loading...</span>
+                        </td>
+                    </tr>
 					<tr>
 						<td class="heading" valign="top">Hidden:</td>
 						<td>
@@ -84,6 +91,15 @@
 						</td>
 					</tr>
 				{ /if }
+				{ if $user.user_id == $meta.owner_id or $user.administrator == 1 }
+                    <tr>
+                        <td class="heading" valign="top">Closed:</td>
+                        <td>
+                            <input type="checkbox" id="close_experiment" name="close_experiment" value="{$meta.experiment_id}" {if $meta.closed == 1}checked{/if}/>
+                            <span id="close_loading_message" style="display:none;">Loading...</span>
+                        </td>
+                    </tr>
+                { /if }
 			</table>
 		</div>
 	</div>
@@ -110,18 +126,19 @@
 						{ if $meta.experiment_id == 350 }
     	                	<div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Contribute" onclick="window.location.href='./tsor.php';"/> - Contribute data to this experiment.</div>
 						{ else }
-							<div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Contribute" onclick="window.location.href='upload.php?id={$meta.experiment_id}';"/> - Contribute data to this experiment.</div>
+                            <div id="contribute" style="margin:0px 0px 6px 0px;" {if $meta.closed == 1 }hidden="hidden" {/if} ><input type="submit" style="width:73px;" value="Contribute" onclick="window.location.href='upload.php?id={$meta.experiment_id}';" /> - Contribute data to this experiment.</div>
 						{ /if }
 
     	                <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Export" onclick="loadExport({$meta.experiment_id});"/> - Download data from selected sessions.</div>
     	                <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Activity" onclick="createActivity({$meta.experiment_id});"/> - Create an activity for users to complete.</div>
     	                { if $user.user_id == $meta.owner_id or $user.administrator == 1 }
     	                    <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Edit" onclick="window.location.href='experiment-edit.php?id={$meta.experiment_id}'"/> - Edit this experiment.</div>
+    	                    <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Image" onclick="window.location.href='pickexpimage.php?id={$meta.experiment_id}'"/> - Set the picture that will show should this experiment be featured.</div>
     	                { /if }
     	            { /if }
     	            <div><input type="submit" style="width:73px;" value="{if not $activity}Visualize{else}Complete{/if}" onclick="loadVis({$meta.experiment_id}, {if $activity}true{else}false{/if});"/> - {if $activity}View data for this experiment and solve for the prompt.{else}Select sessions below to visualize data{/if}</div>
     	            { if not $activity and $user.administrator == $user.administrator }
-            	        <div><input type="submit" style="width:73px;" value="{if not $activity}Vis Beta{else}Complete{/if}" onclick="loadVis2({$meta.experiment_id}, {if $activity}true{else}false{/if});"/> - Use our visualizations beta to examine your data. </div>
+            	        <div><input type="submit" style="margin:6px 0px 0px 0px; width:73px;" value="{if not $activity}Vis Beta{else}Complete{/if}" onclick="loadVis2({$meta.experiment_id}, {if $activity}true{else}false{/if});"/> - Use our visualizations beta to examine your data. </div>
             	    { /if }
     	        </div>
     	    </div>
@@ -133,59 +150,63 @@
 				<div>Experiment Data</div>
 			</div>
 			<div class="popular_body">
-				<table id="session_list" width="100%" cellpadding="0" cellspacing="0">
-					{ if $sessions }
-						{ foreach from=$sessions item=session key=i }
-							<tr>
-								<td width="35%" style="border-bottom:1px solid #CCC;">
-									<div style="padding:3px 0px;">
-										<table width="100%" cellpadding="0" cellspacing="0">
-											<tr>
-												<td rowspan="4"><input type="checkbox" name="sessions" value="{ $session.session_id }" { if $i == 0 }checked{/if}></td>
-											</tr>
-											<tr >
-												<td rowspan="4" width="34px"><img src="picture.php?id={ $session.owner_id }&h=32&w=32" height="32px" width="32px"></td>
-											</tr>
-											<tr>
-												<td valign="top"><a href="profile.php?id={ $session.owner_id }">{ $session.firstname } { $session.lastname }</a>
-											</tr>
-											<tr>
-												<td valign="top">
-													{ $session.timecreated }
-												</td>
-											</tr>
-										</table>
-									</div>
-								</td>
-								<td style="border-bottom:1px solid #CCC;" { if $session.owner_id != $user.user_id } colspan="2" {/if}>
-									<a href="{if $newvis==1}new{/if}vis.php?sessions={ $session.session_id }">{ $session.name }</a>
-									{ if $user.administrator == 1 }<br/>{ $session.debug_data }{ /if }
-								</td>
-								<td style="border-bottom:1px solid #CCC;">
-									{ counter start=0 skip=1 assign='imginc' }
-									{ foreach from=$expimages item=expimg key=j }
-										{ if $expimg.session_id == $session.session_id && $imginc < 7 }
-											{ counter }
-											<a class="nounderline" href="{ $expimg.provider_url }">
-												<img src="{ $expimg.provider_url }" width="30px" height="30px"/>
-											</a>
-										{ /if }
-									{ /foreach }
-								</td>
-								{ if $session.owner_id == $user.user_id or $user.administrator == 1 }
-								    <td style="border-bottom:1px solid #CCC;">
-										<a href="session-upload-pictures.php?sid={ $session.session_id }&id={ $id }">Add Image</a> - 
-								        <a href="javascript:void(0);" onclick="window.location.href='session-edit.php?id={$session.session_id}';">Edit</a>
-								    </td>
-								{ /if }
-							</tr>
-						{ /foreach }
-					{ else }
-						<tr>
-							<td style=" padding:6px 0px 0px 0px; font-weight:bold; font-style: italic;">No sessions were found.</td>
-						</tr>
+				<div id="session_list" width="100%" cellpadding="0" cellspacing="0">
+                    { if $sessions }
+                        { foreach from=$sessions item=session key=i }
+                                <div class="session_cell">
+                                    <div class="session_select">
+                                        <input type="checkbox" name="sessions" value="{$session.session_id}" {if $i == 0}checked{/if} />
+                                    </div>
+                                    
+                                    <div class="owner_img">
+                                        <img src="{$session.owner_avatar}&h=32&w=32" width="32px" height="32px" />
+                                    </div>
+                                    
+                                    <div class="owner_name">
+                                        <a href="profile.php?id={ $session.owner_id }">{ $session.firstname } { $session.lastname }</a>
+                                    </div>
+                                    
+                                    <div class="session_name">
+                                        <a href="newvis.php?sessions={ $session.session_id }">{ $session.name|truncate:27 }</a>
+                                    </div>
+                                    
+                                    <div class="pictures_maybe">
+                                        { counter start=0 skip=1 assign='imginc' }
+                                        { foreach from=$expimages item=expimg key=j }
+                                            { if $expimg.session_id == $session.session_id && $imginc < 7 }
+                                                { counter }
+                                                <a class="nounderline" href="{ $expimg.provider_url }">
+                                                    <img src="{ $expimg.provider_url }" width="30px" height="30px"/>
+                                                </a>
+                                            { /if }
+                                        { /foreach }
+                                    </div>
+                                    
+                                    {if $user.administrator == 1 or $meta.owner_id == $user.user_id or $session.owner_id == $user.user_id}
+                                        <div id="experiment_control_panel">
+                                            <div class="add_img">
+                                                {if $user.administrator == 1 or $meta.owner_id == $user.user_id or $session.owner_id == $user.user_id}
+                                                    <a href="session-upload-pictures.php?sid={ $session.session_id }&id={ $id }">Add Image</a>
+                                                { /if }
+                                            </div>
+                                            
+                                            <div class="edit_session">
+                                                { if $user.administrator == 1 or $meta.owner_id == $user.user_id or $session.owner_id == $user.user_id}
+                                                    <a href="javascript:void(0);" onclick="window.location.href='session-edit.php?id={$session.session_id}';">Edit Session</a>
+                                                { /if }
+                                            </div>
+                                            
+                                            <div class="edit_data">
+                                                {if $user.administrator == 1 or $session.owner_id == $user.user_id}
+                                                    <a href-"javasript:void(0)" onclick="window.location.href='/edit.php?exp={$session.experiment_id}&ses={$session.session_id}';">Edit Data</a>
+                                                { /if }
+                                            </div>
+                                        </div>
+                                    {/if}
+                                </div>
+                        { /foreach }
 					{ /if }
-				</table>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -193,8 +214,9 @@
 
 <div id="sidebar">
 	<div class="module">
-		<h1>Session Map</h1>
-		<div id="minimap"><div id="map_canvas" style="margin:4px 0px 0px 0px; width:240px; height:240px; overflow:hidden;"></div></div>
+		<h1>QR Code</h1>
+
+		<div id="qrcode" style="text-align: center;"><img src="{$qrcode}" /><div id="qrcode" style="margin:4px 0px 0px 0px;  overflow:hidden;"></div></div>
 	</div>
 	
 	<div class="module">
