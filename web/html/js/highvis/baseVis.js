@@ -85,6 +85,10 @@
         credits: {
           enabled: false
         },
+        legend: {
+          symbolWidth: 60,
+          itemWidth: 200
+        },
         plotOptions: {
           series: {
             marker: {
@@ -123,8 +127,14 @@
             data: [],
             color: '#000',
             marker: {
-              symbol: globals.symbols[count % globals.symbols.length]
+              symbol: 'blank'
             },
+            dashStyle: globals.dashes[count % globals.symbols.length],
+            /*
+                            marker:
+                                symbol: globals.symbols[count % globals.symbols.length]
+            */
+
             name: field.fieldName
           });
         }

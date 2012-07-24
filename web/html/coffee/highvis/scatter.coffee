@@ -52,7 +52,7 @@ class window.Scatter extends BaseVis
                     color: globals.colors[groupIndex % globals.colors.length]
                     marker:
                         symbol: globals.symbols[symbolIndex % globals.symbols.length]
-                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
+                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName                    
                     
                 @chartOptions.series.push options
     

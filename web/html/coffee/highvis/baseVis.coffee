@@ -55,7 +55,9 @@ class window.BaseVis
                 enabled: false
             #global: {}
             #labels: {}
-            #legend: {}
+            legend:
+                symbolWidth:60
+                itemWidth: 200
             #loading: {}
             plotOptions:
                 series:
@@ -89,7 +91,12 @@ class window.BaseVis
                 data: []
                 color: '#000'
                 marker:
+                    symbol:'blank'
+                dashStyle: globals.dashes[count % globals.symbols.length]
+                ###
+                marker:
                     symbol: globals.symbols[count % globals.symbols.length]
+                ###
                 name: field.fieldName
 
     ###
