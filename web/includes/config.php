@@ -106,6 +106,9 @@ require_once 'session.php';
 $session = new Session();
 $session->start();
 
+/* Sanitize */
+require_once 'sanitizer.php';
+
 /* Include API Libraries */
 require_once API_DIR . 'authentication.php';
 require_once API_DIR . 'event.php';

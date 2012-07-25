@@ -67,7 +67,7 @@ else if(isset($_GET['type']) && isset($_GET['id'])) {
 else if(isset($_GET['url'])) {
 	$src = $_GET['url'];
 }
-
+error_log("IM LOGGING HERE:  " . $src);
 if($src != "") {
 	list($width, $height, $type) = getimagesize($src);
 
