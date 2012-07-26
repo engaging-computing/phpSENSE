@@ -137,7 +137,7 @@
 				<fieldset>
 			    	<legend>Step 4: Review and Finish</legend>
 			    	    <p style="padding:6px 0px;">When you are finished reviewing your experiment, click the Create Experiment button to continue.</p>
-					    <button id="experiment_create" name="experiment_create" type="submit" disabled="disabled">Create Experiment</button>
+					    <button id="experiment_create" name="experiment_create" type="submit">Create Experiment</button>
 				</fieldset>
 			{ else }
 			
