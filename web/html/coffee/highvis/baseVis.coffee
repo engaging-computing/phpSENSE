@@ -216,10 +216,8 @@ class window.BaseVis
             selection = []
             ($ '.group_input').each ()->
                 if @checked
-                    console.log 'checked'
                     selection.push Number @value
                 else
-                    console.log 'unchecked'
             globals.groupSelection = selection
             @update()
             

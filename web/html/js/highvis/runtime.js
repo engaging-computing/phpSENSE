@@ -67,7 +67,7 @@
     */
 
     ($('#vis_select')).children().children().click(function() {
-      if (global.curVis != null) {
+      if (globals.curVis != null) {
         globals.curVis.end();
       }
       /* Remove old selection

@@ -140,7 +140,7 @@
   _ref2 = [[0, "down"], [1 / 4, "right"], [2 / 4, "up"], [3 / 4, "left"]];
   for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
     _ref3 = _ref2[_j], phase = _ref3[0], direction = _ref3[1];
-    addRadialMarkerStyle("" + direction + "-tri", 3, phase);
+    addRadialMarkerStyle("" + direction + "-tri", 3, phase, [Math.sqrt(0.5)]);
   }
 
   tempSymbolsMatrix[tempSymbolsMatrix.length] = [];

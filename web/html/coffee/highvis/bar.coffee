@@ -27,43 +27,52 @@
  *
 ###
 
-window.globals ?= {}
-globals.curVis = null
+class window.Bar extends BaseVis
+    constructor: (@canvas) ->
+    
+    analysisType: "Max"
+    
+    buildOptions: ->
+        super()
+        
+        @chartOptions
+        $.extend true, @chartOptions,
+            chart:
+                type: "column"
+            title:
+                text: "Bar"
+            xAxis:
+                categories:
+                    for fieldIndex in data.normalFields
+                        data.fields[fieldIndex].fieldName
+        
+        for groupIndex of data.groups
+            options = 
+                data: for fieldIndex in data.normalFields
+                    data.getMax(fieldIndex, @groupFilter)
+                showInLegend: false
+                name: data.groups[groupIndex]
+            @chartOptions.series.push options
+    
+    drawAnalysisTypeControls: ->
 
-###
-CoffeeScript version of runtime.
-###
-($ document).ready ->
-    ($ can).hide() for can in ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas']
-    
-    ### Generate tabs ###
-    for vis of data.relVis
-        ($ '#vis_select').append '<li class="vis_tab_' + vis + '"><a href="#">' + data.relVis[vis] + '</a></li>'
-        
-    ($ '#vis_select > li > a').css 'background-color', '#ccc'
-    ($ '#vis_select > li > a').css 'border-bottom', '1px solid black'
-        
-    ($ '.vis_tab_0 > a').css 'background-color', '#fff'
-    ($ '.vis_tab_0 > a').css 'border-bottom','1px solid white'
-        
-    globals.curVis = (eval 'globals.' + data.relVis[0].toLowerCase())
-        
-    ($ '#vis_select > li > a').unbind()
-    
-    ### Change vis click handler ###
-    ($ '#vis_select').children().children().click ->
-        globals.curVis.end() if globals.curVis?
-        
-        ### Remove old selection ###
-        ($ '#vis_select  > li > a').css 'background-color', '#ccc'
-        ($ '#vis_select  > li > a').css 'border-bottom','1px solid black'
+        controls =  '<div id="AnalysisTypeControl" class="vis_controls">'
             
-        globals.curVis = (eval 'globals.' + @text.toLowerCase())
+        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>'
         
-        ### Set new selection ###
-        ($ @).css "background-color", "#ffffff"
-        ($ @).css 'border-bottom','1px solid white'
+        controls += '<tr><td><div class="vis_control_table_div">'
         
-        globals.curVis.start()
-            
-    globals.curVis.start()
+        controls += '<select><option>Max</option><option>Min</option><option>Mean</option></select>'
+        
+        controls += '</div></td></tr>'
+        
+        controls += '</table></div>'
+        
+        # Write HTML
+        ($ '#controldiv').append controls
+        
+    drawControls: ->
+        @drawGroupControls()
+        @drawAnalysisTypeControls()
+
+globals.bar = new Bar 'bar_canvas'
