@@ -26,71 +26,59 @@
  * DAMAGE.
  */
 
-require_once 'includes/config.php';
+ /**
+  * Runs HTML-only sanitization on the given file(path).
+  * The file is modified then saved back to disk.
+  */
+function sanitizeFile($filename) {
 
-$targ_w = $targ_h = 150;
-$jpeg_quality = 90;
+    $contents = file_get_contents($filename);
 
-if(isset($_GET['h'])) {
-	$targ_h = (int) $_GET['h'];
+    //Files only need to be protected from js injection (not sql)
+    $contents = htmlentities($contents);
+
+    //Save sanitized data
+    $file = fopen($filename, "w");
+    fwrite($file, $contents);
+    fclose($file);
 }
 
-if(isset($_GET['w'])) {
-	$targ_w = (int) $_GET['w'];
+/**
+  * Preforms both HTML and SQL sanitization on the given string.
+  * Also sanitizes escapes to avoid unescaping escaped SQL input.
+  */
+function sanitizeString($string) {
+
+    $string = str_replace("\\", "", $string);
+    $string = mysql_real_escape_string($string);
+    $string = htmlentities($string);
+    
+    return $string;
 }
 
-$src = "";
-if(isset($_GET['id']) && !isset($_GET['type'])) {
-	
-	$user_id = (int)$_GET['id'];
+/**
+  * Runs sanitizeString on all contents of an array-like object recursively
+  */
+function sanitizeGeneric($obj) {
 
-	// This is just bad....
-	$src = PIC_DIR . $user_id . '.jpg';
-	if(!file_exists($src)) {
-		$src = PIC_DIR . $user_id . '.png';
-		if(!file_exists($src)) {
-			$src = PIC_DIR . $user_id . '.gif';
-			if(!file_exists($src)) {
-				$src = dirname(__FILE__) . '/html/img/user.jpg';
-			}
-		}
-	}
-}
-else if(isset($_GET['type']) && isset($_GET['id'])) {
-	$id = safeString($_GET['id']);
-	$imgs = getImagesForExperiment($id);
+    if (is_array($obj)) {
+        foreach ($obj as $key=>$val) {
+            $obj[$key] = sanitizeGeneric($val);
+        }
+    }
+    else {
+        return sanitizeString($obj);
+    }
 
-	if(count($imgs) > 1) {
-		header('Location: ' . $imgs[0]['provider_url']);
-	}
-}
-else if(isset($_GET['url'])) {
-	$src = $_GET['url'];
+    return $obj;
 }
 
-if($src != "") {
-	list($width, $height, $type) = getimagesize($src);
-
-	switch($type) {
-		case IMAGETYPE_JPEG:
-			$img_r = imagecreatefromjpeg($src);
-			break;
-
-		case IMAGETYPE_GIF:
-			$img_r = imagecreatefromgif($src);
-			break;
-
-		case IMAGETYPE_PNG:
-			$img_r = imagecreatefrompng($src);
-			break;
-	}
-
-	$dst_r = ImageCreateTrueColor( $targ_w, $targ_h );
-
-	imagecopyresampled($dst_r, $img_r, 0, 0, 0, 0, $targ_w, $targ_h, $width, $height);
-
-	header('Content-type: image/jpeg');
-	imagejpeg($dst_r, null, $jpeg_quality);
-}
+/**
+  * Sanitize all standard input vectors.
+  */
+$_POST    = sanitizeGeneric($_POST);
+$_GET     = sanitizeGeneric($_GET);
+$_REQUEST = sanitizeGeneric($_REQUEST);
+$_COOKIE  = sanitizeGeneric($_COOKIE);
 
 ?>
