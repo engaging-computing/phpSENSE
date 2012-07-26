@@ -103,11 +103,18 @@ function getActiveUsers() {
 }
 
 function safeString($string) {
-	if(get_magic_quotes_gpc()) {
+        /**
+         * This function has been deprecated in favor of using the input
+         * replacment in sanitizer.php
+         *
+         * This should be removed once all references to it have been deleted.
+         */
+	/*if(get_magic_quotes_gpc()) {
 		$string = stripslashes($string);
 	}
 	
-	return str_replace("`", "\`", mysql_real_escape_string($string));
+	return str_replace("`", "\`", mysql_real_escape_string($string));*/
+	return $string;
 }
 
 function contrib_cmp($a, $b) {
