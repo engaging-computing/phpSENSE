@@ -27,10 +27,10 @@
  *
 ###
 
-data.xySelector = (xIndex, yIndex, gIndex) ->
+data.xySelector = (xIndex, yIndex, groupIndex) ->
 
     rawData = @dataPoints.filter (dp) =>
-        (String dp[@groupIndex]).toLowerCase() == @groups[gIndex]
+        (String dp[@groupingFieldIndex]).toLowerCase() == @groups[groupIndex]
 
     if (Number @fields[xIndex].typeID) == 7
         mapFunc = (dp) ->
@@ -54,71 +54,92 @@ Selects an array of data from the given field index.
 if 'nans' is true then datapoints with NaN values in the given field will be included.
 'filterFunc' is a boolean filter that must be passed (true) for a datapoint to be included.
 ###
-data.selector = (fieldIndex, nans = false, filterFunc = ((dp) -> true)) ->
+data.selector = (fieldIndex, groupIndex, nans = false) ->
+
+    filterFunc = (dp) =>
+        (String dp[@groupingFieldIndex]).toLowerCase() == @groups[groupIndex]
+        
     newFilterFunc = if nans
         filterFunc
     else 
         (dp) -> (filterFunc dp) and (not isNaN dp[fieldIndex]) and (dp[fieldIndex] isnt null)
-
+        
     rawData = @dataPoints.filter newFilterFunc
+    
     rawData.map (dp) -> dp[fieldIndex]
 
 ###
 Gets the maximum (numeric) value for the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
 ###
-data.getMax = (fieldIndex, filterFunc = (dp) -> true) ->
-    rawData = @selector(fieldIndex, false, filterFunc)
-    rawData.reduce (a,b) -> Math.max(a,b)
+data.getMax = (fieldIndex, groupIndex) ->
+    rawData = @selector(fieldIndex, groupIndex)
+
+    if rawData.length > 0
+        rawData.reduce (a,b) -> Math.max(a,b)
+    else
+        null
 
 ###
 Gets the minimum (numeric) value for the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
 ###
-data.getMin = (fieldIndex, filterFunc = (dp) -> true) ->
-    rawData = @selector(fieldIndex, false, filterFunc)
-    rawData.reduce (a,b) -> Math.min(a,b)
+data.getMin = (fieldIndex, groupIndex) ->
+    rawData = @selector(fieldIndex, groupIndex)
+
+    if rawData.length > 0
+        rawData.reduce (a,b) -> Math.min(a,b)
+    else
+        null
 
 ###
 Gets the mean (numeric) value for the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
 ###
-data.getMean = (fieldIndex, filterFunc = (dp) -> true) ->
-    rawData = @selector(fieldIndex, false, filterFunc)
-    (rawData.reduce (a,b) -> a + b) / rawData.length
+data.getMean = (fieldIndex, groupIndex) ->
+    rawData = @selector(fieldIndex, groupIndex)
+
+    if rawData.length > 0
+        (rawData.reduce (a,b) -> a + b) / rawData.length
+    else
+        null
 
 ###
 Gets the median (numeric) value for the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
 ###
-data.getMedian = (fieldIndex, filterFunc = (dp) -> true) ->
-    rawData = @selector(fieldIndex, false, filterFunc)
+data.getMedian = (fieldIndex, groupIndex) ->
+    rawData = @selector(fieldIndex, groupIndex)
     rawData.sort()
     
     mid = Math.floor (rawData.length / 2)
-    
-    if rawData.length % 2
-        return rawData[mid]
+
+    if rawData.length > 0
+        if rawData.length % 2
+            return rawData[mid]
+        else
+            return (rawData[mid - 1] + rawData[mid]) / 2.0
     else
-        return (rawData[mid - 1] + rawData[mid]) / 2.0
+        null
         
 ###
 Gets a list of unique, non-null, stringified vals from the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
 ###
 data.setGroupIndex = (index) ->
-    @groupIndex = index
+    @groupingFieldIndex = index
     @groups = @makeGroups()
 
 ###
 Gets a list of unique, non-null, stringified vals from the group field index.
 ###
 data.makeGroups =  ->
-    rawData = @selector @groupIndex, true, (dp) -> dp[@groupIndex] isnt null
+    
     result = {}
     
-    for dat in rawData
-        result[String(dat).toLowerCase()] = true
+    for dp in @dataPoints
+        if dp[@groupingFieldIndex] isnt null
+            result[String(dp[@groupingFieldIndex]).toLowerCase()] = true
         
     keys for keys of result
     
@@ -148,6 +169,6 @@ data.numericFields = for index, field of data.fields when (Number field.typeID) 
 
 
 #Field index of grouping field
-data.groupIndex = 0
+data.groupingFieldIndex = 0
 #Array of current groups
 data.groups = data.makeGroups()
