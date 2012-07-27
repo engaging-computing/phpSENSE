@@ -38,11 +38,15 @@ if(isset($_GET['action']) && isset($_GET['follower']) && isset($_GET['followee']
     switch($action) {
         
         case "follow":
-            $result = addGraphEdge($follower, $followee);
+            if(isUser()){
+                $result = addGraphEdge($follower, $followee);
+            }
             break;
             
         case "unfollow":
-            $result = deleteGraphEdge($follower, $followee);
+            if(isUser()){
+                $result = deleteGraphEdge($follower, $followee);
+            }
             break;
     }
     

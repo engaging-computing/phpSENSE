@@ -1,6 +1,6 @@
 <?php
- /* Copyright (c) 2011, iSENSE Project. All rights reserved.
- *
+/* Copyright (c) 2011, iSENSE Project. All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
@@ -29,23 +29,25 @@
 require_once '../includes/config.php';
 
 if(isset($_GET['action'])) {
-	
-	switch($_GET['action']) {
-		case "delete":
-			deleteUser($_GET['id']);
-			echo "worked!";
-			break;
-		
-		case "reset":
-			resetUserPassword($_GET['id']);
-			echo "worked!";
-			break;
-		
-		case "admin":
-			makeUserAdmin($_GET['id']);
-			echo "worked!";
-			break;
-	}
+    
+    switch($_GET['action']) {
+        case "delete":
+            if(isAdmin()){
+                deleteUser($_GET['id']);
+            }
+            break;
+         /*   
+        case "reset":
+            resetUserPassword($_GET['id']);
+            echo "worked!";
+            break;
+           */ 
+        case "admin":
+            if(isAdmin()){
+                makeUserAdmin($_GET['id']);
+            }
+            break;
+    }
 }
 
 ?>
