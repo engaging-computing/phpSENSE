@@ -97,12 +97,12 @@ $flotval = (string) $config->flot;
 $flotval = (($flotval == "true") ? true : false);
 define('FLOT_ENABLED',      $flotval);
 
-/* Sanitize */
-require_once 'sanitizer.php';
-
 /* Initalizes the Database object */
 require_once 'database.php';
 require_once 'mongo.php';
+
+/* Sanitize */
+require_once 'sanitizer.php';
 
 /* Initalizes the Session object */
 require_once 'session.php';
