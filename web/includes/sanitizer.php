@@ -35,7 +35,7 @@ function sanitizeFile($filename) {
     $contents = file_get_contents($filename);
 
     //Files only need to be protected from js injection (not sql)
-    $contents = htmlentities($contents);
+    $contents = htmlentities($contents, ENT_NOQUOTES);
 
     //Save sanitized data
     $file = fopen($filename, "w");
@@ -51,7 +51,7 @@ function sanitizeString($string) {
 
     $string = str_replace("\\", "", $string);
     $string = mysql_real_escape_string($string);
-    $string = htmlentities($string);
+    $string = htmlentities($string, ENT_NOQUOTES);
     
     return $string;
 }
