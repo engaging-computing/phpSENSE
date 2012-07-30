@@ -108,8 +108,11 @@ halfmoonMagList      = [1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0]
 
 tempSymbolsMatrix = []
 symbolList        = ['circle', 'square', 'up-tri', 'down-tri', 'left-tri', 'right-tri', 'diamond']
+globals.dashes = ['solid', 'Dot', 'ShortDot', 'DashDot', 'ShortDashDot']
 
 tempSymbolsMatrix[tempSymbolsMatrix.length] = []
+
+addRadialMarkerStyle "blank", 1, 0, [0]
 
 tempSymbolsMatrix[tempSymbolsMatrix.length] = []
 for i in [2,3,4,6,10]

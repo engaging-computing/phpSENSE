@@ -85,6 +85,10 @@
         credits: {
           enabled: false
         },
+        legend: {
+          symbolWidth: 60,
+          itemWidth: 200
+        },
         plotOptions: {
           series: {
             marker: {
@@ -122,6 +126,12 @@
           _results.push(dummy = {
             data: [],
             color: '#000',
+            /*
+                            marker:
+                                symbol:'blank'
+                            dashStyle: globals.dashes[count % globals.symbols.length]
+            */
+
             marker: {
               symbol: globals.symbols[count % globals.symbols.length]
             },
@@ -186,8 +196,8 @@
       this.drawControls();
       _results = [];
       for (index = _i = 0, _ref4 = this.chart.series.length - data.normalFields.length; 0 <= _ref4 ? _i < _ref4 : _i > _ref4; index = 0 <= _ref4 ? ++_i : --_i) {
-        fieldIndex = data.normalFields[index % data.normalFields.length];
-        groupIndex = Math.floor(index / data.normalFields.length);
+        groupIndex = index % data.groups.length;
+        fieldIndex = data.normalFields[Math.floor(index / data.groups.length)];
         if ((__indexOf.call(globals.groupSelection, groupIndex) >= 0) && (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0)) {
           this.chart.series[index + data.normalFields.length].setVisible(true, false);
         } else {

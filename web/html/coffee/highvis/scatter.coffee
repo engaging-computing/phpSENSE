@@ -43,16 +43,16 @@ class window.Scatter extends BaseVis
             xAxis:
                 type: if (Number data.fields[globals.xAxis].typeID) == 7 then 'datetime' else 'linear'
 
-        
-        for groupIndex of data.groups
-            for symbolIndex, fieldIndex of data.normalFields
+
+        for symbolIndex, fieldIndex of data.normalFields
+            for groupIndex of data.groups
                 options =
                     data: data.xySelector(globals.xAxis, fieldIndex, groupIndex)
                     showInLegend: false
                     color: globals.colors[groupIndex % globals.colors.length]
                     marker:
                         symbol: globals.symbols[symbolIndex % globals.symbols.length]
-                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
+                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName                    
                     
                 @chartOptions.series.push options
     
