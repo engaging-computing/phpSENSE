@@ -90,13 +90,14 @@ class window.BaseVis
             dummy =
                 data: []
                 color: '#000'
+                ###
                 marker:
                     symbol:'blank'
                 dashStyle: globals.dashes[count % globals.symbols.length]
                 ###
                 marker:
                     symbol: globals.symbols[count % globals.symbols.length]
-                ###
+                
                 name: field.fieldName
 
     ###
@@ -143,8 +144,8 @@ class window.BaseVis
 
         #Update hidden state
         for index in [0...@chart.series.length - data.normalFields.length]
-            fieldIndex = data.normalFields[index % data.normalFields.length]
-            groupIndex = Math.floor (index / data.normalFields.length)
+            groupIndex = index % data.groups.length
+            fieldIndex = data.normalFields[Math.floor (index / data.groups.length)]
             
             if (groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection)
                 @chart.series[index + data.normalFields.length].setVisible(true, false)

@@ -43,7 +43,7 @@
     }
 
     Scatter.prototype.buildOptions = function() {
-      var fieldIndex, groupIndex, options, symbolIndex, _results;
+      var fieldIndex, groupIndex, options, symbolIndex, _ref, _results;
       Scatter.__super__.buildOptions.call(this);
       this.chartOptions;
       $.extend(true, this.chartOptions, {
@@ -58,14 +58,14 @@
           type: (Number(data.fields[globals.xAxis].typeID)) === 7 ? 'datetime' : 'linear'
         }
       });
+      _ref = data.normalFields;
       _results = [];
-      for (groupIndex in data.groups) {
+      for (symbolIndex in _ref) {
+        fieldIndex = _ref[symbolIndex];
         _results.push((function() {
-          var _ref, _results1;
-          _ref = data.normalFields;
+          var _results1;
           _results1 = [];
-          for (symbolIndex in _ref) {
-            fieldIndex = _ref[symbolIndex];
+          for (groupIndex in data.groups) {
             options = {
               data: data.xySelector(globals.xAxis, fieldIndex, groupIndex),
               showInLegend: false,
