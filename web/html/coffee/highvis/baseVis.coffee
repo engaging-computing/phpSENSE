@@ -28,7 +28,7 @@
 ###
 
 window.globals ?= {}
-globals.groupSelection ?= for keys of data.groups
+globals.groupSelection ?= for vals, keys in data.groups
     Number keys
 globals.fieldSelection ?= data.normalFields[0..0]
 globals.xAxis ?= data.numericFields[0]
@@ -115,6 +115,7 @@ class window.BaseVis
 
         #Sync hidden state from globals
         for ser in @chart.series[0...data.normalFields.length]
+            console.log ser
             index = data.normalFields[ser.index]
             if index in globals.fieldSelection
                 ser.show()
@@ -198,7 +199,7 @@ class window.BaseVis
         
         # Populate choices
         counter = 0
-        for gIndex, group of data.groups
+        for group, gIndex in data.groups
             controls += '<tr><td>'
             controls += "<div class=\"vis_control_table_div\" style=\"color:#{globals.colors[counter]};\">"
             
@@ -215,7 +216,7 @@ class window.BaseVis
         ($ '.group_selector').change (e) =>
             element = e.target or e.srcElement
             data.setGroupIndex (Number element.value)
-            globals.groupSelection ?= for keys of data.groups
+            globals.groupSelection ?= for vals, keys in data.groups
                 Number keys
             @start()
         
@@ -242,13 +243,13 @@ class window.BaseVis
         controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>'
         
         # Populate choices (not text)
-        for field of data.fields
-            if (Number data.fields[field].typeID) != 37
+        for field, fieldIndex in data.fields
+            if (Number data.fields[fieldIndex].typeID) != 37
                 controls += '<tr><td>'
                 controls += '<div class="vis_control_table_div">'
                 
-                controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{field}\" #{if (Number field) == globals.xAxis then "checked" else ""}></input>&nbsp"
-                controls += "#{data.fields[field].fieldName}&nbsp"
+                controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{fieldIndex}\" #{if (Number fieldIndex) == globals.xAxis then "checked" else ""}></input>&nbsp"
+                controls += "#{data.fields[fieldIndex].fieldName}&nbsp"
                 controls += "</div></td></tr>"
         
         controls += '</table></div>'

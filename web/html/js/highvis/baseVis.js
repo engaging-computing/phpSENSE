@@ -31,7 +31,7 @@
 
 
 (function() {
-  var keys, _ref, _ref1, _ref2, _ref3,
+  var keys, vals, _ref, _ref1, _ref2, _ref3,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   if ((_ref = window.globals) == null) {
@@ -40,9 +40,11 @@
 
   if ((_ref1 = globals.groupSelection) == null) {
     globals.groupSelection = (function() {
-      var _results;
+      var _i, _len, _ref2, _results;
+      _ref2 = data.groups;
       _results = [];
-      for (keys in data.groups) {
+      for (keys = _i = 0, _len = _ref2.length; _i < _len; keys = ++_i) {
+        vals = _ref2[keys];
         _results.push(Number(keys));
       }
       return _results;
@@ -160,6 +162,7 @@
       _ref4 = this.chart.series.slice(0, data.normalFields.length);
       for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
         ser = _ref4[_i];
+        console.log(ser);
         index = data.normalFields[ser.index];
         if (__indexOf.call(globals.fieldSelection, index) >= 0) {
           ser.show();
@@ -237,7 +240,7 @@
 
 
     BaseVis.prototype.drawGroupControls = function() {
-      var controls, counter, fieldIndex, gIndex, group, _i, _len, _ref4, _ref5, _ref6,
+      var controls, counter, fieldIndex, gIndex, group, _i, _j, _len, _len1, _ref4, _ref5, _ref6,
         _this = this;
       controls = '<div id="groupControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Groups:</tr></td>';
@@ -251,7 +254,7 @@
       controls += "</select></div></td></tr>";
       counter = 0;
       _ref5 = data.groups;
-      for (gIndex in _ref5) {
+      for (gIndex = _j = 0, _len1 = _ref5.length; _j < _len1; gIndex = ++_j) {
         group = _ref5[gIndex];
         controls += '<tr><td>';
         controls += "<div class=\"vis_control_table_div\" style=\"color:" + globals.colors[counter] + ";\">";
@@ -268,9 +271,11 @@
         data.setGroupIndex(Number(element.value));
         if ((_ref7 = globals.groupSelection) == null) {
           globals.groupSelection = (function() {
-            var _results;
+            var _k, _len2, _ref8, _results;
+            _ref8 = data.groups;
             _results = [];
-            for (keys in data.groups) {
+            for (keys = _k = 0, _len2 = _ref8.length; _k < _len2; keys = ++_k) {
+              vals = _ref8[keys];
               _results.push(Number(keys));
             }
             return _results;
@@ -301,16 +306,18 @@
 
 
     BaseVis.prototype.drawXAxisControls = function() {
-      var controls, field,
+      var controls, field, fieldIndex, _i, _len, _ref4,
         _this = this;
       controls = '<div id="xAxisControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>';
-      for (field in data.fields) {
-        if ((Number(data.fields[field].typeID)) !== 37) {
+      _ref4 = data.fields;
+      for (fieldIndex = _i = 0, _len = _ref4.length; _i < _len; fieldIndex = ++_i) {
+        field = _ref4[fieldIndex];
+        if ((Number(data.fields[fieldIndex].typeID)) !== 37) {
           controls += '<tr><td>';
           controls += '<div class="vis_control_table_div">';
-          controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"" + field + "\" " + ((Number(field)) === globals.xAxis ? "checked" : "") + "></input>&nbsp";
-          controls += "" + data.fields[field].fieldName + "&nbsp";
+          controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"" + fieldIndex + "\" " + ((Number(fieldIndex)) === globals.xAxis ? "checked" : "") + "></input>&nbsp";
+          controls += "" + data.fields[fieldIndex].fieldName + "&nbsp";
           controls += "</div></td></tr>";
         }
       }

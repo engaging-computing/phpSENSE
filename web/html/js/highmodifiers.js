@@ -205,10 +205,10 @@
 
 
   data.textFields = (function() {
-    var _ref, _results;
+    var _i, _len, _ref, _results;
     _ref = data.fields;
     _results = [];
-    for (index in _ref) {
+    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
       field = _ref[index];
       if ((Number(field.typeID)) === 37) {
         _results.push(Number(index));
@@ -223,10 +223,10 @@
 
 
   data.timeFields = (function() {
-    var _ref, _results;
+    var _i, _len, _ref, _results;
     _ref = data.fields;
     _results = [];
-    for (index in _ref) {
+    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
       field = _ref[index];
       if ((Number(field.typeID)) === 7) {
         _results.push(Number(index));
@@ -241,10 +241,10 @@
 
 
   data.normalFields = (function() {
-    var _ref, _ref1, _results;
+    var _i, _len, _ref, _ref1, _results;
     _ref = data.fields;
     _results = [];
-    for (index in _ref) {
+    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
       field = _ref[index];
       if ((_ref1 = Number(field.typeID)) !== 37 && _ref1 !== 7) {
         _results.push(Number(index));
@@ -259,10 +259,10 @@
 
 
   data.numericFields = (function() {
-    var _ref, _ref1, _results;
+    var _i, _len, _ref, _ref1, _results;
     _ref = data.fields;
     _results = [];
-    for (index in _ref) {
+    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
       field = _ref[index];
       if ((_ref1 = Number(field.typeID)) !== 37) {
         _results.push(Number(index));
