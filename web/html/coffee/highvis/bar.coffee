@@ -43,16 +43,22 @@ class window.Bar extends BaseVis
                 text: "Bar"
             xAxis:
                 categories:
-                    for fieldIndex in data.normalFields
+                    for fieldIndex in data.normalFields when (fieldIndex in globals.fieldSelection)
                         data.fields[fieldIndex].fieldName
         
-        for groupIndex of data.groups
-            options = 
-                data: for fieldIndex in data.normalFields
-                    data.getMax(fieldIndex,groupIndex)
-                showInLegend: false
-                name: data.groups[groupIndex]
-            @chartOptions.series.push options
+            #if (groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection)
+        
+            for fieldIndex, categoryIndex in data.normalFields
+                for groupName, groupIndex in data.groups when ((groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection))
+                    options =
+                        data: [
+                            x: categoryIndex
+                            y: data.getMax fieldIndex, groupIndex
+                            ]
+                        showInLegend: false
+                        color: globals.colors[groupIndex % globals.colors.length]
+                        name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
+                    @chartOptions.series.push options
     
     drawAnalysisTypeControls: ->
 
@@ -76,5 +82,6 @@ class window.Bar extends BaseVis
     drawControls: ->
         @drawGroupControls()
         @drawAnalysisTypeControls()
+    
 
 globals.bar = new Bar 'bar_canvas'
