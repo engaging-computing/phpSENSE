@@ -60,4 +60,18 @@ class window.Scatter extends BaseVis
         @drawGroupControls()
         @drawXAxisControls()
 
+    update: ->
+        super()
+
+        #Update hidden state
+        for index in [0...@chart.series.length - data.normalFields.length]
+            groupIndex = index % data.groups.length
+            fieldIndex = data.normalFields[Math.floor (index / data.groups.length)]
+
+            if (groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection)
+                @chart.series[index + data.normalFields.length].setVisible(true, false)
+            else
+                @chart.series[index + data.normalFields.length].setVisible(false, false)
+            @chart.redraw()
+
 globals.scatter = new Scatter 'scatter_canvas'
