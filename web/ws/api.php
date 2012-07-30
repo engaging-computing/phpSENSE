@@ -444,7 +444,7 @@ if(isset($_REQUEST['method'])) {
     	        } else if ($uid == null) { //Cannot add data without valid credentials.
                     $status=400;
                     $data = array('msg'=>"Not logged in");
-    	        } else if(getExperiment($eid)!=null){ //Cannot add data to invalid experiment.
+    	        } else if(getExperiment($eid)==null){ //Cannot add data to invalid experiment.
                     $status=400;
                     $data = array('msg'=>"Invalid experiment");
     	        } else if (getSession($sid)==null){ //Cannot add data to invalid session.

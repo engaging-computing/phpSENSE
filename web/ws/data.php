@@ -232,13 +232,13 @@ if(isset($_REQUEST['sessions'])) {
             
             //Remove alpha data from non-alpha fields
             foreach ($data->fields as $k=>$curField) {
-                if ($curField->type_id != intval(37)) {
+                if (intval($curField->type_id) != 37) {
                     if (!is_numeric($datum[$k])) {
                         $data->sessions[$index]->data[$j][$k] = "";
                     }
                 }
                 // If time is a string, convert. If conversion fails, return NAN.
-                if ($curField->type_id != intval(7)) {
+                if (intval($curField->type_id) == 7) {
                     if (!is_numeric($datum[$k])) {
                         $data->sessions[$index]->data[$j][$k] = ( strtotime($data->sessions[$index]->data[$j][$k]) == FALSE ? NAN : strtotime($data->sessions[$index]->data[$j][$k]) );
                     }

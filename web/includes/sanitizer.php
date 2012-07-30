@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2011, iSENSE Project. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
@@ -26,28 +26,59 @@
  * DAMAGE.
  */
 
-require_once '../includes/config.php';
+ /**
+  * Runs HTML-only sanitization on the given file(path).
+  * The file is modified then saved back to disk.
+  */
+function sanitizeFile($filename) {
 
-if(isset($_GET['action'])) {
-    
-    switch($_GET['action']) {
-        case "delete":
-            if(isAdmin()){
-                deleteUser($_GET['id']);
-            }
-            break;
-         /*   
-        case "reset":
-            resetUserPassword($_GET['id']);
-            echo "worked!";
-            break;
-           */ 
-        case "admin":
-            if(isAdmin()){
-                makeUserAdmin($_GET['id']);
-            }
-            break;
-    }
+    $contents = file_get_contents($filename);
+
+    //Files only need to be protected from js injection (not sql)
+    $contents = htmlentities($contents, ENT_NOQUOTES);
+
+    //Save sanitized data
+    $file = fopen($filename, "w");
+    fwrite($file, $contents);
+    fclose($file);
 }
+
+/**
+  * Preforms both HTML and SQL sanitization on the given string.
+  * Also sanitizes escapes to avoid unescaping escaped SQL input.
+  */
+function sanitizeString($string) {
+
+    $string = str_replace("\\", "", $string);
+    $string = mysql_real_escape_string($string);
+    $string = htmlentities($string, ENT_NOQUOTES);
+    
+    return $string;
+}
+
+/**
+  * Runs sanitizeString on all contents of an array-like object recursively
+  */
+function sanitizeGeneric($obj) {
+
+    if (is_array($obj)) {
+        foreach ($obj as $key=>$val) {
+            $obj[$key] = sanitizeGeneric($val);
+        }
+    }
+    else {
+        return sanitizeString($obj);
+    }
+
+    return $obj;
+}
+
+/**
+  * Sanitize all standard input vectors.
+  */
+$_POST    = sanitizeGeneric($_POST);
+$_GET     = sanitizeGeneric($_GET);
+$_REQUEST = sanitizeGeneric($_REQUEST);
+$_COOKIE  = sanitizeGeneric($_COOKIE);
 
 ?>
