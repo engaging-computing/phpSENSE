@@ -41,6 +41,9 @@ class window.Bar extends BaseVis
                 type: "column"
             title:
                 text: "Bar"
+                
+                
+            ###
             xAxis:
                 categories:
                     for fieldIndex in data.normalFields when (fieldIndex in globals.fieldSelection)
@@ -59,6 +62,7 @@ class window.Bar extends BaseVis
                         color: globals.colors[groupIndex % globals.colors.length]
                         name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
                     @chartOptions.series.push options
+            ###
     
     drawAnalysisTypeControls: ->
 
