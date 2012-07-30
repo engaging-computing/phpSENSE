@@ -49,7 +49,7 @@ class window.Bar extends BaseVis
         for groupIndex of data.groups
             options = 
                 data: for fieldIndex in data.normalFields
-                    data.getMax(fieldIndex, @groupFilter)
+                    data.getMax(fieldIndex,groupIndex)
                 showInLegend: false
                 name: data.groups[groupIndex]
             @chartOptions.series.push options
@@ -62,7 +62,7 @@ class window.Bar extends BaseVis
         
         controls += '<tr><td><div class="vis_control_table_div">'
         
-        controls += '<select><option>Max</option><option>Min</option><option>Mean</option></select>'
+        controls += '<select id="drawAnalysisTypeSelector"><option>Max</option><option>Min</option><option>Mean</option></select>'
         
         controls += '</div></td></tr>'
         
@@ -70,6 +70,8 @@ class window.Bar extends BaseVis
         
         # Write HTML
         ($ '#controldiv').append controls
+        
+        ($ '#drawAnalysisTypeSelector').change
         
     drawControls: ->
         @drawGroupControls()

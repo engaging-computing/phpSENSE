@@ -77,10 +77,10 @@
             _results1 = [];
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               fieldIndex = _ref[_i];
-              _results1.push(data.getMax(fieldIndex, this.groupFilter));
+              _results1.push(data.getMax(fieldIndex, groupIndex));
             }
             return _results1;
-          }).call(this),
+          })(),
           showInLegend: false,
           name: data.groups[groupIndex]
         };
@@ -94,10 +94,11 @@
       controls = '<div id="AnalysisTypeControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>';
       controls += '<tr><td><div class="vis_control_table_div">';
-      controls += '<select><option>Max</option><option>Min</option><option>Mean</option></select>';
+      controls += '<select id="drawAnalysisTypeSelector"><option>Max</option><option>Min</option><option>Mean</option></select>';
       controls += '</div></td></tr>';
       controls += '</table></div>';
-      return ($('#controldiv')).append(controls);
+      ($('#controldiv')).append(controls);
+      return ($('#drawAnalysisTypeSelector')).change;
     };
 
     Bar.prototype.drawControls = function() {
