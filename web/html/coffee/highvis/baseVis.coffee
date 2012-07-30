@@ -113,7 +113,7 @@ class window.BaseVis
             @chart.destroy()
         @chart = new Highcharts.Chart @chartOptions
 
-        #Sync hidden state from globals
+        #Sync hidden state for legend from globals
         for ser in @chart.series[0...data.normalFields.length]
             console.log ser
             index = data.normalFields[ser.index]
@@ -142,18 +142,6 @@ class window.BaseVis
     update: ->
         @clearControls()
         @drawControls()
-
-        #Update hidden state
-        for index in [0...@chart.series.length - data.normalFields.length]
-            groupIndex = index % data.groups.length
-            fieldIndex = data.normalFields[Math.floor (index / data.groups.length)]
-            
-            if (groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection)
-                @chart.series[index + data.normalFields.length].setVisible(true, false)
-            else
-                @chart.series[index + data.normalFields.length].setVisible(false, false)
-            @chart.redraw()
-                
 
     ###
     Clear the controls

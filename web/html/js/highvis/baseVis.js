@@ -194,21 +194,8 @@
 
 
     BaseVis.prototype.update = function() {
-      var fieldIndex, groupIndex, index, _i, _ref4, _results;
       this.clearControls();
-      this.drawControls();
-      _results = [];
-      for (index = _i = 0, _ref4 = this.chart.series.length - data.normalFields.length; 0 <= _ref4 ? _i < _ref4 : _i > _ref4; index = 0 <= _ref4 ? ++_i : --_i) {
-        groupIndex = index % data.groups.length;
-        fieldIndex = data.normalFields[Math.floor(index / data.groups.length)];
-        if ((__indexOf.call(globals.groupSelection, groupIndex) >= 0) && (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0)) {
-          this.chart.series[index + data.normalFields.length].setVisible(true, false);
-        } else {
-          this.chart.series[index + data.normalFields.length].setVisible(false, false);
-        }
-        _results.push(this.chart.redraw());
-      }
-      return _results;
+      return this.drawControls();
     };
 
     /*
