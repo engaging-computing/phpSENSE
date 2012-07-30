@@ -43,7 +43,7 @@
     }
 
     Scatter.prototype.buildOptions = function() {
-      var fieldIndex, groupIndex, options, symbolIndex, _ref, _results;
+      var fieldIndex, group, groupIndex, options, symbolIndex, _i, _len, _ref, _results;
       Scatter.__super__.buildOptions.call(this);
       this.chartOptions;
       $.extend(true, this.chartOptions, {
@@ -60,12 +60,14 @@
       });
       _ref = data.normalFields;
       _results = [];
-      for (symbolIndex in _ref) {
+      for (symbolIndex = _i = 0, _len = _ref.length; _i < _len; symbolIndex = ++_i) {
         fieldIndex = _ref[symbolIndex];
         _results.push((function() {
-          var _results1;
+          var _j, _len1, _ref1, _results1;
+          _ref1 = data.groups;
           _results1 = [];
-          for (groupIndex in data.groups) {
+          for (groupIndex = _j = 0, _len1 = _ref1.length; _j < _len1; groupIndex = ++_j) {
+            group = _ref1[groupIndex];
             options = {
               data: data.xySelector(globals.xAxis, fieldIndex, groupIndex),
               showInLegend: false,

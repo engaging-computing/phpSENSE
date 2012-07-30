@@ -146,25 +146,25 @@ data.makeGroups =  ->
 ###
 Gets a list of text field indicies
 ###
-data.textFields = for index, field of data.fields when (Number field.typeID) is 37
+data.textFields = for field, index in data.fields when (Number field.typeID) is 37
     Number index
 
 ###
 Gets a list of time field indicies
 ###
-data.timeFields = for index, field of data.fields when (Number field.typeID) is 7
+data.timeFields = for field, index in data.fields when (Number field.typeID) is 7
     Number index
 
 ###
 Gets a list of non-text, non-time field indicies
 ###
-data.normalFields = for index, field of data.fields when (Number field.typeID) not in [37, 7]
+data.normalFields = for field, index in data.fields when (Number field.typeID) not in [37, 7]
     Number index
 
 ###
 Gets a list of non-text field indicies
 ###
-data.numericFields = for index, field of data.fields when (Number field.typeID) not in [37]
+data.numericFields = for field, index in data.fields when (Number field.typeID) not in [37]
     Number index
 
 

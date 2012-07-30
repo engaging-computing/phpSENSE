@@ -44,8 +44,8 @@ class window.Scatter extends BaseVis
                 type: if (Number data.fields[globals.xAxis].typeID) == 7 then 'datetime' else 'linear'
 
 
-        for symbolIndex, fieldIndex of data.normalFields
-            for groupIndex of data.groups
+        for fieldIndex, symbolIndex in data.normalFields
+            for group, groupIndex in data.groups
                 options =
                     data: data.xySelector(globals.xAxis, fieldIndex, groupIndex)
                     showInLegend: false
