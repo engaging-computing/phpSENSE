@@ -24,7 +24,7 @@ echo "Updating apt-get package list"
 sudo apt-get update
 
 echo "Installing required packages for good times in iSENSE world"
-sudo apt-get install php5-mysql drupal6-mod-imageapi php5-dev openssh-server apache2 php5 libapache2-mod-php5 mysql-server mongodb-10gen php-pear
+sudo apt-get install php5-mysql drupal6-mod-imageapi php5-dev openssh-server apache2 php5 libapache2-mod-php5 mysql-server mongodb-10gen php-pear sendmail
 
 echo "Installing php extensions for mongo"
 sudo pecl install mongo
