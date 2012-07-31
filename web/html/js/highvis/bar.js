@@ -46,7 +46,6 @@
     Bar.prototype.analysisType = "Max";
 
     Bar.prototype.buildOptions = function() {
-      var categoryIndex, fieldIndex, groupIndex, groupName, options;
       Bar.__super__.buildOptions.call(this);
       this.chartOptions;
       return $.extend(true, this.chartOptions, {
@@ -56,57 +55,120 @@
         title: {
           text: "Bar"
         },
-        xAxis: {
-          categories: (function() {
-            var _i, _len, _ref, _results;
-            _ref = data.normalFields;
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              fieldIndex = _ref[_i];
-              if ((__indexOf.call(globals.fieldSelection, fieldIndex) >= 0)) {
-                _results.push(data.fields[fieldIndex].fieldName);
-              }
-            }
-            return _results;
-          })()
+        legend: {
+          symbolWidth: 0
         }
-      }, (function() {
+        /*
+                    xAxis:
+                        categories:
+                            for fieldIndex in data.normalFields when (fieldIndex in globals.fieldSelection)
+                                data.fields[fieldIndex].fieldName
+                
+                    #if (groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection)
+                
+                    for fieldIndex, categoryIndex in data.normalFields
+                        for groupName, groupIndex in data.groups when ((groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection))
+                            options =
+                                data: [
+                                    x: categoryIndex
+                                    y: data.getMax fieldIndex, groupIndex
+                                    ]
+                                showInLegend: false
+                                color: globals.colors[groupIndex % globals.colors.length]
+                                name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
+                            @chartOptions.series.push options
+        */
+
+      });
+    };
+
+    Bar.prototype.update = function() {
+      var fieldIndex, groupIndex, groupName, options, selection, visibleCategories, _i, _len, _ref;
+      Bar.__super__.update.call(this);
+      visibleCategories = (function() {
         var _i, _len, _ref, _results;
-        _ref = data.normalFields;
+        _ref = globals.fieldSelection;
         _results = [];
-        for (categoryIndex = _i = 0, _len = _ref.length; _i < _len; categoryIndex = ++_i) {
-          fieldIndex = _ref[categoryIndex];
-          _results.push((function() {
-            var _j, _len1, _ref1, _results1;
-            _ref1 = data.groups;
-            _results1 = [];
-            for (groupIndex = _j = 0, _len1 = _ref1.length; _j < _len1; groupIndex = ++_j) {
-              groupName = _ref1[groupIndex];
-              if (!((__indexOf.call(globals.groupSelection, groupIndex) >= 0) && (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0))) {
-                continue;
-              }
-              options = {
-                data: [
-                  {
-                    x: categoryIndex,
-                    y: data.getMax(fieldIndex, groupIndex)
-                  }
-                ],
-                showInLegend: false,
-                color: globals.colors[groupIndex % globals.colors.length],
-                name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
-              };
-              _results1.push(this.chartOptions.series.push(options));
-            }
-            return _results1;
-          }).call(this));
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          selection = _ref[_i];
+          _results.push(data.fields[selection].fieldName);
         }
         return _results;
-      }).call(this));
+      })();
+      this.chart.xAxis[0].setCategories(visibleCategories, false);
+      while (this.chart.series.length > data.normalFields.length) {
+        this.chart.series[this.chart.series.length - 1].remove(false);
+      }
+      /*
+              categoryIndex = -1
+              for fieldIndex in data.normalFields when fieldIndex in globals.fieldSelection
+                  categoryIndex += 1
+                  
+                  for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
+                      options =
+                          data: [
+                              x: categoryIndex
+                              y: data.getMax fieldIndex, groupIndex
+                              ]
+                          showInLegend: false
+                          color: globals.colors[groupIndex % globals.colors.length]
+                          name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
+                          
+                      @chart.addSeries options, false
+      */
+
+      _ref = data.groups;
+      for (groupIndex = _i = 0, _len = _ref.length; _i < _len; groupIndex = ++_i) {
+        groupName = _ref[groupIndex];
+        if (!(__indexOf.call(globals.groupSelection, groupIndex) >= 0)) {
+          continue;
+        }
+        options = {
+          showInLegend: false,
+          color: globals.colors[groupIndex % globals.colors.length],
+          name: data.groups[groupIndex]
+        };
+        options.data = (function() {
+          var _j, _len1, _ref1, _results;
+          _ref1 = data.normalFields;
+          _results = [];
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            fieldIndex = _ref1[_j];
+            if (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0) {
+              _results.push(data.getMax(fieldIndex, groupIndex));
+            }
+          }
+          return _results;
+        })();
+        this.chart.addSeries(options, false);
+      }
+      return this.chart.redraw();
+    };
+
+    Bar.prototype.buildLegendSeries = function() {
+      var count, dummy, field, _i, _len, _ref, _ref1, _results;
+      count = -1;
+      _ref = data.fields;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        field = _ref[_i];
+        if (!((_ref1 = Number(field.typeID)) !== 37 && _ref1 !== 7)) {
+          continue;
+        }
+        count += 1;
+        _results.push(dummy = {
+          data: [],
+          color: '#000',
+          name: field.fieldName,
+          type: 'area',
+          xAxis: 1
+        });
+      }
+      return _results;
     };
 
     Bar.prototype.drawAnalysisTypeControls = function() {
-      var controls;
+      var bar, controls;
       controls = '<div id="AnalysisTypeControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>';
       controls += '<tr><td><div class="vis_control_table_div">';
@@ -114,46 +176,16 @@
       controls += '</div></td></tr>';
       controls += '</table></div>';
       ($('#controldiv')).append(controls);
-      return ($('#drawAnalysisTypeSelector')).change;
+      bar = this;
+      return ($('#drawAnalysisTypeSelector')).change(function() {
+        bar.analysisType = this.value;
+        return console.log(bar.analysisType);
+      });
     };
 
     Bar.prototype.drawControls = function() {
       this.drawGroupControls();
       return this.drawAnalysisTypeControls();
-    };
-
-    Bar.prototype.update = function() {
-      var fieldIndex, groupIndex, index, ser, _i, _j, _len, _ref, _ref1, _results;
-      this.buildOptions();
-      if (this.chart != null) {
-        this.chart.destroy();
-      }
-      this.chart = new Highcharts.Chart(this.chartOptions);
-      _ref = this.chart.series.slice(0, data.normalFields.length);
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        ser = _ref[_i];
-        index = data.normalFields[ser.index];
-        if (__indexOf.call(globals.fieldSelection, index) >= 0) {
-          ser.show();
-        } else {
-          ser.hide();
-        }
-      }
-      ($('#' + this.canvas)).show();
-      this.clearControls();
-      this.drawControls();
-      _results = [];
-      for (index = _j = 0, _ref1 = this.chart.series.length - data.normalFields.length; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; index = 0 <= _ref1 ? ++_j : --_j) {
-        groupIndex = index % data.groups.length;
-        fieldIndex = data.normalFields[Math.floor(index / data.groups.length)];
-        if ((__indexOf.call(globals.groupSelection, groupIndex) >= 0) && (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0)) {
-          this.chart.series[index + data.normalFields.length].setVisible(true, false);
-        } else {
-          this.chart.series[index + data.normalFields.length].setVisible(false, false);
-        }
-        _results.push(this.chart.redraw());
-      }
-      return _results;
     };
 
     return Bar;

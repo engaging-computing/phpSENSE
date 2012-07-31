@@ -41,6 +41,8 @@ class window.Bar extends BaseVis
                 type: "column"
             title:
                 text: "Bar"
+            legend:
+                symbolWidth: 0
                 
                 
             ###
@@ -63,6 +65,60 @@ class window.Bar extends BaseVis
                         name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
                     @chartOptions.series.push options
             ###
+            
+    update: ->
+        super()
+        
+        visibleCategories = for selection in globals.fieldSelection
+            data.fields[selection].fieldName
+        
+        @chart.xAxis[0].setCategories visibleCategories, false
+        
+        while @chart.series.length > data.normalFields.length
+            @chart.series[@chart.series.length-1].remove false
+        
+        
+        ###
+        categoryIndex = -1
+        for fieldIndex in data.normalFields when fieldIndex in globals.fieldSelection
+            categoryIndex += 1
+            
+            for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
+                options =
+                    data: [
+                        x: categoryIndex
+                        y: data.getMax fieldIndex, groupIndex
+                        ]
+                    showInLegend: false
+                    color: globals.colors[groupIndex % globals.colors.length]
+                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
+                    
+                @chart.addSeries options, false
+        ###
+        
+        for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
+            options =
+                showInLegend: false
+                color: globals.colors[groupIndex % globals.colors.length]
+                name: data.groups[groupIndex]
+                
+            options.data = for fieldIndex in data.normalFields when fieldIndex in globals.fieldSelection
+                data.getMax fieldIndex, groupIndex
+                
+            @chart.addSeries options, false
+        
+        @chart.redraw()
+        
+    buildLegendSeries: ->
+        count = -1
+        for field in data.fields when (Number field.typeID) not in [37, 7]
+            count += 1
+            dummy =
+                data: []
+                color: '#000'
+                name: field.fieldName
+                type: 'area'
+                xAxis: 1
     
     drawAnalysisTypeControls: ->
 
@@ -81,7 +137,10 @@ class window.Bar extends BaseVis
         # Write HTML
         ($ '#controldiv').append controls
         
-        ($ '#drawAnalysisTypeSelector').change
+        bar = this
+        
+        ($ '#drawAnalysisTypeSelector').change ->
+            bar.analysisType = @value
         
     drawControls: ->
         @drawGroupControls()

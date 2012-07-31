@@ -171,6 +171,7 @@
 
     BaseVis.prototype.end = function() {
       this.chart.destroy();
+      this.chart = void 0;
       this.clearControls();
       return ($('#' + this.canvas)).hide();
     };

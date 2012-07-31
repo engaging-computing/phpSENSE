@@ -136,6 +136,7 @@ class window.BaseVis
     ###
     end: ->
         @chart.destroy()
+        @chart = undefined;
         @clearControls()
         ($ '#' + @canvas).hide()
 
