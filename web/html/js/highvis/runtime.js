@@ -67,9 +67,8 @@
     */
 
     ($('#vis_select')).children().children().click(function() {
-      if (global.curVis != null) {
-        globals.curVis.end();
-      }
+      var oldVis;
+      oldVis = globals.curVis;
       /* Remove old selection
       */
 
@@ -81,7 +80,12 @@
 
       ($(this)).css("background-color", "#ffffff");
       ($(this)).css('border-bottom', '1px solid white');
-      return globals.curVis.start();
+      oldVis.chart.showLoading('Loading...');
+      globals.curVis.start();
+      oldVis.chart.hideLoading();
+      if (global.curVis != null) {
+        return oldVis.end();
+      }
     });
     return globals.curVis.start();
   });
