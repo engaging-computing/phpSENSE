@@ -83,23 +83,22 @@ class window.BaseVis
             #yAxis: {}
             #exporting: {}
             #navigation: {}
+        
+        @chartOptions.series = @buildLegendSeries()
 
-        count = -1
-        @chartOptions.series = for field in data.fields when (Number field.typeID) not in [37, 7]
-            count += 1
-            dummy =
-                data: []
-                color: '#000'
-                ###
-                marker:
-                    symbol:'blank'
-                dashStyle: globals.dashes[count % globals.symbols.length]
-                ###
-                marker:
-                    symbol: globals.symbols[count % globals.symbols.length]
-                
-                name: field.fieldName
+    ###
+    Builds the 'fake series' for legend controls.
+        Derrived objects should implement this.
+    ###
+    buildLegendSeries: ->
+        console.log console.trace()
+        alert   """
+                BAD IMPLEMENTATION ALERT!
 
+                Called: 'BaseVis.buildLegendSeries'
+
+                See logged stack trace in console.
+                """
     ###
     Start sequence used by runtime
         This is called when the user switched to this vis.

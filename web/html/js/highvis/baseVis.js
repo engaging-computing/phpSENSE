@@ -77,8 +77,7 @@
 
 
     BaseVis.prototype.buildOptions = function() {
-      var count, dummy, field,
-        _this = this;
+      var _this = this;
       this.chartOptions = {
         chart: {
           renderTo: this.canvas,
@@ -114,34 +113,18 @@
         series: [],
         title: {}
       };
-      count = -1;
-      return this.chartOptions.series = (function() {
-        var _i, _len, _ref4, _ref5, _results;
-        _ref4 = data.fields;
-        _results = [];
-        for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
-          field = _ref4[_i];
-          if (!((_ref5 = Number(field.typeID)) !== 37 && _ref5 !== 7)) {
-            continue;
-          }
-          count += 1;
-          _results.push(dummy = {
-            data: [],
-            color: '#000',
-            /*
-                            marker:
-                                symbol:'blank'
-                            dashStyle: globals.dashes[count % globals.symbols.length]
-            */
+      return this.chartOptions.series = this.buildLegendSeries();
+    };
 
-            marker: {
-              symbol: globals.symbols[count % globals.symbols.length]
-            },
-            name: field.fieldName
-          });
-        }
-        return _results;
-      })();
+    /*
+        Builds the 'fake series' for legend controls.
+            Derrived objects should implement this.
+    */
+
+
+    BaseVis.prototype.buildLegendSeries = function() {
+      console.log(console.trace());
+      return alert("BAD IMPLEMENTATION ALERT!\n\nCalled: 'BaseVis.buildLegendSeries'\n\nSee logged stack trace in console.");
     };
 
     /*

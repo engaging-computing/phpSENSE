@@ -86,6 +86,35 @@
       return _results;
     };
 
+    Scatter.prototype.buildLegendSeries = function() {
+      var count, dummy, field, _i, _len, _ref, _ref1, _results;
+      count = -1;
+      _ref = data.fields;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        field = _ref[_i];
+        if (!((_ref1 = Number(field.typeID)) !== 37 && _ref1 !== 7)) {
+          continue;
+        }
+        count += 1;
+        _results.push(dummy = {
+          data: [],
+          color: '#000',
+          /*
+                          marker:
+                              symbol:'blank'
+                          dashStyle: globals.dashes[count % globals.symbols.length]
+          */
+
+          marker: {
+            symbol: globals.symbols[count % globals.symbols.length]
+          },
+          name: field.fieldName
+        });
+      }
+      return _results;
+    };
+
     Scatter.prototype.drawControls = function() {
       this.drawGroupControls();
       return this.drawXAxisControls();
