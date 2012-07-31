@@ -55,6 +55,23 @@ class window.Scatter extends BaseVis
                     name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName                    
                     
                 @chartOptions.series.push options
+
+    buildLegendSeries: ->
+        count = -1
+        for field in data.fields when (Number field.typeID) not in [37, 7]
+            count += 1
+            dummy =
+                data: []
+                color: '#000'
+                ###
+                marker:
+                    symbol:'blank'
+                dashStyle: globals.dashes[count % globals.symbols.length]
+                ###
+                marker:
+                    symbol: globals.symbols[count % globals.symbols.length]
+
+                name: field.fieldName
     
     drawControls: ->
         @drawGroupControls()

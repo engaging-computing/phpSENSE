@@ -77,8 +77,7 @@
 
 
     BaseVis.prototype.buildOptions = function() {
-      var count, dummy, field,
-        _this = this;
+      var _this = this;
       this.chartOptions = {
         chart: {
           renderTo: this.canvas,
@@ -114,34 +113,24 @@
         series: [],
         title: {}
       };
-      count = -1;
-      return this.chartOptions.series = (function() {
-        var _i, _len, _ref4, _ref5, _results;
-        _ref4 = data.fields;
-        _results = [];
-        for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
-          field = _ref4[_i];
-          if (!((_ref5 = Number(field.typeID)) !== 37 && _ref5 !== 7)) {
-            continue;
-          }
-          count += 1;
-          _results.push(dummy = {
-            data: [],
-            color: '#000',
-            /*
-                            marker:
-                                symbol:'blank'
-                            dashStyle: globals.dashes[count % globals.symbols.length]
-            */
+      this.chartOptions.xAxis = [];
+      this.chartOptions.xAxis.push({});
+      this.chartOptions.xAxis.push({
+        lineWidth: 0,
+        categories: ['']
+      });
+      return this.chartOptions.series = this.buildLegendSeries();
+    };
 
-            marker: {
-              symbol: globals.symbols[count % globals.symbols.length]
-            },
-            name: field.fieldName
-          });
-        }
-        return _results;
-      })();
+    /*
+        Builds the 'fake series' for legend controls.
+            Derrived objects should implement this.
+    */
+
+
+    BaseVis.prototype.buildLegendSeries = function() {
+      console.log(console.trace());
+      return alert("BAD IMPLEMENTATION ALERT!\n\nCalled: 'BaseVis.buildLegendSeries'\n\nSee logged stack trace in console.");
     };
 
     /*
@@ -162,7 +151,6 @@
       _ref4 = this.chart.series.slice(0, data.normalFields.length);
       for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
         ser = _ref4[_i];
-        console.log(ser);
         index = data.normalFields[ser.index];
         if (__indexOf.call(globals.fieldSelection, index) >= 0) {
           ser.show();
@@ -320,14 +308,6 @@
         globals.xAxis = Number(selection);
         return _this.start();
       });
-    };
-
-    BaseVis.prototype.groupFilter = function(dp) {
-      var groups, _ref4;
-      groups = globals.groupSelection.map(function(index) {
-        return data.groups[index];
-      });
-      return _ref4 = (String(dp[data.groupIndex])).toLowerCase(), __indexOf.call(groups, _ref4) >= 0;
     };
 
     return BaseVis;
