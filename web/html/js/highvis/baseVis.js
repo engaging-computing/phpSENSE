@@ -171,6 +171,7 @@
 
     BaseVis.prototype.end = function() {
       this.chart.destroy();
+      this.chart = void 0;
       this.clearControls();
       return ($('#' + this.canvas)).hide();
     };
@@ -263,10 +264,9 @@
         selection = [];
         ($('.group_input')).each(function() {
           if (this.checked) {
-            console.log('checked');
             return selection.push(Number(this.value));
           } else {
-            return console.log('unchecked');
+
           }
         });
         globals.groupSelection = selection;

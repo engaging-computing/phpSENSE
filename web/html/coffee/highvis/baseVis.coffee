@@ -136,6 +136,7 @@ class window.BaseVis
     ###
     end: ->
         @chart.destroy()
+        @chart = undefined;
         @clearControls()
         ($ '#' + @canvas).hide()
 
@@ -217,10 +218,8 @@ class window.BaseVis
             selection = []
             ($ '.group_input').each ()->
                 if @checked
-                    console.log 'checked'
                     selection.push Number @value
                 else
-                    console.log 'unchecked'
             globals.groupSelection = selection
             @update()
             

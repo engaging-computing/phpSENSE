@@ -121,7 +121,7 @@ for i in [2,3,4,6,10]
 
 tempSymbolsMatrix[tempSymbolsMatrix.length] = []
 for [phase, direction] in [[0, "down"],[1/4, "right"],[2/4, "up"],[3/4, "left"]]
-	addRadialMarkerStyle "#{direction}-tri", 3, phase
+	addRadialMarkerStyle "#{direction}-tri", 3, phase, [Math.sqrt(0.5)]
 	#tempSymbolsMatrix[tempSymbolsMatrix.length-1].push "#{direction}-tri"
 
 tempSymbolsMatrix[tempSymbolsMatrix.length] = []

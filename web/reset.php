@@ -31,6 +31,9 @@ require_once 'includes/database.php';
 
 $errors = array();
 
+if(isset($_SERVER[SERVER_ADDR])) {
+     $server = $_SERVER[SERVER_ADDR];
+}
 
 if(isset($_POST['email'])) { 
   $email = safeString($_POST['email']); 
@@ -40,7 +43,7 @@ if(isset($_POST['email'])) {
     $auth = $tmp[0]['auth'];
 
     $subject = 'Password Reset Link';
-    $message = 'It seems you\'ve forgotten your password. Click <a href="http://isense.cs.uml.edu/reset.php?auth=' . $auth . '"> here </a> to reset your password';
+    $message = 'It seems you\'ve forgotten your password. Click <a href="' . $server . '/reset.php?auth=' . $auth . '"> here </a> to reset your password';
 
 
     $headers = "MIME-Version: 1.0" . "\r\n";
