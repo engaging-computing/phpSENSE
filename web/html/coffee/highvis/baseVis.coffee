@@ -83,6 +83,12 @@ class window.BaseVis
             #yAxis: {}
             #exporting: {}
             #navigation: {}
+
+        @chartOptions.xAxis = []
+        @chartOptions.xAxis.push {}
+        @chartOptions.xAxis.push
+            lineWidth: 0
+            categories: ['']
         
         @chartOptions.series = @buildLegendSeries()
 
@@ -114,7 +120,6 @@ class window.BaseVis
 
         #Sync hidden state for legend from globals
         for ser in @chart.series[0...data.normalFields.length]
-            console.log ser
             index = data.normalFields[ser.index]
             if index in globals.fieldSelection
                 ser.show()
@@ -252,8 +257,3 @@ class window.BaseVis
                     selection = @value
             globals.xAxis = Number selection
             @start()
-
-    groupFilter: (dp) ->
-        groups = globals.groupSelection.map (index) -> data.groups[index]
-        (String dp[data.groupIndex]).toLowerCase() in groups
-        

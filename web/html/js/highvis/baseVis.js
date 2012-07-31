@@ -113,6 +113,12 @@
         series: [],
         title: {}
       };
+      this.chartOptions.xAxis = [];
+      this.chartOptions.xAxis.push({});
+      this.chartOptions.xAxis.push({
+        lineWidth: 0,
+        categories: ['']
+      });
       return this.chartOptions.series = this.buildLegendSeries();
     };
 
@@ -145,7 +151,6 @@
       _ref4 = this.chart.series.slice(0, data.normalFields.length);
       for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
         ser = _ref4[_i];
-        console.log(ser);
         index = data.normalFields[ser.index];
         if (__indexOf.call(globals.fieldSelection, index) >= 0) {
           ser.show();
@@ -304,14 +309,6 @@
         globals.xAxis = Number(selection);
         return _this.start();
       });
-    };
-
-    BaseVis.prototype.groupFilter = function(dp) {
-      var groups, _ref4;
-      groups = globals.groupSelection.map(function(index) {
-        return data.groups[index];
-      });
-      return _ref4 = (String(dp[data.groupIndex])).toLowerCase(), __indexOf.call(groups, _ref4) >= 0;
     };
 
     return BaseVis;
