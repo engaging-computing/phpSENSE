@@ -58,10 +58,9 @@
 
 
     Scatter.prototype.buildOptions = function() {
-      var fieldIndex, group, groupIndex, options, symbolIndex, _i, _len, _ref, _results;
       Scatter.__super__.buildOptions.call(this);
       this.chartOptions;
-      $.extend(true, this.chartOptions, {
+      return $.extend(true, this.chartOptions, {
         chart: {
           type: "line",
           zoomType: "xy"
@@ -73,45 +72,6 @@
           type: (Number(data.fields[globals.xAxis].typeID)) === 7 ? 'datetime' : 'linear'
         }
       });
-      _ref = data.normalFields;
-      _results = [];
-      for (symbolIndex = _i = 0, _len = _ref.length; _i < _len; symbolIndex = ++_i) {
-        fieldIndex = _ref[symbolIndex];
-        _results.push((function() {
-          var _j, _len1, _ref1, _results1;
-          _ref1 = data.groups;
-          _results1 = [];
-          for (groupIndex = _j = 0, _len1 = _ref1.length; _j < _len1; groupIndex = ++_j) {
-            group = _ref1[groupIndex];
-            options = {
-              data: data.xySelector(globals.xAxis, fieldIndex, groupIndex),
-              showInLegend: false,
-              color: globals.colors[groupIndex % globals.colors.length],
-              name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
-            };
-            if (this.mode === this.SYMBOLS_LINES_MODE) {
-              options.marker = {
-                symbol: globals.symbols[symbolIndex % globals.symbols.length]
-              };
-            }
-            if (this.mode === this.SYMBOLS_MODE) {
-              options.marker = {
-                symbol: globals.symbols[symbolIndex % globals.symbols.length]
-              };
-              options.lineWidth = 0;
-            }
-            if (this.mode === this.LINES_MODE) {
-              options.marker = {
-                symbol: 'blank'
-              };
-              options.dashStyle = globals.dashes[symbolIndex % globals.dashes.length];
-            }
-            _results1.push(this.chartOptions.series.push(options));
-          }
-          return _results1;
-        }).call(this));
-      }
-      return _results;
     };
 
     /*
@@ -120,7 +80,7 @@
 
 
     Scatter.prototype.buildLegendSeries = function() {
-      var count, dummy, field, _i, _len, _ref, _ref1, _results;
+      var count, field, options, _i, _len, _ref, _ref1, _results;
       count = -1;
       _ref = data.fields;
       _results = [];
@@ -130,29 +90,31 @@
           continue;
         }
         count += 1;
-        dummy = {
+        options = {
           data: [],
           color: '#000',
+          visible: __indexOf.call(globals.fieldSelection, field) >= 0 ? true : false,
           name: field.fieldName
         };
-        if (this.mode === this.SYMBOLS_LINES_MODE) {
-          dummy.marker = {
-            symbol: globals.symbols[count % globals.symbols.length]
-          };
+        switch (false) {
+          case this.mode !== this.SYMBOLS_LINES_MODE:
+            options.marker = {
+              symbol: globals.symbols[count % globals.symbols.length]
+            };
+            break;
+          case this.mode !== this.SYMBOLS_MODE:
+            options.marker = {
+              symbol: globals.symbols[count % globals.symbols.length]
+            };
+            options.lineWidth = 0;
+            break;
+          case this.mode !== this.LINES_MODE:
+            options.marker = {
+              symbol: 'blank'
+            };
+            options.dashStyle = globals.dashes[count % globals.dashes.length];
         }
-        if (this.mode === this.SYMBOLS_MODE) {
-          dummy.marker = {
-            symbol: globals.symbols[count % globals.symbols.length]
-          };
-          dummy.lineWidth = 0;
-        }
-        if (this.mode === this.LINES_MODE) {
-          dummy.marker = {
-            symbol: 'blank'
-          };
-          dummy.dashStyle = globals.dashes[count % globals.dashes.length];
-        }
-        _results.push(dummy);
+        _results.push(options);
       }
       return _results;
     };
@@ -174,20 +136,47 @@
 
 
     Scatter.prototype.update = function() {
-      var fieldIndex, groupIndex, index, _i, _ref, _results;
+      var fieldIndex, group, groupIndex, options, symbolIndex, _i, _j, _len, _len1, _ref, _ref1;
       Scatter.__super__.update.call(this);
-      _results = [];
-      for (index = _i = 0, _ref = this.chart.series.length - data.normalFields.length; 0 <= _ref ? _i < _ref : _i > _ref; index = 0 <= _ref ? ++_i : --_i) {
-        groupIndex = index % data.groups.length;
-        fieldIndex = data.normalFields[Math.floor(index / data.groups.length)];
-        if ((__indexOf.call(globals.groupSelection, groupIndex) >= 0) && (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0)) {
-          this.chart.series[index + data.normalFields.length].setVisible(true, false);
-        } else {
-          this.chart.series[index + data.normalFields.length].setVisible(false, false);
+      _ref = data.normalFields;
+      for (symbolIndex = _i = 0, _len = _ref.length; _i < _len; symbolIndex = ++_i) {
+        fieldIndex = _ref[symbolIndex];
+        if (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0) {
+          _ref1 = data.groups;
+          for (groupIndex = _j = 0, _len1 = _ref1.length; _j < _len1; groupIndex = ++_j) {
+            group = _ref1[groupIndex];
+            if (!(__indexOf.call(globals.groupSelection, groupIndex) >= 0)) {
+              continue;
+            }
+            options = {
+              data: data.xySelector(globals.xAxis, fieldIndex, groupIndex),
+              showInLegend: false,
+              color: globals.colors[groupIndex % globals.colors.length],
+              name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
+            };
+            switch (false) {
+              case this.mode !== this.SYMBOLS_LINES_MODE:
+                options.marker = {
+                  symbol: globals.symbols[symbolIndex % globals.symbols.length]
+                };
+                break;
+              case this.mode !== this.SYMBOLS_MODE:
+                options.marker = {
+                  symbol: globals.symbols[symbolIndex % globals.symbols.length]
+                };
+                options.lineWidth = 0;
+                break;
+              case this.mode !== this.LINES_MODE:
+                options.marker = {
+                  symbol: 'blank'
+                };
+                options.dashStyle = globals.dashes[symbolIndex % globals.dashes.length];
+            }
+            this.chart.addSeries(options, false);
+          }
         }
-        _results.push(this.chart.redraw());
       }
-      return _results;
+      return this.chart.redraw();
     };
 
     /*
@@ -213,7 +202,7 @@
       ($('#controldiv')).append(controls);
       return ($('.mode_radio')).click(function(e) {
         _this.mode = Number(e.target.value);
-        return _this.delayedStart();
+        return _this.delayedUpdate();
       });
     };
 

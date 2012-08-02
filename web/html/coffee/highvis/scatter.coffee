@@ -54,30 +54,6 @@ class window.Scatter extends BaseVis
             xAxis:
                 type: if (Number data.fields[globals.xAxis].typeID) == 7 then 'datetime' else 'linear'
 
-
-        for fieldIndex, symbolIndex in data.normalFields
-            for group, groupIndex in data.groups
-                options =
-                    data: data.xySelector(globals.xAxis, fieldIndex, groupIndex)
-                    showInLegend: false
-                    color: globals.colors[groupIndex % globals.colors.length]
-                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
-
-                if @mode is @SYMBOLS_LINES_MODE
-                    options.marker =
-                    symbol: globals.symbols[symbolIndex % globals.symbols.length]
-
-                if @mode is @SYMBOLS_MODE
-                    options.marker =
-                        symbol: globals.symbols[symbolIndex % globals.symbols.length]
-                    options.lineWidth = 0
-
-                if @mode is @LINES_MODE
-                    options.marker =
-                        symbol: 'blank'
-                    options.dashStyle = globals.dashes[symbolIndex % globals.dashes.length]
-                    
-                @chartOptions.series.push options
     ###
     TODO: Comment This
     ###
@@ -85,27 +61,28 @@ class window.Scatter extends BaseVis
         count = -1
         for field in data.fields when (Number field.typeID) not in [37, 7]
             count += 1
-            dummy =
+            options =
                 data: []
                 color: '#000'
-
+                visible: if field in globals.fieldSelection then true else false
                 name: field.fieldName
 
-            if @mode is @SYMBOLS_LINES_MODE
-                dummy.marker =
-                    symbol: globals.symbols[count % globals.symbols.length]
+            switch
+                when @mode is @SYMBOLS_LINES_MODE
+                    options.marker =
+                        symbol: globals.symbols[count % globals.symbols.length]
             
-            if @mode is @SYMBOLS_MODE
-                dummy.marker =
-                    symbol: globals.symbols[count % globals.symbols.length]
-                dummy.lineWidth = 0
+                when @mode is @SYMBOLS_MODE
+                    options.marker =
+                        symbol: globals.symbols[count % globals.symbols.length]
+                    options.lineWidth = 0
 
-            if @mode is @LINES_MODE
-                dummy.marker =
-                    symbol: 'blank'
-                dummy.dashStyle = globals.dashes[count % globals.dashes.length]
+                when @mode is @LINES_MODE
+                    options.marker =
+                        symbol: 'blank'
+                    options.dashStyle = globals.dashes[count % globals.dashes.length]
 
-            dummy
+            options
 
     ###
     TODO: Comment This
@@ -121,16 +98,32 @@ class window.Scatter extends BaseVis
     update: ->
         super()
 
-        #Update hidden state
-        for index in [0...@chart.series.length - data.normalFields.length]
-            groupIndex = index % data.groups.length
-            fieldIndex = data.normalFields[Math.floor (index / data.groups.length)]
+        for fieldIndex, symbolIndex in data.normalFields when fieldIndex in globals.fieldSelection
+            for group, groupIndex in data.groups when groupIndex in globals.groupSelection
+                options =
+                    data: data.xySelector(globals.xAxis, fieldIndex, groupIndex)
+                    showInLegend: false
+                    color: globals.colors[groupIndex % globals.colors.length]
+                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
 
-            if (groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection)
-                @chart.series[index + data.normalFields.length].setVisible(true, false)
-            else
-                @chart.series[index + data.normalFields.length].setVisible(false, false)
-            @chart.redraw()
+                switch
+                    when @mode is @SYMBOLS_LINES_MODE
+                        options.marker =
+                            symbol: globals.symbols[symbolIndex % globals.symbols.length]
+
+                    when @mode is @SYMBOLS_MODE
+                        options.marker =
+                            symbol: globals.symbols[symbolIndex % globals.symbols.length]
+                        options.lineWidth = 0
+
+                    when @mode is @LINES_MODE
+                        options.marker =
+                            symbol: 'blank'
+                        options.dashStyle = globals.dashes[symbolIndex % globals.dashes.length]
+
+                @chart.addSeries options, false
+
+        @chart.redraw()
 
     ###
     TODO: Comment This
@@ -160,7 +153,7 @@ class window.Scatter extends BaseVis
 
         ($ '.mode_radio').click (e) =>
             @mode = Number e.target.value
-            @delayedStart()
+            @delayedUpdate()
 
         
 

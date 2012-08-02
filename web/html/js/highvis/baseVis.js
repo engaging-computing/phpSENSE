@@ -115,11 +115,10 @@
       };
       this.chartOptions.xAxis = [];
       this.chartOptions.xAxis.push({});
-      this.chartOptions.xAxis.push({
+      return this.chartOptions.xAxis.push({
         lineWidth: 0,
         categories: ['']
       });
-      return this.chartOptions.series = this.buildLegendSeries();
     };
 
     /*
@@ -138,39 +137,16 @@
             This is called when the user switched to this vis.
             Should re-build options and the chart itself to ensure sync with global settings.
             This method should also be usable as a 'full update' in that it should destroy the current chart if it exists before generating a fresh one.
+    
+            TODO: Update comment
     */
 
 
     BaseVis.prototype.start = function() {
-      var index, ser, _i, _len, _ref4;
-      this.clearControls();
       this.buildOptions();
-      if (this.chart != null) {
-        this.chart.destroy();
-      }
       this.chart = new Highcharts.Chart(this.chartOptions);
-      _ref4 = this.chart.series.slice(0, data.normalFields.length);
-      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
-        ser = _ref4[_i];
-        index = data.normalFields[ser.index];
-        if (__indexOf.call(globals.fieldSelection, index) >= 0) {
-          ser.show();
-        } else {
-          ser.hide();
-        }
-      }
       ($('#' + this.canvas)).show();
       return this.update();
-    };
-
-    BaseVis.prototype.delayedStart = function() {
-      var mySelf, start;
-      this.chart.showLoading('Loading...');
-      mySelf = this;
-      start = function() {
-        return mySelf.start();
-      };
-      return setTimeout(start, 1);
     };
 
     /*
@@ -188,14 +164,32 @@
 
     /*
         Update minor state
-            Should update the hidden status based on both high-charts legend action and control checkboxes.
+            Redraws html controls, clears current series and re-loads the legend.
+    
+            Derrived classes should overload to add data drawing.
     */
 
 
     BaseVis.prototype.update = function() {
+      var options, _i, _len, _ref4, _results;
       this.clearControls();
-      return this.drawControls();
+      this.drawControls();
+      while (this.chart.series.length !== 0) {
+        this.chart.series[0].remove(false);
+      }
+      _ref4 = this.buildLegendSeries();
+      _results = [];
+      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
+        options = _ref4[_i];
+        _results.push(this.chart.addSeries(options, false));
+      }
+      return _results;
     };
+
+    /*
+        Performs an update while displaying the loading text
+    */
+
 
     BaseVis.prototype.delayedUpdate = function() {
       var mySelf, update;
@@ -278,7 +272,7 @@
             return _results;
           })();
         }
-        return _this.delayedStart();
+        return _this.delayedUpdate();
       });
       return ($('.group_input')).click(function(e) {
         var selection;
@@ -328,7 +322,7 @@
           }
         });
         globals.xAxis = Number(selection);
-        return _this.delayedStart();
+        return _this.delayedUpdate();
       });
     };
 
