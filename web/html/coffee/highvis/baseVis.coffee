@@ -112,6 +112,7 @@ class window.BaseVis
         This method should also be usable as a 'full update' in that it should destroy the current chart if it exists before generating a fresh one.
     ###
     start: ->
+        @clearControls()
         @buildOptions()
         
         if @chart?
@@ -145,7 +146,6 @@ class window.BaseVis
     end: ->
         @chart.destroy()
         @chart = undefined;
-        @clearControls()
         ($ '#' + @canvas).hide()
 
     ###

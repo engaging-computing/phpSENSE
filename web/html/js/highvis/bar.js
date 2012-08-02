@@ -179,10 +179,8 @@
       controls += '</div></td></tr>';
       controls += '</table></div>';
       ($('#controldiv')).append(controls);
-      bar = this;
-      return ($('#drawAnalysisTypeSelector')).change(function() {
-        return bar.analysisType = this.value;
-
+      return ($('#drawAnalysisTypeSelector')).change(function(e) {
+        return _this.analysisType = e.target.value;
       });
     };
 

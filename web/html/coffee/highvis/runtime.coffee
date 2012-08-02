@@ -53,12 +53,14 @@ CoffeeScript version of runtime.
     ### Change vis click handler ###
     ($ '#vis_select').children().children().click ->
         oldVis = globals.curVis
+        globals.curVis = (eval 'globals.' + @text.toLowerCase())
+        
+        if oldVis is globals.curVis
+            return
         
         ### Remove old selection ###
         ($ '#vis_select  > li > a').css 'background-color', '#ccc'
         ($ '#vis_select  > li > a').css 'border-bottom','1px solid black'
-            
-        globals.curVis = (eval 'globals.' + @text.toLowerCase())
         
         ### Set new selection ###
         ($ @).css "background-color", "#ffffff"

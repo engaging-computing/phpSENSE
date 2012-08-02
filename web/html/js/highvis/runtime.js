@@ -69,12 +69,15 @@
     ($('#vis_select')).children().children().click(function() {
       var oldVis, switchVis;
       oldVis = globals.curVis;
+      globals.curVis = eval('globals.' + this.text.toLowerCase());
+      if (oldVis === globals.curVis) {
+        return;
+      }
       /* Remove old selection
       */
 
       ($('#vis_select  > li > a')).css('background-color', '#ccc');
       ($('#vis_select  > li > a')).css('border-bottom', '1px solid black');
-      globals.curVis = eval('globals.' + this.text.toLowerCase());
       /* Set new selection
       */
 

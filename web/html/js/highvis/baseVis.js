@@ -143,6 +143,7 @@
 
     BaseVis.prototype.start = function() {
       var index, ser, _i, _len, _ref4;
+      this.clearControls();
       this.buildOptions();
       if (this.chart != null) {
         this.chart.destroy();
@@ -182,7 +183,6 @@
     BaseVis.prototype.end = function() {
       this.chart.destroy();
       this.chart = void 0;
-      this.clearControls();
       return ($('#' + this.canvas)).hide();
     };
 
