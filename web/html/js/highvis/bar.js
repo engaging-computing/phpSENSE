@@ -168,18 +168,19 @@
     };
 
     Bar.prototype.drawAnalysisTypeControls = function() {
-      var bar, controls;
+      var controls,
+        _this = this;
       controls = '<div id="AnalysisTypeControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>';
       controls += '<tr><td><div class="vis_control_table_div">';
-      controls += '<select id="drawAnalysisTypeSelector"><option>Max</option><option>Min</option><option>Mean</option></select>';
+      controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Max">Max</input><br>';
+      controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Min">Min</input><br>';
+      controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Mean">Mean</input><br>';
       controls += '</div></td></tr>';
       controls += '</table></div>';
       ($('#controldiv')).append(controls);
-      bar = this;
-      return ($('#drawAnalysisTypeSelector')).change(function() {
-        bar.analysisType = this.value;
-        return console.log(bar.analysisType);
+      return ($('#drawAnalysisTypeSelector')).change(function(e) {
+        return _this.analysisType = e.target.value;
       });
     };
 
