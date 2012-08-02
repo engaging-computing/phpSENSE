@@ -28,8 +28,19 @@
 ###
 
 class window.Scatter extends BaseVis
+    ###
+    TODO: Comment This
+    ###
     constructor: (@canvas) ->
-    
+        @SYMBOLS_LINES_MODE = 3
+        @LINES_MODE = 2
+        @SYMBOLS_MODE = 1
+
+        @mode = @SYMBOLS_LINES_MODE
+
+    ###
+    TODO: Comment This
+    ###
     buildOptions: ->
         super()
         
@@ -50,12 +61,26 @@ class window.Scatter extends BaseVis
                     data: data.xySelector(globals.xAxis, fieldIndex, groupIndex)
                     showInLegend: false
                     color: globals.colors[groupIndex % globals.colors.length]
-                    marker:
+                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
+
+                if @mode is @SYMBOLS_LINES_MODE
+                    options.marker =
+                    symbol: globals.symbols[symbolIndex % globals.symbols.length]
+
+                if @mode is @SYMBOLS_MODE
+                    options.marker =
                         symbol: globals.symbols[symbolIndex % globals.symbols.length]
-                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName                    
+                    options.lineWidth = 0
+
+                if @mode is @LINES_MODE
+                    options.marker =
+                        symbol: 'blank'
+                    options.dashStyle = globals.dashes[symbolIndex % globals.dashes.length]
                     
                 @chartOptions.series.push options
-
+    ###
+    TODO: Comment This
+    ###
     buildLegendSeries: ->
         count = -1
         for field in data.fields when (Number field.typeID) not in [37, 7]
@@ -63,20 +88,36 @@ class window.Scatter extends BaseVis
             dummy =
                 data: []
                 color: '#000'
-                ###
-                marker:
-                    symbol:'blank'
-                dashStyle: globals.dashes[count % globals.symbols.length]
-                ###
-                marker:
-                    symbol: globals.symbols[count % globals.symbols.length]
 
                 name: field.fieldName
-    
+
+            if @mode is @SYMBOLS_LINES_MODE
+                dummy.marker =
+                    symbol: globals.symbols[count % globals.symbols.length]
+            
+            if @mode is @SYMBOLS_MODE
+                dummy.marker =
+                    symbol: globals.symbols[count % globals.symbols.length]
+                dummy.lineWidth = 0
+
+            if @mode is @LINES_MODE
+                dummy.marker =
+                    symbol: 'blank'
+                dummy.dashStyle = globals.dashes[count % globals.dashes.length]
+
+            dummy
+
+    ###
+    TODO: Comment This
+    ###
     drawControls: ->
         @drawGroupControls()
         @drawXAxisControls()
+        @drawModeControls()
 
+    ###
+    TODO: Comment This
+    ###
     update: ->
         super()
 
@@ -90,5 +131,37 @@ class window.Scatter extends BaseVis
             else
                 @chart.series[index + data.normalFields.length].setVisible(false, false)
             @chart.redraw()
+
+    ###
+    TODO: Comment This
+    ###
+    drawModeControls: ->
+        #console.log @mode
+        controls =  '<div id="AnalysisTypeControl" class="vis_controls">'
+
+        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Tools:</td></tr>'
+
+        controls += '<tr><td><div class="vis_control_table_div">'
+        controls += "<input class='mode_radio' type='radio' name='mode_selector' value='#{@SYMBOLS_LINES_MODE}' #{if @mode is @SYMBOLS_LINES_MODE then 'checked' else ''}/>"
+        controls += "Symbols and Lines  </div></td></tr>"
+
+        controls += '<tr><td><div class="vis_control_table_div">'
+        controls += "<input class='mode_radio' type='radio' name='mode_selector' value='#{@LINES_MODE}' #{if @mode is @LINES_MODE then 'checked' else ''}/>"
+        controls += "Lines Only </div></td></tr>"
+
+        controls += '<tr><td><div class="vis_control_table_div">'
+        controls += "<input class='mode_radio' type='radio' name='mode_selector' value='#{@SYMBOLS_MODE}' #{if @mode is @SYMBOLS_MODE then 'checked' else ''}/>"
+        controls += "Symbols Only </div></td></tr>"
+
+        controls += '</table></div>'
+        #console.log @mode
+        # Write HTML
+        ($ '#controldiv').append controls
+
+        ($ '.mode_radio').click (e) =>
+            @mode = Number e.target.value
+            @delayedStart()
+
+        
 
 globals.scatter = new Scatter 'scatter_canvas'

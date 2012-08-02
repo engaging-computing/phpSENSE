@@ -72,7 +72,7 @@ class window.BaseVis
                                 arrayRemove(globals.fieldSelection, index)
                             else
                                 globals.fieldSelection.push(index)
-                            @update()
+                            @delayedUpdate()
             #point: {}
             series: []
             #subtitle: {}
@@ -128,6 +128,14 @@ class window.BaseVis
     
         ($ '#' + @canvas).show()
         @update()
+
+    delayedStart: ->
+        @chart.showLoading 'Loading...'
+        
+        #Save context
+        mySelf = this
+        start = -> mySelf.start()
+        setTimeout start, 1
         
     ###
     End sequence used by runtime
@@ -147,6 +155,16 @@ class window.BaseVis
     update: ->
         @clearControls()
         @drawControls()
+
+    delayedUpdate: ->
+        @chart.showLoading 'Loading...'
+        
+        #Save context
+        mySelf = this
+        update = -> mySelf.update()
+        setTimeout update, 1
+
+        @chart.hideLoading()
 
     ###
     Clear the controls
@@ -211,7 +229,7 @@ class window.BaseVis
             data.setGroupIndex (Number element.value)
             globals.groupSelection ?= for vals, keys in data.groups
                 Number keys
-            @start()
+            @delayedStart()
         
         # Make group checkbox handler
         ($ '.group_input').click (e) =>
@@ -221,7 +239,7 @@ class window.BaseVis
                     selection.push Number @value
                 else
             globals.groupSelection = selection
-            @update()
+            @delayedUpdate()
             
 
     ###
@@ -255,4 +273,5 @@ class window.BaseVis
                 if @checked
                     selection = @value
             globals.xAxis = Number selection
-            @start()
+            
+            @delayedStart()

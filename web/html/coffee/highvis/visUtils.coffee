@@ -94,6 +94,11 @@ Lightness: 0.3 -   0.95
 K-means
 ###
 globals.colors = ['#5E5A83', '#609B36', '#DC644F', '#9A8867', '#DA6694', '#40938C', '#A78E20', '#884646', '#546222', '#688CCF', '#529F69', '#415B62', '#AE8188', '#D1762F', '#408FB2', '#B18347', '#944B70', '#9F7FBC', '#C77967', '#914C2A', '#396B43', '#625744', '#C25562', '#735521', '#7D9080', '#715365', '#8A9044', '#C573B2', '#788AA2', '#EC5D7A']
+
+###
+Generate a list of dashes
+###
+globals.dashes = ['solid', 'Dot', 'ShortDot', 'DashDot', 'ShortDashDot']
  
 ###
 Generate a list of symbols and symbol rendering routines and then add them
@@ -108,7 +113,6 @@ halfmoonMagList      = [1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0]
 
 tempSymbolsMatrix = []
 symbolList        = ['circle', 'square', 'up-tri', 'down-tri', 'left-tri', 'right-tri', 'diamond']
-globals.dashes = ['solid', 'Dot', 'ShortDot', 'DashDot', 'ShortDashDot']
 
 tempSymbolsMatrix[tempSymbolsMatrix.length] = []
 

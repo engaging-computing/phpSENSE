@@ -64,9 +64,13 @@ CoffeeScript version of runtime.
         ($ @).css "background-color", "#ffffff"
         ($ @).css 'border-bottom','1px solid white'
 
-        oldVis.chart.showLoading 'Loading...'
-        globals.curVis.start()
-        oldVis.chart.hideLoading()
-        oldVis.end() if global.curVis?
+        (oldVis.chart.showLoading 'Loading...') if oldVis?
+
+        ### Give the renderer a cycle to update the loading state before switching ###
+        switchVis = ->
+            globals.curVis.start()
+            oldVis.end() if oldVis?
+
+        setTimeout switchVis, 1
             
     globals.curVis.start()

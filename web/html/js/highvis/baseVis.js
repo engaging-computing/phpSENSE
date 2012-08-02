@@ -105,7 +105,7 @@
                 } else {
                   globals.fieldSelection.push(index);
                 }
-                return _this.update();
+                return _this.delayedUpdate();
               }
             }
           }
@@ -162,6 +162,16 @@
       return this.update();
     };
 
+    BaseVis.prototype.delayedStart = function() {
+      var mySelf, start;
+      this.chart.showLoading('Loading...');
+      mySelf = this;
+      start = function() {
+        return mySelf.start();
+      };
+      return setTimeout(start, 1);
+    };
+
     /*
         End sequence used by runtime
             This is called when the user switches away from this vis.
@@ -185,6 +195,17 @@
     BaseVis.prototype.update = function() {
       this.clearControls();
       return this.drawControls();
+    };
+
+    BaseVis.prototype.delayedUpdate = function() {
+      var mySelf, update;
+      this.chart.showLoading('Loading...');
+      mySelf = this;
+      update = function() {
+        return mySelf.update();
+      };
+      setTimeout(update, 1);
+      return this.chart.hideLoading();
     };
 
     /*
@@ -257,7 +278,7 @@
             return _results;
           })();
         }
-        return _this.start();
+        return _this.delayedStart();
       });
       return ($('.group_input')).click(function(e) {
         var selection;
@@ -270,7 +291,7 @@
           }
         });
         globals.groupSelection = selection;
-        return _this.update();
+        return _this.delayedUpdate();
       });
     };
 
@@ -307,7 +328,7 @@
           }
         });
         globals.xAxis = Number(selection);
-        return _this.start();
+        return _this.delayedStart();
       });
     };
 

@@ -39,9 +39,23 @@
 
     __extends(Scatter, _super);
 
+    /*
+        TODO: Comment This
+    */
+
+
     function Scatter(canvas) {
       this.canvas = canvas;
+      this.SYMBOLS_LINES_MODE = 3;
+      this.LINES_MODE = 2;
+      this.SYMBOLS_MODE = 1;
+      this.mode = this.SYMBOLS_LINES_MODE;
     }
+
+    /*
+        TODO: Comment This
+    */
+
 
     Scatter.prototype.buildOptions = function() {
       var fieldIndex, group, groupIndex, options, symbolIndex, _i, _len, _ref, _results;
@@ -73,11 +87,25 @@
               data: data.xySelector(globals.xAxis, fieldIndex, groupIndex),
               showInLegend: false,
               color: globals.colors[groupIndex % globals.colors.length],
-              marker: {
-                symbol: globals.symbols[symbolIndex % globals.symbols.length]
-              },
               name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
             };
+            if (this.mode === this.SYMBOLS_LINES_MODE) {
+              options.marker = {
+                symbol: globals.symbols[symbolIndex % globals.symbols.length]
+              };
+            }
+            if (this.mode === this.SYMBOLS_MODE) {
+              options.marker = {
+                symbol: globals.symbols[symbolIndex % globals.symbols.length]
+              };
+              options.lineWidth = 0;
+            }
+            if (this.mode === this.LINES_MODE) {
+              options.marker = {
+                symbol: 'blank'
+              };
+              options.dashStyle = globals.dashes[symbolIndex % globals.dashes.length];
+            }
             _results1.push(this.chartOptions.series.push(options));
           }
           return _results1;
@@ -85,6 +113,11 @@
       }
       return _results;
     };
+
+    /*
+        TODO: Comment This
+    */
+
 
     Scatter.prototype.buildLegendSeries = function() {
       var count, dummy, field, _i, _len, _ref, _ref1, _results;
@@ -97,28 +130,48 @@
           continue;
         }
         count += 1;
-        _results.push(dummy = {
+        dummy = {
           data: [],
           color: '#000',
-          /*
-                          marker:
-                              symbol:'blank'
-                          dashStyle: globals.dashes[count % globals.symbols.length]
-          */
-
-          marker: {
-            symbol: globals.symbols[count % globals.symbols.length]
-          },
           name: field.fieldName
-        });
+        };
+        if (this.mode === this.SYMBOLS_LINES_MODE) {
+          dummy.marker = {
+            symbol: globals.symbols[count % globals.symbols.length]
+          };
+        }
+        if (this.mode === this.SYMBOLS_MODE) {
+          dummy.marker = {
+            symbol: globals.symbols[count % globals.symbols.length]
+          };
+          dummy.lineWidth = 0;
+        }
+        if (this.mode === this.LINES_MODE) {
+          dummy.marker = {
+            symbol: 'blank'
+          };
+          dummy.dashStyle = globals.dashes[count % globals.dashes.length];
+        }
+        _results.push(dummy);
       }
       return _results;
     };
 
+    /*
+        TODO: Comment This
+    */
+
+
     Scatter.prototype.drawControls = function() {
       this.drawGroupControls();
-      return this.drawXAxisControls();
+      this.drawXAxisControls();
+      return this.drawModeControls();
     };
+
+    /*
+        TODO: Comment This
+    */
+
 
     Scatter.prototype.update = function() {
       var fieldIndex, groupIndex, index, _i, _ref, _results;
@@ -135,6 +188,33 @@
         _results.push(this.chart.redraw());
       }
       return _results;
+    };
+
+    /*
+        TODO: Comment This
+    */
+
+
+    Scatter.prototype.drawModeControls = function() {
+      var controls,
+        _this = this;
+      controls = '<div id="AnalysisTypeControl" class="vis_controls">';
+      controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Tools:</td></tr>';
+      controls += '<tr><td><div class="vis_control_table_div">';
+      controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + this.SYMBOLS_LINES_MODE + "' " + (this.mode === this.SYMBOLS_LINES_MODE ? 'checked' : '') + "/>";
+      controls += "Symbols and Lines  </div></td></tr>";
+      controls += '<tr><td><div class="vis_control_table_div">';
+      controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + this.LINES_MODE + "' " + (this.mode === this.LINES_MODE ? 'checked' : '') + "/>";
+      controls += "Lines Only </div></td></tr>";
+      controls += '<tr><td><div class="vis_control_table_div">';
+      controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + this.SYMBOLS_MODE + "' " + (this.mode === this.SYMBOLS_MODE ? 'checked' : '') + "/>";
+      controls += "Symbols Only </div></td></tr>";
+      controls += '</table></div>';
+      ($('#controldiv')).append(controls);
+      return ($('.mode_radio')).click(function(e) {
+        _this.mode = Number(e.target.value);
+        return _this.delayedStart();
+      });
     };
 
     return Scatter;

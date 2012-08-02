@@ -128,7 +128,9 @@ class window.Bar extends BaseVis
         
         controls += '<tr><td><div class="vis_control_table_div">'
         
-        controls += '<select id="drawAnalysisTypeSelector"><option>Max</option><option>Min</option><option>Mean</option></select>'
+        controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Max">Max</input><br>'
+        controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Min">Min</input><br>'
+        controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Mean">Mean</input><br>'
         
         controls += '</div></td></tr>'
         
@@ -137,10 +139,8 @@ class window.Bar extends BaseVis
         # Write HTML
         ($ '#controldiv').append controls
         
-        bar = this
-        
-        ($ '#drawAnalysisTypeSelector').change ->
-            bar.analysisType = @value
+        ($ '#drawAnalysisTypeSelector').change (e) =>
+            @analysisType = e.target.value
         
     drawControls: ->
         @drawGroupControls()
