@@ -43,8 +43,7 @@ class window.Scatter extends BaseVis
     ###
     buildOptions: ->
         super()
-        
-        @chartOptions
+
         $.extend true, @chartOptions,
             chart:
                 type: "line"
@@ -59,12 +58,12 @@ class window.Scatter extends BaseVis
     ###
     buildLegendSeries: ->
         count = -1
-        for field in data.fields when (Number field.typeID) not in [37, 7]
+        for field, fieldIndex in data.fields when fieldIndex in data.normalFields
             count += 1
             options =
                 data: []
                 color: '#000'
-                visible: if field in globals.fieldSelection then true else false
+                visible: if fieldIndex in globals.fieldSelection then true else false
                 name: field.fieldName
 
             switch

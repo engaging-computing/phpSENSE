@@ -100,7 +100,7 @@
               legendItemClick: function(event) {
                 var index;
                 index = data.normalFields[event.target.index];
-                if (event.target.visible) {
+                if (__indexOf.call(globals.fieldSelection, index) >= 0) {
                   arrayRemove(globals.fieldSelection, index);
                 } else {
                   globals.fieldSelection.push(index);
@@ -295,15 +295,20 @@
     */
 
 
-    BaseVis.prototype.drawXAxisControls = function() {
+    BaseVis.prototype.drawXAxisControls = function(filter) {
       var controls, field, fieldIndex, _i, _len, _ref4,
         _this = this;
+      if (filter == null) {
+        filter = function(fieldIndex) {
+          return (Number(data.fields[fieldIndex].typeID)) !== 37;
+        };
+      }
       controls = '<div id="xAxisControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>';
       _ref4 = data.fields;
       for (fieldIndex = _i = 0, _len = _ref4.length; _i < _len; fieldIndex = ++_i) {
         field = _ref4[fieldIndex];
-        if ((Number(data.fields[fieldIndex].typeID)) !== 37) {
+        if (filter(fieldIndex)) {
           controls += '<tr><td>';
           controls += '<div class="vis_control_table_div">';
           controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"" + fieldIndex + "\" " + ((Number(fieldIndex)) === globals.xAxis ? "checked" : "") + "></input>&nbsp";

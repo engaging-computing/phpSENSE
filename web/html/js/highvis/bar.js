@@ -146,19 +146,20 @@
     };
 
     Bar.prototype.buildLegendSeries = function() {
-      var count, dummy, field, _i, _len, _ref, _ref1, _results;
+      var count, dummy, field, fieldIndex, _i, _len, _ref, _results;
       count = -1;
       _ref = data.fields;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        field = _ref[_i];
-        if (!((_ref1 = Number(field.typeID)) !== 37 && _ref1 !== 7)) {
+      for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
+        field = _ref[fieldIndex];
+        if (!(__indexOf.call(data.normalFields, fieldIndex) >= 0)) {
           continue;
         }
         count += 1;
         _results.push(dummy = {
           data: [],
           color: '#000',
+          visible: __indexOf.call(globals.fieldSelection, fieldIndex) >= 0 ? true : false,
           name: field.fieldName,
           type: 'area',
           xAxis: 1

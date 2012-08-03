@@ -68,10 +68,11 @@ class window.BaseVis
                         legendItemClick: (event) =>
                             index = data.normalFields[event.target.index]
 
-                            if event.target.visible
+                            if index in globals.fieldSelection
                                 arrayRemove(globals.fieldSelection, index)
                             else
                                 globals.fieldSelection.push(index)
+                                
                             @delayedUpdate()
             #point: {}
             series: []
@@ -240,14 +241,14 @@ class window.BaseVis
     Draws x axis selection controls
         This includes a series of radio buttons.
     ###
-    drawXAxisControls: ->
+    drawXAxisControls: (filter = (fieldIndex) -> (Number data.fields[fieldIndex].typeID) != 37) ->
         controls = '<div id="xAxisControl" class="vis_controls">'
         
         controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>'
         
         # Populate choices (not text)
         for field, fieldIndex in data.fields
-            if (Number data.fields[fieldIndex].typeID) != 37
+            if filter fieldIndex
                 controls += '<tr><td>'
                 controls += '<div class="vis_control_table_div">'
                 

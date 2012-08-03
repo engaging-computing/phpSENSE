@@ -59,7 +59,6 @@
 
     Scatter.prototype.buildOptions = function() {
       Scatter.__super__.buildOptions.call(this);
-      this.chartOptions;
       return $.extend(true, this.chartOptions, {
         chart: {
           type: "line",
@@ -80,20 +79,20 @@
 
 
     Scatter.prototype.buildLegendSeries = function() {
-      var count, field, options, _i, _len, _ref, _ref1, _results;
+      var count, field, fieldIndex, options, _i, _len, _ref, _results;
       count = -1;
       _ref = data.fields;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        field = _ref[_i];
-        if (!((_ref1 = Number(field.typeID)) !== 37 && _ref1 !== 7)) {
+      for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
+        field = _ref[fieldIndex];
+        if (!(__indexOf.call(data.normalFields, fieldIndex) >= 0)) {
           continue;
         }
         count += 1;
         options = {
           data: [],
           color: '#000',
-          visible: __indexOf.call(globals.fieldSelection, field) >= 0 ? true : false,
+          visible: __indexOf.call(globals.fieldSelection, fieldIndex) >= 0 ? true : false,
           name: field.fieldName
         };
         switch (false) {
