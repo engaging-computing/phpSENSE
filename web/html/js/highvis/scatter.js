@@ -184,19 +184,17 @@
 
 
     Scatter.prototype.drawModeControls = function() {
-      var controls,
+      var controls, mode, modeText, _i, _len, _ref, _ref1,
         _this = this;
       controls = '<div id="AnalysisTypeControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Tools:</td></tr>';
-      controls += '<tr><td><div class="vis_control_table_div">';
-      controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + this.SYMBOLS_LINES_MODE + "' " + (this.mode === this.SYMBOLS_LINES_MODE ? 'checked' : '') + "/>";
-      controls += "Symbols and Lines  </div></td></tr>";
-      controls += '<tr><td><div class="vis_control_table_div">';
-      controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + this.LINES_MODE + "' " + (this.mode === this.LINES_MODE ? 'checked' : '') + "/>";
-      controls += "Lines Only </div></td></tr>";
-      controls += '<tr><td><div class="vis_control_table_div">';
-      controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + this.SYMBOLS_MODE + "' " + (this.mode === this.SYMBOLS_MODE ? 'checked' : '') + "/>";
-      controls += "Symbols Only </div></td></tr>";
+      _ref = [[this.SYMBOLS_LINES_MODE, "Symbols and Lines"], [this.LINES_MODE, "Lines Only"], [this.SYMBOLS_MODE, "Symbols Only"]];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        _ref1 = _ref[_i], mode = _ref1[0], modeText = _ref1[1];
+        controls += '<tr><td><div class="vis_control_table_div">';
+        controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + mode + "' " + (this.mode === mode ? 'checked' : '') + "/>";
+        controls += modeText + "  </div></td></tr>";
+      }
       controls += '</table></div>';
       ($('#controldiv')).append(controls);
       return ($('.mode_radio')).click(function(e) {

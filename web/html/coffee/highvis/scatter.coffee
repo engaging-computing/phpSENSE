@@ -133,20 +133,16 @@ class window.Scatter extends BaseVis
 
         controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Tools:</td></tr>'
 
-        controls += '<tr><td><div class="vis_control_table_div">'
-        controls += "<input class='mode_radio' type='radio' name='mode_selector' value='#{@SYMBOLS_LINES_MODE}' #{if @mode is @SYMBOLS_LINES_MODE then 'checked' else ''}/>"
-        controls += "Symbols and Lines  </div></td></tr>"
 
-        controls += '<tr><td><div class="vis_control_table_div">'
-        controls += "<input class='mode_radio' type='radio' name='mode_selector' value='#{@LINES_MODE}' #{if @mode is @LINES_MODE then 'checked' else ''}/>"
-        controls += "Lines Only </div></td></tr>"
-
-        controls += '<tr><td><div class="vis_control_table_div">'
-        controls += "<input class='mode_radio' type='radio' name='mode_selector' value='#{@SYMBOLS_MODE}' #{if @mode is @SYMBOLS_MODE then 'checked' else ''}/>"
-        controls += "Symbols Only </div></td></tr>"
+        for [mode, modeText] in [[@SYMBOLS_LINES_MODE, "Symbols and Lines"],
+                                 [@LINES_MODE,         "Lines Only"],
+                                 [@SYMBOLS_MODE,       "Symbols Only"]]
+            controls += '<tr><td><div class="vis_control_table_div">'
+            controls += "<input class='mode_radio' type='radio' name='mode_selector' value='#{mode}' #{if @mode is mode then 'checked' else ''}/>"
+            controls += modeText + "  </div></td></tr>"
 
         controls += '</table></div>'
-        #console.log @mode
+        
         # Write HTML
         ($ '#controldiv').append controls
 
