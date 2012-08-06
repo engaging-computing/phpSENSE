@@ -43,7 +43,15 @@
       this.canvas = canvas;
     }
 
-    Bar.prototype.analysisType = "Max";
+    Bar.prototype.ANALYSISTYPE_MAX = 0;
+
+    Bar.prototype.ANALYSISTYPE_MIN = 1;
+
+    Bar.prototype.ANALYSISTYPE_MEAN = 2;
+
+    Bar.prototype.ANALYSISTYPE_MEDIAN = 3;
+
+    Bar.prototype.analysisType = 0;
 
     Bar.prototype.buildOptions = function() {
       Bar.__super__.buildOptions.call(this);
@@ -135,11 +143,26 @@
           for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
             fieldIndex = _ref1[_j];
             if (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0) {
-              _results.push(data.getMax(fieldIndex, groupIndex));
+              switch (this.analysisType) {
+                case this.ANALYSISTYPE_MAX:
+                  _results.push(data.getMax(fieldIndex, groupIndex));
+                  break;
+                case this.ANALYSISTYPE_MIN:
+                  _results.push(data.getMin(fieldIndex, groupIndex));
+                  break;
+                case this.ANALYSISTYPE_MEAN:
+                  _results.push(data.getMean(fieldIndex, groupIndex));
+                  break;
+                case this.ANALYSISTYPE_MEDIAN:
+                  _results.push(data.getMedian(fieldIndex, groupIndex));
+                  break;
+                default:
+                  _results.push(void 0);
+              }
             }
           }
           return _results;
-        })();
+        }).call(this);
         this.chart.addSeries(options, false);
       }
       return this.chart.redraw();
@@ -168,19 +191,22 @@
     };
 
     Bar.prototype.drawAnalysisTypeControls = function() {
-      var controls,
+      var controls, type, typestring, _i, _len, _ref, _ref1,
         _this = this;
       controls = '<div id="AnalysisTypeControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>';
-      controls += '<tr><td><div class="vis_control_table_div">';
-      controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Max">Max</input><br>';
-      controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Min">Min</input><br>';
-      controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Mean">Mean</input><br>';
-      controls += '</div></td></tr>';
+      _ref = [[this.ANALYSISTYPE_MAX, 'Max'], [this.ANALYSISTYPE_MIN, 'Min'], [this.ANALYSISTYPE_MEAN, 'Mean'], [this.ANALYSISTYPE_MEDIAN, 'Median']];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        _ref1 = _ref[_i], type = _ref1[0], typestring = _ref1[1];
+        controls += '<tr><td><div class="vis_control_table_div">';
+        controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='" + type + "' " + (type === this.analysisType ? 'checked' : '') + ">" + typestring + "</input><br>";
+        controls += '</div></td></tr>';
+      }
       controls += '</table></div>';
       ($('#controldiv')).append(controls);
-      return ($('#drawAnalysisTypeSelector')).change(function(e) {
-        return _this.analysisType = e.target.value;
+      return ($('.analysisType')).change(function(e) {
+        _this.analysisType = Number(e.target.value);
+        return _this.delayedUpdate();
       });
     };
 

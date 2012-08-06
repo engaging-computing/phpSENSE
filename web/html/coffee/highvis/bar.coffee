@@ -30,7 +30,12 @@
 class window.Bar extends BaseVis
     constructor: (@canvas) ->
     
-    analysisType: "Max"
+    ANALYSISTYPE_MAX:       0
+    ANALYSISTYPE_MIN:       1
+    ANALYSISTYPE_MEAN:      2
+    ANALYSISTYPE_MEDIAN:    3
+    
+    analysisType: 0
     
     buildOptions: ->
         super()
@@ -43,7 +48,6 @@ class window.Bar extends BaseVis
                 text: "Bar"
             legend:
                 symbolWidth: 0
-                
                 
             ###
             xAxis:
@@ -103,7 +107,11 @@ class window.Bar extends BaseVis
                 name: data.groups[groupIndex]
                 
             options.data = for fieldIndex in data.normalFields when fieldIndex in globals.fieldSelection
-                data.getMax fieldIndex, groupIndex
+                switch @analysisType
+                    when @ANALYSISTYPE_MAX      then data.getMax    fieldIndex, groupIndex
+                    when @ANALYSISTYPE_MIN      then data.getMin    fieldIndex, groupIndex
+                    when @ANALYSISTYPE_MEAN     then data.getMean   fieldIndex, groupIndex
+                    when @ANALYSISTYPE_MEDIAN   then data.getMedian fieldIndex, groupIndex
                 
             @chart.addSeries options, false
         
@@ -126,21 +134,22 @@ class window.Bar extends BaseVis
             
         controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>'
         
-        controls += '<tr><td><div class="vis_control_table_div">'
+        for [type, typestring] in [[@ANALYSISTYPE_MAX, 'Max'],[@ANALYSISTYPE_MIN, 'Min'],[@ANALYSISTYPE_MEAN, 'Mean'],[@ANALYSISTYPE_MEDIAN, 'Median']]
         
-        controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Max">Max</input><br>'
-        controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Min">Min</input><br>'
-        controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Mean">Mean</input><br>'
+            controls += '<tr><td><div class="vis_control_table_div">'
         
-        controls += '</div></td></tr>'
+            controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='#{type}' #{if type is @analysisType then 'checked' else ''}>#{typestring}</input><br>"
+        
+            controls += '</div></td></tr>'
         
         controls += '</table></div>'
         
         # Write HTML
         ($ '#controldiv').append controls
         
-        ($ '#drawAnalysisTypeSelector').change (e) =>
-            @analysisType = e.target.value
+        ($ '.analysisType').change (e) =>
+            @analysisType = Number e.target.value
+            @delayedUpdate()
         
     drawControls: ->
         @drawGroupControls()
