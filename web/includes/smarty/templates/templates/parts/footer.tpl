@@ -27,9 +27,8 @@
  *}
 <!--<p>This page is part of the iSENSE Project at the University of Massachusetts Lowell.</p>-->
 <!--<p>The iSENSE Project is supported by grants DRL-0735597 and DRL-0735592 from the National Science Foundation, and a gift from Google Inc.</p>-->
-<p>The iSENSE project is a collaborative effort of the University of Massachusetts Lowell and Machine Science Inc.</p> 
-<p>Our work is supported by grants DRL-0735597, DRL-0735592, <a href="http://nsf.gov/awardsearch/showAward.do?AwardNumber=1123998">IIS-1123998</a>, and <a href="http://nsf.gov/awardsearch/showAward.do?AwardNumber=1123972">IIS-1123972</a></p>
-<p>from the National Science Foundation, and a gift from Google Inc.</p>
+<p>The iSENSE project is a collaborative effort of the University of Massachusetts Lowell and Machine Science Inc. </p>
+<p>Our work is supported by grants <a href="http://nsf.gov/awardsearch/showAward.do?AwardNumber=0735597">DRL-0735597</a>, <a href="http://nsf.gov/awardsearch/showAward.do?AwardNumber=0735592">DRL-0735592</a>, <a href="http://nsf.gov/awardsearch/showAward.do?AwardNumber=0546513">DRL-0546513</a>, <a href="http://nsf.gov/awardsearch/showAward.do?AwardNumber=1123998">IIS-1123998</a>, and <a href="http://nsf.gov/awardsearch/showAward.do?AwardNumber=1123972">IIS-1123972</a> from the National Science Foundation, and a gift from Google Inc.</p>
 <p>
     <a href="/blog/about">About</a> &#8226; 
     <a href="/blog">Blog</a> &#8226; 
