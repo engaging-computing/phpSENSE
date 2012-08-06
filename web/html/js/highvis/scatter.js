@@ -50,6 +50,7 @@
       this.LINES_MODE = 2;
       this.SYMBOLS_MODE = 1;
       this.mode = this.SYMBOLS_LINES_MODE;
+      this.xAxis = data.normalFields[0];
     }
 
     /*
@@ -58,9 +59,7 @@
 
 
     Scatter.prototype.buildOptions = function() {
-      var fieldIndex, group, groupIndex, options, symbolIndex, _i, _len, _ref, _results;
       Scatter.__super__.buildOptions.call(this);
-      this.chartOptions;
       $.extend(true, this.chartOptions, {
         chart: {
           type: "line",
@@ -69,49 +68,22 @@
         title: {
           text: "Scatter"
         },
-        xAxis: {
-          type: (Number(data.fields[globals.xAxis].typeID)) === 7 ? 'datetime' : 'linear'
+        tooltip: {
+          formatter: function() {
+            var str;
+            console.log(this);
+            str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div><br>";
+            str += "<table>";
+            str += "<tr><td>" + this.series.xAxis.options.title.text + ":</td><td><strong>" + this.x + "</strong></td></tr>";
+            str += "<tr><td>" + this.series.name.field + ":</td><td><strong>" + this.y + "</strong></td></tr>";
+            return str += "</table>";
+          },
+          useHTML: true
         }
       });
-      _ref = data.normalFields;
-      _results = [];
-      for (symbolIndex = _i = 0, _len = _ref.length; _i < _len; symbolIndex = ++_i) {
-        fieldIndex = _ref[symbolIndex];
-        _results.push((function() {
-          var _j, _len1, _ref1, _results1;
-          _ref1 = data.groups;
-          _results1 = [];
-          for (groupIndex = _j = 0, _len1 = _ref1.length; _j < _len1; groupIndex = ++_j) {
-            group = _ref1[groupIndex];
-            options = {
-              data: data.xySelector(globals.xAxis, fieldIndex, groupIndex),
-              showInLegend: false,
-              color: globals.colors[groupIndex % globals.colors.length],
-              name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
-            };
-            if (this.mode === this.SYMBOLS_LINES_MODE) {
-              options.marker = {
-                symbol: globals.symbols[symbolIndex % globals.symbols.length]
-              };
-            }
-            if (this.mode === this.SYMBOLS_MODE) {
-              options.marker = {
-                symbol: globals.symbols[symbolIndex % globals.symbols.length]
-              };
-              options.lineWidth = 0;
-            }
-            if (this.mode === this.LINES_MODE) {
-              options.marker = {
-                symbol: 'blank'
-              };
-              options.dashStyle = globals.dashes[symbolIndex % globals.dashes.length];
-            }
-            _results1.push(this.chartOptions.series.push(options));
-          }
-          return _results1;
-        }).call(this));
-      }
-      return _results;
+      return this.chartOptions.xAxis = {
+        type: 'linear'
+      };
     };
 
     /*
@@ -120,39 +92,41 @@
 
 
     Scatter.prototype.buildLegendSeries = function() {
-      var count, dummy, field, _i, _len, _ref, _ref1, _results;
+      var count, field, fieldIndex, options, _i, _len, _ref, _results;
       count = -1;
       _ref = data.fields;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        field = _ref[_i];
-        if (!((_ref1 = Number(field.typeID)) !== 37 && _ref1 !== 7)) {
+      for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
+        field = _ref[fieldIndex];
+        if (!(__indexOf.call(data.normalFields, fieldIndex) >= 0)) {
           continue;
         }
         count += 1;
-        dummy = {
+        options = {
           data: [],
           color: '#000',
+          visible: __indexOf.call(globals.fieldSelection, fieldIndex) >= 0 ? true : false,
           name: field.fieldName
         };
-        if (this.mode === this.SYMBOLS_LINES_MODE) {
-          dummy.marker = {
-            symbol: globals.symbols[count % globals.symbols.length]
-          };
+        switch (false) {
+          case this.mode !== this.SYMBOLS_LINES_MODE:
+            options.marker = {
+              symbol: globals.symbols[count % globals.symbols.length]
+            };
+            break;
+          case this.mode !== this.SYMBOLS_MODE:
+            options.marker = {
+              symbol: globals.symbols[count % globals.symbols.length]
+            };
+            options.lineWidth = 0;
+            break;
+          case this.mode !== this.LINES_MODE:
+            options.marker = {
+              symbol: 'blank'
+            };
+            options.dashStyle = globals.dashes[count % globals.dashes.length];
         }
-        if (this.mode === this.SYMBOLS_MODE) {
-          dummy.marker = {
-            symbol: globals.symbols[count % globals.symbols.length]
-          };
-          dummy.lineWidth = 0;
-        }
-        if (this.mode === this.LINES_MODE) {
-          dummy.marker = {
-            symbol: 'blank'
-          };
-          dummy.dashStyle = globals.dashes[count % globals.dashes.length];
-        }
-        _results.push(dummy);
+        _results.push(options);
       }
       return _results;
     };
@@ -174,20 +148,54 @@
 
 
     Scatter.prototype.update = function() {
-      var fieldIndex, groupIndex, index, _i, _ref, _results;
+      var fieldIndex, group, groupIndex, options, symbolIndex, title, _i, _j, _len, _len1, _ref, _ref1;
       Scatter.__super__.update.call(this);
-      _results = [];
-      for (index = _i = 0, _ref = this.chart.series.length - data.normalFields.length; 0 <= _ref ? _i < _ref : _i > _ref; index = 0 <= _ref ? ++_i : --_i) {
-        groupIndex = index % data.groups.length;
-        fieldIndex = data.normalFields[Math.floor(index / data.groups.length)];
-        if ((__indexOf.call(globals.groupSelection, groupIndex) >= 0) && (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0)) {
-          this.chart.series[index + data.normalFields.length].setVisible(true, false);
-        } else {
-          this.chart.series[index + data.normalFields.length].setVisible(false, false);
+      title = {
+        text: data.fields[this.xAxis].fieldName
+      };
+      this.chart.xAxis[0].setTitle(title, false);
+      _ref = data.normalFields;
+      for (symbolIndex = _i = 0, _len = _ref.length; _i < _len; symbolIndex = ++_i) {
+        fieldIndex = _ref[symbolIndex];
+        if (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0) {
+          _ref1 = data.groups;
+          for (groupIndex = _j = 0, _len1 = _ref1.length; _j < _len1; groupIndex = ++_j) {
+            group = _ref1[groupIndex];
+            if (!(__indexOf.call(globals.groupSelection, groupIndex) >= 0)) {
+              continue;
+            }
+            options = {
+              data: data.xySelector(this.xAxis, fieldIndex, groupIndex),
+              showInLegend: false,
+              color: globals.colors[groupIndex % globals.colors.length],
+              name: {
+                group: data.groups[groupIndex],
+                field: data.fields[fieldIndex].fieldName
+              }
+            };
+            switch (false) {
+              case this.mode !== this.SYMBOLS_LINES_MODE:
+                options.marker = {
+                  symbol: globals.symbols[symbolIndex % globals.symbols.length]
+                };
+                break;
+              case this.mode !== this.SYMBOLS_MODE:
+                options.marker = {
+                  symbol: globals.symbols[symbolIndex % globals.symbols.length]
+                };
+                options.lineWidth = 0;
+                break;
+              case this.mode !== this.LINES_MODE:
+                options.marker = {
+                  symbol: 'blank'
+                };
+                options.dashStyle = globals.dashes[symbolIndex % globals.dashes.length];
+            }
+            this.chart.addSeries(options, false);
+          }
         }
-        _results.push(this.chart.redraw());
       }
-      return _results;
+      return this.chart.redraw();
     };
 
     /*
@@ -196,24 +204,65 @@
 
 
     Scatter.prototype.drawModeControls = function() {
-      var controls,
+      var controls, mode, modeText, _i, _len, _ref, _ref1,
         _this = this;
       controls = '<div id="AnalysisTypeControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Tools:</td></tr>';
-      controls += '<tr><td><div class="vis_control_table_div">';
-      controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + this.SYMBOLS_LINES_MODE + "' " + (this.mode === this.SYMBOLS_LINES_MODE ? 'checked' : '') + "/>";
-      controls += "Symbols and Lines  </div></td></tr>";
-      controls += '<tr><td><div class="vis_control_table_div">';
-      controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + this.LINES_MODE + "' " + (this.mode === this.LINES_MODE ? 'checked' : '') + "/>";
-      controls += "Lines Only </div></td></tr>";
-      controls += '<tr><td><div class="vis_control_table_div">';
-      controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + this.SYMBOLS_MODE + "' " + (this.mode === this.SYMBOLS_MODE ? 'checked' : '') + "/>";
-      controls += "Symbols Only </div></td></tr>";
+      _ref = [[this.SYMBOLS_LINES_MODE, "Symbols and Lines"], [this.LINES_MODE, "Lines Only"], [this.SYMBOLS_MODE, "Symbols Only"]];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        _ref1 = _ref[_i], mode = _ref1[0], modeText = _ref1[1];
+        controls += '<tr><td><div class="vis_control_table_div">';
+        controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + mode + "' " + (this.mode === mode ? 'checked' : '') + "/>";
+        controls += modeText + "  </div></td></tr>";
+      }
       controls += '</table></div>';
       ($('#controldiv')).append(controls);
       return ($('.mode_radio')).click(function(e) {
         _this.mode = Number(e.target.value);
-        return _this.delayedStart();
+        return _this.delayedUpdate();
+      });
+    };
+
+    /*
+        Draws x axis selection controls
+            This includes a series of radio buttons.
+    */
+
+
+    Scatter.prototype.drawXAxisControls = function(filter) {
+      var controls, field, fieldIndex, _i, _len, _ref,
+        _this = this;
+      if (filter == null) {
+        filter = function(fieldIndex) {
+          var _ref;
+          return (_ref = Number(data.fields[fieldIndex].typeID)) !== 7 && _ref !== 37;
+        };
+      }
+      controls = '<div id="xAxisControl" class="vis_controls">';
+      controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>';
+      _ref = data.fields;
+      for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
+        field = _ref[fieldIndex];
+        if (filter(fieldIndex)) {
+          controls += '<tr><td>';
+          controls += '<div class="vis_control_table_div">';
+          controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"" + fieldIndex + "\" " + ((Number(fieldIndex)) === this.xAxis ? "checked" : "") + "></input>&nbsp";
+          controls += "" + data.fields[fieldIndex].fieldName + "&nbsp";
+          controls += "</div></td></tr>";
+        }
+      }
+      controls += '</table></div>';
+      ($('#controldiv')).append(controls);
+      return ($('.xAxis_input')).click(function(e) {
+        var selection;
+        selection = null;
+        ($('.xAxis_input')).each(function() {
+          if (this.checked) {
+            return selection = this.value;
+          }
+        });
+        _this.xAxis = Number(selection);
+        return _this.delayedUpdate();
       });
     };
 

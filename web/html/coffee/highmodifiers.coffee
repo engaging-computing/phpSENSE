@@ -43,7 +43,7 @@ data.xySelector = (xIndex, yIndex, groupIndex) ->
             obj =
                 x: dp[xIndex]
                 y: dp[yIndex]
-                name: "Temp"
+                #name: "Temp"
 
     mapped = rawData.map mapFunc
     mapped.sort (a, b) -> (a.x - b.x)

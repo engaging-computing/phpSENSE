@@ -119,11 +119,12 @@ class window.Bar extends BaseVis
         
     buildLegendSeries: ->
         count = -1
-        for field in data.fields when (Number field.typeID) not in [37, 7]
+        for field, fieldIndex in data.fields when fieldIndex in data.normalFields
             count += 1
             dummy =
                 data: []
                 color: '#000'
+                visible: if fieldIndex in globals.fieldSelection then true else false
                 name: field.fieldName
                 type: 'area'
                 xAxis: 1

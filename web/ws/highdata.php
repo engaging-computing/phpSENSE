@@ -54,7 +54,7 @@ class Data {
 
             /* if a time field exists, add timeline */
             foreach( $this->fields as $field ){
-                if ($field->type_id == 7) {
+                if ($field->typeID == 7) {
                     $this->relVis = array_merge(array('Timeline'), $this->relVis); 
                 }
             }

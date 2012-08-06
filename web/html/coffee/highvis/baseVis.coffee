@@ -31,7 +31,6 @@ window.globals ?= {}
 globals.groupSelection ?= for vals, keys in data.groups
     Number keys
 globals.fieldSelection ?= data.normalFields[0..0]
-globals.xAxis ?= data.numericFields[0]
 
 class window.BaseVis
     ###
@@ -68,10 +67,11 @@ class window.BaseVis
                         legendItemClick: (event) =>
                             index = data.normalFields[event.target.index]
 
-                            if event.target.visible
+                            if index in globals.fieldSelection
                                 arrayRemove(globals.fieldSelection, index)
                             else
                                 globals.fieldSelection.push(index)
+                                
                             @delayedUpdate()
             #point: {}
             series: []
@@ -89,8 +89,6 @@ class window.BaseVis
         @chartOptions.xAxis.push
             lineWidth: 0
             categories: ['']
-        
-        @chartOptions.series = @buildLegendSeries()
 
     ###
     Builds the 'fake series' for legend controls.
@@ -110,33 +108,16 @@ class window.BaseVis
         This is called when the user switched to this vis.
         Should re-build options and the chart itself to ensure sync with global settings.
         This method should also be usable as a 'full update' in that it should destroy the current chart if it exists before generating a fresh one.
+
+        TODO: Update comment
     ###
     start: ->
-        @clearControls()
         @buildOptions()
         
-        if @chart?
-            @chart.destroy()
         @chart = new Highcharts.Chart @chartOptions
-
-        #Sync hidden state for legend from globals
-        for ser in @chart.series[0...data.normalFields.length]
-            index = data.normalFields[ser.index]
-            if index in globals.fieldSelection
-                ser.show()
-            else
-                ser.hide()
     
         ($ '#' + @canvas).show()
         @update()
-
-    delayedStart: ->
-        @chart.showLoading 'Loading...'
-        
-        #Save context
-        mySelf = this
-        start = -> mySelf.start()
-        setTimeout start, 1
         
     ###
     End sequence used by runtime
@@ -150,12 +131,25 @@ class window.BaseVis
 
     ###
     Update minor state
-        Should update the hidden status based on both high-charts legend action and control checkboxes.
+        Redraws html controls, clears current series and re-loads the legend.
+
+        Derrived classes should overload to add data drawing.
     ###
     update: ->
         @clearControls()
         @drawControls()
 
+        #Remove curent data
+        while @chart.series.length isnt 0
+            @chart.series[0].remove(false)
+
+        #Draw legend
+        for options in @buildLegendSeries()
+            @chart.addSeries options, false
+
+    ###
+    Performs an update while displaying the loading text
+    ###
     delayedUpdate: ->
         @chart.showLoading 'Loading...'
         
@@ -229,7 +223,7 @@ class window.BaseVis
             data.setGroupIndex (Number element.value)
             globals.groupSelection ?= for vals, keys in data.groups
                 Number keys
-            @delayedStart()
+            @delayedUpdate()
         
         # Make group checkbox handler
         ($ '.group_input').click (e) =>
@@ -241,37 +235,3 @@ class window.BaseVis
             globals.groupSelection = selection
             @delayedUpdate()
             
-
-    ###
-    Draws x axis selection controls
-        This includes a series of radio buttons.
-    ###
-    drawXAxisControls: ->
-        controls = '<div id="xAxisControl" class="vis_controls">'
-        
-        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>'
-        
-        # Populate choices (not text)
-        for field, fieldIndex in data.fields
-            if (Number data.fields[fieldIndex].typeID) != 37
-                controls += '<tr><td>'
-                controls += '<div class="vis_control_table_div">'
-                
-                controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{fieldIndex}\" #{if (Number fieldIndex) == globals.xAxis then "checked" else ""}></input>&nbsp"
-                controls += "#{data.fields[fieldIndex].fieldName}&nbsp"
-                controls += "</div></td></tr>"
-        
-        controls += '</table></div>'
-        
-        # Write HTML
-        ($ '#controldiv').append controls
-            
-        # Make xAxis radio handler
-        ($ '.xAxis_input').click (e) =>
-            selection = null
-            ($ '.xAxis_input').each ()->
-                if @checked
-                    selection = @value
-            globals.xAxis = Number selection
-            
-            @delayedStart()
