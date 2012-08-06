@@ -179,6 +179,9 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
 			array_push($errors, 'You did not specify an upload file.');
 		}
 
+                //Sanitize csv contents
+                sanitizeFile($filename);
+                
 		$file = file($filename);
 
 		if($state == IDENTIFY) {

@@ -42,11 +42,17 @@ if(isset($_GET['id'])) {
         
     $smarty->assign('owner', $exp[0]['owner_id'] );
     
-    $title = "Edit Session - {$values['name']}";
+    $exp = getExperimentNameFromSession($sid);
+    
+    $title = "Edit Session > {$exp['name']} > {$values['name']}";
     
     // Output to view
     $smarty->assign('values', $values);
     
+    $hidden_val = isSessionHidden($sid);
+    $smarty->assign('hideme', $hidden_val);
+    
+        
 }
 
 if(isset($_POST['session_create'])) {
@@ -57,29 +63,47 @@ if(isset($_POST['session_create'])) {
     $city = safeString($_POST['session_citystate']);
     $street = safeString($_POST['session_street']);
     
-    //$hidden_val = isSessionHidden($sid);
     
-    if(strtolower($_POST['session_hidden']) == 'on'){
+    if(isset($_POST['session_hidden']) && strtolower($_POST['session_hidden']) == 'on'){
         $hidden_val = 0;
     } else {
         $hidden_val = 1;
     }
     
-    $values = array(
-                    'name' => safeString($_POST['session_name']),
-                    'description' => safeString($_POST['session_description']),
-                    'city' => $city,
-                    'street' => $street,
-                    'finalized' => $hidden_val
-                );
+    $cur_user = $session->getUser();
+    $tmp = getSession($sid);
+
+    if( $cur_user['user_id'] != $tmp['owner_id'] and !$cur_user['administrator'] ){
+
+        $values = array(
+            'name' => $tmp['name'],
+            'description' => $tmp['description'],
+            'city' => $tmp['city'],
+            'street' => $tmp['street'],
+            'finalized' => $hidden_val,
+            'latitude' => $tmp['latitude'],
+            'longitude' => $tmp['longitude']
+            
+        );
+    
+    } else {
+        
+        $values = array(
+                        'name' => safeString($_POST['session_name']),
+                        'description' => safeString($_POST['session_description']),
+                        'city' => $city,
+                        'street' => $street,
+                        'finalized' => $hidden_val
+                    );
                 
-    if(($city != $org_values['city']) || ($street != $org_values['street'])) {
-        $cords = getLatAndLon($street, $city, "United States");
-        $lat = $cords[1];
-		$lon = $cords[0];
+        if(($city != $org_values['city']) || ($street != $org_values['street'])) {
+            $cords = getLatAndLon($street, $city, "United States");
+            $lat = $cords[1];
+    		$lon = $cords[0];
 		
-		$values['latitude'] = $lat;
-		$values['longitude'] = $lon;
+    		$values['latitude'] = $lat;
+    		$values['longitude'] = $lon;
+        }
     }
     
     updateSession($sid, $values);

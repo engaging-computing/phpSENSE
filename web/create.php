@@ -51,6 +51,10 @@ if(isset($_POST['experiment_create'])) {
 	if(isset($_POST['experiment_description'])) { $desc = safeString($_POST['experiment_description']); }
 	if($desc == "") { array_push($errors, 'Experiment description can not be blank.'); }
 	$values['description'] = $desc;
+
+	//Validate fields are selected
+	if(isset($_POST['number_of_fields'])) { $fields = safeString($_POST['number_of_fields']); }
+        if($fields < 1 ) { array_push($errors, 'Experiment fields can not be blank.'); }
 	
 	if(isset($_POST['req_procedure'])) { $req_procedure=$_POST['req_procedure']; }
 	if(isset($_POST['req_location'])) { $req_location=$_POST['req_location']; }

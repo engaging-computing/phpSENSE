@@ -152,7 +152,7 @@
                 { /if }
 
             { else }
-                <div class="result">Sorry, it we could not find any { $marker } matching your criteria.</div>
+                <div class="result">Sorry, we could not find any { $marker } matching your search criteria.</div>
             { /if }
         </div>
         <div class="pagination" style="margin-bottom: 10px;">

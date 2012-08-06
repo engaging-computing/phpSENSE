@@ -101,6 +101,9 @@ define('FLOT_ENABLED',      $flotval);
 require_once 'database.php';
 require_once 'mongo.php';
 
+/* Sanitize */
+require_once 'sanitizer.php';
+
 /* Initalizes the Session object */
 require_once 'session.php';
 $session = new Session();

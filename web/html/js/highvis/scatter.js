@@ -48,10 +48,14 @@
       this.chartOptions;
       $.extend(true, this.chartOptions, {
         chart: {
-          type: "line"
+          type: "line",
+          zoomType: "xy"
         },
         title: {
           text: "Scatter"
+        },
+        xAxis: {
+          type: (Number(data.fields[globals.xAxis].typeID)) === 7 ? 'datetime' : 'linear'
         }
       });
       _results = [];
@@ -66,9 +70,11 @@
               data: data.xySelector(globals.xAxis, fieldIndex, groupIndex),
               showInLegend: false,
               color: globals.colors[groupIndex % globals.colors.length],
-              symbol: globals.symbols[symbolIndex % globals.symbols.length]
+              marker: {
+                symbol: globals.symbols[symbolIndex % globals.symbols.length]
+              },
+              name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
             };
-            console.log([symbolIndex, fieldIndex]);
             _results1.push(this.chartOptions.series.push(options));
           }
           return _results1;

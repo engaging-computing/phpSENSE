@@ -37,8 +37,11 @@ class window.Scatter extends BaseVis
         $.extend true, @chartOptions,
             chart:
                 type: "line"
+                zoomType: "xy"
             title:
                 text: "Scatter"
+            xAxis:
+                type: if (Number data.fields[globals.xAxis].typeID) == 7 then 'datetime' else 'linear'
 
         
         for groupIndex of data.groups
@@ -47,8 +50,9 @@ class window.Scatter extends BaseVis
                     data: data.xySelector(globals.xAxis, fieldIndex, groupIndex)
                     showInLegend: false
                     color: globals.colors[groupIndex % globals.colors.length]
-                    symbol: globals.symbols[symbolIndex % globals.symbols.length]
-                console.log [symbolIndex, fieldIndex]
+                    marker:
+                        symbol: globals.symbols[symbolIndex % globals.symbols.length]
+                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
                     
                 @chartOptions.series.push options
     

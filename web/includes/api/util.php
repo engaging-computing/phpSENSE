@@ -26,130 +26,191 @@
  * DAMAGE.
  */
 
+
+function isAdmin(){
+  global $db; 
+  
+  $sql = "SELECT COUNT(*) FROM users,tokens 
+          WHERE tokens.session_key = '{$_COOKIE['isense_login']}' 
+          AND users.administrator=1 
+          AND users.user_id = tokens.user_id";
+  $output = $db->query($sql);
+    
+  return $output[0]['COUNT(*)']==1;
+
+}
+
+function isUser(){
+    global $db;
+
+    $sql = "SELECT COUNT(*) FROM tokens
+            WHERE tokens.session_key = '{$_COOKIE['isense_login']}'";
+
+    $output = $db->query($sql);
+
+    return $output[0]['COUNT(*)']==1;
+}
+
+function isExperimentOwner($eid){
+    global $db;
+
+    $sql = "SELECT COUNT(*) FROM users,experiments,tokens
+            WHERE tokens.session_key = '{$_COOKIE['isense_login']}'  
+            AND users.user_id = experiments.owner_id
+            AND users.user_id = tokens.user_id
+            AND experiments.experiment_id = '{$eid}'";
+
+    $output = $db->query($sql);
+
+    return $output[0]['COUNT(*)']==1;
+}
+
+function isSessionOwner($sid){
+    global $db;
+
+    $sql = "SELECT COUNT(*) FROM users,sessions,tokens
+            WHERE tokens.session_key = '{$_COOKIE['isense_login']}'  
+            AND users.user_id = sessions.owner_id
+            AND users.user_id = tokens.user_id
+            AND sessions.session_id = '{$sid}'";
+
+    $output = $db->query($sql);
+
+    return $output[0]['COUNT(*)']==1;
+}
+
+
 function getTypeUnits() {
-	global $db;
-	
-	$output = $db->query("	SELECT 	types.name AS `type_name`,
-		 							types.type_id,
-									units.name AS `unit_name`,
-									units.unit_id
-									FROM type_units, types, units
-									WHERE types.type_id = type_units.type_id
-									AND units.unit_id = type_units.unit_id");
-	
-	if($db->numOfRows) {
-		return $output;
-	}
-	
-	return false;
+        global $db;
+        
+        $output = $db->query("  SELECT  types.name AS `type_name`,
+                                                                        types.type_id,
+                                                                        units.name AS `unit_name`,
+                                                                        units.unit_id
+                                                                        FROM type_units, types, units
+                                                                        WHERE types.type_id = type_units.type_id
+                                                                        AND units.unit_id = type_units.unit_id");
+        
+        if($db->numOfRows) {
+                return $output;
+        }
+        
+        return false;
 }
 
 function getTypes() {
-	global $db;
-	
-	$output = $db->query("SELECT types.type_id, types.name FROM types ORDER BY types.name ASC");
-	
-	if($db->numOfRows) {
-		return $output;
-	}
-	
-	return false;
+        global $db;
+        
+        $output = $db->query("SELECT types.type_id, types.name FROM types ORDER BY types.name ASC");
+        
+        if($db->numOfRows) {
+                return $output;
+        }
+        
+        return false;
 }
 
 function getUnits() {
-	global $db;
-	
-	$output = $db->query("SELECT units.unit_id, units.name FROM units ORDER BY units.name ASC");
-	
-	if($db->numOfRows) {
-		return $output;
-	}
-	
-	return false;
+        global $db;
+        
+        $output = $db->query("SELECT units.unit_id, units.name FROM units ORDER BY units.name ASC");
+        
+        if($db->numOfRows) {
+                return $output;
+        }
+        
+        return false;
 }
 
 function getTypeIds($tid) {
-	global $db;
-	
-	$output =  $db->query("SELECT	units.unit_id,
-									units.name,
-									units.abbreviation
-									FROM units, type_units
-									WHERE type_units.type_id = {$tid}
-									AND units.unit_id = type_units.unit_id 
-									ORDER BY units.name ASC");
-	
-	if($db->numOfRows) {
-		return $output;
-	}
-	
-	return false;	
+        global $db;
+        
+        $output =  $db->query("SELECT   units.unit_id,
+                                                                        units.name,
+                                                                        units.abbreviation
+                                                                        FROM units, type_units
+                                                                        WHERE type_units.type_id = {$tid}
+                                                                        AND units.unit_id = type_units.unit_id 
+                                                                        ORDER BY units.name ASC");
+        
+        if($db->numOfRows) {
+                return $output;
+        }
+        
+        return false;   
 }
 
 function getActiveUsers() {
-	global $db;
-	
-	$output = $db->query("SELECT 	tokens.user_id, 
-									users.firstname, 
-									users.lastname, 
-									tokens.updated FROM tokens 
-									LEFT JOIN ( users ) ON ( users.user_id = tokens.user_id ) 
-									WHERE tokens.updated + 1800 > NOW()");
-	if($db->numOfRows) {
-		return $output;
-	}
-	
-	return false;
+        global $db;
+        
+        $output = $db->query("SELECT    tokens.user_id, 
+                                                                        users.firstname, 
+                                                                        users.lastname, 
+                                                                        tokens.updated FROM tokens 
+                                                                        LEFT JOIN ( users ) ON ( users.user_id = tokens.user_id ) 
+                                                                        WHERE tokens.updated + 1800 > NOW()");
+        if($db->numOfRows) {
+                return $output;
+        }
+        
+        return false;
 }
 
 function safeString($string) {
-	if(get_magic_quotes_gpc()) {
-		$string = stripslashes($string);
-	}
-	
-	return str_replace("`", "\`", mysql_real_escape_string($string));
+        /**
+         * This function has been deprecated in favor of using the input
+         * replacment in sanitizer.php
+         *
+         * This should be removed once all references to it have been deleted.
+         */
+        /*if(get_magic_quotes_gpc()) {
+                $string = stripslashes($string);
+        }
+        
+        return str_replace("`", "\`", mysql_real_escape_string($string));*/
+        return $string;
 }
 
 function contrib_cmp($a, $b) {
-	if($a['contrib_count'] == $b['contrib_count']) {
-		return 0;
-	}
-	
-	return ($a['contrib_count'] < $b['contrib_count']);
+        if($a['contrib_count'] == $b['contrib_count']) {
+                return 0;
+        }
+        
+        return ($a['contrib_count'] < $b['contrib_count']);
 }
 
 function session_cmp($a, $b) {
-	if($a['session_count'] == $b['session_count']) {
-		return 0;
-	}
-	
-	return ($a['session_count'] > $b['session_count']);
+        if($a['session_count'] == $b['session_count']) {
+                return 0;
+        }
+        
+        return ($a['session_count'] > $b['session_count']);
 }
 
 function date_cmp($a, $b) {
-	
-	if($a['timecreated'] == $b['timecreated']) {
-		return 0;
-	}
-	
-	return ($a['timecreated'] < $b['timecreated']);
+        
+        if($a['timecreated'] == $b['timecreated']) {
+                return 0;
+        }
+        
+        return ($a['timecreated'] < $b['timecreated']);
 }
 
 function timeobj_cmp($a, $b) {
-	
-	if($a['timeobj'] == $b['timeobj']) {
-		return 0;
-	}
-	
-	return ($a['timeobj'] < $b['timeobj']);
+        
+        if($a['timeobj'] == $b['timeobj']) {
+                return 0;
+        }
+        
+        return ($a['timeobj'] < $b['timeobj']);
 }
 
 function sort_relevancy($a, $b) {
-	if($a['relevancy'] == $b['relevancy']) {
-		return 0;
-	}
-	
-	return ($a['relevancy'] < $b['relevancy']);
+        if($a['relevancy'] == $b['relevancy']) {
+                return 0;
+        }
+        
+        return ($a['relevancy'] < $b['relevancy']);
 }
 
 function getVersionNumber(){
@@ -167,31 +228,31 @@ function exp_activitySort($a,$b){
 }
 
 function dateDifference($day_1, $day_2) {
-	$diff = $day_1 - $day_2;
+        $diff = $day_1 - $day_2;
 
-	$sec   = $diff % 60;
-	$diff  = intval($diff / 60);
-	$min   = $diff % 60;
-	$diff  = intval($diff / 60);
-	$hours = $diff % 24;
-	$days  = intval($diff / 24);
-	
-	$date_diff_string = "";
-	if($days != 0) {
-		$date_diff_string .= $days . " days ";
-	}
-	
-	if($hours != 0) {
-		$date_diff_string .= $hours . " hours ";
-	}
-	
-	if($min != 0) {
-		$date_diff_string .= $min . " minutes ";
-	}
-	
-	$date_diff_string .= "ago";
+        $sec   = $diff % 60;
+        $diff  = intval($diff / 60);
+        $min   = $diff % 60;
+        $diff  = intval($diff / 60);
+        $hours = $diff % 24;
+        $days  = intval($diff / 24);
+        
+        $date_diff_string = "";
+        if($days != 0) {
+                $date_diff_string .= $days . " days ";
+        }
+        
+        if($hours != 0) {
+                $date_diff_string .= $hours . " hours ";
+        }
+        
+        if($min != 0) {
+                $date_diff_string .= $min . " minutes ";
+        }
+        
+        $date_diff_string .= "ago";
 
-	return $date_diff_string;
+        return $date_diff_string;
 }
 
 ?>

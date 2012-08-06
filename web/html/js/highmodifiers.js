@@ -33,11 +33,11 @@
 (function() {
   var field, index;
 
-  data.xySelector = function(xIndex, yIndex, gIndex) {
+  data.xySelector = function(xIndex, yIndex, groupIndex) {
     var mapFunc, mapped, rawData,
       _this = this;
     rawData = this.dataPoints.filter(function(dp) {
-      return (String(dp[_this.groupIndex])).toLowerCase() === _this.groups[gIndex];
+      return (String(dp[_this.groupingFieldIndex])).toLowerCase() === _this.groups[groupIndex];
     });
     if ((Number(this.fields[xIndex].typeID)) === 7) {
       mapFunc = function(dp) {
@@ -72,16 +72,15 @@
   */
 
 
-  data.selector = function(fieldIndex, nans, filterFunc) {
-    var newFilterFunc, rawData;
+  data.selector = function(fieldIndex, groupIndex, nans) {
+    var filterFunc, newFilterFunc, rawData,
+      _this = this;
     if (nans == null) {
       nans = false;
     }
-    if (filterFunc == null) {
-      filterFunc = (function(dp) {
-        return true;
-      });
-    }
+    filterFunc = function(dp) {
+      return (String(dp[_this.groupingFieldIndex])).toLowerCase() === _this.groups[groupIndex];
+    };
     newFilterFunc = nans ? filterFunc : function(dp) {
       return (filterFunc(dp)) && (!isNaN(dp[fieldIndex])) && (dp[fieldIndex] !== null);
     };
@@ -97,17 +96,16 @@
   */
 
 
-  data.getMax = function(fieldIndex, filterFunc) {
+  data.getMax = function(fieldIndex, groupIndex) {
     var rawData;
-    if (filterFunc == null) {
-      filterFunc = function(dp) {
-        return true;
-      };
+    rawData = this.selector(fieldIndex, groupIndex);
+    if (rawData.length > 0) {
+      return rawData.reduce(function(a, b) {
+        return Math.max(a, b);
+      });
+    } else {
+      return null;
     }
-    rawData = this.selector(fieldIndex, false, filterFunc);
-    return rawData.reduce(function(a, b) {
-      return Math.max(a, b);
-    });
   };
 
   /*
@@ -116,17 +114,16 @@
   */
 
 
-  data.getMin = function(fieldIndex, filterFunc) {
+  data.getMin = function(fieldIndex, groupIndex) {
     var rawData;
-    if (filterFunc == null) {
-      filterFunc = function(dp) {
-        return true;
-      };
+    rawData = this.selector(fieldIndex, groupIndex);
+    if (rawData.length > 0) {
+      return rawData.reduce(function(a, b) {
+        return Math.min(a, b);
+      });
+    } else {
+      return null;
     }
-    rawData = this.selector(fieldIndex, false, filterFunc);
-    return rawData.reduce(function(a, b) {
-      return Math.min(a, b);
-    });
   };
 
   /*
@@ -135,17 +132,16 @@
   */
 
 
-  data.getMean = function(fieldIndex, filterFunc) {
+  data.getMean = function(fieldIndex, groupIndex) {
     var rawData;
-    if (filterFunc == null) {
-      filterFunc = function(dp) {
-        return true;
-      };
+    rawData = this.selector(fieldIndex, groupIndex);
+    if (rawData.length > 0) {
+      return (rawData.reduce(function(a, b) {
+        return a + b;
+      })) / rawData.length;
+    } else {
+      return null;
     }
-    rawData = this.selector(fieldIndex, false, filterFunc);
-    return (rawData.reduce(function(a, b) {
-      return a + b;
-    })) / rawData.length;
   };
 
   /*
@@ -154,20 +150,19 @@
   */
 
 
-  data.getMedian = function(fieldIndex, filterFunc) {
+  data.getMedian = function(fieldIndex, groupIndex) {
     var mid, rawData;
-    if (filterFunc == null) {
-      filterFunc = function(dp) {
-        return true;
-      };
-    }
-    rawData = this.selector(fieldIndex, false, filterFunc);
+    rawData = this.selector(fieldIndex, groupIndex);
     rawData.sort();
     mid = Math.floor(rawData.length / 2);
-    if (rawData.length % 2) {
-      return rawData[mid];
+    if (rawData.length > 0) {
+      if (rawData.length % 2) {
+        return rawData[mid];
+      } else {
+        return (rawData[mid - 1] + rawData[mid]) / 2.0;
+      }
     } else {
-      return (rawData[mid - 1] + rawData[mid]) / 2.0;
+      return null;
     }
   };
 
@@ -178,7 +173,7 @@
 
 
   data.setGroupIndex = function(index) {
-    this.groupIndex = index;
+    this.groupingFieldIndex = index;
     return this.groups = this.makeGroups();
   };
 
@@ -188,14 +183,14 @@
 
 
   data.makeGroups = function() {
-    var dat, keys, rawData, result, _i, _len, _results;
-    rawData = this.selector(this.groupIndex, true, function(dp) {
-      return dp[this.groupIndex] !== null;
-    });
+    var dp, keys, result, _i, _len, _ref, _results;
     result = {};
-    for (_i = 0, _len = rawData.length; _i < _len; _i++) {
-      dat = rawData[_i];
-      result[String(dat).toLowerCase()] = true;
+    _ref = this.dataPoints;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      dp = _ref[_i];
+      if (dp[this.groupingFieldIndex] !== null) {
+        result[String(dp[this.groupingFieldIndex]).toLowerCase()] = true;
+      }
     }
     _results = [];
     for (keys in result) {
@@ -276,7 +271,7 @@
     return _results;
   })();
 
-  data.groupIndex = 0;
+  data.groupingFieldIndex = 0;
 
   data.groups = data.makeGroups();
 
