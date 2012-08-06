@@ -95,7 +95,7 @@ echo "<hr>";
 
 echo "<div class=\"testheading\">Starting login test....<br></div>";
 
-require('apitest-login.php');
+require_once('apitest-login.php');
 
 //echo "<div class=\"testheading\">Starting Experiment Test...<br></div>";
 
