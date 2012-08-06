@@ -31,7 +31,6 @@ window.globals ?= {}
 globals.groupSelection ?= for vals, keys in data.groups
     Number keys
 globals.fieldSelection ?= data.normalFields[0..0]
-globals.xAxis ?= data.numericFields[0]
 
 class window.BaseVis
     ###
@@ -236,37 +235,3 @@ class window.BaseVis
             globals.groupSelection = selection
             @delayedUpdate()
             
-
-    ###
-    Draws x axis selection controls
-        This includes a series of radio buttons.
-    ###
-    drawXAxisControls: (filter = (fieldIndex) -> (Number data.fields[fieldIndex].typeID) != 37) ->
-        controls = '<div id="xAxisControl" class="vis_controls">'
-        
-        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>'
-        
-        # Populate choices (not text)
-        for field, fieldIndex in data.fields
-            if filter fieldIndex
-                controls += '<tr><td>'
-                controls += '<div class="vis_control_table_div">'
-                
-                controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{fieldIndex}\" #{if (Number fieldIndex) == globals.xAxis then "checked" else ""}></input>&nbsp"
-                controls += "#{data.fields[fieldIndex].fieldName}&nbsp"
-                controls += "</div></td></tr>"
-        
-        controls += '</table></div>'
-        
-        # Write HTML
-        ($ '#controldiv').append controls
-            
-        # Make xAxis radio handler
-        ($ '.xAxis_input').click (e) =>
-            selection = null
-            ($ '.xAxis_input').each ()->
-                if @checked
-                    selection = @value
-            globals.xAxis = Number selection
-            
-            @delayedUpdate()

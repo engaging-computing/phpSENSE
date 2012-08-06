@@ -38,6 +38,8 @@ class window.Scatter extends BaseVis
 
         @mode = @SYMBOLS_LINES_MODE
 
+        @xAxis = data.normalFields[0]
+
     ###
     TODO: Comment This
     ###
@@ -50,8 +52,18 @@ class window.Scatter extends BaseVis
                 zoomType: "xy"
             title:
                 text: "Scatter"
-            xAxis:
-                type: if (Number data.fields[globals.xAxis].typeID) == 7 then 'datetime' else 'linear'
+            tooltip:
+                formatter: ->
+                    console.log this
+                    str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                    str += "<table>"
+                    str += "<tr><td>#{@series.xAxis.options.title.text}:</td><td><strong>#{@x}</strong></td></tr>"
+                    str += "<tr><td>#{@series.name.field}:</td><td><strong>#{@y}</strong></td></tr>"
+                    str += "</table>"
+                useHTML: true
+                
+        @chartOptions.xAxis =
+            type: 'linear'
 
     ###
     TODO: Comment This
@@ -97,13 +109,21 @@ class window.Scatter extends BaseVis
     update: ->
         super()
 
+        #Set axis title
+        title =
+           text: data.fields[@xAxis].fieldName
+        @chart.xAxis[0].setTitle title, false
+
+        #Draw series
         for fieldIndex, symbolIndex in data.normalFields when fieldIndex in globals.fieldSelection
             for group, groupIndex in data.groups when groupIndex in globals.groupSelection
                 options =
-                    data: data.xySelector(globals.xAxis, fieldIndex, groupIndex)
+                    data: data.xySelector(@xAxis, fieldIndex, groupIndex)
                     showInLegend: false
                     color: globals.colors[groupIndex % globals.colors.length]
-                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
+                    name:
+                        group: data.groups[groupIndex]
+                        field: data.fields[fieldIndex].fieldName
 
                 switch
                     when @mode is @SYMBOLS_LINES_MODE
@@ -150,6 +170,38 @@ class window.Scatter extends BaseVis
             @mode = Number e.target.value
             @delayedUpdate()
 
-        
+    ###
+    Draws x axis selection controls
+        This includes a series of radio buttons.
+    ###
+    drawXAxisControls: (filter = (fieldIndex) -> (Number data.fields[fieldIndex].typeID) not in [7, 37]) ->
+        controls = '<div id="xAxisControl" class="vis_controls">'
+
+        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>'
+
+        # Populate choices (not text)
+        for field, fieldIndex in data.fields
+            if filter fieldIndex
+                controls += '<tr><td>'
+                controls += '<div class="vis_control_table_div">'
+
+                controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{fieldIndex}\" #{if (Number fieldIndex) == @xAxis then "checked" else ""}></input>&nbsp"
+                controls += "#{data.fields[fieldIndex].fieldName}&nbsp"
+                controls += "</div></td></tr>"
+
+        controls += '</table></div>'
+
+        # Write HTML
+        ($ '#controldiv').append controls
+
+        # Make xAxis radio handler
+        ($ '.xAxis_input').click (e) =>
+            selection = null
+            ($ '.xAxis_input').each ()->
+                if @checked
+                    selection = @value
+            @xAxis = Number selection
+
+            @delayedUpdate()
 
 globals.scatter = new Scatter 'scatter_canvas'

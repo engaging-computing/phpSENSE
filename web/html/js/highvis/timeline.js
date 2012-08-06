@@ -48,15 +48,19 @@
       this.canvas = canvas;
       Timeline.__super__.constructor.call(this, this.canvas);
       this.mode = this.LINES_MODE;
+      this.xAxis = data.timeFields[0];
     }
 
     Timeline.prototype.buildOptions = function() {
       Timeline.__super__.buildOptions.call(this);
-      return $.extend(true, this.chartOptions, {
+      $.extend(true, this.chartOptions, {
         title: {
           text: 'Timeline'
         }
       });
+      return this.chartOptions.xAxis = {
+        type: 'datetime'
+      };
     };
 
     /*

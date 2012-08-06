@@ -50,6 +50,7 @@
       this.LINES_MODE = 2;
       this.SYMBOLS_MODE = 1;
       this.mode = this.SYMBOLS_LINES_MODE;
+      this.xAxis = data.normalFields[0];
     }
 
     /*
@@ -59,7 +60,7 @@
 
     Scatter.prototype.buildOptions = function() {
       Scatter.__super__.buildOptions.call(this);
-      return $.extend(true, this.chartOptions, {
+      $.extend(true, this.chartOptions, {
         chart: {
           type: "line",
           zoomType: "xy"
@@ -67,10 +68,22 @@
         title: {
           text: "Scatter"
         },
-        xAxis: {
-          type: (Number(data.fields[globals.xAxis].typeID)) === 7 ? 'datetime' : 'linear'
+        tooltip: {
+          formatter: function() {
+            var str;
+            console.log(this);
+            str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div><br>";
+            str += "<table>";
+            str += "<tr><td>" + this.series.xAxis.options.title.text + ":</td><td><strong>" + this.x + "</strong></td></tr>";
+            str += "<tr><td>" + this.series.name.field + ":</td><td><strong>" + this.y + "</strong></td></tr>";
+            return str += "</table>";
+          },
+          useHTML: true
         }
       });
+      return this.chartOptions.xAxis = {
+        type: 'linear'
+      };
     };
 
     /*
@@ -135,8 +148,12 @@
 
 
     Scatter.prototype.update = function() {
-      var fieldIndex, group, groupIndex, options, symbolIndex, _i, _j, _len, _len1, _ref, _ref1;
+      var fieldIndex, group, groupIndex, options, symbolIndex, title, _i, _j, _len, _len1, _ref, _ref1;
       Scatter.__super__.update.call(this);
+      title = {
+        text: data.fields[this.xAxis].fieldName
+      };
+      this.chart.xAxis[0].setTitle(title, false);
       _ref = data.normalFields;
       for (symbolIndex = _i = 0, _len = _ref.length; _i < _len; symbolIndex = ++_i) {
         fieldIndex = _ref[symbolIndex];
@@ -148,10 +165,13 @@
               continue;
             }
             options = {
-              data: data.xySelector(globals.xAxis, fieldIndex, groupIndex),
+              data: data.xySelector(this.xAxis, fieldIndex, groupIndex),
               showInLegend: false,
               color: globals.colors[groupIndex % globals.colors.length],
-              name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
+              name: {
+                group: data.groups[groupIndex],
+                field: data.fields[fieldIndex].fieldName
+              }
             };
             switch (false) {
               case this.mode !== this.SYMBOLS_LINES_MODE:
@@ -199,6 +219,49 @@
       ($('#controldiv')).append(controls);
       return ($('.mode_radio')).click(function(e) {
         _this.mode = Number(e.target.value);
+        return _this.delayedUpdate();
+      });
+    };
+
+    /*
+        Draws x axis selection controls
+            This includes a series of radio buttons.
+    */
+
+
+    Scatter.prototype.drawXAxisControls = function(filter) {
+      var controls, field, fieldIndex, _i, _len, _ref,
+        _this = this;
+      if (filter == null) {
+        filter = function(fieldIndex) {
+          var _ref;
+          return (_ref = Number(data.fields[fieldIndex].typeID)) !== 7 && _ref !== 37;
+        };
+      }
+      controls = '<div id="xAxisControl" class="vis_controls">';
+      controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>';
+      _ref = data.fields;
+      for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
+        field = _ref[fieldIndex];
+        if (filter(fieldIndex)) {
+          controls += '<tr><td>';
+          controls += '<div class="vis_control_table_div">';
+          controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"" + fieldIndex + "\" " + ((Number(fieldIndex)) === this.xAxis ? "checked" : "") + "></input>&nbsp";
+          controls += "" + data.fields[fieldIndex].fieldName + "&nbsp";
+          controls += "</div></td></tr>";
+        }
+      }
+      controls += '</table></div>';
+      ($('#controldiv')).append(controls);
+      return ($('.xAxis_input')).click(function(e) {
+        var selection;
+        selection = null;
+        ($('.xAxis_input')).each(function() {
+          if (this.checked) {
+            return selection = this.value;
+          }
+        });
+        _this.xAxis = Number(selection);
         return _this.delayedUpdate();
       });
     };

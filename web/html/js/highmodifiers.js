@@ -53,8 +53,7 @@
         var obj;
         return obj = {
           x: dp[xIndex],
-          y: dp[yIndex],
-          name: "Temp"
+          y: dp[yIndex]
         };
       };
     }
