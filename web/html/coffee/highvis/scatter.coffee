@@ -175,7 +175,7 @@ class window.Scatter extends BaseVis
     Draws x axis selection controls
         This includes a series of radio buttons.
     ###
-    drawXAxisControls: (filter = (fieldIndex) -> (Number data.fields[fieldIndex].typeID) not in [7, 37]) ->
+    drawXAxisControls: (filter = (fieldIndex) -> (fieldIndex in data.normalFields)) ->
         controls = '<div id="xAxisControl" class="vis_controls">'
 
         controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>'

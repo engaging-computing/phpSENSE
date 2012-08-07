@@ -54,6 +54,6 @@ class window.Timeline extends Scatter
     Overwrite xAxis controls to only allow time fields
     ###
     drawXAxisControls: ->
-        super (fieldIndex) -> (Number data.fields[fieldIndex].typeID) is 7
+        super (fieldIndex) -> fieldIndex in data.timeFields
 
 globals.timeline = new Timeline 'timeline_canvas'

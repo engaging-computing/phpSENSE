@@ -235,8 +235,7 @@
         _this = this;
       if (filter == null) {
         filter = function(fieldIndex) {
-          var _ref;
-          return (_ref = Number(data.fields[fieldIndex].typeID)) !== 7 && _ref !== 37;
+          return __indexOf.call(data.normalFields, fieldIndex) >= 0;
         };
       }
       controls = '<div id="xAxisControl" class="vis_controls">';
