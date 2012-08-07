@@ -40,7 +40,7 @@
     __extends(Scatter, _super);
 
     /*
-        TODO: Comment This
+        Initialize constants for scatter display mode.
     */
 
 
@@ -54,7 +54,8 @@
     }
 
     /*
-        TODO: Comment This
+        Build up the chart options specific to scatter chart
+            The only complex thing here is the html-formatted tooltip.
     */
 
 
@@ -87,7 +88,7 @@
     };
 
     /*
-        TODO: Comment This
+        Build the dummy series for the legend.
     */
 
 
@@ -132,7 +133,7 @@
     };
 
     /*
-        TODO: Comment This
+        Call control drawing methods in order of apperance
     */
 
 
@@ -143,7 +144,7 @@
     };
 
     /*
-        TODO: Comment This
+        Update the chart by removing all current series and recreating them
     */
 
 
@@ -199,7 +200,7 @@
     };
 
     /*
-        TODO: Comment This
+        Draws radio buttons for changing symbol/line mode.
     */
 
 

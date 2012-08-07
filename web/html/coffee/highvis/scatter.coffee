@@ -29,7 +29,7 @@
 
 class window.Scatter extends BaseVis
     ###
-    TODO: Comment This
+    Initialize constants for scatter display mode.
     ###
     constructor: (@canvas) ->
         @SYMBOLS_LINES_MODE = 3
@@ -41,7 +41,8 @@ class window.Scatter extends BaseVis
         @xAxis = data.normalFields[0]
 
     ###
-    TODO: Comment This
+    Build up the chart options specific to scatter chart
+        The only complex thing here is the html-formatted tooltip.
     ###
     buildOptions: ->
         super()
@@ -66,7 +67,7 @@ class window.Scatter extends BaseVis
             type: 'linear'
 
     ###
-    TODO: Comment This
+    Build the dummy series for the legend.
     ###
     buildLegendSeries: ->
         count = -1
@@ -96,7 +97,7 @@ class window.Scatter extends BaseVis
             options
 
     ###
-    TODO: Comment This
+    Call control drawing methods in order of apperance
     ###
     drawControls: ->
         @drawGroupControls()
@@ -104,9 +105,10 @@ class window.Scatter extends BaseVis
         @drawModeControls()
 
     ###
-    TODO: Comment This
+    Update the chart by removing all current series and recreating them
     ###
     update: ->
+        #Remove all series and draw legend
         super()
 
         #Set axis title
@@ -145,10 +147,9 @@ class window.Scatter extends BaseVis
         @chart.redraw()
 
     ###
-    TODO: Comment This
+    Draws radio buttons for changing symbol/line mode.
     ###
     drawModeControls: ->
-        #console.log @mode
         controls =  '<div id="AnalysisTypeControl" class="vis_controls">'
 
         controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Tools:</td></tr>'
