@@ -28,23 +28,57 @@
 ###
 
 class window.Table extends BaseVis
-    constructor: ->
+    constructor: (@canvas) -> 
 
     start: ->
         #Make table visible? (or somthing)
-
+        ($ '#' + @canvas).show()
         #Calls update
         super()
 
     #Gets called when the controls are clicked and at start
     update: ->
-        #updates controls by default
+        ($ '#' + @canvas).html('')
+    
+        #updates controls by default       
+        ($ '#' + @canvas).append '<table id="data_table"></table>'  
+        
+        ($ '#data_table').append '<thead><tr id="table_headers"></tr></thead>'
+        
+        #Build the headers for the table
+        headers = for field in data.fields
+            "<td>#{field.fieldName}</td>"
+            
+        ($ '#table_headers').append header for header in headers
+        
+       #Build the data for the table
+        rows = for dataPoint in data.dataPoints
+                    line = for dp,dpIndex in dataPoint
+                        if(Number(data.fields[dpIndex].typeID) is data.types.TIME)
+                             "<td>#{new Date(dp)}</td>"
+                        else 
+                            "<td>#{dp}</td>"
+                    "<tr>#{line}</tr>"
+        
+        ($ '#data_table').append '<tbody id="table_body"></tbody>'
+        
+        ($ '#table_body').append row for row in rows 
+        
+        dt = 
+            sScrollY: 400
+            sScrollX: "100%"
+            iDisplayLength: -1
+            bDeferRender: true
+            
+        atable = ($ '#data_table').dataTable(dt)
+
         super()
 
     end: ->
+        ($ '#' + @canvas).hide()
         #Hide table here? (or somthing)
 
     drawControls: ->
         @drawGroupControls()
 
-globals.table = new Table()
+globals.table = new Table "table_canvas"
