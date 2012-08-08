@@ -53,6 +53,8 @@
 
     Bar.prototype.analysisType = 0;
 
+    Bar.prototype.sortField = data.normalFields[0];
+
     Bar.prototype.buildOptions = function() {
       Bar.__super__.buildOptions.call(this);
       this.chartOptions;
@@ -65,6 +67,18 @@
         },
         legend: {
           symbolWidth: 0
+        },
+        tooltip: {
+          formatter: function() {
+            var str;
+            console.log(this);
+            str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div><br>";
+            str += "<table>";
+            str += "<tr><td>" + this.series.xAxis.options.title.text + ":</td><td><strong>" + this.x + "</strong></td></tr>";
+            str += "<tr><td>" + this.series.name.field + ":</td><td><strong>" + this.y + "</strong></td></tr>";
+            return str += "</table>";
+          },
+          useHTML: true
         }
         /*
                     xAxis:
@@ -95,11 +109,13 @@
       Bar.__super__.update.call(this);
       visibleCategories = (function() {
         var _i, _len, _ref, _results;
-        _ref = globals.fieldSelection;
+        _ref = data.normalFields;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           selection = _ref[_i];
-          _results.push(data.fields[selection].fieldName);
+          if (__indexOf.call(globals.fieldSelection, selection) >= 0) {
+            _results.push(data.fields[selection].fieldName);
+          }
         }
         return _results;
       })();
@@ -192,7 +208,7 @@
     };
 
     Bar.prototype.drawAnalysisTypeControls = function() {
-      var controls, type, typestring, _i, _len, _ref, _ref1,
+      var controls, fieldID, type, typestring, _i, _j, _len, _len1, _ref, _ref1, _ref2,
         _this = this;
       controls = '<div id="AnalysisTypeControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>';
@@ -200,13 +216,33 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         _ref1 = _ref[_i], type = _ref1[0], typestring = _ref1[1];
         controls += '<tr><td><div class="vis_control_table_div">';
-        controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='" + type + "' " + (type === this.analysisType ? 'checked' : '') + ">" + typestring + "</input><br>";
+        controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='" + type + "' " + (type === this.analysisType ? 'checked' : '') + "> " + typestring + "</input><br>";
         controls += '</div></td></tr>';
       }
+      /* ---
+      */
+
+      controls += '<tr><td><div class="vis_control_table_div"><br>';
+      controls += 'Sort by: <select class="sortField">';
+      _ref2 = data.normalFields;
+      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+        fieldID = _ref2[_j];
+        controls += "<option value='" + fieldID + "'" + (this.sortField === fieldID ? ' selected' : '') + ">" + data.fields[fieldID].fieldName + "</option>";
+      }
+      controls += '</select>';
+      controls += '</div></td></tr>';
       controls += '</table></div>';
+      /* ---
+      */
+
       ($('#controldiv')).append(controls);
-      return ($('.analysisType')).change(function(e) {
+      ($('.analysisType')).change(function(e) {
         _this.analysisType = Number(e.target.value);
+        return _this.delayedUpdate();
+      });
+      return ($('.sortField')).change(function(e) {
+        _this.sortField = Number(e.target.value);
+        console.log(_this.sortField);
         return _this.delayedUpdate();
       });
     };

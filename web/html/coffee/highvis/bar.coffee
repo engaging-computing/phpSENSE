@@ -35,7 +35,8 @@ class window.Bar extends BaseVis
     ANALYSISTYPE_MEAN:      2
     ANALYSISTYPE_MEDIAN:    3
     
-    analysisType: 0
+    analysisType:   0
+    sortField:      data.normalFields[0]
     
     buildOptions: ->
         super()
@@ -48,6 +49,15 @@ class window.Bar extends BaseVis
                 text: "Bar"
             legend:
                 symbolWidth: 0
+            tooltip:
+                formatter: ->
+                    console.log this
+                    str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                    str += "<table>"
+                    str += "<tr><td>#{@series.xAxis.options.title.text}:</td><td><strong>#{@x}</strong></td></tr>"
+                    str += "<tr><td>#{@series.name.field}:</td><td><strong>#{@y}</strong></td></tr>"
+                    str += "</table>"
+                useHTML: true
                 
             ###
             xAxis:
@@ -73,7 +83,7 @@ class window.Bar extends BaseVis
     update: ->
         super()
         
-        visibleCategories = for selection in globals.fieldSelection
+        visibleCategories = for selection in data.normalFields when selection in globals.fieldSelection
             data.fields[selection].fieldName
         
         @chart.xAxis[0].setCategories visibleCategories, false
@@ -139,17 +149,38 @@ class window.Bar extends BaseVis
         
             controls += '<tr><td><div class="vis_control_table_div">'
         
-            controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='#{type}' #{if type is @analysisType then 'checked' else ''}>#{typestring}</input><br>"
+            controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='#{type}' #{if type is @analysisType then 'checked' else ''}> #{typestring}</input><br>"
         
             controls += '</div></td></tr>'
+            
+        ### --- ###
+        
+        controls += '<tr><td><div class="vis_control_table_div"><br>'
+    
+        controls += 'Sort by: <select class="sortField">'
+        
+        for fieldID in data.normalFields
+        
+            controls += "<option value='#{fieldID}'#{if @sortField is fieldID then ' selected' else ''}>#{data.fields[fieldID].fieldName}</option>"
+        
+        controls += '</select>'
+    
+        controls += '</div></td></tr>'
         
         controls += '</table></div>'
+        
+        ### --- ###
         
         # Write HTML
         ($ '#controldiv').append controls
         
         ($ '.analysisType').change (e) =>
             @analysisType = Number e.target.value
+            @delayedUpdate()
+            
+        ($ '.sortField').change (e) =>
+            @sortField = Number e.target.value
+            console.log @sortField
             @delayedUpdate()
         
     drawControls: ->
