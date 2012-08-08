@@ -29,7 +29,7 @@
 
 class window.Scatter extends BaseVis
     ###
-    TODO: Comment This
+    Initialize constants for scatter display mode.
     ###
     constructor: (@canvas) ->
         @SYMBOLS_LINES_MODE = 3
@@ -40,12 +40,17 @@ class window.Scatter extends BaseVis
 
         @xAxis = data.normalFields[0]
 
+        @advancedTooltips = false
+
     ###
-    TODO: Comment This
+    Build up the chart options specific to scatter chart
+        The only complex thing here is the html-formatted tooltip.
     ###
     buildOptions: ->
         super()
 
+        self = this
+        
         $.extend true, @chartOptions,
             chart:
                 type: "line"
@@ -54,19 +59,33 @@ class window.Scatter extends BaseVis
                 text: "Scatter"
             tooltip:
                 formatter: ->
-                    console.log this
-                    str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
-                    str += "<table>"
-                    str += "<tr><td>#{@series.xAxis.options.title.text}:</td><td><strong>#{@x}</strong></td></tr>"
-                    str += "<tr><td>#{@series.name.field}:</td><td><strong>#{@y}</strong></td></tr>"
-                    str += "</table>"
+                    if self.advancedTooltips
+                        str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                        str += "<table>"
+
+                        for field, fieldIndex in data.fields
+                            dat = if (Number field.typeID) is data.types.TIME
+                                new Date(@point.datapoint[fieldIndex])
+                            else
+                                @point.datapoint[fieldIndex]
+                                
+                            str += "<tr><td>#{field.fieldName}</td>"
+                            str += "<td><strong>#{dat}</strong></td></tr>}"
+                            
+                        str += "</table>"
+                    else
+                        str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                        str += "<table>"
+                        str += "<tr><td>#{@series.xAxis.options.title.text}:</td><td><strong>#{@x}</strong></td></tr>"
+                        str += "<tr><td>#{@series.name.field}:</td><td><strong>#{@y}</strong></td></tr>"
+                        str += "</table>"
                 useHTML: true
                 
         @chartOptions.xAxis =
             type: 'linear'
 
     ###
-    TODO: Comment This
+    Build the dummy series for the legend.
     ###
     buildLegendSeries: ->
         count = -1
@@ -96,17 +115,20 @@ class window.Scatter extends BaseVis
             options
 
     ###
-    TODO: Comment This
+    Call control drawing methods in order of apperance
     ###
     drawControls: ->
         @drawGroupControls()
         @drawXAxisControls()
         @drawModeControls()
 
+        #($ '.vis_controls').mCustomScrollbar()
+
     ###
-    TODO: Comment This
+    Update the chart by removing all current series and recreating them
     ###
     update: ->
+        #Remove all series and draw legend
         super()
 
         #Set axis title
@@ -145,10 +167,9 @@ class window.Scatter extends BaseVis
         @chart.redraw()
 
     ###
-    TODO: Comment This
+    Draws radio buttons for changing symbol/line mode.
     ###
     drawModeControls: ->
-        #console.log @mode
         controls =  '<div id="AnalysisTypeControl" class="vis_controls">'
 
         controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Tools:</td></tr>'
@@ -161,6 +182,11 @@ class window.Scatter extends BaseVis
             controls += "<input class='mode_radio' type='radio' name='mode_selector' value='#{mode}' #{if @mode is mode then 'checked' else ''}/>"
             controls += modeText + "  </div></td></tr>"
 
+        controls += '<tr><td><div class="vis_control_table_div">'
+        controls += '<br>'
+        controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' #{if @advancedTooltips then 'checked' else ''}/>&nbspAdvanced Tooltips&nbsp"
+        controls += "</div></td></tr>"
+            
         controls += '</table></div>'
         
         # Write HTML
@@ -170,11 +196,15 @@ class window.Scatter extends BaseVis
             @mode = Number e.target.value
             @delayedUpdate()
 
+        ($ '.tooltip_box').click (e) =>
+            @advancedTooltips = not @advancedTooltips
+            console.log @advancedTooltips
+
     ###
     Draws x axis selection controls
         This includes a series of radio buttons.
     ###
-    drawXAxisControls: (filter = (fieldIndex) -> (Number data.fields[fieldIndex].typeID) not in [7, 37]) ->
+    drawXAxisControls: (filter = (fieldIndex) -> (fieldIndex in data.normalFields)) ->
         controls = '<div id="xAxisControl" class="vis_controls">'
 
         controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>'

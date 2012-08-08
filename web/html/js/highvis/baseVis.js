@@ -244,7 +244,7 @@
       for (gIndex = _j = 0, _len1 = _ref4.length; _j < _len1; gIndex = ++_j) {
         group = _ref4[gIndex];
         controls += '<tr><td>';
-        controls += "<div class=\"vis_control_table_div\" style=\"color:" + globals.colors[counter] + ";\">";
+        controls += "<div class=\"vis_control_table_div\" style=\"color:" + globals.colors[counter % globals.colors.length] + ";\">";
         controls += "<input class='group_input' type='checkbox' value='" + gIndex + "' " + ((_ref5 = Number(gIndex), __indexOf.call(globals.groupSelection, _ref5) >= 0) ? "checked" : "") + "/>&nbsp";
         controls += "" + group + "&nbsp";
         controls += "</div></td></tr>";

@@ -33,19 +33,29 @@
 (function() {
   var field, index;
 
+  data.types = {
+    TIME: 7,
+    TEXT: 37
+  };
+
+  /*
+  Selects data in an x,y object format of the given group.
+  */
+
+
   data.xySelector = function(xIndex, yIndex, groupIndex) {
     var mapFunc, mapped, rawData,
       _this = this;
     rawData = this.dataPoints.filter(function(dp) {
       return (String(dp[_this.groupingFieldIndex])).toLowerCase() === _this.groups[groupIndex];
     });
-    if ((Number(this.fields[xIndex].typeID)) === 7) {
+    if ((Number(this.fields[xIndex].typeID)) === data.types.TIME) {
       mapFunc = function(dp) {
         var obj;
         return obj = {
           x: new Date(dp[xIndex]),
           y: dp[yIndex],
-          name: "Temp"
+          datapoint: dp
         };
       };
     } else {
@@ -53,7 +63,8 @@
         var obj;
         return obj = {
           x: dp[xIndex],
-          y: dp[yIndex]
+          y: dp[yIndex],
+          datapoint: dp
         };
       };
     }
@@ -209,7 +220,7 @@
     _results = [];
     for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
       field = _ref[index];
-      if ((Number(field.typeID)) === 37) {
+      if ((Number(field.typeID)) === data.types.TEXT) {
         _results.push(Number(index));
       }
     }
@@ -227,7 +238,7 @@
     _results = [];
     for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
       field = _ref[index];
-      if ((Number(field.typeID)) === 7) {
+      if ((Number(field.typeID)) === data.types.TIME) {
         _results.push(Number(index));
       }
     }
@@ -245,7 +256,7 @@
     _results = [];
     for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
       field = _ref[index];
-      if ((_ref1 = Number(field.typeID)) !== 37 && _ref1 !== 7) {
+      if ((_ref1 = Number(field.typeID)) !== data.types.TEXT && _ref1 !== data.types.TIME) {
         _results.push(Number(index));
       }
     }
@@ -263,7 +274,7 @@
     _results = [];
     for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
       field = _ref[index];
-      if ((_ref1 = Number(field.typeID)) !== 37) {
+      if ((_ref1 = Number(field.typeID)) !== data.types.TEXT) {
         _results.push(Number(index));
       }
     }
