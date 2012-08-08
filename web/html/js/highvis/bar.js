@@ -254,7 +254,7 @@
 
     return Bar;
 
-  })(BaseVis);
+  })(BaseHighVis);
 
   globals.bar = new Bar('bar_canvas');
 

@@ -66,7 +66,7 @@ CoffeeScript version of runtime.
         ($ @).css "background-color", "#ffffff"
         ($ @).css 'border-bottom','1px solid white'
 
-        (oldVis.chart.showLoading 'Loading...') if oldVis?
+        (oldVis.chart.showLoading 'Loading...') if oldVis.chart?
 
         ### Give the renderer a cycle to update the loading state before switching ###
         switchVis = ->

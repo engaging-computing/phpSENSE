@@ -27,7 +27,7 @@
  *
 ###
 
-class window.Scatter extends BaseVis
+class window.Scatter extends BaseHighVis
     ###
     Initialize constants for scatter display mode.
     ###
