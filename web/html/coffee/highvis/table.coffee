@@ -51,14 +51,17 @@ class window.Table extends BaseVis
             
         ($ '#table_headers').append header for header in headers
         
-       #Build the data for the table
-        rows = for dataPoint in data.dataPoints
-                    line = for dp,dpIndex in dataPoint
-                        if(Number(data.fields[dpIndex].typeID) is data.types.TIME)
-                             "<td>#{new Date(dp)}</td>"
-                        else 
-                            "<td>#{dp}</td>"
-                    "<tr>#{line}</tr>"
+        #Build the data for the table
+        visibleGroups = for group, groupIndex in data.groups when groupIndex in globals.groupSelection
+            group
+        
+        rows = for dataPoint in data.dataPoints when (String dataPoint[data.groupingFieldIndex]).toLowerCase() in visibleGroups
+            line = for dat, fieldIndex in dataPoint 
+                if((Number data.fields[fieldIndex].typeID) is data.types.TIME)
+                    "<td>#{new Date(dat)}</td>"
+                else 
+                    "<td>#{dat}</td>"
+            "<tr>#{line.reduce (a,b)-> a+b}</tr>"
         
         ($ '#data_table').append '<tbody id="table_body"></tbody>'
         
