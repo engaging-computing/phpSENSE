@@ -30,7 +30,13 @@
 class window.Bar extends BaseVis
     constructor: (@canvas) ->
     
-    analysisType: "Max"
+    ANALYSISTYPE_MAX:       0
+    ANALYSISTYPE_MIN:       1
+    ANALYSISTYPE_MEAN:      2
+    ANALYSISTYPE_MEDIAN:    3
+    
+    analysisType:   0
+    sortField:      data.normalFields[0]
     
     buildOptions: ->
         super()
@@ -43,7 +49,15 @@ class window.Bar extends BaseVis
                 text: "Bar"
             legend:
                 symbolWidth: 0
-                
+            tooltip:
+                formatter: ->
+                    console.log this
+                    str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                    str += "<table>"
+                    str += "<tr><td>#{@series.xAxis.options.title.text}:</td><td><strong>#{@x}</strong></td></tr>"
+                    str += "<tr><td>#{@series.name.field}:</td><td><strong>#{@y}</strong></td></tr>"
+                    str += "</table>"
+                useHTML: true
                 
             ###
             xAxis:
@@ -69,7 +83,7 @@ class window.Bar extends BaseVis
     update: ->
         super()
         
-        visibleCategories = for selection in globals.fieldSelection
+        visibleCategories = for selection in data.normalFields when selection in globals.fieldSelection
             data.fields[selection].fieldName
         
         @chart.xAxis[0].setCategories visibleCategories, false
@@ -103,7 +117,11 @@ class window.Bar extends BaseVis
                 name: data.groups[groupIndex]
                 
             options.data = for fieldIndex in data.normalFields when fieldIndex in globals.fieldSelection
-                data.getMax fieldIndex, groupIndex
+                switch @analysisType
+                    when @ANALYSISTYPE_MAX      then data.getMax    fieldIndex, groupIndex
+                    when @ANALYSISTYPE_MIN      then data.getMin    fieldIndex, groupIndex
+                    when @ANALYSISTYPE_MEAN     then data.getMean   fieldIndex, groupIndex
+                    when @ANALYSISTYPE_MEDIAN   then data.getMedian fieldIndex, groupIndex
                 
             @chart.addSeries options, false
         
@@ -127,21 +145,43 @@ class window.Bar extends BaseVis
             
         controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>'
         
-        controls += '<tr><td><div class="vis_control_table_div">'
+        for [type, typestring] in [[@ANALYSISTYPE_MAX, 'Max'],[@ANALYSISTYPE_MIN, 'Min'],[@ANALYSISTYPE_MEAN, 'Mean'],[@ANALYSISTYPE_MEDIAN, 'Median']]
         
-        controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Max">Max</input><br>'
-        controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Min">Min</input><br>'
-        controls += '<input class="analysisType" type="radio" name="analysisTypeSelector" value="Mean">Mean</input><br>'
+            controls += '<tr><td><div class="vis_control_table_div">'
         
+            controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='#{type}' #{if type is @analysisType then 'checked' else ''}> #{typestring}</input><br>"
+        
+            controls += '</div></td></tr>'
+            
+        ### --- ###
+        
+        controls += '<tr><td><div class="vis_control_table_div"><br>'
+    
+        controls += 'Sort by: <select class="sortField">'
+        
+        for fieldID in data.normalFields
+        
+            controls += "<option value='#{fieldID}'#{if @sortField is fieldID then ' selected' else ''}>#{data.fields[fieldID].fieldName}</option>"
+        
+        controls += '</select>'
+    
         controls += '</div></td></tr>'
         
         controls += '</table></div>'
         
+        ### --- ###
+        
         # Write HTML
         ($ '#controldiv').append controls
         
-        ($ '#drawAnalysisTypeSelector').change (e) =>
-            @analysisType = e.target.value
+        ($ '.analysisType').change (e) =>
+            @analysisType = Number e.target.value
+            @delayedUpdate()
+            
+        ($ '.sortField').change (e) =>
+            @sortField = Number e.target.value
+            console.log @sortField
+            @delayedUpdate()
         
     drawControls: ->
         @drawGroupControls()
