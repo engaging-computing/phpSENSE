@@ -27,23 +27,30 @@
  *
 ###
 
+data.types = 
+    TIME: 7
+    TEXT: 37
+
+###
+Selects data in an x,y object format of the given group.
+###
 data.xySelector = (xIndex, yIndex, groupIndex) ->
 
     rawData = @dataPoints.filter (dp) =>
         (String dp[@groupingFieldIndex]).toLowerCase() == @groups[groupIndex]
 
-    if (Number @fields[xIndex].typeID) == 7
+    if (Number @fields[xIndex].typeID) is data.types.TIME
         mapFunc = (dp) ->
             obj =
                 x: new Date(dp[xIndex])
                 y: dp[yIndex]
-                name: "Temp"
+                datapoint: dp
     else
         mapFunc = (dp) ->
             obj =
                 x: dp[xIndex]
                 y: dp[yIndex]
-                name: "Temp"
+                datapoint: dp
 
     mapped = rawData.map mapFunc
     mapped.sort (a, b) -> (a.x - b.x)
@@ -146,25 +153,25 @@ data.makeGroups =  ->
 ###
 Gets a list of text field indicies
 ###
-data.textFields = for index, field of data.fields when (Number field.typeID) is 37
+data.textFields = for field, index in data.fields when (Number field.typeID) is data.types.TEXT
     Number index
 
 ###
 Gets a list of time field indicies
 ###
-data.timeFields = for index, field of data.fields when (Number field.typeID) is 7
+data.timeFields = for field, index in data.fields when (Number field.typeID) is data.types.TIME
     Number index
 
 ###
 Gets a list of non-text, non-time field indicies
 ###
-data.normalFields = for index, field of data.fields when (Number field.typeID) not in [37, 7]
+data.normalFields = for field, index in data.fields when (Number field.typeID) not in [data.types.TEXT, data.types.TIME]
     Number index
 
 ###
 Gets a list of non-text field indicies
 ###
-data.numericFields = for index, field of data.fields when (Number field.typeID) not in [37]
+data.numericFields = for field, index in data.fields when (Number field.typeID) not in [data.types.TEXT]
     Number index
 
 

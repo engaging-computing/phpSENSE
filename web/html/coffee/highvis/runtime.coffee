@@ -52,18 +52,27 @@ CoffeeScript version of runtime.
     
     ### Change vis click handler ###
     ($ '#vis_select').children().children().click ->
-        globals.curVis.end() if global.curVis?
+        oldVis = globals.curVis
+        globals.curVis = (eval 'globals.' + @text.toLowerCase())
+        
+        if oldVis is globals.curVis
+            return
         
         ### Remove old selection ###
         ($ '#vis_select  > li > a').css 'background-color', '#ccc'
         ($ '#vis_select  > li > a').css 'border-bottom','1px solid black'
-            
-        globals.curVis = (eval 'globals.' + @text.toLowerCase())
         
         ### Set new selection ###
         ($ @).css "background-color", "#ffffff"
         ($ @).css 'border-bottom','1px solid white'
-        
-        globals.curVis.start()
+
+        (oldVis.chart.showLoading 'Loading...') if oldVis?
+
+        ### Give the renderer a cycle to update the loading state before switching ###
+        switchVis = ->
+            globals.curVis.start()
+            oldVis.end() if oldVis?
+
+        setTimeout switchVis, 1
             
     globals.curVis.start()

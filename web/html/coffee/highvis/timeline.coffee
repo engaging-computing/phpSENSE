@@ -1,4 +1,4 @@
-/*
+###
  * Copyright (c) 2011, iSENSE Project. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,53 +24,36 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
- */
+ *
+###
 
-#controldiv {
-    float: left;
-    margin:10px;
-    padding:5px;
-}
+class window.Timeline extends Scatter
+    ###
+    Constructor
+        Change default mode to lines only
+    ###
+    constructor: (@canvas) ->
+        super @canvas
+        @mode = @LINES_MODE
+        @xAxis = data.timeFields[0]
 
-.vis_border {
-    float: left;
-    margin: 5px;
-    border: 1px solid grey;
+    ###
+    Build options relevent to timeline
+    ###
+    buildOptions: ->
+        super()
 
-    border-top-left-radius: 5px;
-         border-top-right-radius: 5px;
-        -moz-border-radius-top-left: 5px;
-        -moz-border-radius-top-right: 5px;
-         border-bottom-left-radius: 5px;
-         border-bottom-right-radius: 5px;
-        -moz-border-radius-bottom-left: 5px;
-        -moz-border-radius-bottom-right: 5px;
-}
+        $.extend true, @chartOptions,
+            title:
+                text: 'Timeline'
 
-.vis_controls {
-    float: left;
-    margin: 5px;
-    
-    height:200px;
-    overflow:auto;
-}
+        @chartOptions.xAxis =
+            type: 'datetime'
+        
+    ###
+    Overwrite xAxis controls to only allow time fields
+    ###
+    drawXAxisControls: ->
+        super (fieldIndex) -> fieldIndex in data.timeFields
 
-.vis_control_table {
-    border: 1px solid grey;
-    padding: 5px;
-}
-
-.vis_control_table_div {
-    font-size: 14px;
-    font-family: Arial;
-    text-align: center;
-    color: #000000;
-    float: left;
-}
-
-.vis_control_table_title {
-    text-align: center;
-    text-decoration: underline;
-    padding-bottom: 5px;
-}
-
+globals.timeline = new Timeline 'timeline_canvas'
