@@ -32,7 +32,9 @@
 
 (function() {
   var keys, vals, _ref, _ref1, _ref2,
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   if ((_ref = window.globals) == null) {
     window.globals = {};
@@ -56,92 +58,37 @@
   }
 
   window.BaseVis = (function() {
-    /*
-        Constructor
-            Assigns target canvas name
-    */
 
-    function BaseVis(canvas) {
-      this.canvas = canvas;
-    }
-
-    /*
-        Builds Highcharts options object
-            Builds up the options common to all vis types.
-            Subsequent derrived classes should use $.extend to expand upon these agter calling super()
-    */
-
-
-    BaseVis.prototype.buildOptions = function() {
-      var _this = this;
-      this.chartOptions = {
-        chart: {
-          renderTo: this.canvas,
-          animation: false
-        },
-        credits: {
-          enabled: false
-        },
-        legend: {
-          symbolWidth: 60,
-          itemWidth: 200
-        },
-        plotOptions: {
-          series: {
-            marker: {
-              lineWidth: 1,
-              radius: 5
-            },
-            events: {
-              legendItemClick: function(event) {
-                var index;
-                index = data.normalFields[event.target.index];
-                if (__indexOf.call(globals.fieldSelection, index) >= 0) {
-                  arrayRemove(globals.fieldSelection, index);
-                } else {
-                  globals.fieldSelection.push(index);
-                }
-                return _this.delayedUpdate();
-              }
-            }
-          }
-        },
-        series: [],
-        title: {}
-      };
-      this.chartOptions.xAxis = [];
-      this.chartOptions.xAxis.push({});
-      return this.chartOptions.xAxis.push({
-        lineWidth: 0,
-        categories: ['']
-      });
-    };
-
-    /*
-        Builds the 'fake series' for legend controls.
-            Derrived objects should implement this.
-    */
-
-
-    BaseVis.prototype.buildLegendSeries = function() {
-      console.log(console.trace());
-      return alert("BAD IMPLEMENTATION ALERT!\n\nCalled: 'BaseVis.buildLegendSeries'\n\nSee logged stack trace in console.");
-    };
+    function BaseVis() {}
 
     /*
         Start sequence used by runtime
-            This is called when the user switched to this vis.
-            Should re-build options and the chart itself to ensure sync with global settings.
-            This method should also be usable as a 'full update' in that it should destroy the current chart if it exists before generating a fresh one.
-    
-            TODO: Update comment
     */
 
 
     BaseVis.prototype.start = function() {
-      this.buildOptions();
-      this.chart = new Highcharts.Chart(this.chartOptions);
-      ($('#' + this.canvas)).show();
+      return this.update();
+    };
+
+    /*
+        Update minor state
+            Redraws html controls
+    
+            Derrived classes should overload to reload content.
+    */
+
+
+    BaseVis.prototype.update = function() {
+      this.clearControls();
+      return this.drawControls();
+    };
+
+    /*
+        Default delayed update simply updates
+    */
+
+
+    BaseVis.prototype.delayedUpdate = function() {
       return this.update();
     };
 
@@ -153,49 +100,19 @@
 
 
     BaseVis.prototype.end = function() {
-      this.chart.destroy();
-      this.chart = void 0;
-      return ($('#' + this.canvas)).hide();
+      console.log(console.trace());
+      return alert("BAD IMPLEMENTATION ALERT!\n\nCalled: 'BaseVis.end'\n\nSee logged stack trace in console.");
     };
 
     /*
-        Update minor state
-            Redraws html controls, clears current series and re-loads the legend.
-    
-            Derrived classes should overload to add data drawing.
+        Draws controls
+            Derived classes should write control HTML and bind handlers using the method such as drawGroupControls.
     */
 
 
-    BaseVis.prototype.update = function() {
-      var options, _i, _len, _ref3, _results;
-      this.clearControls();
-      this.drawControls();
-      while (this.chart.series.length !== 0) {
-        this.chart.series[0].remove(false);
-      }
-      _ref3 = this.buildLegendSeries();
-      _results = [];
-      for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
-        options = _ref3[_i];
-        _results.push(this.chart.addSeries(options, false));
-      }
-      return _results;
-    };
-
-    /*
-        Performs an update while displaying the loading text
-    */
-
-
-    BaseVis.prototype.delayedUpdate = function() {
-      var mySelf, update;
-      this.chart.showLoading('Loading...');
-      mySelf = this;
-      update = function() {
-        return mySelf.update();
-      };
-      setTimeout(update, 1);
-      return this.chart.hideLoading();
+    BaseVis.prototype.drawControls = function() {
+      console.log(console.trace());
+      return alert("BAD IMPLEMENTATION ALERT!\n\nCalled: 'BaseVis.drawControls'\n\nSee logged stack trace in console.");
     };
 
     /*
@@ -206,17 +123,6 @@
 
     BaseVis.prototype.clearControls = function() {
       return ($('#controldiv')).html('');
-    };
-
-    /*
-        Draws controls
-            Derived classes should write control HTML and bind handlers using the methods defined below.
-    */
-
-
-    BaseVis.prototype.drawControls = function() {
-      console.log(console.trace());
-      return alert("BAD IMPLEMENTATION ALERT!\n\nCalled: 'BaseVis.drawControls'\n\nSee logged stack trace in console.");
     };
 
     /*
@@ -288,5 +194,155 @@
     return BaseVis;
 
   })();
+
+  window.BaseHighVis = (function(_super) {
+
+    __extends(BaseHighVis, _super);
+
+    /*
+        Constructor
+            Assigns target canvas name
+    */
+
+
+    function BaseHighVis(canvas) {
+      this.canvas = canvas;
+    }
+
+    /*
+        Builds Highcharts options object
+            Builds up the options common to all vis types.
+            Subsequent derrived classes should use $.extend to expand upon these agter calling super()
+    */
+
+
+    BaseHighVis.prototype.buildOptions = function() {
+      var _this = this;
+      this.chartOptions = {
+        chart: {
+          renderTo: this.canvas,
+          animation: false
+        },
+        credits: {
+          enabled: false
+        },
+        legend: {
+          symbolWidth: 60,
+          itemWidth: 200
+        },
+        plotOptions: {
+          series: {
+            marker: {
+              lineWidth: 1,
+              radius: 5
+            },
+            events: {
+              legendItemClick: function(event) {
+                var index;
+                index = data.normalFields[event.target.index];
+                if (__indexOf.call(globals.fieldSelection, index) >= 0) {
+                  arrayRemove(globals.fieldSelection, index);
+                } else {
+                  globals.fieldSelection.push(index);
+                }
+                return _this.delayedUpdate();
+              }
+            }
+          }
+        },
+        series: [],
+        title: {}
+      };
+      this.chartOptions.xAxis = [];
+      this.chartOptions.xAxis.push({});
+      return this.chartOptions.xAxis.push({
+        lineWidth: 0,
+        categories: ['']
+      });
+    };
+
+    /*
+        Builds the 'fake series' for legend controls.
+            Derrived objects should implement this.
+    */
+
+
+    BaseHighVis.prototype.buildLegendSeries = function() {
+      console.log(console.trace());
+      return alert("BAD IMPLEMENTATION ALERT!\n\nCalled: 'BaseVis.buildLegendSeries'\n\nSee logged stack trace in console.");
+    };
+
+    /*
+        Start sequence used by runtime
+            This is called when the user switched to this vis.
+            Should re-build options and the chart itself to ensure sync with global settings.
+            This method should also be usable as a 'full update' in that it should destroy the current chart if it exists before generating a fresh one.
+    
+            TODO: Update comment
+    */
+
+
+    BaseHighVis.prototype.start = function() {
+      this.buildOptions();
+      this.chart = new Highcharts.Chart(this.chartOptions);
+      ($('#' + this.canvas)).show();
+      return this.update();
+    };
+
+    /*
+        Update minor state
+            Clears current series and re-loads the legend.
+    
+            Derrived classes should overload to add data drawing.
+    */
+
+
+    BaseHighVis.prototype.update = function() {
+      var options, _i, _len, _ref3, _results;
+      BaseHighVis.__super__.update.call(this);
+      while (this.chart.series.length !== 0) {
+        this.chart.series[0].remove(false);
+      }
+      _ref3 = this.buildLegendSeries();
+      _results = [];
+      for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+        options = _ref3[_i];
+        _results.push(this.chart.addSeries(options, false));
+      }
+      return _results;
+    };
+
+    /*
+        Performs an update while displaying the loading text
+    */
+
+
+    BaseHighVis.prototype.delayedUpdate = function() {
+      var mySelf, update;
+      this.chart.showLoading('Loading...');
+      mySelf = this;
+      update = function() {
+        return mySelf.update();
+      };
+      setTimeout(update, 1);
+      return this.chart.hideLoading();
+    };
+
+    /*
+        End sequence used by runtime
+            This is called when the user switches away from this vis.
+            Should destroy the chart, hide its canvas and remove controls.
+    */
+
+
+    BaseHighVis.prototype.end = function() {
+      this.chart.destroy();
+      this.chart = void 0;
+      return ($('#' + this.canvas)).hide();
+    };
+
+    return BaseHighVis;
+
+  })(BaseVis);
 
 }).call(this);
