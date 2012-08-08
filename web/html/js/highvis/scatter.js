@@ -291,7 +291,7 @@
 
     return Scatter;
 
-  })(BaseVis);
+  })(BaseHighVis);
 
   globals.scatter = new Scatter('scatter_canvas');
 

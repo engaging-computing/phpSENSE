@@ -27,7 +27,7 @@
  *
 ###
 
-class window.Bar extends BaseVis
+class window.Bar extends BaseHighVis
     constructor: (@canvas) ->
     
     ANALYSISTYPE_MAX:       0

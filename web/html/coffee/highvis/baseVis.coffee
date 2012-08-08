@@ -33,6 +33,120 @@ globals.groupSelection ?= for vals, keys in data.groups
 globals.fieldSelection ?= data.normalFields[0..0]
 
 class window.BaseVis
+    constructor: ->
+
+    ###
+    Start sequence used by runtime
+    ###
+    start: ->
+        @update()
+
+    ###
+    Update minor state
+        Redraws html controls
+
+        Derrived classes should overload to reload content.
+    ###
+    update: ->
+        @clearControls()
+        @drawControls()
+
+    ###
+    Default delayed update simply updates
+    ###
+    delayedUpdate: ->
+        @update()
+        
+    ###
+    End sequence used by runtime
+        This is called when the user switches away from this vis.
+        Should destroy the chart, hide its canvas and remove controls.
+    ###
+    end: ->
+        console.log console.trace()
+        alert   """
+                BAD IMPLEMENTATION ALERT!
+
+                Called: 'BaseVis.end'
+
+                See logged stack trace in console.
+                """
+        
+    ###
+    Draws controls
+        Derived classes should write control HTML and bind handlers using the method such as drawGroupControls.
+    ###
+    drawControls: ->
+        console.log console.trace()
+        alert   """
+                BAD IMPLEMENTATION ALERT!
+
+                Called: 'BaseVis.drawControls'
+
+                See logged stack trace in console.
+                """
+
+    ###
+    Clear the controls
+        Unbinds control handlers and clears the HTML elements.
+    ###
+    clearControls: ->
+        ($ '#controldiv').html('')
+
+    ###
+    Draws group selection controls
+        This includes a series of checkboxes and a selector for the grouping field.
+        The checkbox text color should correspond to the graph color.
+    ###
+    drawGroupControls: ->
+        controls = '<div id="groupControl" class="vis_controls">'
+
+        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Groups:</tr></td>'
+
+        # Add grouping selector
+        controls += '<tr><td><div class="vis_control_table_div">'
+        controls += '<select class="group_selector">'
+
+        for fieldIndex in data.textFields
+            controls += "<option value=\"#{Number fieldIndex}\">#{data.fields[fieldIndex].fieldName}</option>"
+
+        controls += "</select></div></td></tr>"
+
+        # Populate choices
+        counter = 0
+        for group, gIndex in data.groups
+            controls += '<tr><td>'
+            controls += "<div class=\"vis_control_table_div\" style=\"color:#{globals.colors[counter % globals.colors.length]};\">"
+
+            controls += "<input class='group_input' type='checkbox' value='#{gIndex}' #{if (Number gIndex) in globals.groupSelection then "checked" else ""}/>&nbsp"
+            controls += "#{group}&nbsp"
+            controls += "</div></td></tr>"
+            counter += 1
+        controls += '</table></div>'
+
+        # Write HTML
+        ($ '#controldiv').append controls
+
+        # Make group select handler
+        ($ '.group_selector').change (e) =>
+            element = e.target or e.srcElement
+            data.setGroupIndex (Number element.value)
+            globals.groupSelection ?= for vals, keys in data.groups
+                Number keys
+            @delayedUpdate()
+
+        # Make group checkbox handler
+        ($ '.group_input').click (e) =>
+            selection = []
+            ($ '.group_input').each ()->
+                if @checked
+                    selection.push Number @value
+                else
+            globals.groupSelection = selection
+            @delayedUpdate()
+
+
+class window.BaseHighVis extends BaseVis
     ###
     Constructor
         Assigns target canvas name
@@ -118,6 +232,36 @@ class window.BaseVis
     
         ($ '#' + @canvas).show()
         @update()
+
+    ###
+    Update minor state
+        Clears current series and re-loads the legend.
+
+        Derrived classes should overload to add data drawing.
+    ###
+    update: ->
+        super()
+
+        #Remove curent data
+        while @chart.series.length isnt 0
+            @chart.series[0].remove(false)
+
+        #Draw legend
+        for options in @buildLegendSeries()
+            @chart.addSeries options, false
+        
+    ###
+    Performs an update while displaying the loading text
+    ###
+    delayedUpdate: ->
+        @chart.showLoading 'Loading...'
+
+        #Save context
+        mySelf = this
+        update = -> mySelf.update()
+        setTimeout update, 1
+
+        @chart.hideLoading()
         
     ###
     End sequence used by runtime
@@ -129,108 +273,5 @@ class window.BaseVis
         @chart = undefined;
         ($ '#' + @canvas).hide()
 
-    ###
-    Update minor state
-        Redraws html controls, clears current series and re-loads the legend.
 
-        Derrived classes should overload to add data drawing.
-    ###
-    update: ->
-        @clearControls()
-        @drawControls()
-
-        #Remove curent data
-        while @chart.series.length isnt 0
-            @chart.series[0].remove(false)
-
-        #Draw legend
-        for options in @buildLegendSeries()
-            @chart.addSeries options, false
-
-    ###
-    Performs an update while displaying the loading text
-    ###
-    delayedUpdate: ->
-        @chart.showLoading 'Loading...'
-        
-        #Save context
-        mySelf = this
-        update = -> mySelf.update()
-        setTimeout update, 1
-
-        @chart.hideLoading()
-
-    ###
-    Clear the controls
-        Unbinds control handlers and clears the HTML elements.
-    ###
-    clearControls: ->
-        ($ '#controldiv').html('')
-
-    ###
-    Draws controls
-        Derived classes should write control HTML and bind handlers using the methods defined below.
-    ###
-    drawControls: ->
-        console.log console.trace()
-        alert   """
-                BAD IMPLEMENTATION ALERT!
-
-                Called: 'BaseVis.drawControls'
-
-                See logged stack trace in console.
-                """
-
-                
-    ###
-    Draws group selection controls
-        This includes a series of checkboxes and a selector for the grouping field.
-        The checkbox text color should correspond to the graph color.
-    ###
-    drawGroupControls: ->
-        controls = '<div id="groupControl" class="vis_controls">'
-        
-        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Groups:</tr></td>'
-        
-        # Add grouping selector
-        controls += '<tr><td><div class="vis_control_table_div">'
-        controls += '<select class="group_selector">'
-        
-        for fieldIndex in data.textFields
-            controls += "<option value=\"#{Number fieldIndex}\">#{data.fields[fieldIndex].fieldName}</option>"
-        
-        controls += "</select></div></td></tr>"
-        
-        # Populate choices
-        counter = 0
-        for group, gIndex in data.groups
-            controls += '<tr><td>'
-            controls += "<div class=\"vis_control_table_div\" style=\"color:#{globals.colors[counter % globals.colors.length]};\">"
-            
-            controls += "<input class='group_input' type='checkbox' value='#{gIndex}' #{if (Number gIndex) in globals.groupSelection then "checked" else ""}/>&nbsp"
-            controls += "#{group}&nbsp"
-            controls += "</div></td></tr>"
-            counter += 1
-        controls += '</table></div>'
-        
-        # Write HTML
-        ($ '#controldiv').append controls
-        
-        # Make group select handler
-        ($ '.group_selector').change (e) =>
-            element = e.target or e.srcElement
-            data.setGroupIndex (Number element.value)
-            globals.groupSelection ?= for vals, keys in data.groups
-                Number keys
-            @delayedUpdate()
-        
-        # Make group checkbox handler
-        ($ '.group_input').click (e) =>
-            selection = []
-            ($ '.group_input').each ()->
-                if @checked
-                    selection.push Number @value
-                else
-            globals.groupSelection = selection
-            @delayedUpdate()
             

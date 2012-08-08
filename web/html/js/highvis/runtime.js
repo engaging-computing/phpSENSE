@@ -83,7 +83,7 @@
 
       ($(this)).css("background-color", "#ffffff");
       ($(this)).css('border-bottom', '1px solid white');
-      if (oldVis != null) {
+      if (oldVis.chart != null) {
         oldVis.chart.showLoading('Loading...');
       }
       /* Give the renderer a cycle to update the loading state before switching
