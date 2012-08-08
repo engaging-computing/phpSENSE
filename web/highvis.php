@@ -68,16 +68,18 @@ if(isset($_REQUEST['sessions'])) {
     //Close the script
     $head .= '"></script>';
 
+    $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mousewheel.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mCustomScrollbar.js"></script>';
+
     $head .= '<script type="text/javascript" src="/html/js/highvis/highcharts/highcharts.js"></script>';
 
     $head .= '<script type="text/javascript" src="/html/js/highvis/visUtils.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highmodifiers.js"></script>';
 
     $head .= '<script type="text/javascript" src="/html/js/highvis/baseVis.js"></script>';
-    $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mousewheel.js"></script>';
     
-    $head .= '<script type="text/javascript" src="/html/js/highvis/timeline.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/scatter.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/highvis/timeline.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/histogram.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/bar.js"></script>';
     //$head .= '<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>';
@@ -87,7 +89,9 @@ if(isset($_REQUEST['sessions'])) {
     //$head .= '<script type="text/javascript" src="/html/js/highvis/jquery.dataTables.js"></script>';
 
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.prettyPhoto.js"></script>';
+
     $head .= '<link rel="stylesheet" type="text/css" href="/html/css/jquery.dataTables.css"></link>';
+    $head .= '<link rel="stylesheet" type="text/css" href="/html/css/mCustomScrollbar.css"></link>';
     $head .= '<link rel="stylesheet" type="text/css" href="/html/css/demo_table.css"></link>';
     $head .= '<link rel="stylesheet" type="text/css" href="/html/css/highvis.css"></link>';
     $head .= '<link rel="stylesheet" type="text/css" href="/html/css/prettyPhoto.css" media="screen"></link>';

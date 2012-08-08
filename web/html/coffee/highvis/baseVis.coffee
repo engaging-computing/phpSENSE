@@ -28,10 +28,9 @@
 ###
 
 window.globals ?= {}
-globals.groupSelection ?= for keys of data.groups
+globals.groupSelection ?= for vals, keys in data.groups
     Number keys
 globals.fieldSelection ?= data.normalFields[0..0]
-globals.xAxis ?= data.numericFields[0]
 
 class window.BaseVis
     ###
@@ -55,7 +54,9 @@ class window.BaseVis
                 enabled: false
             #global: {}
             #labels: {}
-            #legend: {}
+            legend:
+                symbolWidth:60
+                itemWidth: 200
             #loading: {}
             plotOptions:
                 series:
@@ -66,11 +67,12 @@ class window.BaseVis
                         legendItemClick: (event) =>
                             index = data.normalFields[event.target.index]
 
-                            if event.target.visible
+                            if index in globals.fieldSelection
                                 arrayRemove(globals.fieldSelection, index)
                             else
                                 globals.fieldSelection.push(index)
-                            @update()
+                                
+                            @delayedUpdate()
             #point: {}
             series: []
             #subtitle: {}
@@ -82,36 +84,37 @@ class window.BaseVis
             #exporting: {}
             #navigation: {}
 
-        count = -1
-        @chartOptions.series = for field in data.fields when (Number field.typeID) not in [37, 7]
-            count += 1
-            dummy =
-                data: []
-                color: '#000'
-                marker:
-                    symbol: globals.symbols[count % globals.symbols.length]
-                name: field.fieldName
+        @chartOptions.xAxis = []
+        @chartOptions.xAxis.push {}
+        @chartOptions.xAxis.push
+            lineWidth: 0
+            categories: ['']
 
+    ###
+    Builds the 'fake series' for legend controls.
+        Derrived objects should implement this.
+    ###
+    buildLegendSeries: ->
+        console.log console.trace()
+        alert   """
+                BAD IMPLEMENTATION ALERT!
+
+                Called: 'BaseVis.buildLegendSeries'
+
+                See logged stack trace in console.
+                """
     ###
     Start sequence used by runtime
         This is called when the user switched to this vis.
         Should re-build options and the chart itself to ensure sync with global settings.
         This method should also be usable as a 'full update' in that it should destroy the current chart if it exists before generating a fresh one.
+
+        TODO: Update comment
     ###
     start: ->
         @buildOptions()
         
-        if @chart?
-            @chart.destroy()
         @chart = new Highcharts.Chart @chartOptions
-
-        #Sync hidden state from globals
-        for ser in @chart.series[0...data.normalFields.length]
-            index = data.normalFields[ser.index]
-            if index in globals.fieldSelection
-                ser.show()
-            else
-                ser.hide()
     
         ($ '#' + @canvas).show()
         @update()
@@ -123,35 +126,45 @@ class window.BaseVis
     ###
     end: ->
         @chart.destroy()
-        @clearControls()
+        @chart = undefined;
         ($ '#' + @canvas).hide()
 
     ###
     Update minor state
-        Should update the hidden status based on both high-charts legend action and control checkboxes.
+        Redraws html controls, clears current series and re-loads the legend.
+
+        Derrived classes should overload to add data drawing.
     ###
     update: ->
         @clearControls()
         @drawControls()
 
-        #Update hidden state
-        for index in [0...@chart.series.length - data.normalFields.length]
-            fieldIndex = data.normalFields[index % data.normalFields.length]
-            groupIndex = Math.floor (index / data.normalFields.length)
-            
-            if (groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection)
-                @chart.series[index + data.normalFields.length].setVisible(true, false)
-            else
-                @chart.series[index + data.normalFields.length].setVisible(false, false)
-            @chart.redraw()
-                
+        #Remove curent data
+        while @chart.series.length isnt 0
+            @chart.series[0].remove(false)
+
+        #Draw legend
+        for options in @buildLegendSeries()
+            @chart.addSeries options, false
+
+    ###
+    Performs an update while displaying the loading text
+    ###
+    delayedUpdate: ->
+        @chart.showLoading 'Loading...'
+        
+        #Save context
+        mySelf = this
+        update = -> mySelf.update()
+        setTimeout update, 1
+
+        @chart.hideLoading()
 
     ###
     Clear the controls
         Unbinds control handlers and clears the HTML elements.
     ###
     clearControls: ->
-        #($ '#controldiv').find('*').unbind()
         ($ '#controldiv').html('')
 
     ###
@@ -190,9 +203,9 @@ class window.BaseVis
         
         # Populate choices
         counter = 0
-        for gIndex, group of data.groups
+        for group, gIndex in data.groups
             controls += '<tr><td>'
-            controls += "<div class=\"vis_control_table_div\" style=\"color:#{globals.colors[counter]};\">"
+            controls += "<div class=\"vis_control_table_div\" style=\"color:#{globals.colors[counter % globals.colors.length]};\">"
             
             controls += "<input class='group_input' type='checkbox' value='#{gIndex}' #{if (Number gIndex) in globals.groupSelection then "checked" else ""}/>&nbsp"
             controls += "#{group}&nbsp"
@@ -207,57 +220,17 @@ class window.BaseVis
         ($ '.group_selector').change (e) =>
             element = e.target or e.srcElement
             data.setGroupIndex (Number element.value)
-            globals.groupSelection ?= for keys of data.groups
+            globals.groupSelection ?= for vals, keys in data.groups
                 Number keys
-            @start()
+            @delayedUpdate()
         
         # Make group checkbox handler
         ($ '.group_input').click (e) =>
             selection = []
             ($ '.group_input').each ()->
                 if @checked
-                    console.log 'checked'
                     selection.push Number @value
                 else
-                    console.log 'unchecked'
             globals.groupSelection = selection
-            @update()
+            @delayedUpdate()
             
-
-    ###
-    Draws x axis selection controls
-        This includes a series of radio buttons.
-    ###
-    drawXAxisControls: ->
-        controls = '<div id="xAxisControl" class="vis_controls">'
-        
-        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>'
-        
-        # Populate choices (not text)
-        for field of data.fields
-            if (Number data.fields[field].typeID) != 37
-                controls += '<tr><td>'
-                controls += '<div class="vis_control_table_div">'
-                
-                controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{field}\" #{if (Number field) == globals.xAxis then "checked" else ""}></input>&nbsp"
-                controls += "#{data.fields[field].fieldName}&nbsp"
-                controls += "</div></td></tr>"
-        
-        controls += '</table></div>'
-        
-        # Write HTML
-        ($ '#controldiv').append controls
-            
-        # Make xAxis radio handler
-        ($ '.xAxis_input').click (e) =>
-            selection = null
-            ($ '.xAxis_input').each ()->
-                if @checked
-                    selection = @value
-            globals.xAxis = Number selection
-            @start()
-
-    groupFilter: (dp) ->
-        groups = globals.groupSelection.map (index) -> data.groups[index]
-        (String dp[data.groupIndex]).toLowerCase() in groups
-        

@@ -67,21 +67,35 @@
     */
 
     ($('#vis_select')).children().children().click(function() {
-      if (global.curVis != null) {
-        globals.curVis.end();
+      var oldVis, switchVis;
+      oldVis = globals.curVis;
+      globals.curVis = eval('globals.' + this.text.toLowerCase());
+      if (oldVis === globals.curVis) {
+        return;
       }
       /* Remove old selection
       */
 
       ($('#vis_select  > li > a')).css('background-color', '#ccc');
       ($('#vis_select  > li > a')).css('border-bottom', '1px solid black');
-      globals.curVis = eval('globals.' + this.text.toLowerCase());
       /* Set new selection
       */
 
       ($(this)).css("background-color", "#ffffff");
       ($(this)).css('border-bottom', '1px solid white');
-      return globals.curVis.start();
+      if (oldVis != null) {
+        oldVis.chart.showLoading('Loading...');
+      }
+      /* Give the renderer a cycle to update the loading state before switching
+      */
+
+      switchVis = function() {
+        globals.curVis.start();
+        if (oldVis != null) {
+          return oldVis.end();
+        }
+      };
+      return setTimeout(switchVis, 1);
     });
     return globals.curVis.start();
   });
