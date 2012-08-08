@@ -35,11 +35,15 @@ class window.Bar extends BaseHighVis
     ANALYSISTYPE_MEAN:      2
     ANALYSISTYPE_MEDIAN:    3
     
+    analysisTypeNames: ["Max","Min","Mean","Median"];
+    
     analysisType:   0
     sortField:      data.normalFields[0]
     
     buildOptions: ->
         super()
+        
+        self = this
         
         @chartOptions
         $.extend true, @chartOptions,
@@ -52,10 +56,9 @@ class window.Bar extends BaseHighVis
             tooltip:
                 formatter: ->
                     console.log this
-                    str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                    str  = "<div style='width:100%;text-align:center;color:#{@series.color};margin-bottom:5px'> #{@point.name}</div>"
                     str += "<table>"
-                    str += "<tr><td>#{@series.xAxis.options.title.text}:</td><td><strong>#{@x}</strong></td></tr>"
-                    str += "<tr><td>#{@series.name.field}:</td><td><strong>#{@y}</strong></td></tr>"
+                    str += "<tr><td>#{@x} (#{self.analysisTypeNames[self.analysisType]}):</td><td><strong>#{@y}</strong></td></tr>"
                     str += "</table>"
                 useHTML: true
                 
@@ -91,26 +94,24 @@ class window.Bar extends BaseHighVis
         while @chart.series.length > data.normalFields.length
             @chart.series[@chart.series.length-1].remove false
         
+        ### --- ###
         
-        ###
-        categoryIndex = -1
-        for fieldIndex in data.normalFields when fieldIndex in globals.fieldSelection
-            categoryIndex += 1
-            
-            for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
-                options =
-                    data: [
-                        x: categoryIndex
-                        y: data.getMax fieldIndex, groupIndex
-                        ]
-                    showInLegend: false
-                    color: globals.colors[groupIndex % globals.colors.length]
-                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
-                    
-                @chart.addSeries options, false
-        ###
+        tempGroupIDValuePairs = for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
+            switch @analysisType
+                when @ANALYSISTYPE_MAX      then [groupIndex, data.getMax    @sortField, groupIndex]
+                when @ANALYSISTYPE_MIN      then [groupIndex, data.getMin    @sortField, groupIndex]
+                when @ANALYSISTYPE_MEAN     then [groupIndex, data.getMean   @sortField, groupIndex]
+                when @ANALYSISTYPE_MEDIAN   then [groupIndex, data.getMedian @sortField, groupIndex]
+                
+        fieldSortedGroupIDValuePairs = tempGroupIDValuePairs.sort (a,b) ->
+            return if a[1] > b[1] then 1 else -1
         
-        for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
+        fieldSortedGroupIDs = for [groupID, groupValue] in fieldSortedGroupIDValuePairs
+            groupID
+        
+        ### --- ###
+        
+        for groupIndex in fieldSortedGroupIDs when groupIndex in globals.groupSelection
             options =
                 showInLegend: false
                 color: globals.colors[groupIndex % globals.colors.length]
@@ -118,10 +119,22 @@ class window.Bar extends BaseHighVis
                 
             options.data = for fieldIndex in data.normalFields when fieldIndex in globals.fieldSelection
                 switch @analysisType
-                    when @ANALYSISTYPE_MAX      then data.getMax    fieldIndex, groupIndex
-                    when @ANALYSISTYPE_MIN      then data.getMin    fieldIndex, groupIndex
-                    when @ANALYSISTYPE_MEAN     then data.getMean   fieldIndex, groupIndex
-                    when @ANALYSISTYPE_MEDIAN   then data.getMedian fieldIndex, groupIndex
+                    when @ANALYSISTYPE_MAX
+                        ret =
+                            y:      data.getMax fieldIndex, groupIndex
+                            name:   data.groups[groupIndex]
+                    when @ANALYSISTYPE_MIN
+                        ret =
+                            y:      data.getMin fieldIndex, groupIndex
+                            name:   data.groups[groupIndex]
+                    when @ANALYSISTYPE_MEAN
+                        ret =
+                            y:      data.getMean fieldIndex, groupIndex
+                            name:   data.groups[groupIndex]
+                    when @ANALYSISTYPE_MEDIAN
+                        ret =
+                            y:      data.getMedian fieldIndex, groupIndex
+                            name:   data.groups[groupIndex]
                 
             @chart.addSeries options, false
         
