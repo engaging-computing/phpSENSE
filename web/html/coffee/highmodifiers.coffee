@@ -44,11 +44,13 @@ data.xySelector = (xIndex, yIndex, groupIndex) ->
             obj =
                 x: new Date(dp[xIndex])
                 y: dp[yIndex]
+                datapoint: dp
     else
         mapFunc = (dp) ->
             obj =
                 x: dp[xIndex]
                 y: dp[yIndex]
+                datapoint: dp
 
     mapped = rawData.map mapFunc
     mapped.sort (a, b) -> (a.x - b.x)

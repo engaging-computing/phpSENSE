@@ -32,10 +32,27 @@
     padding:5px;
 }
 
+.vis_border {
+    float: left;
+    margin: 5px;
+    border: 1px solid grey;
+
+    border-top-left-radius: 5px;
+         border-top-right-radius: 5px;
+        -moz-border-radius-top-left: 5px;
+        -moz-border-radius-top-right: 5px;
+         border-bottom-left-radius: 5px;
+         border-bottom-right-radius: 5px;
+        -moz-border-radius-bottom-left: 5px;
+        -moz-border-radius-bottom-right: 5px;
+}
+
 .vis_controls {
     float: left;
-    margin: 10px;
-    border: 1px;
+    margin: 5px;
+    
+    height:200px;
+    overflow:auto;
 }
 
 .vis_control_table {

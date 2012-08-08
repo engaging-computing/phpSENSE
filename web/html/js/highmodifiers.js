@@ -54,7 +54,8 @@
         var obj;
         return obj = {
           x: new Date(dp[xIndex]),
-          y: dp[yIndex]
+          y: dp[yIndex],
+          datapoint: dp
         };
       };
     } else {
@@ -62,7 +63,8 @@
         var obj;
         return obj = {
           x: dp[xIndex],
-          y: dp[yIndex]
+          y: dp[yIndex],
+          datapoint: dp
         };
       };
     }

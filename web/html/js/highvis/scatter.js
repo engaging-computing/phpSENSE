@@ -51,6 +51,7 @@
       this.SYMBOLS_MODE = 1;
       this.mode = this.SYMBOLS_LINES_MODE;
       this.xAxis = data.normalFields[0];
+      this.advancedTooltips = false;
     }
 
     /*
@@ -60,7 +61,9 @@
 
 
     Scatter.prototype.buildOptions = function() {
+      var self;
       Scatter.__super__.buildOptions.call(this);
+      self = this;
       $.extend(true, this.chartOptions, {
         chart: {
           type: "line",
@@ -71,13 +74,25 @@
         },
         tooltip: {
           formatter: function() {
-            var str;
-            console.log(this);
-            str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div><br>";
-            str += "<table>";
-            str += "<tr><td>" + this.series.xAxis.options.title.text + ":</td><td><strong>" + this.x + "</strong></td></tr>";
-            str += "<tr><td>" + this.series.name.field + ":</td><td><strong>" + this.y + "</strong></td></tr>";
-            return str += "</table>";
+            var dat, field, fieldIndex, str, _i, _len, _ref;
+            if (self.advancedTooltips) {
+              str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div><br>";
+              str += "<table>";
+              _ref = data.fields;
+              for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
+                field = _ref[fieldIndex];
+                dat = (Number(field.typeID)) === data.types.TIME ? new Date(this.point.datapoint[fieldIndex]) : this.point.datapoint[fieldIndex];
+                str += "<tr><td>" + field.fieldName + "</td>";
+                str += "<td><strong>" + dat + "</strong></td></tr>}";
+              }
+              return str += "</table>";
+            } else {
+              str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div><br>";
+              str += "<table>";
+              str += "<tr><td>" + this.series.xAxis.options.title.text + ":</td><td><strong>" + this.x + "</strong></td></tr>";
+              str += "<tr><td>" + this.series.name.field + ":</td><td><strong>" + this.y + "</strong></td></tr>";
+              return str += "</table>";
+            }
           },
           useHTML: true
         }
@@ -216,11 +231,19 @@
         controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + mode + "' " + (this.mode === mode ? 'checked' : '') + "/>";
         controls += modeText + "  </div></td></tr>";
       }
+      controls += '<tr><td><div class="vis_control_table_div">';
+      controls += '<br>';
+      controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' " + (this.advancedTooltips ? 'checked' : '') + "/>&nbspAdvanced Tooltips&nbsp";
+      controls += "</div></td></tr>";
       controls += '</table></div>';
       ($('#controldiv')).append(controls);
-      return ($('.mode_radio')).click(function(e) {
+      ($('.mode_radio')).click(function(e) {
         _this.mode = Number(e.target.value);
         return _this.delayedUpdate();
+      });
+      return ($('.tooltip_box')).click(function(e) {
+        _this.advancedTooltips = !_this.advancedTooltips;
+        return console.log(_this.advancedTooltips);
       });
     };
 

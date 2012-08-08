@@ -165,7 +165,6 @@ class window.BaseVis
         Unbinds control handlers and clears the HTML elements.
     ###
     clearControls: ->
-        #($ '#controldiv').find('*').unbind()
         ($ '#controldiv').html('')
 
     ###
@@ -206,7 +205,7 @@ class window.BaseVis
         counter = 0
         for group, gIndex in data.groups
             controls += '<tr><td>'
-            controls += "<div class=\"vis_control_table_div\" style=\"color:#{globals.colors[counter]};\">"
+            controls += "<div class=\"vis_control_table_div\" style=\"color:#{globals.colors[counter % globals.colors.length]};\">"
             
             controls += "<input class='group_input' type='checkbox' value='#{gIndex}' #{if (Number gIndex) in globals.groupSelection then "checked" else ""}/>&nbsp"
             controls += "#{group}&nbsp"

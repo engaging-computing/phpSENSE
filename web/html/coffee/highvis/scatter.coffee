@@ -40,6 +40,8 @@ class window.Scatter extends BaseVis
 
         @xAxis = data.normalFields[0]
 
+        @advancedTooltips = false
+
     ###
     Build up the chart options specific to scatter chart
         The only complex thing here is the html-formatted tooltip.
@@ -47,6 +49,8 @@ class window.Scatter extends BaseVis
     buildOptions: ->
         super()
 
+        self = this
+        
         $.extend true, @chartOptions,
             chart:
                 type: "line"
@@ -55,12 +59,26 @@ class window.Scatter extends BaseVis
                 text: "Scatter"
             tooltip:
                 formatter: ->
-                    console.log this
-                    str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
-                    str += "<table>"
-                    str += "<tr><td>#{@series.xAxis.options.title.text}:</td><td><strong>#{@x}</strong></td></tr>"
-                    str += "<tr><td>#{@series.name.field}:</td><td><strong>#{@y}</strong></td></tr>"
-                    str += "</table>"
+                    if self.advancedTooltips
+                        str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                        str += "<table>"
+
+                        for field, fieldIndex in data.fields
+                            dat = if (Number field.typeID) is data.types.TIME
+                                new Date(@point.datapoint[fieldIndex])
+                            else
+                                @point.datapoint[fieldIndex]
+                                
+                            str += "<tr><td>#{field.fieldName}</td>"
+                            str += "<td><strong>#{dat}</strong></td></tr>}"
+                            
+                        str += "</table>"
+                    else
+                        str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                        str += "<table>"
+                        str += "<tr><td>#{@series.xAxis.options.title.text}:</td><td><strong>#{@x}</strong></td></tr>"
+                        str += "<tr><td>#{@series.name.field}:</td><td><strong>#{@y}</strong></td></tr>"
+                        str += "</table>"
                 useHTML: true
                 
         @chartOptions.xAxis =
@@ -103,6 +121,8 @@ class window.Scatter extends BaseVis
         @drawGroupControls()
         @drawXAxisControls()
         @drawModeControls()
+
+        #($ '.vis_controls').mCustomScrollbar()
 
     ###
     Update the chart by removing all current series and recreating them
@@ -162,6 +182,11 @@ class window.Scatter extends BaseVis
             controls += "<input class='mode_radio' type='radio' name='mode_selector' value='#{mode}' #{if @mode is mode then 'checked' else ''}/>"
             controls += modeText + "  </div></td></tr>"
 
+        controls += '<tr><td><div class="vis_control_table_div">'
+        controls += '<br>'
+        controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' #{if @advancedTooltips then 'checked' else ''}/>&nbspAdvanced Tooltips&nbsp"
+        controls += "</div></td></tr>"
+            
         controls += '</table></div>'
         
         # Write HTML
@@ -170,6 +195,10 @@ class window.Scatter extends BaseVis
         ($ '.mode_radio').click (e) =>
             @mode = Number e.target.value
             @delayedUpdate()
+
+        ($ '.tooltip_box').click (e) =>
+            @advancedTooltips = not @advancedTooltips
+            console.log @advancedTooltips
 
     ###
     Draws x axis selection controls
