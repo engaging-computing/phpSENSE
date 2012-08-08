@@ -34,7 +34,7 @@
 		{ if $done }
 			<fieldset id="basic-info">
 				<legend>Successfully Uploaded Pictures</legend>
-				<p>You've successfully uploaded pictures. You can <a href="upload-pictures.php?id={ $smarty.get.id }">upload more</a> or <a href="experiment.php?id={ $smarty.get.id }">view your pictures.</a></p>
+				<p>You've successfully uploaded pictures. You can <a href="upload-pictures.php?id={ $smarty.get.id }">upload more</a> or <a href="experiment.php?id={ $smarty.get.id }">continue to your experiment.</a></p>
 			</fieldset>
 		{ else }
 			{ include file="parts/errors.tpl" }
