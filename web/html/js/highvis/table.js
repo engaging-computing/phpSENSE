@@ -38,17 +38,75 @@
 
     __extends(Table, _super);
 
-    function Table() {}
+    function Table(canvas) {
+      this.canvas = canvas;
+    }
 
     Table.prototype.start = function() {
+      ($('#' + this.canvas)).show();
       return Table.__super__.start.call(this);
     };
 
     Table.prototype.update = function() {
+      var atable, dataPoint, dp, dpIndex, dt, field, header, headers, line, row, rows, _i, _j, _len, _len1;
+      ($('#' + this.canvas)).html('');
+      ($('#' + this.canvas)).append('<table id="data_table"></table>');
+      ($('#data_table')).append('<thead><tr id="table_headers"></tr></thead>');
+      headers = (function() {
+        var _i, _len, _ref, _results;
+        _ref = data.fields;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          field = _ref[_i];
+          _results.push("<td>" + field.fieldName + "</td>");
+        }
+        return _results;
+      })();
+      for (_i = 0, _len = headers.length; _i < _len; _i++) {
+        header = headers[_i];
+        ($('#table_headers')).append(header);
+      }
+      rows = (function() {
+        var _j, _len1, _ref, _results;
+        _ref = data.dataPoints;
+        _results = [];
+        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+          dataPoint = _ref[_j];
+          line = (function() {
+            var _k, _len2, _results1;
+            _results1 = [];
+            for (dpIndex = _k = 0, _len2 = dataPoint.length; _k < _len2; dpIndex = ++_k) {
+              dp = dataPoint[dpIndex];
+              if (Number(data.fields[dpIndex].typeID) === data.types.TIME) {
+                _results1.push("<td>" + (new Date(dp)) + "</td>");
+              } else {
+                _results1.push("<td>" + dp + "</td>");
+              }
+            }
+            return _results1;
+          })();
+          _results.push("<tr>" + line + "</tr>");
+        }
+        return _results;
+      })();
+      ($('#data_table')).append('<tbody id="table_body"></tbody>');
+      for (_j = 0, _len1 = rows.length; _j < _len1; _j++) {
+        row = rows[_j];
+        ($('#table_body')).append(row);
+      }
+      dt = {
+        sScrollY: 400,
+        sScrollX: "100%",
+        iDisplayLength: -1,
+        bDeferRender: true
+      };
+      atable = ($('#data_table')).dataTable(dt);
       return Table.__super__.update.call(this);
     };
 
-    Table.prototype.end = function() {};
+    Table.prototype.end = function() {
+      return ($('#' + this.canvas)).hide();
+    };
 
     Table.prototype.drawControls = function() {
       return this.drawGroupControls();
@@ -58,6 +116,6 @@
 
   })(BaseVis);
 
-  globals.table = new Table();
+  globals.table = new Table("table_canvas");
 
 }).call(this);
