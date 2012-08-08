@@ -123,20 +123,21 @@
     	        <div class="featured_body" style="padding:6px 0px 6px 6px;">
     	            { if !$user.guest }
 
-						{ if $meta.experiment_id == 350 }
+			{ if $meta.experiment_id == 350 }
     	                	<div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Contribute" onclick="window.location.href='./tsor.php';"/> - Contribute data to this experiment.</div>
-						{ else }
+			{ else }
                             <div id="contribute" style="margin:0px 0px 6px 0px;" {if $meta.closed == 1 }hidden="hidden" {/if} ><input type="submit" style="width:73px;" value="Contribute" onclick="window.location.href='upload.php?id={$meta.experiment_id}';" /> - Contribute data to this experiment.</div>
-						{ /if }
+		        { /if }
 
     	                <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Export" onclick="loadExport({$meta.experiment_id});"/> - Download data from selected sessions.</div>
-    	                <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Activity" onclick="createActivity({$meta.experiment_id});"/> - Create an activity for users to complete.</div>
+    	                <div style="margin:0px 0px 6px 0px; display: none;"><input type="submit" style="width:73px;" value="Activity" onclick="createActivity({$meta.experiment_id});"/> - Create an activity for users to complete.</div>
     	                { if $user.user_id == $meta.owner_id or $user.administrator == 1 }
     	                    <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Edit" onclick="window.location.href='experiment-edit.php?id={$meta.experiment_id}'"/> - Edit this experiment.</div>
     	                    <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="Image" onclick="window.location.href='pickexpimage.php?id={$meta.experiment_id}'"/> - Set the picture that will show should this experiment be featured.</div>
-    	                { /if }
+                        { /if }
     	            { /if }
-    	            <div><input type="submit" style="width:73px;" value="{if not $activity}Visualize{else}Complete{/if}" onclick="loadVis({$meta.experiment_id}, {if $activity}true{else}false{/if});"/> - {if $activity}View data for this experiment and solve for the prompt.{else}Select sessions below to visualize data{/if}</div>
+    	            <div style="margin:0px 0px 6px 0px;"><input type="submit" style="width:73px;" value="{if not $activity}Legacy Vis{else}Complete{/if}" onclick="loadVis0({$meta.experiment_id}, {if $activity}true{else}false{/if});"/> - Select sessions below to visualize data using legacy vis</div>
+    	            <div><input type="submit" style="width:73px;" value="{if not $activity}Visualize{else}Complete{/if}" onclick="loadVis({$meta.experiment_id}, {if $activity}true{else}false{/if});"/> - Select sessions below to visualize data</div>
     	            { if not $activity and $user.administrator == $user.administrator }
             	        <div><input type="submit" style="margin:6px 0px 0px 0px; width:73px;" value="{if not $activity}Vis Beta{else}Complete{/if}" onclick="loadVis2({$meta.experiment_id}, {if $activity}true{else}false{/if});"/> - Use our visualizations beta to examine your data. </div>
             	    { /if }
