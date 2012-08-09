@@ -27,60 +27,55 @@
  *
 ###
 
-class window.Table extends BaseVis
-    constructor: (@canvas) -> 
-
+class window.Map extends BaseVis
+    constructor: (@canvas) ->
+        
     start: ->
-        #Make table visible? (or somthing)
         ($ '#' + @canvas).show()
-        #Calls update
-        super()
 
-    #Gets called when the controls are clicked and at start
+        super()
+       
     update: ->
-        ($ '#' + @canvas).html('')
     
-        #updates controls by default       
-        ($ '#' + @canvas).append '<table id="data_table"></table>'  
+        latlngbounds = new google.maps.LatLngBounds()
         
-        ($ '#data_table').append '<thead><tr id="table_headers"></tr></thead>'
+        markers = Array()
         
-        #Build the headers for the table
-        headers = for field in data.fields
-            "<td>#{field.fieldName}</td>"
-            
-        ($ '#table_headers').append header for header in headers
+        mapOptions =
+            center: new google.maps.LatLng(0,0)
+            zoom: 8
+            mapTypeId: google.maps.MapTypeId.SATELLITE
         
-        #Build the data for the table
+        gmap = new google.maps.Map(document.getElementById("map_canvas"), mapOptions)
+                                
+        geo = for fields,fieldIndex in data.fields when (Number fields.typeID) is (Number data.types.GEOSPATIAL)
+                (Number fieldIndex)
+        
+        #Get all visible data points.
         visibleGroups = for group, groupIndex in data.groups when groupIndex in globals.groupSelection
             group
         
         rows = for dataPoint in data.dataPoints when (String dataPoint[data.groupingFieldIndex]).toLowerCase() in visibleGroups
-            line = for dat, fieldIndex in dataPoint 
-                if((Number data.fields[fieldIndex].typeID) is data.types.TIME)
-                    "<td>#{new Date(dat)}</td>"
-                else 
-                    "<td>#{dat}</td>"
-            "<tr>#{line.reduce (a,b)-> a+b}</tr>"
-        
-        ($ '#data_table').append '<tbody id="table_body"></tbody>'
-        
-        ($ '#table_body').append row for row in rows 
-        
-        dt = 
-            sScrollY: 400
-            sScrollX: "100%"
-            iDisplayLength: -1
-            bDeferRender: true
-            
-        atable = ($ '#data_table').dataTable(dt)
+            line = for dat, fieldIndex in dataPoint when fieldIndex in geo
+                dat
 
+        for row in rows
+            tmp = new google.maps.LatLng(row[0],row[1])
+            m =
+                position: tmp
+                map: gmap   
+            markers[markers.length]= new google.maps.Marker(m)
+            latlngbounds.extend tmp
+        
+        gmap.fitBounds(latlngbounds)
+        
         super()
-
+        
     end: ->
         ($ '#' + @canvas).hide()
-
+        
     drawControls: ->
         @drawGroupControls()
-
-globals.table = new Table "table_canvas"
+        
+globals.map = new Map "map_canvas"
+        
