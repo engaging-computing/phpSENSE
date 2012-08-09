@@ -30,6 +30,7 @@
 data.types = 
     TIME: 7
     TEXT: 37
+    GEOSPATIAL: 19
 
 ###
 Selects data in an x,y object format of the given group.

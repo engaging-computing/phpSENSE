@@ -83,9 +83,11 @@ if(isset($_REQUEST['sessions'])) {
     $head .= '<script type="text/javascript" src="/html/js/highvis/histogram.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/bar.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/table.js"></script>';
-    //$head .= '<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>';
-    //$head .= '<script type="text/javascript" src="/html/js/highvis/map.js"></script>';
-    //$head .= '<script type="text/javascript" src="/html/js/highvis/table.js"></script>';
+    $head .= '<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/highvis/map.js"></script>';
+
+    
+    
     $head .= '<script type="text/javascript" src="/html/js/highvis/runtime.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/jquery.dataTables.js"></script>';
 
