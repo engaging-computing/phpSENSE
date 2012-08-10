@@ -42,6 +42,7 @@
     <div id="scatter_canvas" style="width: 860px; height: 500px"></div>
     <div id="bar_canvas" style="width: 860px; height: 500px"></div>
     <div id="histogram_canvas" style="width: 860px; height: 500px"></div>
+    <div id="motion_canvas" style="width: 860px; height: 500px"></div>
     <div id="controldiv" style="margin: 20px; overflow:hidden;"></div>
 </div>
 
