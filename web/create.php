@@ -39,13 +39,18 @@ $reqs = array();
 $reqs[] = 
 
 $smarty->assign('created', false);
-
 if(isset($_POST['experiment_create'])) {
 	
 	$name = "";
-	if(isset($_POST['experiment_name'])) { $name = safeString($_POST['experiment_name']); }
-	if($name == "") { array_push($errors, 'Experiment name can not be blank.'); }
-	$values['name'] = $name;
+	if(isset($_POST['experiment_name'])) { 
+            $name = safeString($_POST['experiment_name']); 
+            if($name == "") { 
+                array_push($errors, 'Experiment name can not be blank.'); 
+            } else {
+                $values['name'] = $name;
+            }
+        }
+	
 	
 	$desc = "";
 	if(isset($_POST['experiment_description'])) { $desc = safeString($_POST['experiment_description']); }
@@ -59,12 +64,30 @@ if(isset($_POST['experiment_create'])) {
 	if(isset($_POST['req_procedure'])) { $req_procedure=$_POST['req_procedure']; }
 	if(isset($_POST['req_location'])) { $req_location=$_POST['req_location']; }
 	if(isset($_POST['name_prefix'])) { $name_prefix=$_POST['name_prefix']; }
-    if(isset($_POST['req_name'])) { $req_name=safeString($_POST['req_name']); }
+        if(isset($_POST['req_name'])) { $req_name=safeString($_POST['req_name']); }
 	if(isset($_POST['location'])) { $location=safeString($_POST['location']); }
-
+        
+        if(isset($_POST['req_sample_rate'])) { 
+            $req_sample_rate =safeString($_POST['req_sample_rate']);
+            if($req_sample_rate == 1){
+                if(isset($_POST['srate'])) {
+                    $srate = intval(safeString($_POST['srate']));
+                    $values['srate'] = $srate;
+                }
+                if($srate == null){
+                    array_push($errors, 'No recommended sample rate set.');
+                }
+            } else {
+                $srate = -1;
+                $values['srate'] = $srate;
+            }
+            
+        }
+        
 	
 	if(count($errors) == 0) {
-		if($exp = createExperiment($session->generateSessionToken(), $name, $desc, "", $req_name, $req_procedure, $req_location, $name_prefix, $location)) {
+                
+		if($exp = createExperiment($session->generateSessionToken(), $name, $desc, "", $req_name, $req_procedure, $req_location, $name_prefix, $location, $srate)) {
 
 			$tag_list = array();
 
