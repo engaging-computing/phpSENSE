@@ -26,7 +26,7 @@
  * DAMAGE.
  */
  
-function createExperiment($token, $name, $description, $fields, $req_name=1, $req_procedure=1, $req_location=1, $name_prefix=null, $location=null, $defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
+function createExperiment($token, $name, $description, $fields, $req_name=1, $req_procedure=1, $req_location=1, $name_prefix=null, $location=null, $srate = -1,$defaultJoin = true, $joinKey = "", $defaultBrowse = true, $browseKey = "") {
 	global $db;
 	
 	$uid = $token['uid'];
@@ -44,7 +44,7 @@ function createExperiment($token, $name, $description, $fields, $req_name=1, $re
 		return false;
 	}
 	
-	$db->query("INSERT INTO experiments ( experiment_id, owner_id, name, description, timecreated, timemodified, default_read, default_join ,req_name, req_procedure, req_location, name_prefix, location) VALUES ( NULL, {$uid}, '{$name}', '{$description}', NOW(), NOW(), {$defaultBrowse}, {$defaultJoin}, '{$req_name}', '{$req_procedure}', '{$req_location}', '{$name_prefix}', '{$location}')");
+	$db->query("INSERT INTO experiments ( experiment_id, owner_id, name, description, timecreated, timemodified, default_read, default_join ,req_name, req_procedure, req_location, name_prefix, location, srate) VALUES ( NULL, {$uid}, '{$name}', '{$description}', NOW(), NOW(), {$defaultBrowse}, {$defaultJoin}, '{$req_name}', '{$req_procedure}', '{$req_location}', '{$name_prefix}', '{$location}',{$srate})");
 
 	if($db->numOfRows) {
 		
