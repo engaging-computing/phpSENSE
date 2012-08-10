@@ -295,6 +295,25 @@ function loadExport(exp_id) {
     }
 }
 
+function loadVis0(exp_id, is_activity) {
+     var sessionList = Array();
+    
+    $(document).find('input[name=sessions]:checked').each(function(i){ sessionList.push($(this).val()); });
+    
+    if(sessionList.length == 0) {
+        alert("You did not select any sessions to visualize. Please select at least 1 session then click 'Visualize'");
+    }
+    else {
+        var url = 'vis.php?sessions='+sessionList.join('+');
+        
+        if(is_activity == true) {
+            url = url + '&aid='+exp_id;
+        }
+        
+        window.location.href = url;
+    }
+}
+
 function loadVis(exp_id, is_activity) {
     var sessionList = Array();
     
@@ -304,7 +323,7 @@ function loadVis(exp_id, is_activity) {
         alert("You did not select any sessions to visualize. Please select at least 1 session then click 'Visualize'");
     }
     else {
-        var url = 'vis.php?sessions='+sessionList.join('+');
+        var url = 'newvis.php?sessions='+sessionList.join('+');
         
         if(is_activity == true) {
             url = url + '&aid='+exp_id;
@@ -323,7 +342,7 @@ function loadVis2(exp_id, is_activity) {
         alert("You did not select any sessions to visualize. Please select at least 1 session then click 'Visualize'");
     }
     else {
-        var url = 'newvis.php?sessions='+sessionList.join('+');
+        var url = 'highvis.php?sessions='+sessionList.join('+');
         
         if(is_activity == true) {
             url = url + '&aid='+exp_id;
