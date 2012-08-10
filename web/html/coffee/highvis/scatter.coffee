@@ -70,7 +70,7 @@ class window.Scatter extends BaseHighVis
                                 @point.datapoint[fieldIndex]
                                 
                             str += "<tr><td>#{field.fieldName}</td>"
-                            str += "<td><strong>#{dat}</strong></td></tr>}"
+                            str += "<td><strong>#{dat}</strong></td></tr>"
                             
                         str += "</table>"
                     else

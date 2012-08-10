@@ -76,3 +76,32 @@ CoffeeScript version of runtime.
         setTimeout switchVis, 1
             
     globals.curVis.start()
+
+    resizeVis = ->
+        containerSize = ($ '#viscontainer').width()
+        hiderSize     = ($ '#controlhider').outerWidth()
+        controlSize = if controlsVisible
+            200
+        else
+            0
+
+        newWidth = containerSize - (hiderSize + controlSize)
+        newHeight = ($ '#viscontainer').height()
+
+        #($ '.vis_canvas > div').fadeToggle 'fast'
+        globals.curVis.resizeStart()
+        
+        ($ '.vis_canvas').animate {width: newWidth, height: newHeight}, 'slow'
+        
+        ($ '#controldiv').animate {width:controlSize}, 'slow', -> globals.curVis.resizeEnd()
+        
+
+    controlsVisible = true
+        
+    resizeVis()
+    
+    ($ '#control_hide_button').click ->
+        controlsVisible = not controlsVisible
+        resizeVis()
+        
+        

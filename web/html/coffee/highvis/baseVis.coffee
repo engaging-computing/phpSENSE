@@ -40,7 +40,7 @@ class window.BaseVis
     ###
     start: ->
         @update()
-
+        
     ###
     Update minor state
         Redraws html controls
@@ -56,7 +56,19 @@ class window.BaseVis
     ###
     delayedUpdate: ->
         @update()
-        
+
+    ###
+    Method called when vis resize has begun
+        Defaults to doing nothing.
+    ###
+    resizeStart: ->
+
+    ###
+    Method called when vis resize has begun
+        Defaults to doing nothing.
+    ###
+    resizeEnd: ->
+    
     ###
     End sequence used by runtime
         This is called when the user switches away from this vis.
@@ -163,6 +175,10 @@ class window.BaseHighVis extends BaseVis
             chart:
                 renderTo: @canvas
                 animation: false
+                events:
+                    redraw: =>
+                        if (($ "##{@canvas} > div").css 'display') is 'none'
+                            ($ "##{@canvas} > div").fadeIn 'fast'
             #colors:
             credits:
                 enabled: false
@@ -262,6 +278,20 @@ class window.BaseHighVis extends BaseVis
         setTimeout update, 1
 
         @chart.hideLoading()
+
+    ###
+    Method called when vis resize has begun
+        Fades out this viz
+    ###
+    resizeStart: ->
+        ($ "##{@canvas} > div").fadeOut 'fast'
+
+    ###
+    Forces a window resize, causeing this viz to redraw
+    and then unhide.
+    ###
+    resizeEnd: ->
+        ($ window).resize()
         
     ###
     End sequence used by runtime

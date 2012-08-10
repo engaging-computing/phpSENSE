@@ -93,6 +93,22 @@
     };
 
     /*
+        Method called when vis resize has begun
+            Defaults to doing nothing.
+    */
+
+
+    BaseVis.prototype.resizeStart = function() {};
+
+    /*
+        Method called when vis resize has begun
+            Defaults to doing nothing.
+    */
+
+
+    BaseVis.prototype.resizeEnd = function() {};
+
+    /*
         End sequence used by runtime
             This is called when the user switches away from this vis.
             Should destroy the chart, hide its canvas and remove controls.
@@ -221,7 +237,14 @@
       this.chartOptions = {
         chart: {
           renderTo: this.canvas,
-          animation: false
+          animation: false,
+          events: {
+            redraw: function() {
+              if ((($("#" + _this.canvas + " > div")).css('display')) === 'none') {
+                return ($("#" + _this.canvas + " > div")).fadeIn('fast');
+              }
+            }
+          }
         },
         credits: {
           enabled: false
@@ -326,6 +349,26 @@
       };
       setTimeout(update, 1);
       return this.chart.hideLoading();
+    };
+
+    /*
+        Method called when vis resize has begun
+            Fades out this viz
+    */
+
+
+    BaseHighVis.prototype.resizeStart = function() {
+      return ($("#" + this.canvas + " > div")).fadeOut('fast');
+    };
+
+    /*
+        Forces a window resize, causeing this viz to redraw
+        and then unhide.
+    */
+
+
+    BaseHighVis.prototype.resizeEnd = function() {
+      return ($(window)).resize();
     };
 
     /*

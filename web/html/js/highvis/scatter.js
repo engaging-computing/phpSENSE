@@ -83,7 +83,7 @@
                 field = _ref[fieldIndex];
                 dat = (Number(field.typeID)) === data.types.TIME ? new Date(this.point.datapoint[fieldIndex]) : this.point.datapoint[fieldIndex];
                 str += "<tr><td>" + field.fieldName + "</td>";
-                str += "<td><strong>" + dat + "</strong></td></tr>}";
+                str += "<td><strong>" + dat + "</strong></td></tr>";
               }
               return str += "</table>";
             } else {

@@ -26,10 +26,28 @@
  * DAMAGE.
  */
 
-#controldiv {
+#controlcontainer {
     float: left;
-    margin:10px;
-    padding:5px;
+    max-width: 20%;
+    height: 100%;
+
+    background:green;
+}
+
+#controldiv {
+    width:200px;
+    height:100%;
+
+    float:left;
+
+    background:red;
+}
+
+#controlhider {
+    float: left;
+
+    height:100%;
+    background:blue;
 }
 
 .vis_border {
@@ -50,14 +68,12 @@
 .vis_controls {
     float: left;
     margin: 5px;
-    
-    height:200px;
     overflow:auto;
 }
 
 .vis_control_table {
     border: 1px solid grey;
-    padding: 5px;
+/*     padding: 5px; */
 }
 
 .vis_control_table_div {
@@ -74,3 +90,13 @@
     padding-bottom: 5px;
 }
 
+.vis_canvas {
+    float:right;
+    overflow: none;
+    background:green;
+}
+
+#viscontainer {
+    height: 600px;
+    width: 100%;
+}
