@@ -31,8 +31,10 @@ require_once 'includes/database.php';
 
 $errors = array();
 
-if(isset($_SERVER[SERVER_ADDR])) {
-     $server = $_SERVER[SERVER_ADDR];
+print_r($_SERVER);
+
+if(isset($_SERVER[SERVER_NAME])) {
+     $server = $_SERVER[SERVER_NAME];
 }
 
 if(isset($_POST['email'])) { 
