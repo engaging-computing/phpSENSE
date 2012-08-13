@@ -49,7 +49,7 @@ class MDB {
     } catch (MongoConnectionException $e) {
         error_log("--------------------------------------------------");
         error_log("Mongo is not running. Try running:\r\n");
-        error_log("sudo -u mongodb mongod -f /etc/mongodb.conf --fork"
+        error_log("sudo -u mongodb mongod -f /etc/mongodb.conf --fork");
         error_log("--------------------------------------------------");
 
     }
