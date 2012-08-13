@@ -65,7 +65,7 @@
 				{ if !$hide }
 				    <p>Congratulations, you've successfully hidden your session! <a href="experiment.php?id={ $id }">Click here to return to the experiment</a>.
 				{ else }
-				    <p>Congratulations, you've successfully edited your session! <a href="vis.php?sessions={ $sid }">View your session</a> or <a href="experiment.php?id={ $id }">return to the experiment</a>.
+				    <p>Congratulations, you've successfully edited your session! <a href="newvis.php?sessions={ $sid }">View your session</a> or <a href="experiment.php?id={ $id }">return to the experiment</a>.
 				{ /if }
 			</fieldset>
 		{ /if }

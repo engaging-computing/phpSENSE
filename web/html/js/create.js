@@ -28,4 +28,14 @@ $(document).ready( function() {
 
     });
     
+   $('#req_sample_rate').bind( 'change', function(evt) {
+         if(evt.target.value==0) {
+             $('#sample_rate_option').hide();
+             
+         } else {
+             $('#sample_rate_option').show().css('display','inline');
+         }
+
+    });
+   
 });

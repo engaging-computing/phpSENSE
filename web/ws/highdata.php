@@ -61,7 +61,13 @@ class Data {
         }
 
         /* Add the map last because it should always be first. */
-        //$this->relVis = array_merge(array('Map'), $this->relVis);   
+        foreach( $this->fields as $field ){
+                if ($field->typeID == 19) {
+                    $this->relVis = array_merge(array('Map'), $this->relVis);
+                    break;
+                }
+        }
+        
     }  
     
 };

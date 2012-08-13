@@ -35,7 +35,8 @@
 
   data.types = {
     TIME: 7,
-    TEXT: 37
+    TEXT: 37,
+    GEOSPATIAL: 19
   };
 
   /*
