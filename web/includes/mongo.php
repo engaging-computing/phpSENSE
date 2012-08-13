@@ -47,9 +47,10 @@ class MDB {
 		$this->db = $this->c->selectDB($database);
 		$this->col = $this->db->selectCollection($collection);
     } catch (MongoConnectionException $e) {
-        $err = "Mongo was not running. Please refresh the page";
-	$exec = shell_exec("rm /opt/data/db/mongod.lock");
-        $exec = shell_exec("nohup mongod --dbpath /opt/data/db --fork --logpath /var/log/mongo > /dev/null &");
+        error_log("--------------------------------------------------");
+        error_log("Mongo is not running. Try running:\r\n");
+        error_log("sudo -u mongodb mongod -f /etc/mongodb.conf --fork");
+        error_log("--------------------------------------------------");
 
     }
 	}
