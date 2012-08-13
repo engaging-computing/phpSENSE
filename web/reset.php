@@ -31,8 +31,6 @@ require_once 'includes/database.php';
 
 $errors = array();
 
-print_r($_SERVER);
-
 if(isset($_SERVER[SERVER_NAME])) {
      $server = $_SERVER[SERVER_NAME];
 }
