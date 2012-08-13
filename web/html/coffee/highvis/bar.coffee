@@ -35,7 +35,7 @@ class window.Bar extends BaseHighVis
     ANALYSISTYPE_MEAN:      2
     ANALYSISTYPE_MEDIAN:    3
     
-    analysisTypeNames: ["Max","Min","Mean","Median"];
+    analysisTypeNames: ["Max","Min","Mean","Median"]
     
     analysisType:   0
     sortField:      data.normalFields[0]
