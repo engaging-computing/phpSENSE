@@ -32,7 +32,8 @@
 
 (function() {
   var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   window.Table = (function(_super) {
 
@@ -48,7 +49,7 @@
     };
 
     Table.prototype.update = function() {
-      var atable, dataPoint, dp, dpIndex, dt, field, header, headers, line, row, rows, _i, _j, _len, _len1;
+      var atable, dat, dataPoint, dt, field, fieldIndex, group, groupIndex, header, headers, line, row, rows, visibleGroups, _i, _j, _len, _len1;
       ($('#' + this.canvas)).html('');
       ($('#' + this.canvas)).append('<table id="data_table"></table>');
       ($('#data_table')).append('<thead><tr id="table_headers"></tr></thead>');
@@ -66,26 +67,43 @@
         header = headers[_i];
         ($('#table_headers')).append(header);
       }
-      rows = (function() {
+      visibleGroups = (function() {
         var _j, _len1, _ref, _results;
+        _ref = data.groups;
+        _results = [];
+        for (groupIndex = _j = 0, _len1 = _ref.length; _j < _len1; groupIndex = ++_j) {
+          group = _ref[groupIndex];
+          if (__indexOf.call(globals.groupSelection, groupIndex) >= 0) {
+            _results.push(group);
+          }
+        }
+        return _results;
+      })();
+      rows = (function() {
+        var _j, _len1, _ref, _ref1, _results;
         _ref = data.dataPoints;
         _results = [];
         for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
           dataPoint = _ref[_j];
+          if (!(_ref1 = (String(dataPoint[data.groupingFieldIndex])).toLowerCase(), __indexOf.call(visibleGroups, _ref1) >= 0)) {
+            continue;
+          }
           line = (function() {
             var _k, _len2, _results1;
             _results1 = [];
-            for (dpIndex = _k = 0, _len2 = dataPoint.length; _k < _len2; dpIndex = ++_k) {
-              dp = dataPoint[dpIndex];
-              if (Number(data.fields[dpIndex].typeID) === data.types.TIME) {
-                _results1.push("<td>" + (new Date(dp)) + "</td>");
+            for (fieldIndex = _k = 0, _len2 = dataPoint.length; _k < _len2; fieldIndex = ++_k) {
+              dat = dataPoint[fieldIndex];
+              if ((Number(data.fields[fieldIndex].typeID)) === data.types.TIME) {
+                _results1.push("<td>" + (new Date(dat)) + "</td>");
               } else {
-                _results1.push("<td>" + dp + "</td>");
+                _results1.push("<td>" + dat + "</td>");
               }
             }
             return _results1;
           })();
-          _results.push("<tr>" + line + "</tr>");
+          _results.push("<tr>" + (line.reduce(function(a, b) {
+            return a + b;
+          })) + "</tr>");
         }
         return _results;
       })();
