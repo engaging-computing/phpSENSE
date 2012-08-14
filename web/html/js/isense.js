@@ -287,7 +287,7 @@ function loadExport(exp_id) {
     $(document).find('input[name=sessions]:checked').each(function(i){ sessionList.push($(this).val()); });
     
     if(sessionList.length == 0) {
-        alert("You did not select any sessions to visualize. Please select at least 1 session then click 'Visualize'");
+        alert("You did not select any sessions to Export. Please select at least 1 session then click 'Export'");
     }
     else {
         var url = 'http://' + window.location.host + '/actions/package.php?eid=' + exp_id + '&sessions=' + sessionList.join(',');
