@@ -46,4 +46,5 @@
     <div id="scatter_canvas" class="vis_canvas"></div>
     <div id="bar_canvas" class="vis_canvas"></div>
     <div id="histogram_canvas" class="vis_canvas"></div>
+    <div id="motion_canvas" class="vis_canvas"></div>
 </div>
