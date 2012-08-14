@@ -30,8 +30,6 @@
     float: left;
     max-width: 20%;
     height: 100%;
-
-    background:green;
 }
 
 #controldiv {
@@ -39,15 +37,11 @@
     height:100%;
 
     float:left;
-
-    background:red;
 }
 
 #controlhider {
     float: left;
-
     height:100%;
-    background:blue;
 }
 
 .vis_border {
@@ -73,7 +67,6 @@
 
 .vis_control_table {
     border: 1px solid grey;
-/*     padding: 5px; */
 }
 
 .vis_control_table_div {
@@ -93,7 +86,6 @@
 .vis_canvas {
     float:right;
     overflow: none;
-    background:green;
 }
 
 #viscontainer {

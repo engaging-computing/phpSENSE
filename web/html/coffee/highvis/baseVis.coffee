@@ -61,13 +61,7 @@ class window.BaseVis
     Method called when vis resize has begun
         Defaults to doing nothing.
     ###
-    resizeStart: ->
-
-    ###
-    Method called when vis resize has begun
-        Defaults to doing nothing.
-    ###
-    resizeEnd: ->
+    resize: (newWidth, newHeight) ->
     
     ###
     End sequence used by runtime
@@ -174,11 +168,7 @@ class window.BaseHighVis extends BaseVis
         @chartOptions = 
             chart:
                 renderTo: @canvas
-                animation: false
-                events:
-                    redraw: =>
-                        if (($ "##{@canvas} > div").css 'display') is 'none'
-                            ($ "##{@canvas} > div").fadeIn 'fast'
+                reflow: false
             #colors:
             credits:
                 enabled: false
@@ -264,7 +254,7 @@ class window.BaseHighVis extends BaseVis
 
         #Draw legend
         for options in @buildLegendSeries()
-            @chart.addSeries options, false
+           @chart.addSeries options, false
         
     ###
     Performs an update while displaying the loading text
@@ -281,17 +271,10 @@ class window.BaseHighVis extends BaseVis
 
     ###
     Method called when vis resize has begun
-        Fades out this viz
+        Resize highcharts to match
     ###
-    resizeStart: ->
-        ($ "##{@canvas} > div").fadeOut 'fast'
-
-    ###
-    Forces a window resize, causeing this viz to redraw
-    and then unhide.
-    ###
-    resizeEnd: ->
-        ($ window).resize()
+    resize: (newWidth, newHeight) ->
+        @chart.setSize(newWidth, newHeight, {duration: 600, easing:'linear'})
         
     ###
     End sequence used by runtime

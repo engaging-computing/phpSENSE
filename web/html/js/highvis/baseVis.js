@@ -98,15 +98,7 @@
     */
 
 
-    BaseVis.prototype.resizeStart = function() {};
-
-    /*
-        Method called when vis resize has begun
-            Defaults to doing nothing.
-    */
-
-
-    BaseVis.prototype.resizeEnd = function() {};
+    BaseVis.prototype.resize = function(newWidth, newHeight) {};
 
     /*
         End sequence used by runtime
@@ -237,14 +229,7 @@
       this.chartOptions = {
         chart: {
           renderTo: this.canvas,
-          animation: false,
-          events: {
-            redraw: function() {
-              if ((($("#" + _this.canvas + " > div")).css('display')) === 'none') {
-                return ($("#" + _this.canvas + " > div")).fadeIn('fast');
-              }
-            }
-          }
+          reflow: false
         },
         credits: {
           enabled: false
@@ -353,22 +338,15 @@
 
     /*
         Method called when vis resize has begun
-            Fades out this viz
+            Resize highcharts to match
     */
 
 
-    BaseHighVis.prototype.resizeStart = function() {
-      return ($("#" + this.canvas + " > div")).fadeOut('fast');
-    };
-
-    /*
-        Forces a window resize, causeing this viz to redraw
-        and then unhide.
-    */
-
-
-    BaseHighVis.prototype.resizeEnd = function() {
-      return ($(window)).resize();
+    BaseHighVis.prototype.resize = function(newWidth, newHeight) {
+      return this.chart.setSize(newWidth, newHeight, {
+        duration: 600,
+        easing: 'linear'
+      });
     };
 
     /*

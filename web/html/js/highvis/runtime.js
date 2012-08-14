@@ -45,7 +45,7 @@
 
 
   ($(document)).ready(function() {
-    var can, controlsVisible, resizeVis, vis, _i, _len, _ref1;
+    var can, containerSize, controlSize, hiderSize, resizeVis, vis, visHeight, visWidth, _i, _len, _ref1;
     _ref1 = ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas'];
     for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
       can = _ref1[_i];
@@ -97,29 +97,31 @@
       };
       return setTimeout(switchVis, 1);
     });
+    containerSize = ($('#viscontainer')).width();
+    hiderSize = ($('#controlhider')).outerWidth();
+    controlSize = 200;
+    visWidth = containerSize - (hiderSize + controlSize);
+    visHeight = ($('#viscontainer')).height();
+    ($('.vis_canvas')).width(visWidth);
+    ($('.vis_canvas')).height(visHeight);
     globals.curVis.start();
     resizeVis = function() {
-      var containerSize, controlSize, hiderSize, newHeight, newWidth;
+      var newHeight, newWidth;
       containerSize = ($('#viscontainer')).width();
       hiderSize = ($('#controlhider')).outerWidth();
-      controlSize = controlsVisible ? 200 : 0;
+      controlSize = ($('#controldiv')).width() === 0 ? 200 : 0;
       newWidth = containerSize - (hiderSize + controlSize);
       newHeight = ($('#viscontainer')).height();
-      globals.curVis.resizeStart();
-      ($('.vis_canvas, .vis_canvas > div, .vis_canvas svg')).animate({
+      ($('#controldiv')).animate({
+        width: controlSize
+      }, 600, 'linear');
+      ($('.vis_canvas')).animate({
         width: newWidth,
         height: newHeight
-      }, 'slow');
-      return ($('#controldiv')).animate({
-        width: controlSize
-      }, 'slow', function() {
-        return globals.curVis.resizeEnd();
-      });
+      }, 600, 'linear');
+      return globals.curVis.resize(newWidth, newHeight);
     };
-    controlsVisible = true;
-    resizeVis();
     return ($('#control_hide_button')).click(function() {
-      controlsVisible = !controlsVisible;
       return resizeVis();
     });
   });

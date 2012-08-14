@@ -74,13 +74,28 @@ CoffeeScript version of runtime.
             oldVis.end() if oldVis?
 
         setTimeout switchVis, 1
-            
+
+    #Set initial div sizes
+    containerSize = ($ '#viscontainer').width()
+    hiderSize     = ($ '#controlhider').outerWidth()
+    controlSize = 200
+
+    visWidth = containerSize - (hiderSize + controlSize)
+    visHeight = ($ '#viscontainer').height()
+
+    ($ '.vis_canvas').width  visWidth
+    ($ '.vis_canvas').height visHeight
+
+    
+    #Start up vis
     globals.curVis.start()
 
+    #Toggle control panel
     resizeVis = ->
+    
         containerSize = ($ '#viscontainer').width()
         hiderSize     = ($ '#controlhider').outerWidth()
-        controlSize = if controlsVisible
+        controlSize = if ($ '#controldiv').width() is 0
             200
         else
             0
@@ -88,20 +103,11 @@ CoffeeScript version of runtime.
         newWidth = containerSize - (hiderSize + controlSize)
         newHeight = ($ '#viscontainer').height()
 
-        #($ '.vis_canvas > div').fadeToggle 'fast'
-        globals.curVis.resizeStart()
-        
-        ($ '.vis_canvas').animate {width: newWidth, height: newHeight}, 'slow'
-        
-        ($ '#controldiv').animate {width:controlSize}, 'slow', -> globals.curVis.resizeEnd()
-        
+        ($ '#controldiv').animate {width: controlSize}, 600, 'linear'
+        ($ '.vis_canvas').animate {width: newWidth, height: newHeight}, 600, 'linear'
+        globals.curVis.resize newWidth, newHeight
 
-    controlsVisible = true
-        
-    resizeVis()
-    
     ($ '#control_hide_button').click ->
-        controlsVisible = not controlsVisible
         resizeVis()
         
         
