@@ -1,4 +1,4 @@
-<!--
+###
  * Copyright (c) 2011, iSENSE Project. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,27 +24,48 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
- -->
+ *
+###
 
+class window.Motion extends BaseVis
+    constructor: (@canvas) -> 
 
-<ul id="vis_select">
-</ul>
+    start: ->
+        #Make table visible? (or somthing)
+        ($ '#' + @canvas).show()
+        
+        dt = new google.visualization.DataTable();
+        
+        for field,fieldIndex in data.fields
+            switch (Number field.typeID)
+                when data.types.TEXT then dt.addColumn('string', field.fieldName) 
+                when data.types.TIME then dt.addColumn('date', field.fieldName)
+                else dt.addColumn('number', field.fieldName)
+        
+        rows = for dataPoint in data.dataPoints
+            line = for dat, fieldIndex in dataPoint 
+                if((Number data.fields[fieldIndex].typeID) is data.types.TIME)
+                    new Date(dat)
+                else 
+                    dat
+            line
+        
+        dt.addRow(row) for row in rows
+                   
+        chart = new google.visualization.MotionChart(document.getElementById('motion_canvas'));
+        chart.draw(dt, {width: 850, height:490});
+        super()
 
+    #Gets called when the controls are clicked and at start
+    update: ->
+        super()
 
-<div id="select_vis" style="padding: 14px 0px 0px 0px; text-align:right">
+    end: ->
+        ($ '#' + @canvas).hide()
+        
+    drawControls: ->
 
-</div>
-<div id="viscontainer">
-    <canvas id="viscanvas" width="860px" height="400px"><div id="session_image" style="display: none;"></div></canvas>
-    <div id="map_canvas" style="width:860px;min-height:450px;"></div>
-    <div id="table_canvas" style="width: 860px;"></div>
-    <div id="timeline_canvas" style="width: 860px; height: 500px"></div>
-    <div id="scatter_canvas" style="width: 860px; height: 500px"></div>
-    <div id="bar_canvas" style="width: 860px; height: 500px"></div>
-    <div id="histogram_canvas" style="width: 860px; height: 500px"></div>
-    <div id="motion_canvas" style="width: 860px; height: 500px"></div>
-    <div id="controldiv" style="margin: 20px; overflow:hidden;"></div>
-</div>
+    drawChart: ->
 
-<div id="vis" style="width:100%;"></div>
-<div id="legend" style="width:100%;"></div>
+        
+globals.motion = new Motion "motion_canvas"
