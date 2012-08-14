@@ -334,4 +334,18 @@ function updateUserLastLogin($uid){
     return true;
 }
 
+function getAuthForEmail($email){
+    global $db;
+    
+    $output = $db->query('select * from users where email="' . $email . '"');
+
+    if(isset($output[0])){
+        if(isset($output[0]['auth'])){
+            return $output[0]['auth'];
+        }
+    }
+
+    return null;
+}
+
 ?>
