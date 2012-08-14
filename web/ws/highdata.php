@@ -36,7 +36,7 @@ class Data {
     public $experimentID;
     public $experimentName;
     
-    public $relVis      = array('Table');
+    public $relVis      = array('Motion','Table');
     
     public $fields      = array();
     public $dataPoints  = array();
