@@ -28,12 +28,12 @@ $(document).ready( function() {
 
     });
     
-   $('#req_sample_rate').bind( 'change', function(evt) {
+   $('#req_sample_interval').bind( 'change', function(evt) {
          if(evt.target.value==0) {
-             $('#sample_rate_option').hide();
+             $('#sample_interval_option').hide();
              
          } else {
-             $('#sample_rate_option').show().css('display','inline');
+             $('#sample_interval_option').show().css('display','inline');
          }
 
     });
