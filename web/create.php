@@ -33,6 +33,10 @@ $types = getTypes();
 $errors = array();
 $created = false;
 $values = array();
+//Defaults
+$values['interval'] = 1000;
+
+
 $eid = -1;
 $reqs = array();
 
@@ -67,27 +71,31 @@ if(isset($_POST['experiment_create'])) {
         if(isset($_POST['req_name'])) { $req_name=safeString($_POST['req_name']); }
 	if(isset($_POST['location'])) { $location=safeString($_POST['location']); }
         
-        if(isset($_POST['req_sample_rate'])) { 
-            $req_sample_rate =safeString($_POST['req_sample_rate']);
-            if($req_sample_rate == 1){
-                if(isset($_POST['srate'])) {
-                    $srate = intval(safeString($_POST['srate']));
-                    $values['srate'] = $srate;
+        if(isset($_POST['req_sample_interval'])) {
+            
+            $req_sample_interval =safeString($_POST['req_sample_interval']);
+            if($req_sample_interval == 1){
+                if(isset($_POST['interval'])) {
+                    $interval = intval(safeString($_POST['interval']));
+                    $values['interval'] = $interval;
                 }
-                if($srate == null){
-                    array_push($errors, 'No recommended sample rate set.');
+                if ($interval == null){
+                    array_push($errors, 'No recommended sample interval set.');
+                }
+                else if ($interval <= 0) {
+                    array_push($errors, 'Sample interval must be positive.');
                 }
             } else {
-                $srate = -1;
-                $values['srate'] = $srate;
+                $interval = -1;
+                $values['interval'] = $interval;
             }
-            
+            $values['req_sample_interval'] = $req_sample_interval;
         }
         
 	
 	if(count($errors) == 0) {
                 
-		if($exp = createExperiment($session->generateSessionToken(), $name, $desc, "", $req_name, $req_procedure, $req_location, $name_prefix, $location, $srate)) {
+		if($exp = createExperiment($session->generateSessionToken(), $name, $desc, "", $req_name, $req_procedure, $req_location, $name_prefix, $location, $interval)) {
 
 			$tag_list = array();
 
