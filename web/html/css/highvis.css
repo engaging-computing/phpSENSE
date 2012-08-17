@@ -27,7 +27,7 @@
  */
 
 #controlcontainer {
-    float: left;
+    float: right;
     max-width: 20%;
     height: 100%;
 }
@@ -36,15 +36,17 @@
     width:200px;
     height:100%;
 
-    float:left;
+    float:right;
+    overflow-x:hidden;
+    overflow-y:auto;
 }
 
 #controlhider {
-    float: left;
+    float: right;
     height:100%;
 }
 
-.vis_border {
+/*vis_border {
     float: left;
     margin: 5px;
     border: 1px solid grey;
@@ -58,37 +60,71 @@
         -moz-border-radius-bottom-left: 5px;
         -moz-border-radius-bottom-right: 5px;
 }
-
+*/
 .vis_controls {
-    float: left;
-    margin: 5px;
-    overflow:auto;
+    float: right;
+    
 }
 
-.vis_control_table {
-    border: 1px solid grey;
+.ui-accordion .ui-accordion-content {
+    padding: 0.5em 0.5em;
+    overflow-y:hidden;
 }
+
+/*.vis_control_table {
+    font-size: 14px;
+}*/
 
 .vis_control_table_div {
-    font-size: 14px;
+    font-size: 12px;
     font-family: Arial;
-    text-align: center;
     color: #000000;
-    float: left;
-}
+
+    overflow-x:hidden;
+    white-space:nowrap;
+}/*
 
 .vis_control_table_title {
     text-align: center;
     text-decoration: underline;
     padding-bottom: 5px;
+}*/
+
+.outer_control_div {
+    font-size: 12px;
+    font-family: Arial;
+    color: #000000;
+
+    overflow-x:hidden;
+    white-space:nowrap;
+}
+
+.inner_control_div {
+    font-size: 12px;
+    font-family: Arial;
+    color: #000000;
+
+    overflow-x:hidden;
+    white-space:nowrap;
 }
 
 .vis_canvas {
-    float:right;
+    float:left;
     overflow: none;
 }
 
 #viscontainer {
     height: 600px;
     width: 100%;
+
+    font-size:14px;
+}
+
+.vis_tab {
+    font-size:1.2em;
+}
+
+.clean_shrink{
+    white-space:nowrap;
+    overflow-x:hidden;
 }

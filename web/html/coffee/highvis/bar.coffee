@@ -184,6 +184,7 @@ class window.Bar extends BaseHighVis
             @delayedUpdate()
         
     drawControls: ->
+        super()
         @drawGroupControls()
         @drawAnalysisTypeControls()
     

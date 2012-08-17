@@ -27,18 +27,12 @@
  -->
 
 
-<ul id="vis_select">
-</ul>
-
-
-<div id="select_vis" style="padding: 14px 0px 0px 0px; text-align:right">
-
 </div>
 <div id="viscontainer">
-<!--     <div id='controlcontainer'> -->
-    <div id='controlhider'><button id="control_hide_button" type="button" style="margin:5px;"> > </button></div>
-    <div id="controldiv" style="overflow:hidden;"></div>
-<!--     </div> -->
+
+    <ul id='visTabList'>
+    </ul>
+
 
     <div id="map_canvas" class="vis_canvas"></div>
     <div id="table_canvas" class="vis_canvas"></div>
@@ -47,4 +41,11 @@
     <div id="bar_canvas" class="vis_canvas"></div>
     <div id="histogram_canvas" class="vis_canvas"></div>
     <div id="motion_canvas" class="vis_canvas"></div>
+
+    
+
+    <div id='controlhider'>
+        <button id="control_hide_button" type="button" style="margin:5px;"> > </button>
+    </div>
+    <div id="controldiv"></div>
 </div>

@@ -248,6 +248,7 @@
     };
 
     Bar.prototype.drawControls = function() {
+      Bar.__super__.drawControls.call(this);
       this.drawGroupControls();
       return this.drawAnalysisTypeControls();
     };

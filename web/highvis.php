@@ -96,6 +96,7 @@ if(isset($_REQUEST['sessions'])) {
 
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.prettyPhoto.js"></script>';
 
+    $head .= '<link rel="stylesheet" type="text/css" href="/html/css/jquery-ui.css"></link>';
     $head .= '<link rel="stylesheet" type="text/css" href="/html/css/jquery.dataTables.css"></link>';
     $head .= '<link rel="stylesheet" type="text/css" href="/html/css/mCustomScrollbar.css"></link>';
     $head .= '<link rel="stylesheet" type="text/css" href="/html/css/demo_table.css"></link>';
