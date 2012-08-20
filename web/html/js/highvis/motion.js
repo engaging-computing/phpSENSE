@@ -103,7 +103,9 @@
       return ($('#' + this.canvas)).hide();
     };
 
-    Motion.prototype.drawControls = function() {};
+    Motion.prototype.drawControls = function() {
+      return Motion.__super__.drawControls.call(this);
+    };
 
     Motion.prototype.drawChart = function() {};
 

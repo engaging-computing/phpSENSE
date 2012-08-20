@@ -81,9 +81,12 @@
               _ref = data.fields;
               for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
                 field = _ref[fieldIndex];
+                if (!(this.point.datapoint[fieldIndex] !== null)) {
+                  continue;
+                }
                 dat = (Number(field.typeID)) === data.types.TIME ? new Date(this.point.datapoint[fieldIndex]) : this.point.datapoint[fieldIndex];
                 str += "<tr><td>" + field.fieldName + "</td>";
-                str += "<td><strong>" + dat + "</strong></td></tr>}";
+                str += "<td><strong>" + dat + "</strong></td></tr>";
               }
               return str += "</table>";
             } else {
@@ -153,9 +156,10 @@
 
 
     Scatter.prototype.drawControls = function() {
+      Scatter.__super__.drawControls.call(this);
       this.drawGroupControls();
       this.drawXAxisControls();
-      return this.drawModeControls();
+      return this.drawToolControls();
     };
 
     /*
@@ -219,31 +223,43 @@
     */
 
 
-    Scatter.prototype.drawModeControls = function() {
-      var controls, mode, modeText, _i, _len, _ref, _ref1,
+    Scatter.prototype.drawToolControls = function() {
+      var controls, mode, modeText, _i, _len, _ref, _ref1, _ref2,
         _this = this;
-      controls = '<div id="AnalysisTypeControl" class="vis_controls">';
-      controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Tools:</td></tr>';
+      controls = '<div id="toolControl" class="vis_controls">';
+      controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>";
+      controls += "<div class='outer_control_div'>";
+      controls += "<h4 class='clean_shrink'>Display Mode</h4>";
       _ref = [[this.SYMBOLS_LINES_MODE, "Symbols and Lines"], [this.LINES_MODE, "Lines Only"], [this.SYMBOLS_MODE, "Symbols Only"]];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         _ref1 = _ref[_i], mode = _ref1[0], modeText = _ref1[1];
-        controls += '<tr><td><div class="vis_control_table_div">';
+        controls += '<div class="inner_control_div">';
         controls += "<input class='mode_radio' type='radio' name='mode_selector' value='" + mode + "' " + (this.mode === mode ? 'checked' : '') + "/>";
-        controls += modeText + "  </div></td></tr>";
+        controls += modeText + "</div>";
       }
-      controls += '<tr><td><div class="vis_control_table_div">';
-      controls += '<br>';
-      controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' " + (this.advancedTooltips ? 'checked' : '') + "/>&nbspAdvanced Tooltips&nbsp";
-      controls += "</div></td></tr>";
-      controls += '</table></div>';
+      controls += "<br>";
+      controls += "<h4 class='clean_shrink'>Other</h4>";
+      controls += '<div class="inner_control_div">';
+      controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' " + (this.advancedTooltips ? 'checked' : '') + "/> Advanced Tooltips ";
+      controls += "</div></div></div>";
       ($('#controldiv')).append(controls);
       ($('.mode_radio')).click(function(e) {
         _this.mode = Number(e.target.value);
         return _this.delayedUpdate();
       });
-      return ($('.tooltip_box')).click(function(e) {
+      ($('.tooltip_box')).click(function(e) {
         _this.advancedTooltips = !_this.advancedTooltips;
         return console.log(_this.advancedTooltips);
+      });
+      if ((_ref2 = globals.toolsOpen) == null) {
+        globals.toolsOpen = 0;
+      }
+      ($('#toolControl')).accordion({
+        collapsible: true,
+        active: globals.toolsOpen
+      });
+      return ($('#toolControl > h3')).click(function() {
+        return globals.toolsOpen = (globals.toolsOpen + 1) % 2;
       });
     };
 
@@ -254,29 +270,45 @@
 
 
     Scatter.prototype.drawXAxisControls = function(filter) {
-      var controls, field, fieldIndex, _i, _len, _ref,
+      var controls, field, fieldIndex, possible, _i, _len, _ref, _ref1,
         _this = this;
       if (filter == null) {
         filter = function(fieldIndex) {
           return __indexOf.call(data.normalFields, fieldIndex) >= 0;
         };
       }
+      possible = (function() {
+        var _i, _len, _ref, _results;
+        _ref = data.fields;
+        _results = [];
+        for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
+          field = _ref[fieldIndex];
+          if (filter(fieldIndex)) {
+            _results.push(true);
+          }
+        }
+        return _results;
+      })();
+      if (possible.length <= 1) {
+        return;
+      }
       controls = '<div id="xAxisControl" class="vis_controls">';
-      controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>';
+      controls += "<h3 class='clean_shrink'><a href='#'>X Axis:</a></h3>";
+      controls += "<div class='outer_control_div'>";
       _ref = data.fields;
       for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
         field = _ref[fieldIndex];
-        if (filter(fieldIndex)) {
-          controls += '<tr><td>';
-          controls += '<div class="vis_control_table_div">';
-          controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"" + fieldIndex + "\" " + ((Number(fieldIndex)) === this.xAxis ? "checked" : "") + "></input>&nbsp";
-          controls += "" + data.fields[fieldIndex].fieldName + "&nbsp";
-          controls += "</div></td></tr>";
+        if (!(filter(fieldIndex))) {
+          continue;
         }
+        controls += '<div class="inner_control_div">';
+        controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"" + fieldIndex + "\" " + ((Number(fieldIndex)) === this.xAxis ? "checked" : "") + "></input>&nbsp";
+        controls += "" + data.fields[fieldIndex].fieldName + "&nbsp";
+        controls += "</div>";
       }
-      controls += '</table></div>';
+      controls += '</div></div>';
       ($('#controldiv')).append(controls);
-      return ($('.xAxis_input')).click(function(e) {
+      ($('.xAxis_input')).click(function(e) {
         var selection;
         selection = null;
         ($('.xAxis_input')).each(function() {
@@ -286,6 +318,16 @@
         });
         _this.xAxis = Number(selection);
         return _this.delayedUpdate();
+      });
+      if ((_ref1 = globals.xAxisOpen) == null) {
+        globals.xAxisOpen = 0;
+      }
+      ($('#xAxisControl')).accordion({
+        collapsible: true,
+        active: globals.xAxisOpen
+      });
+      return ($('#xAxisControl > h3')).click(function() {
+        return globals.xAxisOpen = (globals.xAxisOpen + 1) % 2;
       });
     };
 

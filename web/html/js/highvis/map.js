@@ -123,6 +123,7 @@
     };
 
     Map.prototype.drawControls = function() {
+      Map.__super__.drawControls.call(this);
       return this.drawGroupControls();
     };
 

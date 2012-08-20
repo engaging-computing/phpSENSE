@@ -38,33 +38,21 @@ CoffeeScript version of runtime.
     
     ### Generate tabs ###
     for vis of data.relVis
-        ($ '#vis_select').append '<li class="vis_tab_' + vis + '"><a href="#">' + data.relVis[vis] + '</a></li>'
-        
-    ($ '#vis_select > li > a').css 'background-color', '#ccc'
-    ($ '#vis_select > li > a').css 'border-bottom', '1px solid black'
-        
-    ($ '.vis_tab_0 > a').css 'background-color', '#fff'
-    ($ '.vis_tab_0 > a').css 'border-bottom','1px solid white'
-        
+        ($ '#visTabList').append "<li class='vis_tab'><a href='##{data.relVis[vis].toLowerCase()}_canvas'>#{data.relVis[vis]}</a></li>"
+    ### Jquery up the tabs ###
+    ($ '#viscontainer').tabs()
+
+    ($ '#viscontainer').width ($ '#viscontainer').width() - (($ '#viscontainer').outerWidth() - ($ '#viscontainer').width())
+    
     globals.curVis = (eval 'globals.' + data.relVis[0].toLowerCase())
-        
-    ($ '#vis_select > li > a').unbind()
     
     ### Change vis click handler ###
-    ($ '#vis_select').children().children().click ->
+    ($ '#visTabList a').click ->
         oldVis = globals.curVis
-        globals.curVis = (eval 'globals.' + @text.toLowerCase())
+        globals.curVis = (eval 'globals.' + @innerText.toLowerCase())
         
         if oldVis is globals.curVis
             return
-        
-        ### Remove old selection ###
-        ($ '#vis_select  > li > a').css 'background-color', '#ccc'
-        ($ '#vis_select  > li > a').css 'border-bottom','1px solid black'
-        
-        ### Set new selection ###
-        ($ @).css "background-color", "#ffffff"
-        ($ @).css 'border-bottom','1px solid white'
 
         (oldVis.chart.showLoading 'Loading...') if oldVis.chart?
 
@@ -74,5 +62,48 @@ CoffeeScript version of runtime.
             oldVis.end() if oldVis?
 
         setTimeout switchVis, 1
-            
+
+    #Set initial div sizes
+    containerSize = ($ '#viscontainer').width()
+    hiderSize     = ($ '#controlhider').outerWidth()
+    controlSize = 200
+
+    visWidth = containerSize - (hiderSize + controlSize)
+    visHeight = ($ '#viscontainer').height() - ($ '#visTabList').outerHeight()
+
+    ($ '.vis_canvas').width  visWidth
+    ($ '.vis_canvas').height visHeight
+    ($ '#controlhider').height visHeight
+    ($ '#controldiv').height visHeight
+
+    ($ '.vis_canvas').css('padding', 0)
+
+    
+    #Start up vis
     globals.curVis.start()
+
+    #Toggle control panel
+    resizeVis = ->
+    
+        containerSize = ($ '#viscontainer').width()
+        hiderSize     = ($ '#controlhider').outerWidth()
+        controlSize = if ($ '#controldiv').width() is 0
+            200
+        else
+            0
+
+        newWidth = containerSize - (hiderSize + controlSize)
+
+        ($ '#controldiv').animate {width: controlSize}, 600, 'linear'
+        ($ '.vis_canvas').animate {width: newWidth}, 600, 'linear'
+        globals.curVis.resize newWidth, $('.vis_canvas').height()
+
+    ($ '#control_hide_button').click ->
+        if ($ '#controldiv').width() is 0
+            $("##{@id}").html('>');
+        else
+            $("##{@id}").html('<');
+        resizeVis()
+        
+        
+        

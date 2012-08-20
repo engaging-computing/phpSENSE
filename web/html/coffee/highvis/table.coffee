@@ -81,6 +81,7 @@ class window.Table extends BaseVis
         ($ '#' + @canvas).hide()
 
     drawControls: ->
+        super()    
         @drawGroupControls()
 
 globals.table = new Table "table_canvas"
