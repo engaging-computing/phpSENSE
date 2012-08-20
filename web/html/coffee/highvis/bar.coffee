@@ -63,27 +63,6 @@ class window.Bar extends BaseHighVis
                     str += "<tr><td>#{@x} (#{self.analysisTypeNames[self.analysisType]}):</td><td><strong>#{@y}</strong></td></tr>"
                     str += "</table>"
                 useHTML: true
-                
-            ###
-            xAxis:
-                categories:
-                    for fieldIndex in data.normalFields when (fieldIndex in globals.fieldSelection)
-                        data.fields[fieldIndex].fieldName
-        
-            #if (groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection)
-        
-            for fieldIndex, categoryIndex in data.normalFields
-                for groupName, groupIndex in data.groups when ((groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection))
-                    options =
-                        data: [
-                            x: categoryIndex
-                            y: data.getMax fieldIndex, groupIndex
-                            ]
-                        showInLegend: false
-                        color: globals.colors[groupIndex % globals.colors.length]
-                        name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
-                    @chartOptions.series.push options
-            ###
             
     update: ->
         super()
@@ -168,40 +147,38 @@ class window.Bar extends BaseHighVis
                 type: 'area'
                 xAxis: 1
     
-    drawAnalysisTypeControls: ->
+    drawToolControls: ->
 
-        controls =  '<div id="AnalysisTypeControl" class="vis_controls">'
-            
-        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>'
+        controls =  '<div id="toolControl" class="vis_controls">'
+
+        controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>"
+        controls += "<div class='outer_control_div'>"
+
+        controls += "<div class='inner_control_div'>"
+        controls += 'Sort by: <select class="sortField">'
+
+        tempFields = for fieldID in data.normalFields
+            [fieldID, data.fields[fieldID].fieldName]
+
+        tempFields = [].concat [[null, 'Group Name']], tempFields
+
+        for [fieldID, fieldName] in tempFields
+
+            controls += "<option value='#{fieldID}'#{if @sortField is fieldID then ' selected' else ''}>#{fieldName}</option>"
+
+        controls += '</select></div><br>'
+        
+        controls += "<h4 class='clean_shrink'>Analysis Type</h4>"
         
         for typestring, type in @analysisTypeNames
         
-            controls += '<tr><td><div class="vis_control_table_div">'
+            controls += '<div class="inner_control_div">'
         
             controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='#{type}' #{if type is @analysisType then 'checked' else ''}> #{typestring}</input><br>"
         
-            controls += '</div></td></tr>'
+            controls += '</div>'
             
-        ### --- ###
-        
-        controls += '<tr><td><div class="vis_control_table_div"><br>'
-    
-        controls += 'Sort by: <select class="sortField">'
-        
-        tempFields = for fieldID in data.normalFields
-            [fieldID, data.fields[fieldID].fieldName]
-            
-        tempFields = [].concat [[null, 'Group Name']], tempFields
-        
-        for [fieldID, fieldName] in tempFields
-        
-            controls += "<option value='#{fieldID}'#{if @sortField is fieldID then ' selected' else ''}>#{fieldName}</option>"
-        
-        controls += '</select>'
-    
-        controls += '</div></td></tr>'
-        
-        controls += '</table></div>'
+        controls += '</div></div>'
         
         ### --- ###
         
@@ -216,11 +193,21 @@ class window.Bar extends BaseHighVis
             @sortField = Number e.target.value
             console.log @sortField
             @delayedUpdate()
+
+        #Set up accordion
+        globals.toolsOpen ?= 0
+
+        ($ '#toolControl').accordion
+            collapsible:true
+            active:globals.toolsOpen
+
+        ($ '#toolControl > h3').click ->
+            globals.toolsOpen = (globals.toolsOpen + 1) % 2
         
     drawControls: ->
         super()
         @drawGroupControls()
-        @drawAnalysisTypeControls()
+        @drawToolControls()
     
 
 globals.bar = new Bar 'bar_canvas'

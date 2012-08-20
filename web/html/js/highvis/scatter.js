@@ -81,6 +81,9 @@
               _ref = data.fields;
               for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
                 field = _ref[fieldIndex];
+                if (!(this.point.datapoint[fieldIndex] !== null)) {
+                  continue;
+                }
                 dat = (Number(field.typeID)) === data.types.TIME ? new Date(this.point.datapoint[fieldIndex]) : this.point.datapoint[fieldIndex];
                 str += "<tr><td>" + field.fieldName + "</td>";
                 str += "<td><strong>" + dat + "</strong></td></tr>";
@@ -156,7 +159,7 @@
       Scatter.__super__.drawControls.call(this);
       this.drawGroupControls();
       this.drawXAxisControls();
-      return this.drawModeControls();
+      return this.drawToolControls();
     };
 
     /*
@@ -220,13 +223,13 @@
     */
 
 
-    Scatter.prototype.drawModeControls = function() {
+    Scatter.prototype.drawToolControls = function() {
       var controls, mode, modeText, _i, _len, _ref, _ref1, _ref2,
         _this = this;
-      controls = '<div id="scatterModeControl" class="vis_controls">';
+      controls = '<div id="toolControl" class="vis_controls">';
       controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>";
       controls += "<div class='outer_control_div'>";
-      controls += "<h6 class='clean_shrink'>Display Mode</h6>";
+      controls += "<h4 class='clean_shrink'>Display Mode</h4>";
       _ref = [[this.SYMBOLS_LINES_MODE, "Symbols and Lines"], [this.LINES_MODE, "Lines Only"], [this.SYMBOLS_MODE, "Symbols Only"]];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         _ref1 = _ref[_i], mode = _ref1[0], modeText = _ref1[1];
@@ -235,7 +238,7 @@
         controls += modeText + "</div>";
       }
       controls += "<br>";
-      controls += "<h6 class='clean_shrink'>Other</h6>";
+      controls += "<h4 class='clean_shrink'>Other</h4>";
       controls += '<div class="inner_control_div">';
       controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' " + (this.advancedTooltips ? 'checked' : '') + "/> Advanced Tooltips ";
       controls += "</div></div></div>";
@@ -248,15 +251,15 @@
         _this.advancedTooltips = !_this.advancedTooltips;
         return console.log(_this.advancedTooltips);
       });
-      if ((_ref2 = globals.scatterToolsOpen) == null) {
-        globals.scatterToolsOpen = 0;
+      if ((_ref2 = globals.toolsOpen) == null) {
+        globals.toolsOpen = 0;
       }
-      ($('#scatterModeControl')).accordion({
+      ($('#toolControl')).accordion({
         collapsible: true,
-        active: globals.scatterToolsOpen
+        active: globals.toolsOpen
       });
-      return ($('#scatterModeControl > h3')).click(function() {
-        return globals.scatterToolsOpen = (globals.scatterToolsOpen + 1) % 2;
+      return ($('#toolControl > h3')).click(function() {
+        return globals.toolsOpen = (globals.toolsOpen + 1) % 2;
       });
     };
 

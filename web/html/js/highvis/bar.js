@@ -87,27 +87,6 @@
           },
           useHTML: true
         }
-        /*
-                    xAxis:
-                        categories:
-                            for fieldIndex in data.normalFields when (fieldIndex in globals.fieldSelection)
-                                data.fields[fieldIndex].fieldName
-                
-                    #if (groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection)
-                
-                    for fieldIndex, categoryIndex in data.normalFields
-                        for groupName, groupIndex in data.groups when ((groupIndex in globals.groupSelection) and (fieldIndex in globals.fieldSelection))
-                            options =
-                                data: [
-                                    x: categoryIndex
-                                    y: data.getMax fieldIndex, groupIndex
-                                    ]
-                                showInLegend: false
-                                color: globals.colors[groupIndex % globals.colors.length]
-                                name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
-                            @chartOptions.series.push options
-        */
-
       });
     };
 
@@ -287,41 +266,39 @@
       return _results;
     };
 
-    Bar.prototype.drawAnalysisTypeControls = function() {
-      var controls, fieldID, fieldName, tempFields, type, typestring, _i, _j, _len, _len1, _ref, _ref1,
+    Bar.prototype.drawToolControls = function() {
+      var controls, fieldID, fieldName, tempFields, type, typestring, _i, _j, _len, _len1, _ref, _ref1, _ref2,
         _this = this;
-      controls = '<div id="AnalysisTypeControl" class="vis_controls">';
-      controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>';
-      _ref = this.analysisTypeNames;
-      for (type = _i = 0, _len = _ref.length; _i < _len; type = ++_i) {
-        typestring = _ref[type];
-        controls += '<tr><td><div class="vis_control_table_div">';
-        controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='" + type + "' " + (type === this.analysisType ? 'checked' : '') + "> " + typestring + "</input><br>";
-        controls += '</div></td></tr>';
-      }
-      /* ---
-      */
-
-      controls += '<tr><td><div class="vis_control_table_div"><br>';
+      controls = '<div id="toolControl" class="vis_controls">';
+      controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>";
+      controls += "<div class='outer_control_div'>";
+      controls += "<div class='inner_control_div'>";
       controls += 'Sort by: <select class="sortField">';
       tempFields = (function() {
-        var _j, _len1, _ref1, _results;
-        _ref1 = data.normalFields;
+        var _i, _len, _ref, _results;
+        _ref = data.normalFields;
         _results = [];
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          fieldID = _ref1[_j];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          fieldID = _ref[_i];
           _results.push([fieldID, data.fields[fieldID].fieldName]);
         }
         return _results;
       })();
       tempFields = [].concat([[null, 'Group Name']], tempFields);
-      for (_j = 0, _len1 = tempFields.length; _j < _len1; _j++) {
-        _ref1 = tempFields[_j], fieldID = _ref1[0], fieldName = _ref1[1];
+      for (_i = 0, _len = tempFields.length; _i < _len; _i++) {
+        _ref = tempFields[_i], fieldID = _ref[0], fieldName = _ref[1];
         controls += "<option value='" + fieldID + "'" + (this.sortField === fieldID ? ' selected' : '') + ">" + fieldName + "</option>";
       }
-      controls += '</select>';
-      controls += '</div></td></tr>';
-      controls += '</table></div>';
+      controls += '</select></div><br>';
+      controls += "<h4 class='clean_shrink'>Analysis Type</h4>";
+      _ref1 = this.analysisTypeNames;
+      for (type = _j = 0, _len1 = _ref1.length; _j < _len1; type = ++_j) {
+        typestring = _ref1[type];
+        controls += '<div class="inner_control_div">';
+        controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='" + type + "' " + (type === this.analysisType ? 'checked' : '') + "> " + typestring + "</input><br>";
+        controls += '</div>';
+      }
+      controls += '</div></div>';
       /* ---
       */
 
@@ -330,17 +307,27 @@
         _this.analysisType = Number(e.target.value);
         return _this.delayedUpdate();
       });
-      return ($('.sortField')).change(function(e) {
+      ($('.sortField')).change(function(e) {
         _this.sortField = Number(e.target.value);
         console.log(_this.sortField);
         return _this.delayedUpdate();
+      });
+      if ((_ref2 = globals.toolsOpen) == null) {
+        globals.toolsOpen = 0;
+      }
+      ($('#toolControl')).accordion({
+        collapsible: true,
+        active: globals.toolsOpen
+      });
+      return ($('#toolControl > h3')).click(function() {
+        return globals.toolsOpen = (globals.toolsOpen + 1) % 2;
       });
     };
 
     Bar.prototype.drawControls = function() {
       Bar.__super__.drawControls.call(this);
       this.drawGroupControls();
-      return this.drawAnalysisTypeControls();
+      return this.drawToolControls();
     };
 
     return Bar;

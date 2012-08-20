@@ -113,6 +113,11 @@
       return globals.curVis.resize(newWidth, $('.vis_canvas').height());
     };
     return ($('#control_hide_button')).click(function() {
+      if (($('#controldiv')).width() === 0) {
+        $("#" + this.id).html('>');
+      } else {
+        $("#" + this.id).html('<');
+      }
       return resizeVis();
     });
   });

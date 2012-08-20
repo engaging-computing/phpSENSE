@@ -63,7 +63,7 @@ class window.Scatter extends BaseHighVis
                         str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
                         str += "<table>"
 
-                        for field, fieldIndex in data.fields
+                        for field, fieldIndex in data.fields when @point.datapoint[fieldIndex] isnt null
                             dat = if (Number field.typeID) is data.types.TIME
                                 new Date(@point.datapoint[fieldIndex])
                             else
@@ -121,7 +121,7 @@ class window.Scatter extends BaseHighVis
         super()
         @drawGroupControls()
         @drawXAxisControls()
-        @drawModeControls()
+        @drawToolControls()
 
     ###
     Update the chart by removing all current series and recreating them
@@ -168,13 +168,13 @@ class window.Scatter extends BaseHighVis
     ###
     Draws radio buttons for changing symbol/line mode.
     ###
-    drawModeControls: ->
-        controls =  '<div id="scatterModeControl" class="vis_controls">'
+    drawToolControls: ->
+        controls =  '<div id="toolControl" class="vis_controls">'
 
         controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>"
         controls += "<div class='outer_control_div'>"
 
-        controls += "<h6 class='clean_shrink'>Display Mode</h6>"
+        controls += "<h4 class='clean_shrink'>Display Mode</h4>"
 
         for [mode, modeText] in [[@SYMBOLS_LINES_MODE, "Symbols and Lines"],
                                  [@LINES_MODE,         "Lines Only"],
@@ -184,7 +184,7 @@ class window.Scatter extends BaseHighVis
             controls += modeText + "</div>"
 
         controls += "<br>"
-        controls += "<h6 class='clean_shrink'>Other</h6>"
+        controls += "<h4 class='clean_shrink'>Other</h4>"
             
         controls += '<div class="inner_control_div">'
         controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' #{if @advancedTooltips then 'checked' else ''}/> Advanced Tooltips "
@@ -202,14 +202,14 @@ class window.Scatter extends BaseHighVis
             console.log @advancedTooltips
 
         #Set up accordion
-        globals.scatterToolsOpen ?= 0
+        globals.toolsOpen ?= 0
 
-        ($ '#scatterModeControl').accordion
+        ($ '#toolControl').accordion
             collapsible:true
-            active:globals.scatterToolsOpen
+            active:globals.toolsOpen
 
-        ($ '#scatterModeControl > h3').click ->
-            globals.scatterToolsOpen = (globals.scatterToolsOpen + 1) % 2
+        ($ '#toolControl > h3').click ->
+            globals.toolsOpen = (globals.toolsOpen + 1) % 2
 
     ###
     Draws x axis selection controls
