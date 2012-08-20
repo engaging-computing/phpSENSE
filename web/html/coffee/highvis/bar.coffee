@@ -34,12 +34,18 @@ class window.Bar extends BaseHighVis
     ANALYSISTYPE_MIN:       1
     ANALYSISTYPE_MEAN:      2
     ANALYSISTYPE_MEDIAN:    3
+    ANALYSISTYPE_COUNT:     4
+    ANALYSISTYPE_TOTAL:     5
+    
+    analysisTypeNames: ["Max","Min","Mean","Median","Count","Total"]
     
     analysisType:   0
-    sortField:      data.normalFields[0]
+    sortField:      null
     
     buildOptions: ->
         super()
+        
+        self = this
         
         @chartOptions
         $.extend true, @chartOptions,
@@ -52,10 +58,9 @@ class window.Bar extends BaseHighVis
             tooltip:
                 formatter: ->
                     console.log this
-                    str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                    str  = "<div style='width:100%;text-align:center;color:#{@series.color};margin-bottom:5px'> #{@point.name}</div>"
                     str += "<table>"
-                    str += "<tr><td>#{@series.xAxis.options.title.text}:</td><td><strong>#{@x}</strong></td></tr>"
-                    str += "<tr><td>#{@series.name.field}:</td><td><strong>#{@y}</strong></td></tr>"
+                    str += "<tr><td>#{@x} (#{self.analysisTypeNames[self.analysisType]}):</td><td><strong>#{@y}</strong></td></tr>"
                     str += "</table>"
                 useHTML: true
                 
@@ -91,26 +96,30 @@ class window.Bar extends BaseHighVis
         while @chart.series.length > data.normalFields.length
             @chart.series[@chart.series.length-1].remove false
         
+        ### --- ###
         
-        ###
-        categoryIndex = -1
-        for fieldIndex in data.normalFields when fieldIndex in globals.fieldSelection
-            categoryIndex += 1
-            
-            for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
-                options =
-                    data: [
-                        x: categoryIndex
-                        y: data.getMax fieldIndex, groupIndex
-                        ]
-                    showInLegend: false
-                    color: globals.colors[groupIndex % globals.colors.length]
-                    name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
-                    
-                @chart.addSeries options, false
-        ###
+        tempGroupIDValuePairs = for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
+            switch @analysisType
+                when @ANALYSISTYPE_MAX      then [groupIndex, data.getMax       @sortField, groupIndex]
+                when @ANALYSISTYPE_MIN      then [groupIndex, data.getMin       @sortField, groupIndex]
+                when @ANALYSISTYPE_MEAN     then [groupIndex, data.getMean      @sortField, groupIndex]
+                when @ANALYSISTYPE_MEDIAN   then [groupIndex, data.getMedian    @sortField, groupIndex]
+                when @ANALYSISTYPE_COUNT    then [groupIndex, data.getCount     @sortField, groupIndex]
+                when @ANALYSISTYPE_TOTAL    then [groupIndex, data.getTotal     @sortField, groupIndex]
         
-        for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
+        if @sortField != null
+            fieldSortedGroupIDValuePairs = tempGroupIDValuePairs.sort (a,b) ->
+                if a[1] > b[1] then 1 else -1
+        
+            fieldSortedGroupIDs = for [groupID, groupValue] in fieldSortedGroupIDValuePairs
+                groupID
+        else
+            fieldSortedGroupIDs = for groupName, groupID in data.groups
+                groupID
+        
+        ### --- ###
+        
+        for groupIndex in fieldSortedGroupIDs when groupIndex in globals.groupSelection
             options =
                 showInLegend: false
                 color: globals.colors[groupIndex % globals.colors.length]
@@ -118,10 +127,30 @@ class window.Bar extends BaseHighVis
                 
             options.data = for fieldIndex in data.normalFields when fieldIndex in globals.fieldSelection
                 switch @analysisType
-                    when @ANALYSISTYPE_MAX      then data.getMax    fieldIndex, groupIndex
-                    when @ANALYSISTYPE_MIN      then data.getMin    fieldIndex, groupIndex
-                    when @ANALYSISTYPE_MEAN     then data.getMean   fieldIndex, groupIndex
-                    when @ANALYSISTYPE_MEDIAN   then data.getMedian fieldIndex, groupIndex
+                    when @ANALYSISTYPE_MAX
+                        ret =
+                            y:      data.getMax fieldIndex, groupIndex
+                            name:   data.groups[groupIndex]
+                    when @ANALYSISTYPE_MIN
+                        ret =
+                            y:      data.getMin fieldIndex, groupIndex
+                            name:   data.groups[groupIndex]
+                    when @ANALYSISTYPE_MEAN
+                        ret =
+                            y:      data.getMean fieldIndex, groupIndex
+                            name:   data.groups[groupIndex]
+                    when @ANALYSISTYPE_MEDIAN
+                        ret =
+                            y:      data.getMedian fieldIndex, groupIndex
+                            name:   data.groups[groupIndex]
+                    when @ANALYSISTYPE_COUNT
+                        ret =
+                            y:      data.getCount fieldIndex, groupIndex
+                            name:   data.groups[groupIndex]
+                    when @ANALYSISTYPE_TOTAL
+                        ret =
+                            y:      data.getTotal fieldIndex, groupIndex
+                            name:   data.groups[groupIndex]
                 
             @chart.addSeries options, false
         
@@ -145,7 +174,7 @@ class window.Bar extends BaseHighVis
             
         controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>'
         
-        for [type, typestring] in [[@ANALYSISTYPE_MAX, 'Max'],[@ANALYSISTYPE_MIN, 'Min'],[@ANALYSISTYPE_MEAN, 'Mean'],[@ANALYSISTYPE_MEDIAN, 'Median']]
+        for typestring, type in @analysisTypeNames
         
             controls += '<tr><td><div class="vis_control_table_div">'
         
@@ -159,9 +188,14 @@ class window.Bar extends BaseHighVis
     
         controls += 'Sort by: <select class="sortField">'
         
-        for fieldID in data.normalFields
+        tempFields = for fieldID in data.normalFields
+            [fieldID, data.fields[fieldID].fieldName]
+            
+        tempFields = [].concat [[null, 'Group Name']], tempFields
         
-            controls += "<option value='#{fieldID}'#{if @sortField is fieldID then ' selected' else ''}>#{data.fields[fieldID].fieldName}</option>"
+        for [fieldID, fieldName] in tempFields
+        
+            controls += "<option value='#{fieldID}'#{if @sortField is fieldID then ' selected' else ''}>#{fieldName}</option>"
         
         controls += '</select>'
     

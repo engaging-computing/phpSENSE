@@ -129,7 +129,31 @@ data.getMedian = (fieldIndex, groupIndex) ->
             return (rawData[mid - 1] + rawData[mid]) / 2.0
     else
         null
-        
+
+###
+Gets the number of points belonging to fieldIndex and groupIndex
+All included datapoints must pass the given filter (defaults to all datapoints).
+###
+data.getCount = (fieldIndex, groupIndex) ->
+    dataCount = @selector(fieldIndex, groupIndex).length
+
+    return dataCount
+
+###
+Gets the sum of the points belonging to fieldIndex and groupIndex
+All included datapoints must pass the given filter (defaults to all datapoints).
+###
+data.getTotal = (fieldIndex, groupIndex) ->
+    rawData = @selector(fieldIndex, groupIndex);
+
+    if rawData.length > 0
+        total = 0
+        for value in rawData
+            total = total + value
+        return total;
+    else
+        null   
+     
 ###
 Gets a list of unique, non-null, stringified vals from the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
@@ -141,7 +165,7 @@ data.setGroupIndex = (index) ->
 ###
 Gets a list of unique, non-null, stringified vals from the group field index.
 ###
-data.makeGroups =  ->
+data.makeGroups = ->
     
     result = {}
     
@@ -149,7 +173,10 @@ data.makeGroups =  ->
         if dp[@groupingFieldIndex] isnt null
             result[String(dp[@groupingFieldIndex]).toLowerCase()] = true
         
-    keys for keys of result
+    groups = for keys of result
+        keys
+        
+    groups.sort()
     
 ###
 Gets a list of text field indicies

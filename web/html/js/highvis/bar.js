@@ -51,12 +51,20 @@
 
     Bar.prototype.ANALYSISTYPE_MEDIAN = 3;
 
+    Bar.prototype.ANALYSISTYPE_COUNT = 4;
+
+    Bar.prototype.ANALYSISTYPE_TOTAL = 5;
+
+    Bar.prototype.analysisTypeNames = ["Max", "Min", "Mean", "Median", "Count", "Total"];
+
     Bar.prototype.analysisType = 0;
 
-    Bar.prototype.sortField = data.normalFields[0];
+    Bar.prototype.sortField = null;
 
     Bar.prototype.buildOptions = function() {
+      var self;
       Bar.__super__.buildOptions.call(this);
+      self = this;
       this.chartOptions;
       return $.extend(true, this.chartOptions, {
         chart: {
@@ -72,10 +80,9 @@
           formatter: function() {
             var str;
             console.log(this);
-            str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div><br>";
+            str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";margin-bottom:5px'> " + this.point.name + "</div>";
             str += "<table>";
-            str += "<tr><td>" + this.series.xAxis.options.title.text + ":</td><td><strong>" + this.x + "</strong></td></tr>";
-            str += "<tr><td>" + this.series.name.field + ":</td><td><strong>" + this.y + "</strong></td></tr>";
+            str += "<tr><td>" + this.x + " (" + self.analysisTypeNames[self.analysisType] + "):</td><td><strong>" + this.y + "</strong></td></tr>";
             return str += "</table>";
           },
           useHTML: true
@@ -105,7 +112,7 @@
     };
 
     Bar.prototype.update = function() {
-      var fieldIndex, groupIndex, groupName, options, selection, visibleCategories, _i, _len, _ref;
+      var fieldIndex, fieldSortedGroupIDValuePairs, fieldSortedGroupIDs, groupID, groupIndex, groupName, groupValue, options, ret, selection, tempGroupIDValuePairs, visibleCategories, _i, _len;
       Bar.__super__.update.call(this);
       visibleCategories = (function() {
         var _i, _len, _ref, _results;
@@ -123,27 +130,76 @@
       while (this.chart.series.length > data.normalFields.length) {
         this.chart.series[this.chart.series.length - 1].remove(false);
       }
-      /*
-              categoryIndex = -1
-              for fieldIndex in data.normalFields when fieldIndex in globals.fieldSelection
-                  categoryIndex += 1
-                  
-                  for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
-                      options =
-                          data: [
-                              x: categoryIndex
-                              y: data.getMax fieldIndex, groupIndex
-                              ]
-                          showInLegend: false
-                          color: globals.colors[groupIndex % globals.colors.length]
-                          name: data.groups[groupIndex] + data.fields[fieldIndex].fieldName
-                          
-                      @chart.addSeries options, false
+      /* ---
       */
 
-      _ref = data.groups;
-      for (groupIndex = _i = 0, _len = _ref.length; _i < _len; groupIndex = ++_i) {
-        groupName = _ref[groupIndex];
+      tempGroupIDValuePairs = (function() {
+        var _i, _len, _ref, _results;
+        _ref = data.groups;
+        _results = [];
+        for (groupIndex = _i = 0, _len = _ref.length; _i < _len; groupIndex = ++_i) {
+          groupName = _ref[groupIndex];
+          if (__indexOf.call(globals.groupSelection, groupIndex) >= 0) {
+            switch (this.analysisType) {
+              case this.ANALYSISTYPE_MAX:
+                _results.push([groupIndex, data.getMax(this.sortField, groupIndex)]);
+                break;
+              case this.ANALYSISTYPE_MIN:
+                _results.push([groupIndex, data.getMin(this.sortField, groupIndex)]);
+                break;
+              case this.ANALYSISTYPE_MEAN:
+                _results.push([groupIndex, data.getMean(this.sortField, groupIndex)]);
+                break;
+              case this.ANALYSISTYPE_MEDIAN:
+                _results.push([groupIndex, data.getMedian(this.sortField, groupIndex)]);
+                break;
+              case this.ANALYSISTYPE_COUNT:
+                _results.push([groupIndex, data.getCount(this.sortField, groupIndex)]);
+                break;
+              case this.ANALYSISTYPE_TOTAL:
+                _results.push([groupIndex, data.getTotal(this.sortField, groupIndex)]);
+                break;
+              default:
+                _results.push(void 0);
+            }
+          }
+        }
+        return _results;
+      }).call(this);
+      if (this.sortField !== null) {
+        fieldSortedGroupIDValuePairs = tempGroupIDValuePairs.sort(function(a, b) {
+          if (a[1] > b[1]) {
+            return 1;
+          } else {
+            return -1;
+          }
+        });
+        fieldSortedGroupIDs = (function() {
+          var _i, _len, _ref, _results;
+          _results = [];
+          for (_i = 0, _len = fieldSortedGroupIDValuePairs.length; _i < _len; _i++) {
+            _ref = fieldSortedGroupIDValuePairs[_i], groupID = _ref[0], groupValue = _ref[1];
+            _results.push(groupID);
+          }
+          return _results;
+        })();
+      } else {
+        fieldSortedGroupIDs = (function() {
+          var _i, _len, _ref, _results;
+          _ref = data.groups;
+          _results = [];
+          for (groupID = _i = 0, _len = _ref.length; _i < _len; groupID = ++_i) {
+            groupName = _ref[groupID];
+            _results.push(groupID);
+          }
+          return _results;
+        })();
+      }
+      /* ---
+      */
+
+      for (_i = 0, _len = fieldSortedGroupIDs.length; _i < _len; _i++) {
+        groupIndex = fieldSortedGroupIDs[_i];
         if (!(__indexOf.call(globals.groupSelection, groupIndex) >= 0)) {
           continue;
         }
@@ -153,24 +209,48 @@
           name: data.groups[groupIndex]
         };
         options.data = (function() {
-          var _j, _len1, _ref1, _results;
-          _ref1 = data.normalFields;
+          var _j, _len1, _ref, _results;
+          _ref = data.normalFields;
           _results = [];
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            fieldIndex = _ref1[_j];
+          for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+            fieldIndex = _ref[_j];
             if (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0) {
               switch (this.analysisType) {
                 case this.ANALYSISTYPE_MAX:
-                  _results.push(data.getMax(fieldIndex, groupIndex));
+                  _results.push(ret = {
+                    y: data.getMax(fieldIndex, groupIndex),
+                    name: data.groups[groupIndex]
+                  });
                   break;
                 case this.ANALYSISTYPE_MIN:
-                  _results.push(data.getMin(fieldIndex, groupIndex));
+                  _results.push(ret = {
+                    y: data.getMin(fieldIndex, groupIndex),
+                    name: data.groups[groupIndex]
+                  });
                   break;
                 case this.ANALYSISTYPE_MEAN:
-                  _results.push(data.getMean(fieldIndex, groupIndex));
+                  _results.push(ret = {
+                    y: data.getMean(fieldIndex, groupIndex),
+                    name: data.groups[groupIndex]
+                  });
                   break;
                 case this.ANALYSISTYPE_MEDIAN:
-                  _results.push(data.getMedian(fieldIndex, groupIndex));
+                  _results.push(ret = {
+                    y: data.getMedian(fieldIndex, groupIndex),
+                    name: data.groups[groupIndex]
+                  });
+                  break;
+                case this.ANALYSISTYPE_COUNT:
+                  _results.push(ret = {
+                    y: data.getCount(fieldIndex, groupIndex),
+                    name: data.groups[groupIndex]
+                  });
+                  break;
+                case this.ANALYSISTYPE_TOTAL:
+                  _results.push(ret = {
+                    y: data.getTotal(fieldIndex, groupIndex),
+                    name: data.groups[groupIndex]
+                  });
                   break;
                 default:
                   _results.push(void 0);
@@ -208,13 +288,13 @@
     };
 
     Bar.prototype.drawAnalysisTypeControls = function() {
-      var controls, fieldID, type, typestring, _i, _j, _len, _len1, _ref, _ref1, _ref2,
+      var controls, fieldID, fieldName, tempFields, type, typestring, _i, _j, _len, _len1, _ref, _ref1,
         _this = this;
       controls = '<div id="AnalysisTypeControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>';
-      _ref = [[this.ANALYSISTYPE_MAX, 'Max'], [this.ANALYSISTYPE_MIN, 'Min'], [this.ANALYSISTYPE_MEAN, 'Mean'], [this.ANALYSISTYPE_MEDIAN, 'Median']];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        _ref1 = _ref[_i], type = _ref1[0], typestring = _ref1[1];
+      _ref = this.analysisTypeNames;
+      for (type = _i = 0, _len = _ref.length; _i < _len; type = ++_i) {
+        typestring = _ref[type];
         controls += '<tr><td><div class="vis_control_table_div">';
         controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='" + type + "' " + (type === this.analysisType ? 'checked' : '') + "> " + typestring + "</input><br>";
         controls += '</div></td></tr>';
@@ -224,10 +304,20 @@
 
       controls += '<tr><td><div class="vis_control_table_div"><br>';
       controls += 'Sort by: <select class="sortField">';
-      _ref2 = data.normalFields;
-      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-        fieldID = _ref2[_j];
-        controls += "<option value='" + fieldID + "'" + (this.sortField === fieldID ? ' selected' : '') + ">" + data.fields[fieldID].fieldName + "</option>";
+      tempFields = (function() {
+        var _j, _len1, _ref1, _results;
+        _ref1 = data.normalFields;
+        _results = [];
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          fieldID = _ref1[_j];
+          _results.push([fieldID, data.fields[fieldID].fieldName]);
+        }
+        return _results;
+      })();
+      tempFields = [].concat([[null, 'Group Name']], tempFields);
+      for (_j = 0, _len1 = tempFields.length; _j < _len1; _j++) {
+        _ref1 = tempFields[_j], fieldID = _ref1[0], fieldName = _ref1[1];
+        controls += "<option value='" + fieldID + "'" + (this.sortField === fieldID ? ' selected' : '') + ">" + fieldName + "</option>";
       }
       controls += '</select>';
       controls += '</div></td></tr>';
