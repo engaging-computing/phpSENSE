@@ -64,6 +64,7 @@ class window.Motion extends BaseVis
         ($ '#' + @canvas).hide()
         
     drawControls: ->
+        super()
 
     drawChart: ->
 

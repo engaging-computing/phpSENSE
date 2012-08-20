@@ -63,14 +63,14 @@ class window.Scatter extends BaseHighVis
                         str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
                         str += "<table>"
 
-                        for field, fieldIndex in data.fields
+                        for field, fieldIndex in data.fields when @point.datapoint[fieldIndex] isnt null
                             dat = if (Number field.typeID) is data.types.TIME
                                 new Date(@point.datapoint[fieldIndex])
                             else
                                 @point.datapoint[fieldIndex]
                                 
                             str += "<tr><td>#{field.fieldName}</td>"
-                            str += "<td><strong>#{dat}</strong></td></tr>}"
+                            str += "<td><strong>#{dat}</strong></td></tr>"
                             
                         str += "</table>"
                     else
@@ -118,11 +118,10 @@ class window.Scatter extends BaseHighVis
     Call control drawing methods in order of apperance
     ###
     drawControls: ->
+        super()
         @drawGroupControls()
         @drawXAxisControls()
-        @drawModeControls()
-
-        #($ '.vis_controls').mCustomScrollbar()
+        @drawToolControls()
 
     ###
     Update the chart by removing all current series and recreating them
@@ -169,25 +168,27 @@ class window.Scatter extends BaseHighVis
     ###
     Draws radio buttons for changing symbol/line mode.
     ###
-    drawModeControls: ->
-        controls =  '<div id="AnalysisTypeControl" class="vis_controls">'
+    drawToolControls: ->
+        controls =  '<div id="toolControl" class="vis_controls">'
 
-        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Tools:</td></tr>'
+        controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>"
+        controls += "<div class='outer_control_div'>"
 
+        controls += "<h4 class='clean_shrink'>Display Mode</h4>"
 
         for [mode, modeText] in [[@SYMBOLS_LINES_MODE, "Symbols and Lines"],
                                  [@LINES_MODE,         "Lines Only"],
                                  [@SYMBOLS_MODE,       "Symbols Only"]]
-            controls += '<tr><td><div class="vis_control_table_div">'
+            controls += '<div class="inner_control_div">'
             controls += "<input class='mode_radio' type='radio' name='mode_selector' value='#{mode}' #{if @mode is mode then 'checked' else ''}/>"
-            controls += modeText + "  </div></td></tr>"
+            controls += modeText + "</div>"
 
-        controls += '<tr><td><div class="vis_control_table_div">'
-        controls += '<br>'
-        controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' #{if @advancedTooltips then 'checked' else ''}/>&nbspAdvanced Tooltips&nbsp"
-        controls += "</div></td></tr>"
+        controls += "<br>"
+        controls += "<h4 class='clean_shrink'>Other</h4>"
             
-        controls += '</table></div>'
+        controls += '<div class="inner_control_div">'
+        controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' #{if @advancedTooltips then 'checked' else ''}/> Advanced Tooltips "
+        controls += "</div></div></div>"
         
         # Write HTML
         ($ '#controldiv').append controls
@@ -200,26 +201,41 @@ class window.Scatter extends BaseHighVis
             @advancedTooltips = not @advancedTooltips
             console.log @advancedTooltips
 
+        #Set up accordion
+        globals.toolsOpen ?= 0
+
+        ($ '#toolControl').accordion
+            collapsible:true
+            active:globals.toolsOpen
+
+        ($ '#toolControl > h3').click ->
+            globals.toolsOpen = (globals.toolsOpen + 1) % 2
+
     ###
     Draws x axis selection controls
         This includes a series of radio buttons.
     ###
     drawXAxisControls: (filter = (fieldIndex) -> (fieldIndex in data.normalFields)) ->
-        controls = '<div id="xAxisControl" class="vis_controls">'
+        #Don't draw if there's only one possible selection
+        possible = for field, fieldIndex in data.fields when filter fieldIndex
+            true
+        if possible.length <= 1
+            return
+    
+        controls =  '<div id="xAxisControl" class="vis_controls">'
 
-        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">X Axis:</tr></td>'
+        controls += "<h3 class='clean_shrink'><a href='#'>X Axis:</a></h3>"
+        controls += "<div class='outer_control_div'>"
 
         # Populate choices (not text)
-        for field, fieldIndex in data.fields
-            if filter fieldIndex
-                controls += '<tr><td>'
-                controls += '<div class="vis_control_table_div">'
+        for field, fieldIndex in data.fields when filter fieldIndex
+            controls += '<div class="inner_control_div">'
 
-                controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{fieldIndex}\" #{if (Number fieldIndex) == @xAxis then "checked" else ""}></input>&nbsp"
-                controls += "#{data.fields[fieldIndex].fieldName}&nbsp"
-                controls += "</div></td></tr>"
+            controls += "<input class=\"xAxis_input\" type=\"radio\" name=\"xaxis\" value=\"#{fieldIndex}\" #{if (Number fieldIndex) == @xAxis then "checked" else ""}></input>&nbsp"
+            controls += "#{data.fields[fieldIndex].fieldName}&nbsp"
+            controls += "</div>"
 
-        controls += '</table></div>'
+        controls += '</div></div>'
 
         # Write HTML
         ($ '#controldiv').append controls
@@ -233,5 +249,15 @@ class window.Scatter extends BaseHighVis
             @xAxis = Number selection
 
             @delayedUpdate()
+
+        #Set up accordion
+        globals.xAxisOpen ?= 0
+
+        ($ '#xAxisControl').accordion
+            collapsible:true
+            active:globals.xAxisOpen
+
+        ($ '#xAxisControl > h3').click ->
+            globals.xAxisOpen = (globals.xAxisOpen + 1) % 2
 
 globals.scatter = new Scatter 'scatter_canvas'

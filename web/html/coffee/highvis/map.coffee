@@ -75,6 +75,7 @@ class window.Map extends BaseVis
         ($ '#' + @canvas).hide()
         
     drawControls: ->
+        super()
         @drawGroupControls()
         
 globals.map = new Map "map_canvas"
