@@ -48,7 +48,12 @@ if(isset($_POST['email'])) {
         $headers = "MIME-Version: 1.0" . "\r\n";
         $headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
         
-        $headers .= 'From: admin@' + $server;
+        $headers .= 'From: no-reply@' . $server;
+
+        error_log("MAIL DEBUGvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
+        error_log($message);
+        error_log($headers);
+        error_log("MAIL DEBUG^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
         
         if (  mail('"'.$email.'"', $subject, $message, $headers)) {
             $smarty->assign('success', 1);
