@@ -51,11 +51,15 @@
 
     Bar.prototype.ANALYSISTYPE_MEDIAN = 3;
 
-    Bar.prototype.analysisTypeNames = ["Max", "Min", "Mean", "Median"];
+    Bar.prototype.ANALYSISTYPE_COUNT = 4;
+
+    Bar.prototype.ANALYSISTYPE_TOTAL = 5;
+
+    Bar.prototype.analysisTypeNames = ["Max", "Min", "Mean", "Median", "Count", "Total"];
 
     Bar.prototype.analysisType = 0;
 
-    Bar.prototype.sortField = data.normalFields[0];
+    Bar.prototype.sortField = null;
 
     Bar.prototype.buildOptions = function() {
       var self;
@@ -149,6 +153,12 @@
               case this.ANALYSISTYPE_MEDIAN:
                 _results.push([groupIndex, data.getMedian(this.sortField, groupIndex)]);
                 break;
+              case this.ANALYSISTYPE_COUNT:
+                _results.push([groupIndex, data.getCount(this.sortField, groupIndex)]);
+                break;
+              case this.ANALYSISTYPE_TOTAL:
+                _results.push([groupIndex, data.getTotal(this.sortField, groupIndex)]);
+                break;
               default:
                 _results.push(void 0);
             }
@@ -156,22 +166,35 @@
         }
         return _results;
       }).call(this);
-      fieldSortedGroupIDValuePairs = tempGroupIDValuePairs.sort(function(a, b) {
-        if (a[1] > b[1]) {
-          return 1;
-        } else {
-          return -1;
-        }
-      });
-      fieldSortedGroupIDs = (function() {
-        var _i, _len, _ref, _results;
-        _results = [];
-        for (_i = 0, _len = fieldSortedGroupIDValuePairs.length; _i < _len; _i++) {
-          _ref = fieldSortedGroupIDValuePairs[_i], groupID = _ref[0], groupValue = _ref[1];
-          _results.push(groupID);
-        }
-        return _results;
-      })();
+      if (this.sortField !== null) {
+        fieldSortedGroupIDValuePairs = tempGroupIDValuePairs.sort(function(a, b) {
+          if (a[1] > b[1]) {
+            return 1;
+          } else {
+            return -1;
+          }
+        });
+        fieldSortedGroupIDs = (function() {
+          var _i, _len, _ref, _results;
+          _results = [];
+          for (_i = 0, _len = fieldSortedGroupIDValuePairs.length; _i < _len; _i++) {
+            _ref = fieldSortedGroupIDValuePairs[_i], groupID = _ref[0], groupValue = _ref[1];
+            _results.push(groupID);
+          }
+          return _results;
+        })();
+      } else {
+        fieldSortedGroupIDs = (function() {
+          var _i, _len, _ref, _results;
+          _ref = data.groups;
+          _results = [];
+          for (groupID = _i = 0, _len = _ref.length; _i < _len; groupID = ++_i) {
+            groupName = _ref[groupID];
+            _results.push(groupID);
+          }
+          return _results;
+        })();
+      }
       /* ---
       */
 
@@ -217,6 +240,18 @@
                     name: data.groups[groupIndex]
                   });
                   break;
+                case this.ANALYSISTYPE_COUNT:
+                  _results.push(ret = {
+                    y: data.getCount(fieldIndex, groupIndex),
+                    name: data.groups[groupIndex]
+                  });
+                  break;
+                case this.ANALYSISTYPE_TOTAL:
+                  _results.push(ret = {
+                    y: data.getTotal(fieldIndex, groupIndex),
+                    name: data.groups[groupIndex]
+                  });
+                  break;
                 default:
                   _results.push(void 0);
               }
@@ -253,13 +288,13 @@
     };
 
     Bar.prototype.drawAnalysisTypeControls = function() {
-      var controls, fieldID, type, typestring, _i, _j, _len, _len1, _ref, _ref1, _ref2,
+      var controls, fieldID, fieldName, tempFields, type, typestring, _i, _j, _len, _len1, _ref, _ref1,
         _this = this;
       controls = '<div id="AnalysisTypeControl" class="vis_controls">';
       controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>';
-      _ref = [[this.ANALYSISTYPE_MAX, 'Max'], [this.ANALYSISTYPE_MIN, 'Min'], [this.ANALYSISTYPE_MEAN, 'Mean'], [this.ANALYSISTYPE_MEDIAN, 'Median']];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        _ref1 = _ref[_i], type = _ref1[0], typestring = _ref1[1];
+      _ref = this.analysisTypeNames;
+      for (type = _i = 0, _len = _ref.length; _i < _len; type = ++_i) {
+        typestring = _ref[type];
         controls += '<tr><td><div class="vis_control_table_div">';
         controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='" + type + "' " + (type === this.analysisType ? 'checked' : '') + "> " + typestring + "</input><br>";
         controls += '</div></td></tr>';
@@ -269,10 +304,20 @@
 
       controls += '<tr><td><div class="vis_control_table_div"><br>';
       controls += 'Sort by: <select class="sortField">';
-      _ref2 = data.normalFields;
-      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-        fieldID = _ref2[_j];
-        controls += "<option value='" + fieldID + "'" + (this.sortField === fieldID ? ' selected' : '') + ">" + data.fields[fieldID].fieldName + "</option>";
+      tempFields = (function() {
+        var _j, _len1, _ref1, _results;
+        _ref1 = data.normalFields;
+        _results = [];
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          fieldID = _ref1[_j];
+          _results.push([fieldID, data.fields[fieldID].fieldName]);
+        }
+        return _results;
+      })();
+      tempFields = [].concat([[null, 'Group Name']], tempFields);
+      for (_j = 0, _len1 = tempFields.length; _j < _len1; _j++) {
+        _ref1 = tempFields[_j], fieldID = _ref1[0], fieldName = _ref1[1];
+        controls += "<option value='" + fieldID + "'" + (this.sortField === fieldID ? ' selected' : '') + ">" + fieldName + "</option>";
       }
       controls += '</select>';
       controls += '</div></td></tr>';

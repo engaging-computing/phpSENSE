@@ -34,11 +34,13 @@ class window.Bar extends BaseHighVis
     ANALYSISTYPE_MIN:       1
     ANALYSISTYPE_MEAN:      2
     ANALYSISTYPE_MEDIAN:    3
+    ANALYSISTYPE_COUNT:     4
+    ANALYSISTYPE_TOTAL:     5
     
-    analysisTypeNames: ["Max","Min","Mean","Median"]
+    analysisTypeNames: ["Max","Min","Mean","Median","Count","Total"]
     
     analysisType:   0
-    sortField:      data.normalFields[0]
+    sortField:      null
     
     buildOptions: ->
         super()
@@ -98,16 +100,22 @@ class window.Bar extends BaseHighVis
         
         tempGroupIDValuePairs = for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
             switch @analysisType
-                when @ANALYSISTYPE_MAX      then [groupIndex, data.getMax    @sortField, groupIndex]
-                when @ANALYSISTYPE_MIN      then [groupIndex, data.getMin    @sortField, groupIndex]
-                when @ANALYSISTYPE_MEAN     then [groupIndex, data.getMean   @sortField, groupIndex]
-                when @ANALYSISTYPE_MEDIAN   then [groupIndex, data.getMedian @sortField, groupIndex]
-                
-        fieldSortedGroupIDValuePairs = tempGroupIDValuePairs.sort (a,b) ->
-            return if a[1] > b[1] then 1 else -1
+                when @ANALYSISTYPE_MAX      then [groupIndex, data.getMax       @sortField, groupIndex]
+                when @ANALYSISTYPE_MIN      then [groupIndex, data.getMin       @sortField, groupIndex]
+                when @ANALYSISTYPE_MEAN     then [groupIndex, data.getMean      @sortField, groupIndex]
+                when @ANALYSISTYPE_MEDIAN   then [groupIndex, data.getMedian    @sortField, groupIndex]
+                when @ANALYSISTYPE_COUNT    then [groupIndex, data.getCount     @sortField, groupIndex]
+                when @ANALYSISTYPE_TOTAL    then [groupIndex, data.getTotal     @sortField, groupIndex]
         
-        fieldSortedGroupIDs = for [groupID, groupValue] in fieldSortedGroupIDValuePairs
-            groupID
+        if @sortField != null
+            fieldSortedGroupIDValuePairs = tempGroupIDValuePairs.sort (a,b) ->
+                if a[1] > b[1] then 1 else -1
+        
+            fieldSortedGroupIDs = for [groupID, groupValue] in fieldSortedGroupIDValuePairs
+                groupID
+        else
+            fieldSortedGroupIDs = for groupName, groupID in data.groups
+                groupID
         
         ### --- ###
         
@@ -135,6 +143,14 @@ class window.Bar extends BaseHighVis
                         ret =
                             y:      data.getMedian fieldIndex, groupIndex
                             name:   data.groups[groupIndex]
+                    when @ANALYSISTYPE_COUNT
+                        ret =
+                            y:      data.getCount fieldIndex, groupIndex
+                            name:   data.groups[groupIndex]
+                    when @ANALYSISTYPE_TOTAL
+                        ret =
+                            y:      data.getTotal fieldIndex, groupIndex
+                            name:   data.groups[groupIndex]
                 
             @chart.addSeries options, false
         
@@ -158,7 +174,7 @@ class window.Bar extends BaseHighVis
             
         controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Analysis Type:</td></tr>'
         
-        for [type, typestring] in [[@ANALYSISTYPE_MAX, 'Max'],[@ANALYSISTYPE_MIN, 'Min'],[@ANALYSISTYPE_MEAN, 'Mean'],[@ANALYSISTYPE_MEDIAN, 'Median']]
+        for typestring, type in @analysisTypeNames
         
             controls += '<tr><td><div class="vis_control_table_div">'
         
@@ -172,9 +188,14 @@ class window.Bar extends BaseHighVis
     
         controls += 'Sort by: <select class="sortField">'
         
-        for fieldID in data.normalFields
+        tempFields = for fieldID in data.normalFields
+            [fieldID, data.fields[fieldID].fieldName]
+            
+        tempFields = [].concat [[null, 'Group Name']], tempFields
         
-            controls += "<option value='#{fieldID}'#{if @sortField is fieldID then ' selected' else ''}>#{data.fields[fieldID].fieldName}</option>"
+        for [fieldID, fieldName] in tempFields
+        
+            controls += "<option value='#{fieldID}'#{if @sortField is fieldID then ' selected' else ''}>#{fieldName}</option>"
         
         controls += '</select>'
     

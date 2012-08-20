@@ -178,6 +178,39 @@
   };
 
   /*
+  Gets the number of points belonging to fieldIndex and groupIndex
+  All included datapoints must pass the given filter (defaults to all datapoints).
+  */
+
+
+  data.getCount = function(fieldIndex, groupIndex) {
+    var dataCount;
+    dataCount = this.selector(fieldIndex, groupIndex).length;
+    return dataCount;
+  };
+
+  /*
+  Gets the sum of the points belonging to fieldIndex and groupIndex
+  All included datapoints must pass the given filter (defaults to all datapoints).
+  */
+
+
+  data.getTotal = function(fieldIndex, groupIndex) {
+    var rawData, total, value, _i, _len;
+    rawData = this.selector(fieldIndex, groupIndex);
+    if (rawData.length > 0) {
+      total = 0;
+      for (_i = 0, _len = rawData.length; _i < _len; _i++) {
+        value = rawData[_i];
+        total = total + value;
+      }
+      return total;
+    } else {
+      return null;
+    }
+  };
+
+  /*
   Gets a list of unique, non-null, stringified vals from the given field index.
   All included datapoints must pass the given filter (defaults to all datapoints).
   */
@@ -194,7 +227,7 @@
 
 
   data.makeGroups = function() {
-    var dp, keys, result, _i, _len, _ref, _results;
+    var dp, groups, keys, result, _i, _len, _ref;
     result = {};
     _ref = this.dataPoints;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -203,11 +236,15 @@
         result[String(dp[this.groupingFieldIndex]).toLowerCase()] = true;
       }
     }
-    _results = [];
-    for (keys in result) {
-      _results.push(keys);
-    }
-    return _results;
+    groups = (function() {
+      var _results;
+      _results = [];
+      for (keys in result) {
+        _results.push(keys);
+      }
+      return _results;
+    })();
+    return groups.sort();
   };
 
   /*
