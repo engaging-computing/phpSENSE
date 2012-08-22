@@ -137,9 +137,12 @@
     */
 
 
-    BaseVis.prototype.drawGroupControls = function() {
+    BaseVis.prototype.drawGroupControls = function(startOnGroup) {
       var controls, counter, fieldIndex, gIndex, group, _i, _j, _len, _len1, _ref3, _ref4, _ref5, _ref6,
         _this = this;
+      if (startOnGroup == null) {
+        startOnGroup = false;
+      }
       controls = '<div id="groupControl" class="vis_controls">';
       controls += "<h3 class='clean_shrink'><a href='#'>Groups:</a></h3>";
       controls += "<div class='outer_control_div'>";
@@ -193,7 +196,11 @@
           }
         });
         globals.groupSelection = selection;
-        return _this.delayedUpdate();
+        if (startOnGroup) {
+          return _this.start();
+        } else {
+          return _this.delayedUpdate();
+        }
       });
       if ((_ref6 = globals.groupOpen) == null) {
         globals.groupOpen = 0;
@@ -267,7 +274,12 @@
           }
         },
         series: [],
-        title: {}
+        title: {},
+        yAxis: {
+          title: {
+            text: globals.fieldSelection.length !== 1 ? 'Y-Values' : data.fields[globals.fieldSelection[0]].fieldName
+          }
+        }
       };
       this.chartOptions.xAxis = [];
       this.chartOptions.xAxis.push({});
@@ -314,7 +326,13 @@
 
 
     BaseHighVis.prototype.update = function() {
-      var options, _i, _len, _ref3, _results;
+      var options, temp, title, _i, _len, _ref3, _results;
+      title = globals.fieldSelection.length !== 1 ? temp = {
+        text: 'Y-Values'
+      } : temp = {
+        text: data.fields[globals.fieldSelection[0]].fieldName
+      };
+      this.chart.yAxis[0].setTitle(title, false);
       while (this.chart.series.length !== 0) {
         this.chart.series[0].remove(false);
       }

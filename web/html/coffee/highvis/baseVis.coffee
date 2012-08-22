@@ -96,7 +96,7 @@ class window.BaseVis
         This includes a series of checkboxes and a selector for the grouping field.
         The checkbox text color should correspond to the graph color.
     ###
-    drawGroupControls: ->
+    drawGroupControls: (startOnGroup = false) ->
         controls = '<div id="groupControl" class="vis_controls">'
 
         controls += "<h3 class='clean_shrink'><a href='#'>Groups:</a></h3>"
@@ -143,7 +143,11 @@ class window.BaseVis
                     selection.push Number @value
                 else
             globals.groupSelection = selection
-            @delayedUpdate()
+            
+            if startOnGroup
+                @start()
+            else
+                @delayedUpdate()
 
         #Set up accordion
         globals.groupOpen ?= 0
@@ -195,7 +199,7 @@ class window.BaseHighVis extends BaseVis
                                 arrayRemove(globals.fieldSelection, index)
                             else
                                 globals.fieldSelection.push(index)
-                                
+
                             @delayedUpdate()
             #point: {}
             series: []
@@ -204,9 +208,13 @@ class window.BaseHighVis extends BaseVis
             title: {}
             #tooltop: {}
             #xAxis: {}
-            #yAxis: {}
-            #exporting: {}
-            #navigation: {}
+            yAxis:
+                title:
+                    text: if globals.fieldSelection.length isnt 1
+                        'Y-Values'
+                    else
+                        data.fields[globals.fieldSelection[0]].fieldName
+                    
 
         @chartOptions.xAxis = []
         @chartOptions.xAxis.push {}
@@ -251,6 +259,15 @@ class window.BaseHighVis extends BaseVis
         Derrived classes should overload to add data drawing.
     ###
     update: ->
+        #Name Y Axis
+        title = if globals.fieldSelection.length isnt 1
+            temp =
+                text: 'Y-Values'
+        else
+            temp =
+                text: data.fields[globals.fieldSelection[0]].fieldName
+        @chart.yAxis[0].setTitle title, false
+    
         #Remove curent data
         while @chart.series.length isnt 0
             @chart.series[0].remove(false)
