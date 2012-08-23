@@ -66,63 +66,62 @@ class window.Map extends BaseVis
         
         for dataPoint in data.dataPoints
             lat = lon = null
+            do =>
+                # Grab geospatial
+                for field, fieldIndex in data.fields
+                    if (Number field.typeID) is data.types.GEOSPATIAL
+                        if (Number field.unitID) is data.units.GEOSPATIAL.LATITUDE
+                            lat = dataPoint[fieldIndex]
+                        else if (Number field.unitID) is data.units.GEOSPATIAL.LONGITUDE
+                            lon = dataPoint[fieldIndex]
 
-            # Grab geospatial
-            for field, fieldIndex in data.fields
-                if (Number field.typeID) is data.types.GEOSPATIAL
-                    if (Number field.unitID) is data.units.GEOSPATIAL.LATITUDE
-                        lat = dataPoint[fieldIndex]
-                    else if (Number field.unitID) is data.units.GEOSPATIAL.LONGITUDE
-                        lon = dataPoint[fieldIndex]
+                groupIndex = data.groups.indexOf dataPoint[data.groupingFieldIndex].toLowerCase()
+                color = globals.colors[groupIndex % globals.colors.length]
 
-            groupIndex = data.groups.indexOf dataPoint[data.groupingFieldIndex].toLowerCase()
-            color = globals.colors[groupIndex % globals.colors.length]
+                latlng = new google.maps.LatLng(lat, lon)
 
-            latlng = new google.maps.LatLng(lat, lon)
+                # Build info window content
+                label  = "<div style='font-size:9pt;overflow-x:none;'>"
+                label += "<div style='width:100%;text-align:center;color:#{color};'> #{dataPoint[data.groupingFieldIndex]}</div>"#<br>"
+                label += "<table>"
 
-            # Build info window content
-            label  = "<div style='font-size:9pt;overflow-x:none;'>"
-            label += "<div style='width:100%;text-align:center;color:#{color};'> #{dataPoint[data.groupingFieldIndex]}</div>"#<br>"
-            label += "<table>"
+                for field, fieldIndex in data.fields when dataPoint[fieldIndex] isnt null
+                    dat = if (Number field.typeID) is data.types.TIME
+                        new Date(dataPoint[fieldIndex])
+                    else
+                        dataPoint[fieldIndex]
 
-            for field, fieldIndex in data.fields when dataPoint[fieldIndex] isnt null
-                dat = if (Number field.typeID) is data.types.TIME
-                    new Date(dataPoint[fieldIndex])
-                else
-                    dataPoint[fieldIndex]
+                    label += "<tr><td>#{field.fieldName}</td>"
+                    label += "<td><strong>#{dat}</strong></td></tr>"
 
-                label += "<tr><td>#{field.fieldName}</td>"
-                label += "<td><strong>#{dat}</strong></td></tr>"
+                label += "</table></div>"
 
-            label += "</table></div>"
+                # make infowindow
+                info = new google.maps.InfoWindow
+                    content: label
 
-            # make infowindow
-            info = new google.maps.InfoWindow
-                content: label
+                iconOptions =
+                    color: color
 
-            iconOptions =
-                color: color
+                newMarker = new StyledMarker
+                    position: latlng
+                    map: @gmap
+                    styleIcon: new StyledIcon StyledIconTypes.MARKER, iconOptions
 
-            newMarker = new StyledMarker
-                position: latlng
-                map: @gmap
-                styleIcon: new StyledIcon StyledIconTypes.MARKER, iconOptions
+                if groupIndex in globals.groupSelection
+                    latlngbounds.extend latlng
 
-            if groupIndex in globals.groupSelection
-                latlngbounds.extend latlng
-
-            google.maps.event.addListener newMarker, 'click', do (newMarker) =>
-                =>
+                google.maps.event.addListener newMarker, 'click', =>
                     info.open @gmap, newMarker
 
-            @markers[groupIndex].push newMarker
+                @markers[groupIndex].push newMarker
 
-            for index in data.normalFields when dataPoint[index] isnt null
-                @heatPoints[index][groupIndex].push
-                    weight: dataPoint[data.normalFields[index]]
-                    location: latlng
-            
-            @heatPoints[@HEATMAP_MARKERS][groupIndex].push latlng
+                for index in data.normalFields when dataPoint[index] isnt null
+                    @heatPoints[index][groupIndex].push
+                        weight: dataPoint[index]
+                        location: latlng
+
+                @heatPoints[@HEATMAP_MARKERS][groupIndex].push latlng
 
         @gmap.fitBounds(latlngbounds)
 
@@ -136,7 +135,7 @@ class window.Map extends BaseVis
         for index, heatArray of @heatPoints when (Number index) is @heatmapSelection
             for groupArray, groupIndex in heatArray when groupIndex in globals.groupSelection
                 heats = heats.concat groupArray
-
+        
         # Disable old heatmap (if there)
         if @heatmap?
             @heatmap.setMap null
@@ -177,17 +176,28 @@ class window.Map extends BaseVis
         controls += '<div class="inner_control_div"> Map By: '
         controls += '<select class="heatmap_selector">'
 
-        controls += "<option value=\"#{@HEATMAP_NONE}\">None</option>"
-        controls += "<option value=\"#{@HEATMAP_MARKERS}\">Location</option>"
+        sel = if @heatmapSelection is @HEATMAP_NONE then 'selected' else ''
+        controls += "<option value=\"#{@HEATMAP_NONE}\" #{sel}>None</option>"
+        sel = if @heatmapSelection is @HEATMAP_MARKERS then 'selected' else ''
+        controls += "<option value=\"#{@HEATMAP_MARKERS}\" #{sel}>Location</option>"
         
         for fieldIndex in data.normalFields
-            controls += "<option value=\"#{Number fieldIndex}\">#{data.fields[fieldIndex].fieldName}</option>"
+            sel = if @heatmapSelection is fieldIndex then 'selected' else ''
+            controls += "<option value=\"#{Number fieldIndex}\" #{sel}>#{data.fields[fieldIndex].fieldName}</option>"
 
         controls += "</select></div>"
 
+        #Heatmap slider
+        controls += "<br>"
+        controls += "<div class='inner_control_div'> Heatmap Radius: "
+        controls += "<b id='radiusText'>#{@heatmapRadius}</b></div>"
+        controls += "<div id='heatmapSlider' style='width:95%'></div>"
+
+        # Other
         controls += "<br>"
         controls += "<h4 class='clean_shrink'>Other</h4>"
 
+        #marker checkbox
         controls += '<div class="inner_control_div">'
         controls += "<input class='marker_box' type='checkbox' name='marker_selector' #{if @visibleMarkers then 'checked' else ''}/> Markers "
         controls += "</div></div></div>"
@@ -206,6 +216,18 @@ class window.Map extends BaseVis
             
             @delayedUpdate()
 
+        #Set up slider
+        ($ '#heatmapSlider').slider
+            range: 'min'
+            value: @heatmapRadius
+            min: 5
+            max: 150
+            step: 5
+            slide: (event, ui) =>
+                @heatmapRadius = Number ui.value
+                ($ '#radiusText').html("#{@heatmapRadius}")
+                @delayedUpdate()
+        
         #Set up accordion
         globals.toolsOpen ?= 0
 

@@ -49,7 +49,7 @@
     }
 
     Map.prototype.start = function() {
-      var color, dat, dataPoint, field, fieldIndex, group, groupIndex, iconOptions, index, info, label, lat, latlng, latlngbounds, lon, mapOptions, newMarker, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _m, _n, _o, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6,
+      var dataPoint, group, index, lat, latlngbounds, lon, mapOptions, _fn, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3,
         _this = this;
       ($('#' + this.canvas)).show();
       this.markers = [];
@@ -82,9 +82,8 @@
       };
       this.gmap = new google.maps.Map(document.getElementById(this.canvas), mapOptions);
       _ref3 = data.dataPoints;
-      for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
-        dataPoint = _ref3[_l];
-        lat = lon = null;
+      _fn = function() {
+        var color, dat, field, fieldIndex, groupIndex, iconOptions, info, label, lat, latlng, lon, newMarker, _len4, _len5, _len6, _m, _n, _o, _ref4, _ref5, _ref6;
         _ref4 = data.fields;
         for (fieldIndex = _m = 0, _len4 = _ref4.length; _m < _len4; fieldIndex = ++_m) {
           field = _ref4[fieldIndex];
@@ -121,29 +120,32 @@
         };
         newMarker = new StyledMarker({
           position: latlng,
-          map: this.gmap,
+          map: _this.gmap,
           styleIcon: new StyledIcon(StyledIconTypes.MARKER, iconOptions)
         });
         if (__indexOf.call(globals.groupSelection, groupIndex) >= 0) {
           latlngbounds.extend(latlng);
         }
-        google.maps.event.addListener(newMarker, 'click', (function(newMarker) {
-          return function() {
-            return info.open(_this.gmap, newMarker);
-          };
-        })(newMarker));
-        this.markers[groupIndex].push(newMarker);
+        google.maps.event.addListener(newMarker, 'click', function() {
+          return info.open(_this.gmap, newMarker);
+        });
+        _this.markers[groupIndex].push(newMarker);
         _ref6 = data.normalFields;
         for (_o = 0, _len6 = _ref6.length; _o < _len6; _o++) {
           index = _ref6[_o];
           if (dataPoint[index] !== null) {
-            this.heatPoints[index][groupIndex].push({
-              weight: dataPoint[data.normalFields[index]],
+            _this.heatPoints[index][groupIndex].push({
+              weight: dataPoint[index],
               location: latlng
             });
           }
         }
-        this.heatPoints[this.HEATMAP_MARKERS][groupIndex].push(latlng);
+        return _this.heatPoints[_this.HEATMAP_MARKERS][groupIndex].push(latlng);
+      };
+      for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
+        dataPoint = _ref3[_l];
+        lat = lon = null;
+        _fn();
       }
       this.gmap.fitBounds(latlngbounds);
       return Map.__super__.start.call(this);
@@ -196,7 +198,7 @@
     };
 
     Map.prototype.drawToolControls = function() {
-      var controls, fieldIndex, _i, _len, _ref, _ref1,
+      var controls, fieldIndex, sel, _i, _len, _ref, _ref1,
         _this = this;
       controls = '<div id="toolControl" class="vis_controls">';
       controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>";
@@ -204,14 +206,21 @@
       controls += "<h4 class='clean_shrink'>Heat Maps</h4>";
       controls += '<div class="inner_control_div"> Map By: ';
       controls += '<select class="heatmap_selector">';
-      controls += "<option value=\"" + this.HEATMAP_NONE + "\">None</option>";
-      controls += "<option value=\"" + this.HEATMAP_MARKERS + "\">Location</option>";
+      sel = this.heatmapSelection === this.HEATMAP_NONE ? 'selected' : '';
+      controls += "<option value=\"" + this.HEATMAP_NONE + "\" " + sel + ">None</option>";
+      sel = this.heatmapSelection === this.HEATMAP_MARKERS ? 'selected' : '';
+      controls += "<option value=\"" + this.HEATMAP_MARKERS + "\" " + sel + ">Location</option>";
       _ref = data.normalFields;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         fieldIndex = _ref[_i];
-        controls += "<option value=\"" + (Number(fieldIndex)) + "\">" + data.fields[fieldIndex].fieldName + "</option>";
+        sel = this.heatmapSelection === fieldIndex ? 'selected' : '';
+        controls += "<option value=\"" + (Number(fieldIndex)) + "\" " + sel + ">" + data.fields[fieldIndex].fieldName + "</option>";
       }
       controls += "</select></div>";
+      controls += "<br>";
+      controls += "<div class='inner_control_div'> Heatmap Radius: ";
+      controls += "<b id='radiusText'>" + this.heatmapRadius + "</b></div>";
+      controls += "<div id='heatmapSlider' style='width:95%'></div>";
       controls += "<br>";
       controls += "<h4 class='clean_shrink'>Other</h4>";
       controls += '<div class="inner_control_div">';
@@ -227,6 +236,18 @@
         element = e.target || e.srcElement;
         _this.heatmapSelection = Number(element.value);
         return _this.delayedUpdate();
+      });
+      ($('#heatmapSlider')).slider({
+        range: 'min',
+        value: this.heatmapRadius,
+        min: 5,
+        max: 150,
+        step: 5,
+        slide: function(event, ui) {
+          _this.heatmapRadius = Number(ui.value);
+          ($('#radiusText')).html("" + _this.heatmapRadius);
+          return _this.delayedUpdate();
+        }
       });
       if ((_ref1 = globals.toolsOpen) == null) {
         globals.toolsOpen = 0;

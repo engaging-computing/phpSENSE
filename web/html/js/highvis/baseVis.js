@@ -138,7 +138,7 @@
 
 
     BaseVis.prototype.drawGroupControls = function(startOnGroup) {
-      var controls, counter, fieldIndex, gIndex, group, _i, _j, _len, _len1, _ref3, _ref4, _ref5, _ref6,
+      var controls, counter, fieldIndex, gIndex, group, sel, _i, _j, _len, _len1, _ref3, _ref4, _ref5, _ref6,
         _this = this;
       if (startOnGroup == null) {
         startOnGroup = false;
@@ -151,7 +151,8 @@
       _ref3 = data.textFields;
       for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
         fieldIndex = _ref3[_i];
-        controls += "<option value=\"" + (Number(fieldIndex)) + "\">" + data.fields[fieldIndex].fieldName + "</option>";
+        sel = fieldIndex === data.groupingFieldIndex ? 'selected' : '';
+        controls += "<option value='" + (Number(fieldIndex)) + "' " + sel + ">" + data.fields[fieldIndex].fieldName + "</option>";
       }
       controls += "</select></div>";
       counter = 0;
@@ -167,21 +168,19 @@
       controls += '</div></div>';
       ($('#controldiv')).append(controls);
       ($('.group_selector')).change(function(e) {
-        var element, _ref6;
+        var element;
         element = e.target || e.srcElement;
         data.setGroupIndex(Number(element.value));
-        if ((_ref6 = globals.groupSelection) == null) {
-          globals.groupSelection = (function() {
-            var _k, _len2, _ref7, _results;
-            _ref7 = data.groups;
-            _results = [];
-            for (keys = _k = 0, _len2 = _ref7.length; _k < _len2; keys = ++_k) {
-              vals = _ref7[keys];
-              _results.push(Number(keys));
-            }
-            return _results;
-          })();
-        }
+        globals.groupSelection = (function() {
+          var _k, _len2, _ref6, _results;
+          _ref6 = data.groups;
+          _results = [];
+          for (keys = _k = 0, _len2 = _ref6.length; _k < _len2; keys = ++_k) {
+            vals = _ref6[keys];
+            _results.push(Number(keys));
+          }
+          return _results;
+        })();
         _this.delayedUpdate();
         return _this.drawControls();
       });

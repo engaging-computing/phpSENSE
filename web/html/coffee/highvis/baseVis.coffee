@@ -108,7 +108,8 @@ class window.BaseVis
         controls += '<select class="group_selector">'
 
         for fieldIndex in data.textFields
-            controls += "<option value=\"#{Number fieldIndex}\">#{data.fields[fieldIndex].fieldName}</option>"
+            sel = if fieldIndex is data.groupingFieldIndex then 'selected' else ''
+            controls += "<option value='#{Number fieldIndex}' #{sel}>#{data.fields[fieldIndex].fieldName}</option>"
 
         controls += "</select></div>"
 
@@ -130,7 +131,7 @@ class window.BaseVis
         ($ '.group_selector').change (e) =>
             element = e.target or e.srcElement
             data.setGroupIndex (Number element.value)
-            globals.groupSelection ?= for vals, keys in data.groups
+            globals.groupSelection = for vals, keys in data.groups
                 Number keys
             @delayedUpdate()
             @drawControls()
