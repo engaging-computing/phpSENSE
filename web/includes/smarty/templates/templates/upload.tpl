@@ -14,8 +14,10 @@
     var sloc = '{$session_citystate}';
     {literal}
 
-    $('#col_match').append("<table id='mismatch_table' width='100%' style='text-align:center;border:1px solid black;'><thead><tr><th>Field</th><th>Headers</th></tr></thead><tbody id='mrows'></tbody></table><input style='margin-top:5px;' id='match_submit' type='submit'/>" );
+    $('#col_match').append("<table id='mismatch_table' width='100%''><thead><tr><th>Field</th><th>Headers</th></tr></thead><tbody id='mrows'></tbody></table>" );
     
+    $('#match_submit').button();
+
     for( var field in ufields ){
         var header_drop_down = "<select id='header_"+ufields[field][0]+"'>";
         
@@ -25,35 +27,31 @@
 
         header_drop_down += "</select>";
 
-        $('#mrows').append('<tr><td id="field_'+ufields[field][0]+'">'+ufields[field][1]+'</td><td>'+header_drop_down+'</td></tr>');
+        $('#mrows').append('<tr><td id="field_'+ufields[field][0]+'">'+ufields[field][1]+'</td><td style=text-align:center;>'+header_drop_down+'</td></tr>');
     }
 
- 
-
-    $('#match_submit').click(function(){
+    $('#col_match').dialog({ buttons: { "Submit": function(){
         var matched = [];
         for( var field in ufields ){
             matched[matched.length] = {field: ufields[field][0], header:$('#header_'+ufields[field][0]).val()}
         }
-
+        
         $.ajax({
             url: '../../actions/upload.php',
             type: "POST",
             data: {matched_columns: matched, file: filename, eid: eid, sname: sname, sdesc: sdesc, sloc: sloc}
         }).done(function(msg){
             $('#col_match').dialog('close');
-           
+            
             window.location = "newvis.php?sessions="+msg;
-       
+            
         }).fail(function(){
             alert('Something broke');
         });
-
-    });
-
-    $('#col_match').dialog({width: "800",modal:true,draggable:false,closeOnEscape:false,resizable:false});   
-
-    $('.ui-icon-closethick').hide();
+        
+    }},minWidth:"400",modal:true,draggable:false,closeOnEscape:false,resizable:false});  
+    
+    $('.ui-dialog-titlebar-close').hide();
 
     });
     {/literal}
@@ -77,27 +75,25 @@
                         <fieldset id="basic-info">
             
                             { if $hideName || $hideProcedure || $hideLocation}
-                    
-                               
-                    
+
                                 <legend>Step 1: Session Information</legend>
                                 <p>Your session will be created with the following information.</p>
                                 
                                 { if $hideName }
                                 <label for="session_name">* Name:</label>
-                                <input type="text" name="session_name" id="session_name" class="required urlSafe" value="" onKeyPress="return event.keyCode!=13"/>
+                                <input type="text" name="session_name" id="session_name" class="required urlSafe" value="{$session_name}" onKeyPress="return event.keyCode!=13"/>
                                 <br/>
                                 <span id="session_name_hint" class="hint">Example: "My Super Awesome Test"</span><br/>
                                 
                                 {/if}{ if $hideProcedure }
                                 <label for="session_description">* Procedure:</label>
-                                <textarea name="session_description" id="session_description" class="required"></textarea>
+                                <textarea name="session_description" id="session_description" class="required">{$session_description}</textarea>
                                 <br/>
                                 <span id="session_description_hint" class="hint">Describe the session procedure and other details.</span><br/>
                                 
                                 {/if}{ if $hideLocation }
                                 <label for="session_citystate">* Location:</label>
-                                <input type="text" name="session_citystate" id="session_citystate" value="" class="required" onKeyPress="return event.keyCode!=13"/>
+                                <input type="text" name="session_citystate" id="session_citystate" value="{$session_citystate}" class="required" onKeyPress="return event.keyCode!=13"/>
                                 <br/>
                                 <span id="session_citystate_hint" class="hint">Example: "4 Yawkey Way, Boston, MA" or "Boston, Ma" </span><br/>
                                 
