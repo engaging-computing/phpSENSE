@@ -116,7 +116,7 @@ if(isset($_REQUEST['sessions'])) {
 
     }
     
-    array_unshift($data->fields, new DataField(-1, "Session ID-Name", 37, 81, "Text", "Text", ""));
+    array_unshift($data->fields, new DataField(-1, "Session Name(ID)", 37, 81, "Text", "Text", ""));
     
     $newdata = array();
 
@@ -126,7 +126,7 @@ if(isset($_REQUEST['sessions'])) {
     foreach( $sessions as $index=>$ses ) {
 
         //Make Session ID-Name value
-        $idName = "" . $ses . "-" . $sessionNames[$ses] . "";
+        $idName = "" . $sessionNames[$ses] . "(" . $ses . ")";
         
         //Add Session ID-Name field to data
         $tmpData = getData($data->experimentID, $ses);

@@ -60,7 +60,7 @@ class window.Scatter extends BaseHighVis
             tooltip:
                 formatter: ->
                     if self.advancedTooltips
-                        str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                        str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div>"#<br>"
                         str += "<table>"
 
                         for field, fieldIndex in data.fields when @point.datapoint[fieldIndex] isnt null
@@ -74,7 +74,7 @@ class window.Scatter extends BaseHighVis
                             
                         str += "</table>"
                     else
-                        str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                        str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div>"#<br>"
                         str += "<table>"
                         str += "<tr><td>#{@series.xAxis.options.title.text}:</td><td><strong>#{@x}</strong></td></tr>"
                         str += "<tr><td>#{@series.name.field}:</td><td><strong>#{@y}</strong></td></tr>"
@@ -150,10 +150,12 @@ class window.Scatter extends BaseHighVis
                     when @mode is @SYMBOLS_LINES_MODE
                         options.marker =
                             symbol: globals.symbols[symbolIndex % globals.symbols.length]
+                            lineColor: null
 
                     when @mode is @SYMBOLS_MODE
                         options.marker =
                             symbol: globals.symbols[symbolIndex % globals.symbols.length]
+                            lineColor: null
                         options.lineWidth = 0
 
                     when @mode is @LINES_MODE
