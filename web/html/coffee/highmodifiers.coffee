@@ -32,6 +32,11 @@ data.types =
     TEXT: 37
     GEOSPATIAL: 19
 
+data.units =
+    GEOSPATIAL:
+        LATITUDE: 57
+        LONGITUDE: 58
+
 ###
 Selects data in an x,y object format of the given group.
 ###
@@ -193,13 +198,19 @@ data.timeFields = for field, index in data.fields when (Number field.typeID) is 
 ###
 Gets a list of non-text, non-time field indicies
 ###
-data.normalFields = for field, index in data.fields when (Number field.typeID) not in [data.types.TEXT, data.types.TIME]
+data.normalFields = for field, index in data.fields when (Number field.typeID) not in [data.types.TEXT, data.types.TIME, data.types.GEOSPATIAL]
     Number index
 
 ###
 Gets a list of non-text field indicies
 ###
 data.numericFields = for field, index in data.fields when (Number field.typeID) not in [data.types.TEXT]
+    Number index
+
+###
+Gets a list of geolocation field indicies
+###
+data.geoFields = for field, index in data.fields when (Number field.typeID) isnt data.types.GEOSPATIAL
     Number index
 
 

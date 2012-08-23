@@ -39,6 +39,13 @@
     GEOSPATIAL: 19
   };
 
+  data.units = {
+    GEOSPATIAL: {
+      LATITUDE: 57,
+      LONGITUDE: 58
+    }
+  };
+
   /*
   Selects data in an x,y object format of the given group.
   */
@@ -294,7 +301,7 @@
     _results = [];
     for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
       field = _ref[index];
-      if ((_ref1 = Number(field.typeID)) !== data.types.TEXT && _ref1 !== data.types.TIME) {
+      if ((_ref1 = Number(field.typeID)) !== data.types.TEXT && _ref1 !== data.types.TIME && _ref1 !== data.types.GEOSPATIAL) {
         _results.push(Number(index));
       }
     }
@@ -313,6 +320,24 @@
     for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
       field = _ref[index];
       if ((_ref1 = Number(field.typeID)) !== data.types.TEXT) {
+        _results.push(Number(index));
+      }
+    }
+    return _results;
+  })();
+
+  /*
+  Gets a list of geolocation field indicies
+  */
+
+
+  data.geoFields = (function() {
+    var _i, _len, _ref, _results;
+    _ref = data.fields;
+    _results = [];
+    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+      field = _ref[index];
+      if ((Number(field.typeID)) !== data.types.GEOSPATIAL) {
         _results.push(Number(index));
       }
     }
