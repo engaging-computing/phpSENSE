@@ -107,16 +107,16 @@
 
                            </div>
                            <div>
-                                <div style="float:left;width:50%">Is there a recommended sample rate?</div>
-                                    <div><select name="req_sample_rate" id="req_sample_rate">
+                                <div style="float:left;width:50%">Is there a recommended sample interval?</div>
+                                    <div><select name="req_sample_interval" id="req_sample_interval">
                                         <option value="0">No</option>
-                                        <option value="1">Yes</option>
+                                        <option value="1" {if $values.req_sample_interval == 1} selected {/if}>Yes</option>
                                     </select><br /><br /></div>
                                     
-                                <div id="sample_rate_option" style="display:none;">
-                                    <span id="srate_label">&nbsp;&nbsp;<b>Sample rate:</b></span>
-                                    <input type="number" name="srate" id="srate_input" style="position:absolute;left:31%;width:15%" /><br /><br />
-                                    <span style="float:none;left:5%" id="srate_hint" class="hint">i.e., 1000 milliseconds is 1 second</span><br />
+                                <div id="sample_interval_option" {if not $values.req_sample_interval == 1} style="display:none;{/if}">
+                                    <span id="sinterval_label">&nbsp;&nbsp;<b>Sample interval:</b></span>
+                                    <input type="number" name="interval" id="sinterval_input" value="{$values.interval}" min="1" style="width:15%;text-align:right;" /> ms<br />
+                                    <span style="float:none;left:5%" id="sinterval_hint" class="hint">i.e., 1000 milliseconds is 1 second</span><br />
                                 </div>
                            </div>
                         </div>

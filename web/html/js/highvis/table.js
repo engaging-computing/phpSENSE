@@ -127,6 +127,7 @@
     };
 
     Table.prototype.drawControls = function() {
+      Table.__super__.drawControls.call(this);
       return this.drawGroupControls();
     };
 

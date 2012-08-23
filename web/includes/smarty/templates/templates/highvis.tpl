@@ -27,24 +27,25 @@
  -->
 
 
-<ul id="vis_select">
-</ul>
-
-
-<div id="select_vis" style="padding: 14px 0px 0px 0px; text-align:right">
-
 </div>
 <div id="viscontainer">
-    <canvas id="viscanvas" width="860px" height="400px"><div id="session_image" style="display: none;"></div></canvas>
-    <div id="map_canvas" style="width:860px;min-height:450px;"></div>
-    <div id="table_canvas" style="width: 860px;"></div>
-    <div id="timeline_canvas" style="width: 860px; height: 500px"></div>
-    <div id="scatter_canvas" style="width: 860px; height: 500px"></div>
-    <div id="bar_canvas" style="width: 860px; height: 500px"></div>
-    <div id="histogram_canvas" style="width: 860px; height: 500px"></div>
-    <div id="motion_canvas" style="width: 860px; height: 500px"></div>
-    <div id="controldiv" style="margin: 20px; overflow:hidden;"></div>
-</div>
 
-<div id="vis" style="width:100%;"></div>
-<div id="legend" style="width:100%;"></div>
+    <ul id='visTabList'>
+    </ul>
+
+
+    <div id="map_canvas" class="vis_canvas"></div>
+    <div id="table_canvas" class="vis_canvas"></div>
+    <div id="timeline_canvas" class="vis_canvas"></div>
+    <div id="scatter_canvas" class="vis_canvas"></div>
+    <div id="bar_canvas" class="vis_canvas"></div>
+    <div id="histogram_canvas" class="vis_canvas"></div>
+    <div id="motion_canvas" class="vis_canvas"></div>
+
+    
+
+    <div id='controlhider'>
+        <button id="control_hide_button" type="button" style="margin:5px;"> > </button>
+    </div>
+    <div id="controldiv"></div>
+</div>

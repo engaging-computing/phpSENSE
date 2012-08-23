@@ -39,8 +39,9 @@ class window.BaseVis
     Start sequence used by runtime
     ###
     start: ->
+        @drawControls()
         @update()
-
+        
     ###
     Update minor state
         Redraws html controls
@@ -48,15 +49,19 @@ class window.BaseVis
         Derrived classes should overload to reload content.
     ###
     update: ->
-        @clearControls()
-        @drawControls()
 
     ###
     Default delayed update simply updates
     ###
     delayedUpdate: ->
         @update()
-        
+
+    ###
+    Method called when vis resize has begun
+        Defaults to doing nothing.
+    ###
+    resize: (newWidth, newHeight) ->
+    
     ###
     End sequence used by runtime
         This is called when the user switches away from this vis.
@@ -77,52 +82,47 @@ class window.BaseVis
         Derived classes should write control HTML and bind handlers using the method such as drawGroupControls.
     ###
     drawControls: ->
-        console.log console.trace()
-        alert   """
-                BAD IMPLEMENTATION ALERT!
-
-                Called: 'BaseVis.drawControls'
-
-                See logged stack trace in console.
-                """
+        @clearControls()
 
     ###
     Clear the controls
         Unbinds control handlers and clears the HTML elements.
     ###
     clearControls: ->
-        ($ '#controldiv').html('')
+        ($ '#controldiv').empty()
 
     ###
     Draws group selection controls
         This includes a series of checkboxes and a selector for the grouping field.
         The checkbox text color should correspond to the graph color.
     ###
-    drawGroupControls: ->
+    drawGroupControls: (startOnGroup = false) ->
         controls = '<div id="groupControl" class="vis_controls">'
 
-        controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Groups:</tr></td>'
+        controls += "<h3 class='clean_shrink'><a href='#'>Groups:</a></h3>"
+
+        controls += "<div class='outer_control_div'>"
 
         # Add grouping selector
-        controls += '<tr><td><div class="vis_control_table_div">'
+        controls += '<div class="inner_control_div"> Group By: '
         controls += '<select class="group_selector">'
 
         for fieldIndex in data.textFields
-            controls += "<option value=\"#{Number fieldIndex}\">#{data.fields[fieldIndex].fieldName}</option>"
+            sel = if fieldIndex is data.groupingFieldIndex then 'selected' else ''
+            controls += "<option value='#{Number fieldIndex}' #{sel}>#{data.fields[fieldIndex].fieldName}</option>"
 
-        controls += "</select></div></td></tr>"
+        controls += "</select></div>"
 
         # Populate choices
         counter = 0
         for group, gIndex in data.groups
-            controls += '<tr><td>'
-            controls += "<div class=\"vis_control_table_div\" style=\"color:#{globals.colors[counter % globals.colors.length]};\">"
+            controls += "<div class='inner_control_div' style=\"color:#{globals.colors[counter % globals.colors.length]};\">"
 
             controls += "<input class='group_input' type='checkbox' value='#{gIndex}' #{if (Number gIndex) in globals.groupSelection then "checked" else ""}/>&nbsp"
-            controls += "#{group}&nbsp"
-            controls += "</div></td></tr>"
+            controls += "#{group}"
+            controls += "</div>"
             counter += 1
-        controls += '</table></div>'
+        controls += '</div></div>'
 
         # Write HTML
         ($ '#controldiv').append controls
@@ -131,9 +131,10 @@ class window.BaseVis
         ($ '.group_selector').change (e) =>
             element = e.target or e.srcElement
             data.setGroupIndex (Number element.value)
-            globals.groupSelection ?= for vals, keys in data.groups
+            globals.groupSelection = for vals, keys in data.groups
                 Number keys
             @delayedUpdate()
+            @drawControls()
 
         # Make group checkbox handler
         ($ '.group_input').click (e) =>
@@ -143,7 +144,21 @@ class window.BaseVis
                     selection.push Number @value
                 else
             globals.groupSelection = selection
-            @delayedUpdate()
+            
+            if startOnGroup
+                @start()
+            else
+                @delayedUpdate()
+
+        #Set up accordion
+        globals.groupOpen ?= 0
+            
+        ($ '#groupControl').accordion
+            collapsible:true
+            active:globals.groupOpen
+
+        ($ '#groupControl > h3').click ->
+            globals.groupOpen = (globals.groupOpen + 1) % 2
 
 
 class window.BaseHighVis extends BaseVis
@@ -162,7 +177,7 @@ class window.BaseHighVis extends BaseVis
         @chartOptions = 
             chart:
                 renderTo: @canvas
-                animation: false
+                reflow: false
             #colors:
             credits:
                 enabled: false
@@ -185,7 +200,7 @@ class window.BaseHighVis extends BaseVis
                                 arrayRemove(globals.fieldSelection, index)
                             else
                                 globals.fieldSelection.push(index)
-                                
+
                             @delayedUpdate()
             #point: {}
             series: []
@@ -194,9 +209,13 @@ class window.BaseHighVis extends BaseVis
             title: {}
             #tooltop: {}
             #xAxis: {}
-            #yAxis: {}
-            #exporting: {}
-            #navigation: {}
+            yAxis:
+                title:
+                    text: if globals.fieldSelection.length isnt 1
+                        'Y-Values'
+                    else
+                        data.fields[globals.fieldSelection[0]].fieldName
+                    
 
         @chartOptions.xAxis = []
         @chartOptions.xAxis.push {}
@@ -231,7 +250,8 @@ class window.BaseHighVis extends BaseVis
         @chart = new Highcharts.Chart @chartOptions
     
         ($ '#' + @canvas).show()
-        @update()
+        
+        super()
 
     ###
     Update minor state
@@ -240,15 +260,22 @@ class window.BaseHighVis extends BaseVis
         Derrived classes should overload to add data drawing.
     ###
     update: ->
-        super()
-
+        #Name Y Axis
+        title = if globals.fieldSelection.length isnt 1
+            temp =
+                text: 'Y-Values'
+        else
+            temp =
+                text: data.fields[globals.fieldSelection[0]].fieldName
+        @chart.yAxis[0].setTitle title, false
+    
         #Remove curent data
         while @chart.series.length isnt 0
             @chart.series[0].remove(false)
 
         #Draw legend
         for options in @buildLegendSeries()
-            @chart.addSeries options, false
+           @chart.addSeries options, false
         
     ###
     Performs an update while displaying the loading text
@@ -262,6 +289,13 @@ class window.BaseHighVis extends BaseVis
         setTimeout update, 1
 
         @chart.hideLoading()
+
+    ###
+    Method called when vis resize has begun
+        Resize highcharts to match
+    ###
+    resize: (newWidth, newHeight) ->
+        @chart.setSize(newWidth, newHeight, {duration: 600, easing:'linear'})
         
     ###
     End sequence used by runtime

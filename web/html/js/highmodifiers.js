@@ -39,6 +39,13 @@
     GEOSPATIAL: 19
   };
 
+  data.units = {
+    GEOSPATIAL: {
+      LATITUDE: 57,
+      LONGITUDE: 58
+    }
+  };
+
   /*
   Selects data in an x,y object format of the given group.
   */
@@ -178,6 +185,39 @@
   };
 
   /*
+  Gets the number of points belonging to fieldIndex and groupIndex
+  All included datapoints must pass the given filter (defaults to all datapoints).
+  */
+
+
+  data.getCount = function(fieldIndex, groupIndex) {
+    var dataCount;
+    dataCount = this.selector(fieldIndex, groupIndex).length;
+    return dataCount;
+  };
+
+  /*
+  Gets the sum of the points belonging to fieldIndex and groupIndex
+  All included datapoints must pass the given filter (defaults to all datapoints).
+  */
+
+
+  data.getTotal = function(fieldIndex, groupIndex) {
+    var rawData, total, value, _i, _len;
+    rawData = this.selector(fieldIndex, groupIndex);
+    if (rawData.length > 0) {
+      total = 0;
+      for (_i = 0, _len = rawData.length; _i < _len; _i++) {
+        value = rawData[_i];
+        total = total + value;
+      }
+      return total;
+    } else {
+      return null;
+    }
+  };
+
+  /*
   Gets a list of unique, non-null, stringified vals from the given field index.
   All included datapoints must pass the given filter (defaults to all datapoints).
   */
@@ -194,7 +234,7 @@
 
 
   data.makeGroups = function() {
-    var dp, keys, result, _i, _len, _ref, _results;
+    var dp, groups, keys, result, _i, _len, _ref;
     result = {};
     _ref = this.dataPoints;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -203,11 +243,15 @@
         result[String(dp[this.groupingFieldIndex]).toLowerCase()] = true;
       }
     }
-    _results = [];
-    for (keys in result) {
-      _results.push(keys);
-    }
-    return _results;
+    groups = (function() {
+      var _results;
+      _results = [];
+      for (keys in result) {
+        _results.push(keys);
+      }
+      return _results;
+    })();
+    return groups.sort();
   };
 
   /*
@@ -257,7 +301,7 @@
     _results = [];
     for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
       field = _ref[index];
-      if ((_ref1 = Number(field.typeID)) !== data.types.TEXT && _ref1 !== data.types.TIME) {
+      if ((_ref1 = Number(field.typeID)) !== data.types.TEXT && _ref1 !== data.types.TIME && _ref1 !== data.types.GEOSPATIAL) {
         _results.push(Number(index));
       }
     }
@@ -276,6 +320,24 @@
     for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
       field = _ref[index];
       if ((_ref1 = Number(field.typeID)) !== data.types.TEXT) {
+        _results.push(Number(index));
+      }
+    }
+    return _results;
+  })();
+
+  /*
+  Gets a list of geolocation field indicies
+  */
+
+
+  data.geoFields = (function() {
+    var _i, _len, _ref, _results;
+    _ref = data.fields;
+    _results = [];
+    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+      field = _ref[index];
+      if ((Number(field.typeID)) !== data.types.GEOSPATIAL) {
         _results.push(Number(index));
       }
     }

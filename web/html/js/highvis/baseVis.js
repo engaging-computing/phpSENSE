@@ -67,6 +67,7 @@
 
 
     BaseVis.prototype.start = function() {
+      this.drawControls();
       return this.update();
     };
 
@@ -78,10 +79,7 @@
     */
 
 
-    BaseVis.prototype.update = function() {
-      this.clearControls();
-      return this.drawControls();
-    };
+    BaseVis.prototype.update = function() {};
 
     /*
         Default delayed update simply updates
@@ -91,6 +89,14 @@
     BaseVis.prototype.delayedUpdate = function() {
       return this.update();
     };
+
+    /*
+        Method called when vis resize has begun
+            Defaults to doing nothing.
+    */
+
+
+    BaseVis.prototype.resize = function(newWidth, newHeight) {};
 
     /*
         End sequence used by runtime
@@ -111,8 +117,7 @@
 
 
     BaseVis.prototype.drawControls = function() {
-      console.log(console.trace());
-      return alert("BAD IMPLEMENTATION ALERT!\n\nCalled: 'BaseVis.drawControls'\n\nSee logged stack trace in console.");
+      return this.clearControls();
     };
 
     /*
@@ -122,7 +127,7 @@
 
 
     BaseVis.prototype.clearControls = function() {
-      return ($('#controldiv')).html('');
+      return ($('#controldiv')).empty();
     };
 
     /*
@@ -132,51 +137,54 @@
     */
 
 
-    BaseVis.prototype.drawGroupControls = function() {
-      var controls, counter, fieldIndex, gIndex, group, _i, _j, _len, _len1, _ref3, _ref4, _ref5,
+    BaseVis.prototype.drawGroupControls = function(startOnGroup) {
+      var controls, counter, fieldIndex, gIndex, group, sel, _i, _j, _len, _len1, _ref3, _ref4, _ref5, _ref6,
         _this = this;
+      if (startOnGroup == null) {
+        startOnGroup = false;
+      }
       controls = '<div id="groupControl" class="vis_controls">';
-      controls += '<table class="vis_control_table"><tr><td class="vis_control_table_title">Groups:</tr></td>';
-      controls += '<tr><td><div class="vis_control_table_div">';
+      controls += "<h3 class='clean_shrink'><a href='#'>Groups:</a></h3>";
+      controls += "<div class='outer_control_div'>";
+      controls += '<div class="inner_control_div"> Group By: ';
       controls += '<select class="group_selector">';
       _ref3 = data.textFields;
       for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
         fieldIndex = _ref3[_i];
-        controls += "<option value=\"" + (Number(fieldIndex)) + "\">" + data.fields[fieldIndex].fieldName + "</option>";
+        sel = fieldIndex === data.groupingFieldIndex ? 'selected' : '';
+        controls += "<option value='" + (Number(fieldIndex)) + "' " + sel + ">" + data.fields[fieldIndex].fieldName + "</option>";
       }
-      controls += "</select></div></td></tr>";
+      controls += "</select></div>";
       counter = 0;
       _ref4 = data.groups;
       for (gIndex = _j = 0, _len1 = _ref4.length; _j < _len1; gIndex = ++_j) {
         group = _ref4[gIndex];
-        controls += '<tr><td>';
-        controls += "<div class=\"vis_control_table_div\" style=\"color:" + globals.colors[counter % globals.colors.length] + ";\">";
+        controls += "<div class='inner_control_div' style=\"color:" + globals.colors[counter % globals.colors.length] + ";\">";
         controls += "<input class='group_input' type='checkbox' value='" + gIndex + "' " + ((_ref5 = Number(gIndex), __indexOf.call(globals.groupSelection, _ref5) >= 0) ? "checked" : "") + "/>&nbsp";
-        controls += "" + group + "&nbsp";
-        controls += "</div></td></tr>";
+        controls += "" + group;
+        controls += "</div>";
         counter += 1;
       }
-      controls += '</table></div>';
+      controls += '</div></div>';
       ($('#controldiv')).append(controls);
       ($('.group_selector')).change(function(e) {
-        var element, _ref6;
+        var element;
         element = e.target || e.srcElement;
         data.setGroupIndex(Number(element.value));
-        if ((_ref6 = globals.groupSelection) == null) {
-          globals.groupSelection = (function() {
-            var _k, _len2, _ref7, _results;
-            _ref7 = data.groups;
-            _results = [];
-            for (keys = _k = 0, _len2 = _ref7.length; _k < _len2; keys = ++_k) {
-              vals = _ref7[keys];
-              _results.push(Number(keys));
-            }
-            return _results;
-          })();
-        }
-        return _this.delayedUpdate();
+        globals.groupSelection = (function() {
+          var _k, _len2, _ref6, _results;
+          _ref6 = data.groups;
+          _results = [];
+          for (keys = _k = 0, _len2 = _ref6.length; _k < _len2; keys = ++_k) {
+            vals = _ref6[keys];
+            _results.push(Number(keys));
+          }
+          return _results;
+        })();
+        _this.delayedUpdate();
+        return _this.drawControls();
       });
-      return ($('.group_input')).click(function(e) {
+      ($('.group_input')).click(function(e) {
         var selection;
         selection = [];
         ($('.group_input')).each(function() {
@@ -187,7 +195,21 @@
           }
         });
         globals.groupSelection = selection;
-        return _this.delayedUpdate();
+        if (startOnGroup) {
+          return _this.start();
+        } else {
+          return _this.delayedUpdate();
+        }
+      });
+      if ((_ref6 = globals.groupOpen) == null) {
+        globals.groupOpen = 0;
+      }
+      ($('#groupControl')).accordion({
+        collapsible: true,
+        active: globals.groupOpen
+      });
+      return ($('#groupControl > h3')).click(function() {
+        return globals.groupOpen = (globals.groupOpen + 1) % 2;
       });
     };
 
@@ -221,7 +243,7 @@
       this.chartOptions = {
         chart: {
           renderTo: this.canvas,
-          animation: false
+          reflow: false
         },
         credits: {
           enabled: false
@@ -251,7 +273,12 @@
           }
         },
         series: [],
-        title: {}
+        title: {},
+        yAxis: {
+          title: {
+            text: globals.fieldSelection.length !== 1 ? 'Y-Values' : data.fields[globals.fieldSelection[0]].fieldName
+          }
+        }
       };
       this.chartOptions.xAxis = [];
       this.chartOptions.xAxis.push({});
@@ -286,7 +313,7 @@
       this.buildOptions();
       this.chart = new Highcharts.Chart(this.chartOptions);
       ($('#' + this.canvas)).show();
-      return this.update();
+      return BaseHighVis.__super__.start.call(this);
     };
 
     /*
@@ -298,8 +325,13 @@
 
 
     BaseHighVis.prototype.update = function() {
-      var options, _i, _len, _ref3, _results;
-      BaseHighVis.__super__.update.call(this);
+      var options, temp, title, _i, _len, _ref3, _results;
+      title = globals.fieldSelection.length !== 1 ? temp = {
+        text: 'Y-Values'
+      } : temp = {
+        text: data.fields[globals.fieldSelection[0]].fieldName
+      };
+      this.chart.yAxis[0].setTitle(title, false);
       while (this.chart.series.length !== 0) {
         this.chart.series[0].remove(false);
       }
@@ -326,6 +358,19 @@
       };
       setTimeout(update, 1);
       return this.chart.hideLoading();
+    };
+
+    /*
+        Method called when vis resize has begun
+            Resize highcharts to match
+    */
+
+
+    BaseHighVis.prototype.resize = function(newWidth, newHeight) {
+      return this.chart.setSize(newWidth, newHeight, {
+        duration: 600,
+        easing: 'linear'
+      });
     };
 
     /*

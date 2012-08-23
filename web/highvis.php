@@ -70,6 +70,8 @@ if(isset($_REQUEST['sessions'])) {
 
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mousewheel.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mCustomScrollbar.js"></script>';
+    $head .= '<script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=visualization&sensor=false"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/lib/StyledMarker.js"></script>';
 
     $head .= '<script type="text/javascript" src="/html/js/highvis/highcharts/highcharts.js"></script>';
 
@@ -83,7 +85,6 @@ if(isset($_REQUEST['sessions'])) {
     $head .= '<script type="text/javascript" src="/html/js/highvis/histogram.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/bar.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/table.js"></script>';
-    $head .= '<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/map.js"></script>';
     
     $head .= '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
@@ -96,6 +97,7 @@ if(isset($_REQUEST['sessions'])) {
 
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.prettyPhoto.js"></script>';
 
+    $head .= '<link rel="stylesheet" type="text/css" href="/html/css/jquery-ui.css"></link>';
     $head .= '<link rel="stylesheet" type="text/css" href="/html/css/jquery.dataTables.css"></link>';
     $head .= '<link rel="stylesheet" type="text/css" href="/html/css/mCustomScrollbar.css"></link>';
     $head .= '<link rel="stylesheet" type="text/css" href="/html/css/demo_table.css"></link>';
