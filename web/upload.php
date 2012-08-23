@@ -256,8 +256,6 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
                   header("Location: newvis.php?sessions={$sid}");
             }
             
-        } else {
-            echo "I AM HERE";
         }
     } 
 }
@@ -278,7 +276,7 @@ $smarty->assign('hideLocation', $req_loc);
 
 $smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>' . 
                         '<script src="/html/js/lib/validate.js"></script>'.
-                        '<script src="/html/js/lib/MillisecondClock.js"></script>');
+                        '<link rel="stylesheet" type="text/css" href="/html/css/jquery-ui.css"></link>');
 
 // Assign values required for all views
 $smarty->assign('user',             $session->getUser());
