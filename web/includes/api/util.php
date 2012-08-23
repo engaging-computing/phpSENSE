@@ -255,4 +255,185 @@ function dateDifference($day_1, $day_2) {
         return $date_diff_string;
 }
 
+function getJSONFromFile($filename){
+    
+    //Open the file.
+    $file = file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    
+    $file_data = array();
+    $header = array();
+    
+    $json = array('headers'=>array(), 'data'=>array());
+    
+    // Need to do attempt to match up fields
+    foreach($file as $f) {
+        if(strpos($f, "#") !== false) {
+            $debug_data .= $f . " ";
+        }
+        else {
+            array_push($file_data, explode(",", $f));
+        }
+    }
+    
+    // Grab the header
+    $header = $file_data[0];
+    $first_header = $header[0];
+    $first_data = $file_data[1];             
+    
+    // Clean header
+    for($i = 0; $i < count($header); $i++) {
+            $header[$i] = strtolower(str_replace("\"", "", $header[$i]));
+    }
+    
+    $preformatted = array_slice($file_data,1,count($file_data)-1);
+    
+    //Transpose the array
+    $row_count = count($preformatted[0]);
+    $transposed = array();
+    
+    //Init the new array
+    for($i=0;$i<$row_count;$i++){
+        $transposed=array();
+    }
+    
+    //Transpose the array
+    foreach ($preformatted as $line) {
+        for($i=0;$i<$row_count;$i++){         
+            $transposed[$i][] = $line[$i];
+        }
+    }
+    
+    $json['data'] = $transposed;
+    $json['headers'] = $header;
+    
+    return $json;
+}
+
+function getColumnMatches($data_pre_match,$eid){
+    $fields = array();
+    
+    $file_headers = $data_pre_match['headers'];
+    
+    foreach (getFields($eid) as $field){
+        $fields[] = strtolower($field['field_name']);
+    }
+
+    $matched_columns = array();
+    for($i=0;$i<count($fields);$i++){
+        $matched_columns[$i]=-1;
+    }
+    
+    //THE BAYES NET IMPLEMENTATION SHOULD GO HERE
+    for($j=0; $j<count($fields); $j++){
+        for($i=0; $i<count($file_headers); $i++){
+            $field = preg_replace( '/\s+/', '', $fields[$j]);
+            $file_header = preg_replace( '/\s+/', '', $file_headers[$i]);
+            if(strcmp($field,$file_header)==0){
+                $matched_columns[$j] = $i;
+            }
+        }
+    }
+    
+    //Count number of mismatched 
+    $mismatched_count = 0;
+    foreach ($matched_columns as $column) {
+        if($column == -1){
+            $mismatched_count++;
+        }   
+    }
+    
+    $matches = array ('matches'=>$matched_columns, 'mismatched_count'=>$mismatched_count);
+    
+    return $matches;
+}
+
+function shuffleColumns($filename,$eid,$hand_matched=null){
+    
+    //Recompute everything cause page state is a pain.
+    $json = getJSONFromFile($filename);
+    $matches = getColumnMatches($json,$eid);
+    
+    //Fill in the missing headers from matched.
+    if($hand_matched != null){
+        for ($i=0; $i < count($matches['matches']); $i++){
+            foreach($hand_matched as $match){
+                if($match['field']==$i){ 
+                    $matches['matches'][$i] = $match['header'];
+                }
+            } 
+        }
+    }
+    
+    //Init the new data array
+    $data_pre = $json['data'];
+    $data = array();
+    $numrows = count($data_pre[0]);
+    
+    //return $matches['matches'];
+    
+    //$matchlist = $matches['matches'];
+    
+    for($i=0; $i < $numrows; $i++){
+        $data[$i] = array();
+    }
+    
+    //Transpose the array back to rows from columns
+    for($i=0; $i < $numrows; $i++){
+        foreach($matches['matches'] as $key=>$match){
+            $data[$i][$key] = $data_pre[$match][$i];
+        }
+    }
+    
+    return $data;
+    
+}
+
+
+function fixTime($data, $eid){
+    
+        //Check for time Fields
+        $timefields = array();
+        foreach(getFields($eid) as $key=>$field){
+            if($field['type_id']==7){
+                $timefields[]=$key;
+            }
+        }
+        
+        //If there are time fields check them else return data.
+        if(count($timefields) > 0){
+            foreach($data as $row_key=>$row){
+                foreach($timefields as $tfield){
+                    $preformatted = $data[$row_key][$tfield];
+                    $fixed_time; 
+                    
+                    //Do time fix on each timefield
+                    if( is_numeric($preformatted) ) {
+                        //leave it alone
+                        $fixed_time = $preformatted;
+                    } else {
+                        if( $loc = strpos($preformatted, '.') ) {
+                            $fixed_time = (strtotime(substr($preformatted, 0, $loc))*1000) + (intval(substr($preformatted, $loc+1)) * 1000);
+                        } else {
+                            $tmp = explode(':', $preformatted);
+                            
+                            if( count($tmp) == 3 ) {
+                                $fixed_time = strtotime($tmp[0].$tmp[1])*1000;
+                                $fixed_time = $fixed_time + ($tmp[2]*1000);
+                            } else {
+                                $tmp = strtotime($preformatted);
+                                //Store $tmp * 1000
+                                $fixed_time = $tmp * 1000;      
+                            }
+                        }
+                        
+                    } 
+                    
+                    $data[$row_key][$tfield] = $fixed_time;
+                }
+            }
+        } 
+        
+        return $data;
+}
+
 ?>

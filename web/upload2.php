@@ -282,7 +282,7 @@ $smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>
 
 // Assign values required for all views
 $smarty->assign('user',             $session->getUser());
-$smarty->assign('content',          $smarty->fetch('upload.tpl'));
+$smarty->assign('content',          $smarty->fetch('upload2.tpl'));
 
 
 
