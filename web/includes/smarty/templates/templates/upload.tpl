@@ -157,5 +157,42 @@
 
                                 <div id="col_match" title="Please help us match your headers"></div>
 
+                     </div>           
+                     <div id="sidebar">
+                         
+                         <div class="module">
+                             <h1>Experiment Procedure:</h1>
+                             <div id="e_proc">
+                                 <p>{$e_proc}</p>
+                             </div>
+                         </div>    
+                         
+                         <div class="module">
+                             <h1>First Time Uploading?</h1>
+                             <div>
+                                 <p>
+                                 Check out our quick step-by-step walkthrough on how to contribute data.
+                             </p>
+                             <p>
+                                 <a href="actions/tutorials.php?tutorial=upload&amp;height=620&amp;width=888" class="thickbox">Watch Tutorial</a> 
+                             </p>
+                         </div>
+                     </div>
+                     
+                     <div class="module">
+                         <h1>Uploading from a PinPoint?</h1>
+                         <div>
+                             <p>
+                             First time using a PinPoint? Watch our quick tutorial to learn how to upload data from the PinPoint. 
+                         </p>
+                         <p>
+                             <a href="actions/tutorials.php?tutorial=pincushion&amp;height=570&amp;width=520" class="thickbox">Watch Tutorial</a>
+                         </p>
+                     </div>
+                 </div>
+                 
+             </div>
 
 {/if}
+
+
