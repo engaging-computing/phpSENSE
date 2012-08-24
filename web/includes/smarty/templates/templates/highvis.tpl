@@ -52,11 +52,11 @@
 
 <script>
     {literal} 
-        $('#container,#viscontainer,#content').css("width", document.width-100);
+        $('#container,#viscontainer,#content').css("width", window.innerWidth-100);
         $('#pagetitle').css("border-bottom","0px");
 
         $(window).resize(function() {      
-            $('#container,#viscontainer,#content').css("width", document.width-100);
+            $('#container,#viscontainer,#content').css("width", window.innerWidth-100);
         });
     {/literal}
 </script>
