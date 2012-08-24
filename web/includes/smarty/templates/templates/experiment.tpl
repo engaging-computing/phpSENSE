@@ -29,7 +29,7 @@
 <script> 
 {literal}
     $(document).ready(function(){
-                $( ".exp_tools a").button().width('100px').css("margin","0px 0px 6px 0px");
+                $( ".exp_tools a").button().width('100px').css({margin:'0px 0px 6px 0px',fontSize:'1em',fontFamily:'Trebuchet MS, sans-serif',fontWeight:'bold'});
     });
 {/literal}    
 </script>
