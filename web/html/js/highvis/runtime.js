@@ -89,7 +89,7 @@
     });
     containerSize = ($('#viscontainer')).width();
     hiderSize = ($('#controlhider')).outerWidth();
-    controlSize = 200;
+    controlSize = 210;
     visWidth = containerSize - (hiderSize + controlSize);
     visHeight = ($('#viscontainer')).height() - ($('#visTabList')).outerHeight();
     ($('.vis_canvas')).width(visWidth);
@@ -103,7 +103,7 @@
       var newWidth;
       containerSize = ($('#viscontainer')).width();
       hiderSize = ($('#controlhider')).outerWidth();
-      controlSize = ($('#controldiv')).width() === 0 ? 200 : 0;
+      controlSize = ($('#controldiv')).width() === 0 ? 210 : 0;
       newWidth = containerSize - (hiderSize + controlSize);
       ($('#controldiv')).animate({
         width: controlSize
@@ -111,7 +111,7 @@
       ($('.vis_canvas')).animate({
         width: newWidth
       }, 600, 'linear');
-      return globals.curVis.resize(newWidth, $('.vis_canvas').height());
+      return globals.curVis.resize(newWidth, $('.vis_canvas').height(), 600);
     };
     return ($('#control_hide_button')).click(function() {
       if (($('#controldiv')).width() === 0) {

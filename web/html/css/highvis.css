@@ -33,7 +33,7 @@
 }
 
 #controldiv {
-    width:200px;
+    width:210px;
     height:100%;
 
     float:right;
@@ -70,25 +70,6 @@
     padding: 0.5em 0.5em;
     overflow-y:hidden;
 }
-
-/*.vis_control_table {
-    font-size: 14px;
-}*/
-
-.vis_control_table_div {
-    font-size: 12px;
-    font-family: Arial;
-    color: #000000;
-
-    overflow-x:hidden;
-    white-space:nowrap;
-}/*
-
-.vis_control_table_title {
-    text-align: center;
-    text-decoration: underline;
-    padding-bottom: 5px;
-}*/
 
 .outer_control_div {
     font-size: 12px;
@@ -127,4 +108,8 @@
 .clean_shrink{
     white-space:nowrap;
     overflow-x:hidden;
+}
+
+.control_select {
+    width:124px;
 }

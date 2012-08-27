@@ -147,7 +147,7 @@
       controls += "<h3 class='clean_shrink'><a href='#'>Groups:</a></h3>";
       controls += "<div class='outer_control_div'>";
       controls += '<div class="inner_control_div"> Group By: ';
-      controls += '<select class="group_selector">';
+      controls += '<select id="groupSelector" class="control_select">';
       _ref3 = data.textFields;
       for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
         fieldIndex = _ref3[_i];
@@ -167,7 +167,7 @@
       }
       controls += '</div></div>';
       ($('#controldiv')).append(controls);
-      ($('.group_selector')).change(function(e) {
+      ($('#groupSelector')).change(function(e) {
         var element;
         element = e.target || e.srcElement;
         data.setGroupIndex(Number(element.value));
@@ -366,9 +366,9 @@
     */
 
 
-    BaseHighVis.prototype.resize = function(newWidth, newHeight) {
+    BaseHighVis.prototype.resize = function(newWidth, newHeight, duration) {
       return this.chart.setSize(newWidth, newHeight, {
-        duration: 600,
+        duration: duration,
         easing: 'linear'
       });
     };

@@ -66,7 +66,7 @@ CoffeeScript version of runtime.
     #Set initial div sizes
     containerSize = ($ '#viscontainer').width()
     hiderSize     = ($ '#controlhider').outerWidth()
-    controlSize = 200
+    controlSize = 210
 
     visWidth = containerSize - (hiderSize + controlSize)
     visHeight = ($ '#viscontainer').height() - ($ '#visTabList').outerHeight()
@@ -89,7 +89,7 @@ CoffeeScript version of runtime.
         containerSize = ($ '#viscontainer').width()
         hiderSize     = ($ '#controlhider').outerWidth()
         controlSize = if ($ '#controldiv').width() is 0
-            200
+            210
         else
             0
 
@@ -97,7 +97,7 @@ CoffeeScript version of runtime.
 
         ($ '#controldiv').animate {width: controlSize}, 600, 'linear'
         ($ '.vis_canvas').animate {width: newWidth}, 600, 'linear'
-        globals.curVis.resize newWidth, $('.vis_canvas').height()
+        globals.curVis.resize newWidth, $('.vis_canvas').height(), 600
 
     ($ '#control_hide_button').click ->
         if ($ '#controldiv').width() is 0
