@@ -45,10 +45,11 @@
 
     Histogram.prototype.binSize = 1;
 
-    Histogram.prototype.displayField = data.normalFields[2];
+    Histogram.prototype.displayField = data.normalFields[0];
 
     Histogram.prototype.buildOptions = function() {
-      var self;
+      var self,
+        _this = this;
       Histogram.__super__.buildOptions.call(this);
       self = this;
       this.chartOptions;
@@ -67,6 +68,16 @@
             stacking: 'normal',
             groupPadding: 0,
             pointPadding: 0
+          },
+          series: {
+            events: {
+              legendItemClick: (function() {
+                return function(event) {
+                  self.displayField = this.options.legendIndex;
+                  return self.delayedUpdate();
+                };
+              })()
+            }
           }
         }
       });
@@ -146,7 +157,7 @@
         _results.push(dummy = {
           data: [],
           color: '#000',
-          visible: __indexOf.call(globals.fieldSelection, fieldIndex) >= 0 ? true : false,
+          visible: this.displayField === fieldIndex,
           name: field.fieldName,
           type: 'area',
           xAxis: 1,
