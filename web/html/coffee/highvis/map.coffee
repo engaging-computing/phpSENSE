@@ -29,54 +29,214 @@
 
 class window.Map extends BaseVis
     constructor: (@canvas) ->
+        @HEATMAP_NONE = -2
+        @HEATMAP_MARKERS = -1
+
+        @visibleMarkers = true
+        @heatmapSelection = @HEATMAP_NONE
+
+        @heatmapRadius = 30
         
     start: ->
         ($ '#' + @canvas).show()
 
-        super()
-       
-    update: ->
-    
+        @markers = []
+        for group in data.groups
+            @markers.push []
+
+        @heatmaps = {}
+        @heatPoints = {}
+        @heatPoints[@HEATMAP_NONE] = []
+        @heatPoints[@HEATMAP_MARKERS] = []
+        for index in data.normalFields
+            @heatPoints[index] = []
+
+        for index of @heatPoints
+            for group in data.groups
+                @heatPoints[index].push []
+        ###############################
         latlngbounds = new google.maps.LatLngBounds()
-        
-        markers = Array()
-        
+
         mapOptions =
             center: new google.maps.LatLng(0,0)
             zoom: 8
             mapTypeId: google.maps.MapTypeId.SATELLITE
-        
-        gmap = new google.maps.Map(document.getElementById("map_canvas"), mapOptions)
-                                
-        geo = for fields,fieldIndex in data.fields when (Number fields.typeID) is (Number data.types.GEOSPATIAL)
-                (Number fieldIndex)
-        
-        #Get all visible data points.
-        visibleGroups = for group, groupIndex in data.groups when groupIndex in globals.groupSelection
-            group
-        
-        rows = for dataPoint in data.dataPoints when (String dataPoint[data.groupingFieldIndex]).toLowerCase() in visibleGroups
-            line = for dat, fieldIndex in dataPoint when fieldIndex in geo
-                dat
 
-        for row in rows
-            tmp = new google.maps.LatLng(row[0],row[1])
-            m =
-                position: tmp
-                map: gmap   
-            markers[markers.length]= new google.maps.Marker(m)
-            latlngbounds.extend tmp
+        @gmap = new google.maps.Map(document.getElementById(@canvas), mapOptions)
         
-        gmap.fitBounds(latlngbounds)
+        for dataPoint in data.dataPoints
+            lat = lon = null
+            do =>
+                # Grab geospatial
+                for field, fieldIndex in data.fields
+                    if (Number field.typeID) is data.types.GEOSPATIAL
+                        if (Number field.unitID) is data.units.GEOSPATIAL.LATITUDE
+                            lat = dataPoint[fieldIndex]
+                        else if (Number field.unitID) is data.units.GEOSPATIAL.LONGITUDE
+                            lon = dataPoint[fieldIndex]
+
+                groupIndex = data.groups.indexOf dataPoint[data.groupingFieldIndex].toLowerCase()
+                color = globals.colors[groupIndex % globals.colors.length]
+
+                latlng = new google.maps.LatLng(lat, lon)
+
+                # Build info window content
+                label  = "<div style='font-size:9pt;overflow-x:none;'>"
+                label += "<div style='width:100%;text-align:center;color:#{color};'> #{dataPoint[data.groupingFieldIndex]}</div>"#<br>"
+                label += "<table>"
+
+                for field, fieldIndex in data.fields when dataPoint[fieldIndex] isnt null
+                    dat = if (Number field.typeID) is data.types.TIME
+                        new Date(dataPoint[fieldIndex])
+                    else
+                        dataPoint[fieldIndex]
+
+                    label += "<tr><td>#{field.fieldName}</td>"
+                    label += "<td><strong>#{dat}</strong></td></tr>"
+
+                label += "</table></div>"
+
+                # make infowindow
+                info = new google.maps.InfoWindow
+                    content: label
+
+                iconOptions =
+                    color: color
+
+                newMarker = new StyledMarker
+                    position: latlng
+                    map: @gmap
+                    styleIcon: new StyledIcon StyledIconTypes.MARKER, iconOptions
+
+                if groupIndex in globals.groupSelection
+                    latlngbounds.extend latlng
+
+                google.maps.event.addListener newMarker, 'click', =>
+                    info.open @gmap, newMarker
+
+                @markers[groupIndex].push newMarker
+
+                for index in data.normalFields when dataPoint[index] isnt null
+                    @heatPoints[index][groupIndex].push
+                        weight: dataPoint[index]
+                        location: latlng
+
+                @heatPoints[@HEATMAP_MARKERS][groupIndex].push latlng
+
+        @gmap.fitBounds(latlngbounds)
+
+        
+        super()
+       
+    update: ->
+
+        # Build heatmap points from pre-computed data
+        heats = []
+        for index, heatArray of @heatPoints when (Number index) is @heatmapSelection
+            for groupArray, groupIndex in heatArray when groupIndex in globals.groupSelection
+                heats = heats.concat groupArray
+        
+        # Disable old heatmap (if there)
+        if @heatmap?
+            @heatmap.setMap null
+
+        # Draw heatmap
+        @heatmap = new google.maps.visualization.HeatmapLayer
+            data: heats
+            radius: @heatmapRadius
+            dissipating:true
+        @heatmap.setMap @gmap
+
+        # Set marker visibility
+        for markGroup, index in @markers
+            for mark in markGroup
+                mark.setVisible ((index in globals.groupSelection) and @visibleMarkers)
+        
         
         super()
         
     end: ->
         ($ '#' + @canvas).hide()
+        @heatmap = undefined
         
     drawControls: ->
         super()
         @drawGroupControls()
+        @drawToolControls()
+
+    drawToolControls: ->
+        controls =  '<div id="toolControl" class="vis_controls">'
+
+        controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>"
+        controls += "<div class='outer_control_div'>"
+        
+        controls += "<h4 class='clean_shrink'>Heat Maps</h4>"
+
+        # Add heatmap selector
+        controls += '<div class="inner_control_div"> Map By: '
+        controls += '<select class="heatmap_selector">'
+
+        sel = if @heatmapSelection is @HEATMAP_NONE then 'selected' else ''
+        controls += "<option value=\"#{@HEATMAP_NONE}\" #{sel}>None</option>"
+        sel = if @heatmapSelection is @HEATMAP_MARKERS then 'selected' else ''
+        controls += "<option value=\"#{@HEATMAP_MARKERS}\" #{sel}>Location</option>"
+        
+        for fieldIndex in data.normalFields
+            sel = if @heatmapSelection is fieldIndex then 'selected' else ''
+            controls += "<option value=\"#{Number fieldIndex}\" #{sel}>#{data.fields[fieldIndex].fieldName}</option>"
+
+        controls += "</select></div>"
+
+        #Heatmap slider
+        controls += "<br>"
+        controls += "<div class='inner_control_div'> Heatmap Radius: "
+        controls += "<b id='radiusText'>#{@heatmapRadius}</b></div>"
+        controls += "<div id='heatmapSlider' style='width:95%'></div>"
+
+        # Other
+        controls += "<br>"
+        controls += "<h4 class='clean_shrink'>Other</h4>"
+
+        #marker checkbox
+        controls += '<div class="inner_control_div">'
+        controls += "<input class='marker_box' type='checkbox' name='marker_selector' #{if @visibleMarkers then 'checked' else ''}/> Markers "
+        controls += "</div></div></div>"
+
+        # Write HTML
+        ($ '#controldiv').append controls
+
+        ($ '.marker_box').click (e) =>
+            @visibleMarkers = not @visibleMarkers
+            @delayedUpdate()
+
+        # Make heatmap select handler
+        ($ '.heatmap_selector').change (e) =>
+            element = e.target or e.srcElement
+            @heatmapSelection = (Number element.value)
+            
+            @delayedUpdate()
+
+        #Set up slider
+        ($ '#heatmapSlider').slider
+            range: 'min'
+            value: @heatmapRadius
+            min: 5
+            max: 150
+            step: 5
+            slide: (event, ui) =>
+                @heatmapRadius = Number ui.value
+                ($ '#radiusText').html("#{@heatmapRadius}")
+                @delayedUpdate()
+        
+        #Set up accordion
+        globals.toolsOpen ?= 0
+
+        ($ '#toolControl').accordion
+            collapsible:true
+            active:globals.toolsOpen
+
+        ($ '#toolControl > h3').click ->
+            globals.toolsOpen = (globals.toolsOpen + 1) % 2
         
 globals.map = new Map "map_canvas"
         

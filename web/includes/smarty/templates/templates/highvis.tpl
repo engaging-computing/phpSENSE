@@ -49,3 +49,14 @@
     </div>
     <div id="controldiv"></div>
 </div>
+
+<script>
+    {literal} 
+        $('#container,#viscontainer,#content').css("width", window.innerWidth-100);
+        $('#pagetitle').css("border-bottom","0px");
+
+        $(window).resize(function() {      
+            $('#container,#viscontainer,#content').css("width", window.innerWidth-100);
+        });
+    {/literal}
+</script>

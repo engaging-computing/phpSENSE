@@ -97,6 +97,7 @@
     ($('#controlhider')).height(visHeight);
     ($('#controldiv')).height(visHeight);
     ($('.vis_canvas')).css('padding', 0);
+    ($('.vis_canvas')).css('margin', 0);
     globals.curVis.start();
     resizeVis = function() {
       var newWidth;
