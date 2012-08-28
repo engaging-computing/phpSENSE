@@ -157,7 +157,7 @@ data.getTotal = (fieldIndex, groupIndex) ->
             total = total + value
         return total;
     else
-        null   
+        null
      
 ###
 Gets a list of unique, non-null, stringified vals from the given field index.
