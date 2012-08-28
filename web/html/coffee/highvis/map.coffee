@@ -237,6 +237,9 @@ class window.Map extends BaseVis
 
         ($ '#toolControl > h3').click ->
             globals.toolsOpen = (globals.toolsOpen + 1) % 2
-        
-globals.map = new Map "map_canvas"
+
+if "Map" in data.relVis
+    globals.map = new Map "map_canvas"
+else
+    globals.map = new DisabledVis "map_canvas"
         

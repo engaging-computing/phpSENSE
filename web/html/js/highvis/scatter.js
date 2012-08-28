@@ -335,6 +335,10 @@
 
   })(BaseHighVis);
 
-  globals.scatter = new Scatter('scatter_canvas');
+  if (__indexOf.call(data.relVis, "Scatter") >= 0) {
+    globals.scatter = new Scatter("scatter_canvas");
+  } else {
+    globals.scatter = new DisabledVis("scatter_canvas");
+  }
 
 }).call(this);
