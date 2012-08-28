@@ -189,5 +189,7 @@ class window.Histogram extends BaseHighVis
         @drawGroupControls()
         @drawToolControls()
     
-
-globals.histogram = new Histogram 'histogram_canvas'
+if "Histogram" in data.relVis
+    globals.histogram = new Histogram 'histogram_canvas'
+else
+    globals.histogram = new DisabledVis 'histogram_canvas'

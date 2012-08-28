@@ -334,6 +334,10 @@
 
   })(BaseHighVis);
 
-  globals.bar = new Bar('bar_canvas');
+  if (__indexOf.call(data.relVis, "Bar") >= 0) {
+    globals.bar = new Bar('bar_canvas');
+  } else {
+    globals.bar = new DisabledVis("bar_canvas");
+  }
 
 }).call(this);
