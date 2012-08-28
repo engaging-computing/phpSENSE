@@ -84,6 +84,10 @@
 
   })(Scatter);
 
-  globals.timeline = new Timeline('timeline_canvas');
+  if (__indexOf.call(data.relVis, "Timeline") >= 0) {
+    globals.timeline = new Timeline('timeline_canvas');
+  } else {
+    globals.timeline = new DisabledVis("timeline_canvas");
+  }
 
 }).call(this);

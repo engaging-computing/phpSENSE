@@ -262,4 +262,7 @@ class window.Scatter extends BaseHighVis
         ($ '#xAxisControl > h3').click ->
             globals.xAxisOpen = (globals.xAxisOpen + 1) % 2
 
-globals.scatter = new Scatter 'scatter_canvas'
+if "Scatter" in data.relVis
+    globals.scatter = new Scatter "scatter_canvas"
+else
+    globals.scatter = new DisabledVis "scatter_canvas"

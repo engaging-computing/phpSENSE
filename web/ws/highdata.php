@@ -35,12 +35,16 @@ class Data {
 
     public $experimentID;
     public $experimentName;
+    public $allVis      = array('Map','Scatter','Timeline','Bar','Histogram','Table','Motion');
     
-    public $relVis      = array('Motion','Table');
+    public $relVis      = array('Table');
     
-    public $fields      = array();
-    public $dataPoints  = array();
-    public $metaData    = array();
+    public $fields       = array();
+    public $dataPoints   = array();
+    public $metaData     = array();
+    public $normalFields = array();
+    public $timeFields   = array();
+    public $geoFields = false;
   
     /* Turn on the relevant vizes */
     public function setRelVis() {
@@ -48,26 +52,24 @@ class Data {
         /* See how much data the experiment has */
         $total = count($this->dataPoints);
         
-        /* If there is more than one data point in a session add the following vizes */
-        if( $total > 1 ) {
-            $this->relVis = array_merge(array('Scatter', 'Bar', 'Histogram'), $this->relVis); 
-
-            /* if a time field exists, add timeline */
-            foreach( $this->fields as $field ){
-                if ($field->typeID == 7) {
-                    $this->relVis = array_merge(array('Timeline'), $this->relVis); 
-                }
+        if ($total > 1) {         
+            
+            if((count($this->normalFields))>0){
+                $this->relVis = array_merge(array('Bar','Histogram'), $this->relVis);     
             }
+            
+            if((count($this->normalFields))>1){
+                $this->relVis = array_merge(array('Scatter'), $this->relVis);     
+            }
+            if((count($this->timeFields))>0 && (count($this->normalFields))>0 ){
+                $this->relVis = array_merge(array('Timeline','Motion'), $this->relVis);              
+            }
+            
+            
+        }    
+        if($this->geoFields){
+            $this->relVis = array_merge(array('Map'), $this->relVis);
         }
-
-        /* Add the map last because it should always be first. */
-        foreach( $this->fields as $field ){
-                if ($field->typeID == 19) {
-                    $this->relVis = array_merge(array('Map'), $this->relVis);
-                    break;
-                }
-        }
-        
     }  
     
 };
@@ -151,7 +153,28 @@ if(isset($_REQUEST['sessions'])) {
         
         //add the data
         $data->dataPoints = array_merge($data->dataPoints, $tmpData);
+        
+        
+        foreach($fields as $key=>$field){
+            $t = $field['type_id'];
             
+            //add timeFields
+            if ($t == 7) {
+                $data->timeFields = array_merge($data->timeFields,array($key));               
+            }
+            
+            //add normalFields
+            if ($t!=7 && $t!=19 && $t!=37){
+                $data->normalFields = array_merge($data->timeFields,array($key));
+            }
+            
+            if($t == 19){
+                $data->geoFields = true;
+            }
+        }
+        
+
+        
         //Get session related meta data
         $data->metaData[$idName] = getSession($ses);
         $data->metaData[$idName]['pictures'] = getSessionPictures($ses);

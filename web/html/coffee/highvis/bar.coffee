@@ -210,4 +210,7 @@ class window.Bar extends BaseHighVis
         @drawToolControls()
     
 
-globals.bar = new Bar 'bar_canvas'
+if "Bar" in data.relVis
+    globals.bar = new Bar 'bar_canvas'
+else
+    globals.bar = new DisabledVis "bar_canvas"

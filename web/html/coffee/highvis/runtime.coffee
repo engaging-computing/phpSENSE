@@ -37,14 +37,18 @@ CoffeeScript version of runtime.
     ($ can).hide() for can in ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas','#motion_canvas']
     
     ### Generate tabs ###
-    for vis of data.relVis
-        ($ '#visTabList').append "<li class='vis_tab'><a href='##{data.relVis[vis].toLowerCase()}_canvas'>#{data.relVis[vis]}</a></li>"
+    for vis of data.allVis
+        if data.allVis[vis] in data.relVis
+            ($ '#visTabList').append "<li class='vis_tab'><a href='##{data.allVis[vis].toLowerCase()}_canvas'>#{data.allVis[vis]}</a></li>"
+        else
+            ($ '#visTabList').append "<li class='vis_tab'><a href='' onclick='return false'>#{data.allVis[vis]}</a></li>"
+            
     ### Jquery up the tabs ###
     ($ '#viscontainer').tabs()
 
     ($ '#viscontainer').width ($ '#viscontainer').width() - (($ '#viscontainer').outerWidth() - ($ '#viscontainer').width())
     
-    globals.curVis = (eval 'globals.' + data.relVis[0].toLowerCase())
+    globals.curVis = (eval 'globals.' + data.allVis[0].toLowerCase())
     
     ### Change vis click handler ###
     ($ '#visTabList a').click ->
@@ -54,15 +58,9 @@ CoffeeScript version of runtime.
         if oldVis is globals.curVis
             return
 
-        (oldVis.chart.showLoading 'Loading...') if oldVis.chart?
-
-        ### Give the renderer a cycle to update the loading state before switching ###
-        switchVis = ->
-            globals.curVis.start()
-            oldVis.end() if oldVis?
-
-        setTimeout switchVis, 1
-
+        oldVis.end() if oldVis?
+        globals.curVis.start()
+        
     #Set initial div sizes
     containerSize = ($ '#viscontainer').width()
     hiderSize     = ($ '#controlhider').outerWidth()
