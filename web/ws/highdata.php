@@ -35,7 +35,7 @@ class Data {
 
     public $experimentID;
     public $experimentName;
-    public $allVis      = array('Map','Timeline','Scatter','Bar','Histogram','Table','Motion');
+    public $allVis      = array('Map','Scatter','Timeline','Bar','Histogram','Table','Motion','Photos');
     
     public $relVis      = array();
     
@@ -165,7 +165,7 @@ if(isset($_REQUEST['sessions'])) {
         //add the data
         $data->dataPoints = array_merge($data->dataPoints, $tmpData);
         
-        
+        //Figure out the field types for the experiment.
         foreach($fields as $key=>$field){
             $t = $field['type_id'];
             
