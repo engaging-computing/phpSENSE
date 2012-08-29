@@ -36,7 +36,7 @@ class window.DisabledVis extends BaseVis
     histogram_err = "Histogram could not be displayed<br>Either no numeric fields were found, or there were not enough data"
     bar_err = "Bar Chart could not be displayed<br>Either no numeric fields were found, or there were not enough data"
     map_err = "Map could not be displayed<br>No geographic data were found"
-    photo_err = "There were no photos to display"
+    photos_err = "There are no photos to display"
     start: ->  
         ($ '#' + @canvas).show()
         
