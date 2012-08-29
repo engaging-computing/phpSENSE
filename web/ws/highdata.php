@@ -62,9 +62,11 @@ class Data {
             if($this->hasPics){
                 $this->relVis = array_merge(array('Photos'), $this->relVis);
             }
-
-            $this->relVis = array_merge(array('Table'), $this->relVis);
-
+        }
+        
+        $this->relVis = array_merge(array('Table'), $this->relVis);
+        
+        if ($total > 1) {
             if((count($this->normalFields))>0){
                 $this->relVis = array_merge(array('Bar','Histogram'), $this->relVis);
             }
