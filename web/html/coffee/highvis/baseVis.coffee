@@ -97,6 +97,7 @@ class window.BaseVis
         The checkbox text color should correspond to the graph color.
     ###
     drawGroupControls: (startOnGroup = false) ->
+
         controls = '<div id="groupControl" class="vis_controls">'
 
         controls += "<h3 class='clean_shrink'><a href='#'>Groups:</a></h3>"

@@ -35,7 +35,7 @@ class Data {
 
     public $experimentID;
     public $experimentName;
-    public $allVis      = array('Map','Scatter','Timeline','Bar','Histogram','Table','Motion');
+    public $allVis      = array('Map','Scatter','Timeline','Bar','Histogram','Table','Motion','Photos');
     
     public $relVis      = array('Table');
     
@@ -67,9 +67,15 @@ class Data {
             
             
         }    
+        
+        $this->relVis = array_merge(array('Photos'), $this->relVis);
+        
         if($this->geoFields){
             $this->relVis = array_merge(array('Map'), $this->relVis);
         }
+     
+        
+     
     }  
     
 };
@@ -154,7 +160,7 @@ if(isset($_REQUEST['sessions'])) {
         //add the data
         $data->dataPoints = array_merge($data->dataPoints, $tmpData);
         
-        
+        //Figure out the field types for the experiment.
         foreach($fields as $key=>$field){
             $t = $field['type_id'];
             
@@ -171,9 +177,7 @@ if(isset($_REQUEST['sessions'])) {
             if($t == 19){
                 $data->geoFields = true;
             }
-        }
-        
-
+        }        
         
         //Get session related meta data
         $data->metaData[$idName] = getSession($ses);
