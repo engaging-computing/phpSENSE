@@ -122,6 +122,7 @@
         }
         count += 1;
         options = {
+          legendIndex: fieldIndex,
           data: [],
           color: '#000',
           visible: __indexOf.call(globals.fieldSelection, fieldIndex) >= 0 ? true : false,

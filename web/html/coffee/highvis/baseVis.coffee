@@ -174,6 +174,9 @@ class window.BaseHighVis extends BaseVis
         Subsequent derrived classes should use $.extend to expand upon these agter calling super()
     ###
     buildOptions: ->
+
+        self = this
+    
         @chartOptions = 
             chart:
                 renderTo: @canvas
@@ -193,15 +196,16 @@ class window.BaseHighVis extends BaseVis
                         lineWidth:1
                         radius:5
                     events:
-                        legendItemClick: (event) =>
-                            index = data.normalFields[event.target.index]
+                        legendItemClick: do => (event) ->
+                            
+                            index = this.options.legendIndex
 
                             if index in globals.fieldSelection
                                 arrayRemove(globals.fieldSelection, index)
                             else
                                 globals.fieldSelection.push(index)
 
-                            @delayedUpdate()
+                            self.delayedUpdate()
             #point: {}
             series: []
             #subtitle: {}

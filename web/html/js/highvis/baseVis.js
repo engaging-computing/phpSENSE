@@ -239,7 +239,9 @@
 
 
     BaseHighVis.prototype.buildOptions = function() {
-      var _this = this;
+      var self,
+        _this = this;
+      self = this;
       this.chartOptions = {
         chart: {
           renderTo: this.canvas,
@@ -259,16 +261,18 @@
               radius: 5
             },
             events: {
-              legendItemClick: function(event) {
-                var index;
-                index = data.normalFields[event.target.index];
-                if (__indexOf.call(globals.fieldSelection, index) >= 0) {
-                  arrayRemove(globals.fieldSelection, index);
-                } else {
-                  globals.fieldSelection.push(index);
-                }
-                return _this.delayedUpdate();
-              }
+              legendItemClick: (function() {
+                return function(event) {
+                  var index;
+                  index = this.options.legendIndex;
+                  if (__indexOf.call(globals.fieldSelection, index) >= 0) {
+                    arrayRemove(globals.fieldSelection, index);
+                  } else {
+                    globals.fieldSelection.push(index);
+                  }
+                  return self.delayedUpdate();
+                };
+              })()
             }
           }
         },
