@@ -31,7 +31,8 @@
 
 
 (function() {
-  var _ref;
+  var _ref,
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   if ((_ref = window.globals) == null) {
     window.globals = {};
@@ -45,7 +46,7 @@
 
 
   ($(document)).ready(function() {
-    var can, containerSize, controlSize, hiderSize, resizeVis, vis, visHeight, visWidth, _i, _len, _ref1;
+    var can, containerSize, controlSize, hiderSize, resizeVis, vis, visHeight, visWidth, _i, _len, _ref1, _ref2;
     _ref1 = ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas', '#motion_canvas'];
     for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
       can = _ref1[_i];
@@ -54,38 +55,33 @@
     /* Generate tabs
     */
 
-    for (vis in data.relVis) {
-      ($('#visTabList')).append("<li class='vis_tab'><a href='#" + (data.relVis[vis].toLowerCase()) + "_canvas'>" + data.relVis[vis] + "</a></li>");
+    for (vis in data.allVis) {
+      if (_ref2 = data.allVis[vis], __indexOf.call(data.relVis, _ref2) >= 0) {
+        ($('#visTabList')).append("<li class='vis_tab'><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas'>" + data.allVis[vis] + "</a></li>");
+      } else {
+        ($('#visTabList')).append("<li class='vis_tab'><a href='' onclick='return false'>" + data.allVis[vis] + "</a></li>");
+      }
     }
     /* Jquery up the tabs
     */
 
     ($('#viscontainer')).tabs();
     ($('#viscontainer')).width(($('#viscontainer')).width() - (($('#viscontainer')).outerWidth() - ($('#viscontainer')).width()));
-    globals.curVis = eval('globals.' + data.relVis[0].toLowerCase());
+    globals.curVis = eval('globals.' + data.allVis[0].toLowerCase());
     /* Change vis click handler
     */
 
     ($('#visTabList a')).click(function() {
-      var oldVis, switchVis;
+      var oldVis;
       oldVis = globals.curVis;
       globals.curVis = eval('globals.' + this.innerText.toLowerCase());
       if (oldVis === globals.curVis) {
         return;
       }
-      if (oldVis.chart != null) {
-        oldVis.chart.showLoading('Loading...');
+      if (oldVis != null) {
+        oldVis.end();
       }
-      /* Give the renderer a cycle to update the loading state before switching
-      */
-
-      switchVis = function() {
-        globals.curVis.start();
-        if (oldVis != null) {
-          return oldVis.end();
-        }
-      };
-      return setTimeout(switchVis, 1);
+      return globals.curVis.start();
     });
     containerSize = ($('#viscontainer')).width();
     hiderSize = ($('#controlhider')).outerWidth();

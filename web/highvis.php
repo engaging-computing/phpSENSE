@@ -79,6 +79,7 @@ if(isset($_REQUEST['sessions'])) {
     $head .= '<script type="text/javascript" src="/html/js/highmodifiers.js"></script>';
 
     $head .= '<script type="text/javascript" src="/html/js/highvis/baseVis.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/highvis/disabledVis.js"></script>';
     
     $head .= '<script type="text/javascript" src="/html/js/highvis/scatter.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/timeline.js"></script>';

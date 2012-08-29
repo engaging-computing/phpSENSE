@@ -27,48 +27,30 @@
  *
 ###
 
-class window.Motion extends BaseVis
+class window.DisabledVis extends BaseVis
     constructor: (@canvas) -> 
 
+    motion_err = "Motion Chart could not be displayed<br>A time field was not found in this experiment"
+    time_err = "Timeline could not be displayed<br>Either a time field was not found or there were not enough data"
+    scatter_err = "Scatter Chart could not be displayed<br>Either two numeric fields were not found or there were not enough data"
+    histogram_err = "Histogram could not be displayed<br>Either no numeric fields were found, or there were not enough data"
+    bar_err = "Bar Chart could not be displayed<br>Either no numeric fields were found, or there were not enough data"
+    map_err = "Map could not be displayed<br>No geographic data were found"
+    
     start: ->
-        #Make table visible? (or somthing)
+        switch @canvas
+            when "map_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{map_err}</div>")
+            when "motion_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{motion_err}</div>")
+            when "bar_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{bar_err}</div>")
+            when "histogram_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{histogram_err}</div>")
+            when "timeline_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{time_err}</div>")
+            when "scatter_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{scatter_err}</div>")
+            
+        ($ '#controlhider').hide();
+        ($ '#controldiv').hide();
         ($ '#' + @canvas).show()
-        
-        dt = new google.visualization.DataTable();
-        
-        for field,fieldIndex in data.fields
-            switch (Number field.typeID)
-                when data.types.TEXT then dt.addColumn('string', field.fieldName) 
-                when data.types.TIME then dt.addColumn('date', field.fieldName)
-                else dt.addColumn('number', field.fieldName)
-        
-        rows = for dataPoint in data.dataPoints
-            line = for dat, fieldIndex in dataPoint 
-                if((Number data.fields[fieldIndex].typeID) is data.types.TIME)
-                    new Date(dat)
-                else 
-                    dat
-            line
-        
-        dt.addRow(row) for row in rows
-                   
-        chart = new google.visualization.MotionChart(document.getElementById('motion_canvas'));
-        chart.draw(dt, {width: 850, height:490});
-        super()
-
-    #Gets called when the controls are clicked and at start
-    update: ->
-        super()
 
     end: ->
         ($ '#' + @canvas).hide()
-        
-    drawControls: ->
-        super()
-
-    drawChart: ->
-
-if "Motion" in data.relVis
-    globals.motion = new Motion "motion_canvas"      
-else
-    globals.motion = new DisabledVis "motion_canvas"
+        ($ '#controlhider').show();
+        ($ '#controldiv').show();

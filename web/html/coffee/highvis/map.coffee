@@ -243,5 +243,8 @@ class window.Map extends BaseVis
             google.maps.event.trigger @gmap, 'resize'
         setTimeout func, duration
         
-globals.map = new Map "map_canvas"
+if "Map" in data.relVis
+    globals.map = new Map "map_canvas"
+else
+    globals.map = new DisabledVis "map_canvas"
         

@@ -274,6 +274,10 @@
 
   })(BaseVis);
 
-  globals.map = new Map("map_canvas");
+  if (__indexOf.call(data.relVis, "Map") >= 0) {
+    globals.map = new Map("map_canvas");
+  } else {
+    globals.map = new DisabledVis("map_canvas");
+  }
 
 }).call(this);

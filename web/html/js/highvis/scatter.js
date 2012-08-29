@@ -76,7 +76,7 @@
           formatter: function() {
             var dat, field, fieldIndex, str, _i, _len, _ref;
             if (self.advancedTooltips) {
-              str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div>";
+              str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div><br>";
               str += "<table>";
               _ref = data.fields;
               for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
@@ -90,7 +90,7 @@
               }
               return str += "</table>";
             } else {
-              str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div>";
+              str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div><br>";
               str += "<table>";
               str += "<tr><td>" + this.series.xAxis.options.title.text + ":</td><td><strong>" + this.x + "</strong></td></tr>";
               str += "<tr><td>" + this.series.name.field + ":</td><td><strong>" + this.y + "</strong></td></tr>";
@@ -197,14 +197,12 @@
             switch (false) {
               case this.mode !== this.SYMBOLS_LINES_MODE:
                 options.marker = {
-                  symbol: globals.symbols[symbolIndex % globals.symbols.length],
-                  lineColor: null
+                  symbol: globals.symbols[symbolIndex % globals.symbols.length]
                 };
                 break;
               case this.mode !== this.SYMBOLS_MODE:
                 options.marker = {
-                  symbol: globals.symbols[symbolIndex % globals.symbols.length],
-                  lineColor: null
+                  symbol: globals.symbols[symbolIndex % globals.symbols.length]
                 };
                 options.lineWidth = 0;
                 break;
@@ -338,6 +336,10 @@
 
   })(BaseHighVis);
 
-  globals.scatter = new Scatter('scatter_canvas');
+  if (__indexOf.call(data.relVis, "Scatter") >= 0) {
+    globals.scatter = new Scatter("scatter_canvas");
+  } else {
+    globals.scatter = new DisabledVis("scatter_canvas");
+  }
 
 }).call(this);
