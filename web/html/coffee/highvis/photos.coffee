@@ -27,26 +27,11 @@
  *
 ###
 
-class window.DisabledVis extends BaseVis
+class window.Photos extends BaseVis
     constructor: (@canvas) -> 
 
-    motion_err = "Motion Chart could not be displayed<br>A time field was not found in this experiment"
-    time_err = "Timeline could not be displayed<br>Either a time field was not found or there were not enough data"
-    scatter_err = "Scatter Chart could not be displayed<br>Either two numeric fields were not found or there were not enough data"
-    histogram_err = "Histogram could not be displayed<br>Either no numeric fields were found, or there were not enough data"
-    bar_err = "Bar Chart could not be displayed<br>Either no numeric fields were found, or there were not enough data"
-    map_err = "Map could not be displayed<br>No geographic data were found"
-    
-    start: ->  
+    start: ->
         ($ '#' + @canvas).show()
-        
-        switch @canvas
-            when "map_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{map_err}</div>")
-            when "motion_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{motion_err}</div>")
-            when "bar_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{bar_err}</div>")
-            when "histogram_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{histogram_err}</div>")
-            when "timeline_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{time_err}</div>")
-            when "scatter_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{scatter_err}</div>")
         
         @controlWidth = ($ '#controldiv').width()
 
@@ -54,10 +39,49 @@ class window.DisabledVis extends BaseVis
             width:0
         ($ '#' + @canvas).css
             width:($ "#viscontainer").innerWidth() - ($ "#controlhider").outerWidth()
-
-      
-
-    end: ->
+        
+        super()
+ 
+    #Gets called when the controls are clicked and at start
+    update: ->
+        #clear the old canvas
+        ($ '#' + @canvas).html('')
+            
+        #Append the photoTable to the canvas    
+        ($ '#' + @canvas).append '<div id="photoTable"></div>'
+        
+        #Build the table of pictures with their onlick handlers
+        i=0
+        for ses of data.metaData
+            if data.metaData[ses].pictures.length > 0
+                for pic of data.metaData[ses].pictures
+                    console.log pic
+                    tmp = data.metaData[ses].pictures[pic]
+                    do (tmp) =>
+                        thumb = "<img id='pic_#{i}' class='photoTable_photo' src='#{tmp.provider_url}'/>"
+                        full = "<img id='pic_#{i}' class='photoTable_openPhoto' src='#{tmp.provider_url}'/>"
+                        ($ '#photoTable').append thumb
+                        ($ '#pic_'+i).click ->
+                            ($ '#photoTable').append("<div id='dialog' style='overflow-x:hidden'>#{full}<div style='float:left'><b>Description: </b>#{tmp.description}</div></div>")
+                            ($ '#dialog').dialog
+                                modal: true
+                                draggable:false
+                                minWidth:688
+                                minHeight:480
+                                resizable:false
+                                title: 'Session: ' +data.metaData[ses].session_id
+                        i++
+                      
+    end: ->    
         ($ '#' + @canvas).hide()
         ($ '#controldiv').css
             width:@controlWidth
+
+        
+    drawControls: ->
+        super()
+        
+if "Photos" in data.relVis
+    globals.photos = new Photos "photos_canvas"
+else
+    globals.photos = new DisabledVis "photos_canvas"

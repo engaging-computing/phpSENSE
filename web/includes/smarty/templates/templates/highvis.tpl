@@ -41,9 +41,8 @@
     <div id="bar_canvas" class="vis_canvas"></div>
     <div id="histogram_canvas" class="vis_canvas"></div>
     <div id="motion_canvas" class="vis_canvas"></div>
-
+    <div id="photos_canvas" class="vis_canvas"></div>
     
-
     <div id='controlhider'>
         <button id="control_hide_button" type="button" style="margin:5px;"> > </button>
     </div>

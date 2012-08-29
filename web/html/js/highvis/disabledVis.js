@@ -56,6 +56,7 @@
     map_err = "Map could not be displayed<br>No geographic data were found";
 
     DisabledVis.prototype.start = function() {
+      ($('#' + this.canvas)).show();
       switch (this.canvas) {
         case "map_canvas":
           ($('#' + this.canvas)).html("<div id='vis_disabled'>" + map_err + "</div>");
@@ -75,15 +76,20 @@
         case "scatter_canvas":
           ($('#' + this.canvas)).html("<div id='vis_disabled'>" + scatter_err + "</div>");
       }
-      ($('#controlhider')).hide();
-      ($('#controldiv')).hide();
-      return ($('#' + this.canvas)).show();
+      this.controlWidth = ($('#controldiv')).width();
+      ($('#controldiv')).css({
+        width: 0
+      });
+      return ($('#' + this.canvas)).css({
+        width: ($("#viscontainer")).innerWidth() - ($("#controlhider")).outerWidth()
+      });
     };
 
     DisabledVis.prototype.end = function() {
       ($('#' + this.canvas)).hide();
-      ($('#controlhider')).show();
-      return ($('#controldiv')).show();
+      return ($('#controldiv')).css({
+        width: this.controlWidth
+      });
     };
 
     return DisabledVis;
