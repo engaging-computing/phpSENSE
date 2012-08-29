@@ -255,6 +255,7 @@
         }
         count += 1;
         _results.push(dummy = {
+          legendIndex: fieldIndex,
           data: [],
           color: '#000',
           visible: __indexOf.call(globals.fieldSelection, fieldIndex) >= 0 ? true : false,
@@ -273,7 +274,7 @@
       controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>";
       controls += "<div class='outer_control_div'>";
       controls += "<div class='inner_control_div'>";
-      controls += 'Sort by: <select class="sortField">';
+      controls += 'Sort by: <select class="sortField control_select">';
       tempFields = (function() {
         var _i, _len, _ref, _results;
         _ref = data.normalFields;

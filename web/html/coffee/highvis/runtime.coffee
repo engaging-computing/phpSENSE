@@ -41,14 +41,15 @@ CoffeeScript version of runtime.
         if data.allVis[vis] in data.relVis
             ($ '#visTabList').append "<li class='vis_tab'><a href='##{data.allVis[vis].toLowerCase()}_canvas'>#{data.allVis[vis]}</a></li>"
         else
-            ($ '#visTabList').append "<li class='vis_tab'><a href='' onclick='return false'>#{data.allVis[vis]}</a></li>"
+            ($ '#visTabList').append "<li class='vis_tab'><s><a href='##{data.allVis[vis].toLowerCase()}_canvas'>#{data.allVis[vis]}</a><s></li>"
             
     ### Jquery up the tabs ###
     ($ '#viscontainer').tabs()
+    ($ '#viscontainer').tabs('select', "##{data.relVis[0].toLowerCase()}_canvas")
 
     ($ '#viscontainer').width ($ '#viscontainer').width() - (($ '#viscontainer').outerWidth() - ($ '#viscontainer').width())
     
-    globals.curVis = (eval 'globals.' + data.allVis[0].toLowerCase())
+    globals.curVis = (eval 'globals.' + data.relVis[0].toLowerCase())
     
     ### Change vis click handler ###
     ($ '#visTabList a').click ->
@@ -64,7 +65,7 @@ CoffeeScript version of runtime.
     #Set initial div sizes
     containerSize = ($ '#viscontainer').width()
     hiderSize     = ($ '#controlhider').outerWidth()
-    controlSize = 200
+    controlSize = 210
 
     visWidth = containerSize - (hiderSize + controlSize)
     visHeight = ($ '#viscontainer').height() - ($ '#visTabList').outerHeight()
@@ -87,7 +88,7 @@ CoffeeScript version of runtime.
         containerSize = ($ '#viscontainer').width()
         hiderSize     = ($ '#controlhider').outerWidth()
         controlSize = if ($ '#controldiv').width() is 0
-            200
+            210
         else
             0
 
@@ -95,7 +96,7 @@ CoffeeScript version of runtime.
 
         ($ '#controldiv').animate {width: controlSize}, 600, 'linear'
         ($ '.vis_canvas').animate {width: newWidth}, 600, 'linear'
-        globals.curVis.resize newWidth, $('.vis_canvas').height()
+        globals.curVis.resize newWidth, $('.vis_canvas').height(), 600
 
     ($ '#control_hide_button').click ->
         if ($ '#controldiv').width() is 0

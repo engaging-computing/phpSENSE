@@ -59,15 +59,16 @@
       if (_ref2 = data.allVis[vis], __indexOf.call(data.relVis, _ref2) >= 0) {
         ($('#visTabList')).append("<li class='vis_tab'><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas'>" + data.allVis[vis] + "</a></li>");
       } else {
-        ($('#visTabList')).append("<li class='vis_tab'><a href='' onclick='return false'>" + data.allVis[vis] + "</a></li>");
+        ($('#visTabList')).append("<li class='vis_tab'><s><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas'>" + data.allVis[vis] + "</a><s></li>");
       }
     }
     /* Jquery up the tabs
     */
 
     ($('#viscontainer')).tabs();
+    ($('#viscontainer')).tabs('select', "#" + (data.relVis[0].toLowerCase()) + "_canvas");
     ($('#viscontainer')).width(($('#viscontainer')).width() - (($('#viscontainer')).outerWidth() - ($('#viscontainer')).width()));
-    globals.curVis = eval('globals.' + data.allVis[0].toLowerCase());
+    globals.curVis = eval('globals.' + data.relVis[0].toLowerCase());
     /* Change vis click handler
     */
 
@@ -85,7 +86,7 @@
     });
     containerSize = ($('#viscontainer')).width();
     hiderSize = ($('#controlhider')).outerWidth();
-    controlSize = 200;
+    controlSize = 210;
     visWidth = containerSize - (hiderSize + controlSize);
     visHeight = ($('#viscontainer')).height() - ($('#visTabList')).outerHeight();
     ($('.vis_canvas')).width(visWidth);
@@ -99,7 +100,7 @@
       var newWidth;
       containerSize = ($('#viscontainer')).width();
       hiderSize = ($('#controlhider')).outerWidth();
-      controlSize = ($('#controldiv')).width() === 0 ? 200 : 0;
+      controlSize = ($('#controldiv')).width() === 0 ? 210 : 0;
       newWidth = containerSize - (hiderSize + controlSize);
       ($('#controldiv')).animate({
         width: controlSize
@@ -107,7 +108,7 @@
       ($('.vis_canvas')).animate({
         width: newWidth
       }, 600, 'linear');
-      return globals.curVis.resize(newWidth, $('.vis_canvas').height());
+      return globals.curVis.resize(newWidth, $('.vis_canvas').height(), 600);
     };
     return ($('#control_hide_button')).click(function() {
       if (($('#controldiv')).width() === 0) {

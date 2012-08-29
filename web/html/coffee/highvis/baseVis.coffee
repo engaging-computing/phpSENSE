@@ -106,7 +106,7 @@ class window.BaseVis
 
         # Add grouping selector
         controls += '<div class="inner_control_div"> Group By: '
-        controls += '<select class="group_selector">'
+        controls += '<select id="groupSelector" class="control_select">'
 
         for fieldIndex in data.textFields
             sel = if fieldIndex is data.groupingFieldIndex then 'selected' else ''
@@ -129,7 +129,7 @@ class window.BaseVis
         ($ '#controldiv').append controls
 
         # Make group select handler
-        ($ '.group_selector').change (e) =>
+        ($ '#groupSelector').change (e) =>
             element = e.target or e.srcElement
             data.setGroupIndex (Number element.value)
             globals.groupSelection = for vals, keys in data.groups
@@ -175,6 +175,9 @@ class window.BaseHighVis extends BaseVis
         Subsequent derrived classes should use $.extend to expand upon these agter calling super()
     ###
     buildOptions: ->
+
+        self = this
+    
         @chartOptions = 
             chart:
                 renderTo: @canvas
@@ -194,15 +197,16 @@ class window.BaseHighVis extends BaseVis
                         lineWidth:1
                         radius:5
                     events:
-                        legendItemClick: (event) =>
-                            index = data.normalFields[event.target.index]
+                        legendItemClick: do => (event) ->
+                            
+                            index = this.options.legendIndex
 
                             if index in globals.fieldSelection
                                 arrayRemove(globals.fieldSelection, index)
                             else
                                 globals.fieldSelection.push(index)
 
-                            @delayedUpdate()
+                            self.delayedUpdate()
             #point: {}
             series: []
             #subtitle: {}
@@ -295,8 +299,8 @@ class window.BaseHighVis extends BaseVis
     Method called when vis resize has begun
         Resize highcharts to match
     ###
-    resize: (newWidth, newHeight) ->
-        @chart.setSize(newWidth, newHeight, {duration: 600, easing:'linear'})
+    resize: (newWidth, newHeight, duration) ->
+        @chart.setSize(newWidth, newHeight, {duration: duration, easing:'linear'})
         
     ###
     End sequence used by runtime

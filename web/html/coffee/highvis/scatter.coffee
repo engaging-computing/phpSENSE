@@ -92,6 +92,7 @@ class window.Scatter extends BaseHighVis
         for field, fieldIndex in data.fields when fieldIndex in data.normalFields
             count += 1
             options =
+                legendIndex: fieldIndex
                 data: []
                 color: '#000'
                 visible: if fieldIndex in globals.fieldSelection then true else false

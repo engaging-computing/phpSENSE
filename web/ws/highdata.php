@@ -35,9 +35,9 @@ class Data {
 
     public $experimentID;
     public $experimentName;
-    public $allVis      = array('Map','Scatter','Timeline','Bar','Histogram','Table','Motion','Photos');
+    public $allVis      = array('Map','Timeline','Scatter','Bar','Histogram','Table','Motion','Photos');
     
-    public $relVis      = array('Table');
+    public $relVis      = array();
     
     public $fields       = array();
     public $dataPoints   = array();
@@ -45,6 +45,7 @@ class Data {
     public $normalFields = array();
     public $timeFields   = array();
     public $geoFields = false;
+    public $hasPics = false;
   
     /* Turn on the relevant vizes */
     public function setRelVis() {
@@ -53,29 +54,35 @@ class Data {
         $total = count($this->dataPoints);
         
         if ($total > 1) {         
-            
+
+            if((count($this->timeFields))>0 && (count($this->normalFields))>0 ){
+                $this->relVis = array_merge(array('Motion'), $this->relVis);
+            }
+
+            if($this->hasPics){
+                $this->relVis = array_merge(array('Photos'), $this->relVis);
+            }
+        }
+        
+        $this->relVis = array_merge(array('Table'), $this->relVis);
+        
+        if ($total > 1) {
             if((count($this->normalFields))>0){
-                $this->relVis = array_merge(array('Bar','Histogram'), $this->relVis);     
+                $this->relVis = array_merge(array('Bar','Histogram'), $this->relVis);
             }
             
             if((count($this->normalFields))>1){
                 $this->relVis = array_merge(array('Scatter'), $this->relVis);     
             }
             if((count($this->timeFields))>0 && (count($this->normalFields))>0 ){
-                $this->relVis = array_merge(array('Timeline','Motion'), $this->relVis);              
+                $this->relVis = array_merge(array('Timeline'), $this->relVis);
             }
             
             
         }    
-        
-        $this->relVis = array_merge(array('Photos'), $this->relVis);
-        
         if($this->geoFields){
             $this->relVis = array_merge(array('Map'), $this->relVis);
         }
-     
-        
-     
     }  
     
 };
@@ -177,11 +184,15 @@ if(isset($_REQUEST['sessions'])) {
             if($t == 19){
                 $data->geoFields = true;
             }
-        }        
+        }
         
         //Get session related meta data
         $data->metaData[$idName] = getSession($ses);
         $data->metaData[$idName]['pictures'] = getSessionPictures($ses);
+
+        if(count($data->metaData[$idName]['pictures'])>0){
+            $data->hasPics = true;
+        }
     }
     
     //Determine witch vises are relevant
