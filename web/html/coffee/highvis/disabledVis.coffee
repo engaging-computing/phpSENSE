@@ -36,7 +36,7 @@ class window.DisabledVis extends BaseVis
     histogram_err = "Histogram could not be displayed<br>Either no numeric fields were found, or there were not enough data"
     bar_err = "Bar Chart could not be displayed<br>Either no numeric fields were found, or there were not enough data"
     map_err = "Map could not be displayed<br>No geographic data were found"
-    
+    photo_err = "There were no photos to display"
     start: ->  
         ($ '#' + @canvas).show()
         
@@ -47,17 +47,18 @@ class window.DisabledVis extends BaseVis
             when "histogram_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{histogram_err}</div>")
             when "timeline_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{time_err}</div>")
             when "scatter_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{scatter_err}</div>")
+            when "photos_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{photos_err}</div>")
         
         @controlWidth = ($ '#controldiv').width()
-
+        
+        #Hide the controls
         ($ '#controldiv').css
             width:0
+        ($ '#controlhider').hide()
         ($ '#' + @canvas).css
             width:($ "#viscontainer").innerWidth() - ($ "#controlhider").outerWidth()
-
-      
-
     end: ->
         ($ '#' + @canvas).hide()
         ($ '#controldiv').css
             width:@controlWidth
+        ($ '#controlhider').show()

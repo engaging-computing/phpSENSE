@@ -35,7 +35,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   window.DisabledVis = (function(_super) {
-    var bar_err, histogram_err, map_err, motion_err, scatter_err, time_err;
+    var bar_err, histogram_err, map_err, motion_err, photo_err, scatter_err, time_err;
 
     __extends(DisabledVis, _super);
 
@@ -54,6 +54,8 @@
     bar_err = "Bar Chart could not be displayed<br>Either no numeric fields were found, or there were not enough data";
 
     map_err = "Map could not be displayed<br>No geographic data were found";
+
+    photo_err = "There were no photos to display";
 
     DisabledVis.prototype.start = function() {
       ($('#' + this.canvas)).show();
@@ -75,11 +77,15 @@
           break;
         case "scatter_canvas":
           ($('#' + this.canvas)).html("<div id='vis_disabled'>" + scatter_err + "</div>");
+          break;
+        case "photos_canvas":
+          ($('#' + this.canvas)).html("<div id='vis_disabled'>" + photos_err + "</div>");
       }
       this.controlWidth = ($('#controldiv')).width();
       ($('#controldiv')).css({
         width: 0
       });
+      ($('#controlhider')).hide();
       return ($('#' + this.canvas)).css({
         width: ($("#viscontainer")).innerWidth() - ($("#controlhider")).outerWidth()
       });
@@ -87,9 +93,10 @@
 
     DisabledVis.prototype.end = function() {
       ($('#' + this.canvas)).hide();
-      return ($('#controldiv')).css({
+      ($('#controldiv')).css({
         width: this.controlWidth
       });
+      return ($('#controlhider')).show();
     };
 
     return DisabledVis;

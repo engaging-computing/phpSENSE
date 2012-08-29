@@ -34,6 +34,16 @@ class window.Motion extends BaseVis
         #Make table visible? (or somthing)
         ($ '#' + @canvas).show()
         
+        #Hide the controls
+        @controlWidth = ($ '#controldiv').width()
+        
+        ($ '#controldiv').css
+            width:0
+        ($ '#controlhider').hide()
+        ($ '#' + @canvas).css
+            width:($ "#viscontainer").innerWidth() - ($ "#controlhider").outerWidth()
+        
+        
         dt = new google.visualization.DataTable();
         
         for field,fieldIndex in data.fields
@@ -53,7 +63,7 @@ class window.Motion extends BaseVis
         dt.addRow(row) for row in rows
                    
         chart = new google.visualization.MotionChart(document.getElementById('motion_canvas'));
-        chart.draw(dt, {width: 850, height:490});
+        chart.draw(dt, {width: '100%', height: '100%'});
         super()
 
     #Gets called when the controls are clicked and at start
@@ -62,6 +72,9 @@ class window.Motion extends BaseVis
 
     end: ->
         ($ '#' + @canvas).hide()
+        ($ '#controldiv').css
+            width:@controlWidth
+        ($ '#controlhider').show()
         
     drawControls: ->
         super()

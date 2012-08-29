@@ -35,16 +35,15 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  window.Motion = (function(_super) {
+  window.Photos = (function(_super) {
 
-    __extends(Motion, _super);
+    __extends(Photos, _super);
 
-    function Motion(canvas) {
+    function Photos(canvas) {
       this.canvas = canvas;
     }
 
-    Motion.prototype.start = function() {
-      var chart, dat, dataPoint, dt, field, fieldIndex, line, row, rows, _i, _j, _len, _len1, _ref;
+    Photos.prototype.start = function() {
       ($('#' + this.canvas)).show();
       this.controlWidth = ($('#controldiv')).width();
       ($('#controldiv')).css({
@@ -54,61 +53,53 @@
       ($('#' + this.canvas)).css({
         width: ($("#viscontainer")).innerWidth() - ($("#controlhider")).outerWidth()
       });
-      dt = new google.visualization.DataTable();
-      _ref = data.fields;
-      for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
-        field = _ref[fieldIndex];
-        switch (Number(field.typeID)) {
-          case data.types.TEXT:
-            dt.addColumn('string', field.fieldName);
-            break;
-          case data.types.TIME:
-            dt.addColumn('date', field.fieldName);
-            break;
-          default:
-            dt.addColumn('number', field.fieldName);
-        }
-      }
-      rows = (function() {
-        var _j, _len1, _ref1, _results;
-        _ref1 = data.dataPoints;
-        _results = [];
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          dataPoint = _ref1[_j];
-          line = (function() {
-            var _k, _len2, _results1;
+      return Photos.__super__.start.call(this);
+    };
+
+    Photos.prototype.update = function() {
+      var i, pic, ses, tmp, _results;
+      ($('#' + this.canvas)).html('');
+      ($('#' + this.canvas)).append('<div id="photoTable"></div>');
+      i = 0;
+      _results = [];
+      for (ses in data.metaData) {
+        if (data.metaData[ses].pictures.length > 0) {
+          _results.push((function() {
+            var _results1,
+              _this = this;
             _results1 = [];
-            for (fieldIndex = _k = 0, _len2 = dataPoint.length; _k < _len2; fieldIndex = ++_k) {
-              dat = dataPoint[fieldIndex];
-              if ((Number(data.fields[fieldIndex].typeID)) === data.types.TIME) {
-                _results1.push(new Date(dat));
-              } else {
-                _results1.push(dat);
-              }
+            for (pic in data.metaData[ses].pictures) {
+              console.log(pic);
+              tmp = data.metaData[ses].pictures[pic];
+              _results1.push((function(tmp) {
+                var full, thumb;
+                thumb = "<img id='pic_" + i + "' class='photoTable_photo' src='" + tmp.provider_url + "'/>";
+                full = "<img id='pic_" + i + "' class='photoTable_openPhoto' src='" + tmp.provider_url + "'/>";
+                ($('#photoTable')).append(thumb);
+                ($('#pic_' + i)).click(function() {
+                  ($('#photoTable')).append("<div id='dialog' style='overflow-x:hidden'>" + full + "<div style='float:left'><b>Description: </b>" + tmp.description + "</div></div>");
+                  return ($('#dialog')).dialog({
+                    modal: true,
+                    draggable: false,
+                    minWidth: 688,
+                    minHeight: 480,
+                    resizable: false,
+                    title: 'Session: ' + data.metaData[ses].session_id
+                  });
+                });
+                return i++;
+              })(tmp));
             }
             return _results1;
-          })();
-          _results.push(line);
+          }).call(this));
+        } else {
+          _results.push(void 0);
         }
-        return _results;
-      })();
-      for (_j = 0, _len1 = rows.length; _j < _len1; _j++) {
-        row = rows[_j];
-        dt.addRow(row);
       }
-      chart = new google.visualization.MotionChart(document.getElementById('motion_canvas'));
-      chart.draw(dt, {
-        width: '100%',
-        height: '100%'
-      });
-      return Motion.__super__.start.call(this);
+      return _results;
     };
 
-    Motion.prototype.update = function() {
-      return Motion.__super__.update.call(this);
-    };
-
-    Motion.prototype.end = function() {
+    Photos.prototype.end = function() {
       ($('#' + this.canvas)).hide();
       ($('#controldiv')).css({
         width: this.controlWidth
@@ -116,20 +107,18 @@
       return ($('#controlhider')).show();
     };
 
-    Motion.prototype.drawControls = function() {
-      return Motion.__super__.drawControls.call(this);
+    Photos.prototype.drawControls = function() {
+      return Photos.__super__.drawControls.call(this);
     };
 
-    Motion.prototype.drawChart = function() {};
-
-    return Motion;
+    return Photos;
 
   })(BaseVis);
 
-  if (__indexOf.call(data.relVis, "Motion") >= 0) {
-    globals.motion = new Motion("motion_canvas");
+  if (__indexOf.call(data.relVis, "Photos") >= 0) {
+    globals.photos = new Photos("photos_canvas");
   } else {
-    globals.motion = new DisabledVis("motion_canvas");
+    globals.photos = new DisabledVis("photos_canvas");
   }
 
 }).call(this);
