@@ -46,7 +46,20 @@
     Motion.prototype.start = function() {
       var chart, dat, dataPoint, dt, field, fieldIndex, line, row, rows, _i, _j, _len, _len1, _ref;
       ($('#' + this.canvas)).show();
+      this.controlWidth = ($('#controldiv')).width();
+      ($('#controldiv')).css({
+        width: 0
+      });
+      ($('#controlhider')).hide();
+      ($('#' + this.canvas)).css({
+        width: ($("#viscontainer")).innerWidth() - ($("#controlhider")).outerWidth()
+      });
       dt = new google.visualization.DataTable();
+      if (data.timeFields.length > 0) {
+        if (data.timeFields[0] !== 1) {
+          this.shuffleFields();
+        }
+      }
       _ref = data.fields;
       for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
         field = _ref[fieldIndex];
@@ -90,8 +103,8 @@
       }
       chart = new google.visualization.MotionChart(document.getElementById('motion_canvas'));
       chart.draw(dt, {
-        width: 850,
-        height: 490
+        width: '100%',
+        height: '100%'
       });
       return Motion.__super__.start.call(this);
     };
@@ -101,7 +114,11 @@
     };
 
     Motion.prototype.end = function() {
-      return ($('#' + this.canvas)).hide();
+      ($('#' + this.canvas)).hide();
+      ($('#controldiv')).css({
+        width: this.controlWidth
+      });
+      return ($('#controlhider')).show();
     };
 
     Motion.prototype.drawControls = function() {
@@ -109,6 +126,27 @@
     };
 
     Motion.prototype.drawChart = function() {};
+
+    Motion.prototype.shuffleFields = function() {
+      var dataPoint, dpindex, tempa, tempb, timeField, _i, _len, _ref, _results;
+      timeField = data.timeFields[0];
+      if (timeField !== -1 && timeField !== 1) {
+        tempa = data.fields[1];
+        tempb = data.fields[timeField];
+        data.fields[1] = tempb;
+        data.fields[timeField] = tempa;
+        _ref = data.dataPoints;
+        _results = [];
+        for (dpindex = _i = 0, _len = _ref.length; _i < _len; dpindex = ++_i) {
+          dataPoint = _ref[dpindex];
+          tempa = dataPoint[1];
+          tempb = dataPoint[timeField];
+          data.dataPoints[dpindex][1] = tempb;
+          _results.push(data.dataPoints[dpindex][timeField] = tempa);
+        }
+        return _results;
+      }
+    };
 
     return Motion;
 
