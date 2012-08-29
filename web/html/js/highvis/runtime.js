@@ -59,15 +59,16 @@
       if (_ref2 = data.allVis[vis], __indexOf.call(data.relVis, _ref2) >= 0) {
         ($('#visTabList')).append("<li class='vis_tab'><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas'>" + data.allVis[vis] + "</a></li>");
       } else {
-        ($('#visTabList')).append("<li class='vis_tab'><a href='' onclick='return false'>" + data.allVis[vis] + "</a></li>");
+        ($('#visTabList')).append("<li class='vis_tab'><s><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas'>" + data.allVis[vis] + "</a><s></li>");
       }
     }
     /* Jquery up the tabs
     */
 
     ($('#viscontainer')).tabs();
+    ($('#viscontainer')).tabs('select', "#" + (data.relVis[0].toLowerCase()) + "_canvas");
     ($('#viscontainer')).width(($('#viscontainer')).width() - (($('#viscontainer')).outerWidth() - ($('#viscontainer')).width()));
-    globals.curVis = eval('globals.' + data.allVis[0].toLowerCase());
+    globals.curVis = eval('globals.' + data.relVis[0].toLowerCase());
     /* Change vis click handler
     */
 
