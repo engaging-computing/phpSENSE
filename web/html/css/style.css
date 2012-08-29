@@ -909,13 +909,17 @@ textarea {
     width: 100%;
     height: 100%;
     overflow-y: auto;
-    border-top: 20px;
+    margin:5px;
 }
 
 .photoTable_photo{
     height:120px;
     width:165px;
-    padding:1px 1px 1px 1px; 
+    padding:1px; 
+    background:#fff;  
+}
+.photoTable_openPhoto{
+    padding:1px; 
     background:#fff;  
 }
 
