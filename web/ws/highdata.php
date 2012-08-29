@@ -35,7 +35,7 @@ class Data {
 
     public $experimentID;
     public $experimentName;
-    public $allVis      = array('Map','Scatter','Timeline','Bar','Histogram','Table','Motion','Photos');
+    public $allVis      = array('Map','Timeline','Scatter','Bar','Histogram','Table','Motion','Photos');
     
     public $relVis      = array();
     
