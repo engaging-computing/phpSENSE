@@ -42,13 +42,20 @@ CoffeeScript version of runtime.
             ($ '#visTabList').append "<li class='vis_tab'><a href='##{data.allVis[vis].toLowerCase()}_canvas'>#{data.allVis[vis]}</a></li>"
         else
             ($ '#visTabList').append "<li class='vis_tab'><a href='' onclick='return false'>#{data.allVis[vis]}</a></li>"
-            
+    
+    data.relVis
+    data.allVis
+    
     ### Jquery up the tabs ###
-    ($ '#viscontainer').tabs()
+    for vis, visIndex in data.allVis
+        if vis is data.relVis[0]
+            ($ '#viscontainer').tabs
+                selected: visIndex
+    
 
     ($ '#viscontainer').width ($ '#viscontainer').width() - (($ '#viscontainer').outerWidth() - ($ '#viscontainer').width())
     
-    globals.curVis = (eval 'globals.' + data.allVis[0].toLowerCase())
+    globals.curVis = (eval 'globals.' + data.relVis[0].toLowerCase())
     
     ### Change vis click handler ###
     ($ '#visTabList a').click ->
@@ -76,7 +83,6 @@ CoffeeScript version of runtime.
 
     ($ '.vis_canvas').css('padding', 0)
     ($ '.vis_canvas').css('margin', 0)
-
     
     #Start up vis
     globals.curVis.start()

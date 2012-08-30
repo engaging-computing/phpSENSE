@@ -37,7 +37,7 @@ class Data {
     public $experimentName;
     public $allVis      = array('Map','Scatter','Timeline','Bar','Histogram','Table','Motion');
     
-    public $relVis      = array('Table');
+    public $relVis      = array();
     
     public $fields       = array();
     public $dataPoints   = array();
@@ -52,24 +52,34 @@ class Data {
         /* See how much data the experiment has */
         $total = count($this->dataPoints);
         
-        if ($total > 1) {         
-            
-            if((count($this->normalFields))>0){
-                $this->relVis = array_merge(array('Bar','Histogram'), $this->relVis);     
-            }
+        if ($total > 1) {       
             
             if((count($this->normalFields))>1){
                 $this->relVis = array_merge(array('Scatter'), $this->relVis);     
             }
-            if((count($this->timeFields))>0 && (count($this->normalFields))>0 ){
-                $this->relVis = array_merge(array('Timeline','Motion'), $this->relVis);              
+            if((count($this->timeFields))>0 && (count($this->normalFields))>0){
+                $this->relVis = array_merge(array('Timeline'), $this->relVis);           
+            }
+            if((count($this->normalFields))>0){
+                $this->relVis = array_merge(array('Bar','Histogram'), $this->relVis);     
             }
             
-            
-        }    
+        }
+        
+        $this->relVis = array_merge(array('Table'), $this->relVis);
+        
         if($this->geoFields){
             $this->relVis = array_merge(array('Map'), $this->relVis);
         }
+        
+        if ($total > 1 && (count($this->timeFields))>0 && (count($this->normalFields))>0){
+            
+            $this->relVis = array_merge(array('Motion'), $this->relVis);
+            
+        }
+        
+        $this->relVis = array_reverse($this->relVis);
+        
     }  
     
 };

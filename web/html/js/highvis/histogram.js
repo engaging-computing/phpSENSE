@@ -43,7 +43,7 @@
       this.canvas = canvas;
     }
 
-    Histogram.prototype.binSize = 1;
+    Histogram.prototype.binSize = 10000;
 
     Histogram.prototype.displayField = data.normalFields[0];
 

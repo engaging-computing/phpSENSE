@@ -30,7 +30,7 @@
 class window.Histogram extends BaseHighVis
     constructor: (@canvas) ->
     
-    binSize: 1
+    binSize: 10000
     displayField: data.normalFields[0]
     
     buildOptions: ->

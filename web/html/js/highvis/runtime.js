@@ -46,7 +46,7 @@
 
 
   ($(document)).ready(function() {
-    var can, containerSize, controlSize, hiderSize, resizeVis, vis, visHeight, visWidth, _i, _len, _ref1, _ref2;
+    var can, containerSize, controlSize, hiderSize, resizeVis, vis, visHeight, visIndex, visWidth, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
     _ref1 = ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas', '#motion_canvas'];
     for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
       can = _ref1[_i];
@@ -62,12 +62,22 @@
         ($('#visTabList')).append("<li class='vis_tab'><a href='' onclick='return false'>" + data.allVis[vis] + "</a></li>");
       }
     }
+    data.relVis;
+    data.allVis;
     /* Jquery up the tabs
     */
 
-    ($('#viscontainer')).tabs();
+    _ref3 = data.allVis;
+    for (visIndex = _j = 0, _len1 = _ref3.length; _j < _len1; visIndex = ++_j) {
+      vis = _ref3[visIndex];
+      if (vis === data.relVis[0]) {
+        ($('#viscontainer')).tabs({
+          selected: visIndex
+        });
+      }
+    }
     ($('#viscontainer')).width(($('#viscontainer')).width() - (($('#viscontainer')).outerWidth() - ($('#viscontainer')).width()));
-    globals.curVis = eval('globals.' + data.allVis[0].toLowerCase());
+    globals.curVis = eval('globals.' + data.relVis[0].toLowerCase());
     /* Change vis click handler
     */
 
