@@ -35,12 +35,7 @@ class window.Photos extends BaseVis
         
         #Hide the controls
         @controlWidth = ($ '#controldiv').width()
-        
-        ($ '#controldiv').css
-            width:0
-        ($ '#controlhider').hide()
-        ($ '#' + @canvas).css
-            width:($ "#viscontainer").innerWidth() - ($ "#controlhider").outerWidth()
+        @hideControls()
         
         super()
  
@@ -57,28 +52,30 @@ class window.Photos extends BaseVis
         for ses of data.metaData
             if data.metaData[ses].pictures.length > 0
                 for pic of data.metaData[ses].pictures
-                    console.log pic
                     tmp = data.metaData[ses].pictures[pic]
-                    do (tmp) =>
+                    name = data.metaData[ses].name
+                    do (tmp,name) =>
                         thumb = "<img id='pic_#{i}' class='photoTable_photo' src='#{tmp.provider_url}'/>"
                         full = "<img id='pic_#{i}' class='photoTable_openPhoto' src='#{tmp.provider_url}'/>"
                         ($ '#photoTable').append thumb
                         ($ '#pic_'+i).click ->
-                            ($ '#photoTable').append("<div id='dialog' style='overflow-x:hidden'>#{full}<div style='float:left'><b>Description: </b>#{tmp.description}</div></div>")
+                            description = if(tmp.description != null)
+                                tmp.description
+                            else
+                                "Description not provided."
+                            ($ '#photoTable').append("<div id='dialog' style='overflow-x:hidden'><table><tr><td style='text-align:center'>#{full}</td></tr><tr><td><b>Description: </b>#{description}</td></tr></table></div>")
                             ($ '#dialog').dialog
                                 modal: true
                                 draggable:false
-                                minWidth:688
-                                minHeight:480
+                                width: 'auto'
+                                height: 'auto'
                                 resizable:false
-                                title: 'Session: ' +data.metaData[ses].session_id
+                                title: 'Session: ' + name
                         i++
                       
     end: ->    
         ($ '#' + @canvas).hide()
-        ($ '#controldiv').css
-            width:@controlWidth
-        ($ '#controlhider').show()
+        @unhideControls(@controlWidth)
         
     drawControls: ->
         super()

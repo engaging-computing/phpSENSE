@@ -213,6 +213,23 @@
       });
     };
 
+    BaseVis.prototype.hideControls = function() {
+      ($('#controldiv')).css({
+        width: 0
+      });
+      ($('#controlhider')).hide();
+      return ($('#' + this.canvas)).css({
+        width: ($("#viscontainer")).innerWidth() - ($("#controlhider")).outerWidth()
+      });
+    };
+
+    BaseVis.prototype.unhideControls = function(size) {
+      ($('#controldiv')).css({
+        width: size
+      });
+      return ($('#controlhider')).show();
+    };
+
     return BaseVis;
 
   })();

@@ -82,21 +82,12 @@
           ($('#' + this.canvas)).html("<div id='vis_disabled'>" + photos_err + "</div>");
       }
       this.controlWidth = ($('#controldiv')).width();
-      ($('#controldiv')).css({
-        width: 0
-      });
-      ($('#controlhider')).hide();
-      return ($('#' + this.canvas)).css({
-        width: ($("#viscontainer")).innerWidth() - ($("#controlhider")).outerWidth()
-      });
+      return this.hideControls();
     };
 
     DisabledVis.prototype.end = function() {
       ($('#' + this.canvas)).hide();
-      ($('#controldiv')).css({
-        width: this.controlWidth
-      });
-      return ($('#controlhider')).show();
+      return this.unhideControls(this.controlWidth);
     };
 
     return DisabledVis;
