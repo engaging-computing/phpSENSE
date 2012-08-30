@@ -30,8 +30,9 @@
 class window.Histogram extends BaseHighVis
     constructor: (@canvas) ->
     
-    binSize: 1
-    displayField: data.normalFields[0]
+        @displayField = data.normalFields[0]
+        @binSize = @defaultBinSize()
+        
     
     buildOptions: ->
         super()
@@ -56,10 +57,68 @@ class window.Histogram extends BaseHighVis
                         legendItemClick: do => (event) ->
 
                            self.displayField = this.options.legendIndex
+                           self.binSize = self.defaultBinSize()
+                           ($ "#binSizeInput").attr('value', self.binSize)
 
                            self.delayedUpdate()
             
-            
+    ###
+    Returns a rough default 'human-like' bin size selection
+    ###
+    defaultBinSize: ->
+        lowBound = 10
+        highBound = 35
+
+        min = Number.MAX_VALUE
+        max = Number.MIN_VALUE
+
+        for groupIndex in globals.groupSelection
+
+            localMin = data.getMin @displayField, groupIndex
+            if localMin isnt null
+                min = Math.min min, localMin
+
+            localMax = data.getMax @displayField, groupIndex
+            if localMax isnt null
+                max = Math.max max, localMax
+
+        range = max - min
+
+        # No data
+        if max < min
+            return 1
+        
+        curSize = 1
+
+        done = (s) -> (highBound > (range / s) > lowBound)
+        
+        while not (done curSize)
+        
+            # Bins too big
+            if (range / curSize) < lowBound
+
+                if (done (curSize / 2))
+                    return curSize / 2
+
+                if (done (curSize / 5))
+                    return curSize / 5
+
+                curSize /= 10
+
+            # Bins too small
+            else if (range / curSize) > highBound
+
+                if (done (curSize * 2))
+                    return curSize * 2
+
+                if (done (curSize * 5))
+                    return curSize * 5
+
+                curSize *= 10
+
+        curSize
+                
+    
     update: ->
         super()
         
@@ -72,27 +131,39 @@ class window.Histogram extends BaseHighVis
         globalmax = Number.MIN_VALUE
         
         for groupIndex in globals.groupSelection
+            
+            min = data.getMin @displayField, groupIndex
+            min = Math.round(min/@binSize)*@binSize
+            globalmin = Math.min globalmin, min
+
+            max = data.getMax @displayField, groupIndex
+            max = Math.round(max/@binSize)*@binSize
+            globalmax = Math.max globalmax, max
+
+        #### Make 'fake' data to ensure proper bar spacing ###
+        fakeDat = for i in [globalmin...globalmax] by @binSize
+            [i, 0]
+
+        options =
+            showInLegend: false
+            data: fakeDat
+        @chart.addSeries options, false
+        ### ###
+        
+        for groupIndex in globals.groupSelection
         
             selecteddata = data.selector @displayField, groupIndex
         
-            tempdata = for i in selecteddata
+            binArr = for i in selecteddata
                 Math.round(i/@binSize)*@binSize
-            
-            tempdict = {}
+
+            tempData = {}
         
-            roundedmin = Math.round((data.getMin @displayField, groupIndex)/@binSize)*@binSize
-            roundedmax = Math.round((data.getMax @displayField, groupIndex)/@binSize)*@binSize
+            for bin in binArr
+                tempData[bin] ?= 0
+                tempData[bin]++
             
-            globalmin = Math.min globalmin, roundedmin
-            globalmax = Math.max globalmax, roundedmax
-        
-            for i in [roundedmin..roundedmax] by @binSize
-                tempdict[i] = 0;
-        
-            for i in tempdata
-                tempdict[i]++
-            
-            tempdata = histogramdata = for number, occurences of tempdict
+            finalData = for number, occurences of tempData
                 [(Number number), occurences]
         
             ### --- ###
@@ -101,8 +172,7 @@ class window.Histogram extends BaseHighVis
                 showInLegend: false
                 color: globals.colors[groupIndex % globals.colors.length]
                 name: data.groups[groupIndex]
-                
-            options.data = tempdata
+                data: finalData
                         
             @chart.addSeries options, false
             
@@ -137,37 +207,11 @@ class window.Histogram extends BaseHighVis
             
         controls += "Bin Size: <input id='binSizeInput' type='text' value='#{@binSize}' size='#{4}'></input>"
         
-        controls += '</div>'
-        
-        controls += '</div>'
-        
-        controls += '</div>'
-        
-        
-        ###
-        for typestring, type in @analysisTypeNames
-        
-            controls += '<div class="inner_control_div">'
-        
-            controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='#{type}' #{if type is @analysisType then 'checked' else ''}> #{typestring}</input><br>"
-        
-            controls += '</div>'
-        ###
+        controls += '</div></div></div>'
         
         
         # Write HTML
         ($ '#controldiv').append controls
-        
-        
-        ###
-        ($ '.analysisType').change (e) =>
-            @analysisType = Number e.target.value
-            @delayedUpdate()
-            
-        ($ '.sortField').change (e) =>
-            @sortField = Number e.target.value
-            @delayedUpdate()
-        ###
 
         #Set up accordion
         globals.toolsOpen ?= 0

@@ -41,11 +41,9 @@
 
     function Histogram(canvas) {
       this.canvas = canvas;
+      this.displayField = data.normalFields[0];
+      this.binSize = this.defaultBinSize();
     }
-
-    Histogram.prototype.binSize = 1;
-
-    Histogram.prototype.displayField = data.normalFields[0];
 
     Histogram.prototype.buildOptions = function() {
       var self,
@@ -74,6 +72,8 @@
               legendItemClick: (function() {
                 return function(event) {
                   self.displayField = this.options.legendIndex;
+                  self.binSize = self.defaultBinSize();
+                  ($("#binSizeInput")).attr('value', self.binSize);
                   return self.delayedUpdate();
                 };
               })()
@@ -83,8 +83,62 @@
       });
     };
 
+    /*
+        Returns a rough default 'human-like' bin size selection
+    */
+
+
+    Histogram.prototype.defaultBinSize = function() {
+      var curSize, done, groupIndex, highBound, localMax, localMin, lowBound, max, min, range, _i, _len, _ref;
+      lowBound = 10;
+      highBound = 35;
+      min = Number.MAX_VALUE;
+      max = Number.MIN_VALUE;
+      _ref = globals.groupSelection;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        groupIndex = _ref[_i];
+        localMin = data.getMin(this.displayField, groupIndex);
+        if (localMin !== null) {
+          min = Math.min(min, localMin);
+        }
+        localMax = data.getMax(this.displayField, groupIndex);
+        if (localMax !== null) {
+          max = Math.max(max, localMax);
+        }
+      }
+      range = max - min;
+      if (max < min) {
+        return 1;
+      }
+      curSize = 1;
+      done = function(s) {
+        var _ref1;
+        return (highBound > (_ref1 = range / s) && _ref1 > lowBound);
+      };
+      while (!(done(curSize))) {
+        if ((range / curSize) < lowBound) {
+          if (done(curSize / 2)) {
+            return curSize / 2;
+          }
+          if (done(curSize / 5)) {
+            return curSize / 5;
+          }
+          curSize /= 10;
+        } else if ((range / curSize) > highBound) {
+          if (done(curSize * 2)) {
+            return curSize * 2;
+          }
+          if (done(curSize * 5)) {
+            return curSize * 5;
+          }
+          curSize *= 10;
+        }
+      }
+      return curSize;
+    };
+
     Histogram.prototype.update = function() {
-      var globalmax, globalmin, groupIndex, histogramdata, i, number, occurences, options, roundedmax, roundedmin, selecteddata, tempdata, tempdict, _i, _j, _k, _len, _len1, _ref, _ref1;
+      var bin, binArr, fakeDat, finalData, globalmax, globalmin, groupIndex, i, max, min, number, occurences, options, selecteddata, tempData, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
       Histogram.__super__.update.call(this);
       while (this.chart.series.length > data.normalFields.length) {
         this.chart.series[this.chart.series.length - 1].remove(false);
@@ -97,33 +151,55 @@
       _ref = globals.groupSelection;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         groupIndex = _ref[_i];
+        min = data.getMin(this.displayField, groupIndex);
+        min = Math.round(min / this.binSize) * this.binSize;
+        globalmin = Math.min(globalmin, min);
+        max = data.getMax(this.displayField, groupIndex);
+        max = Math.round(max / this.binSize) * this.binSize;
+        globalmax = Math.max(globalmax, max);
+      }
+      fakeDat = (function() {
+        var _j, _ref1, _results;
+        _results = [];
+        for (i = _j = globalmin, _ref1 = this.binSize; globalmin <= globalmax ? _j < globalmax : _j > globalmax; i = _j += _ref1) {
+          _results.push([i, 0]);
+        }
+        return _results;
+      }).call(this);
+      options = {
+        showInLegend: false,
+        data: fakeDat
+      };
+      this.chart.addSeries(options, false);
+      /*
+      */
+
+      _ref1 = globals.groupSelection;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        groupIndex = _ref1[_j];
         selecteddata = data.selector(this.displayField, groupIndex);
-        tempdata = (function() {
-          var _j, _len1, _results;
+        binArr = (function() {
+          var _k, _len2, _results;
           _results = [];
-          for (_j = 0, _len1 = selecteddata.length; _j < _len1; _j++) {
-            i = selecteddata[_j];
+          for (_k = 0, _len2 = selecteddata.length; _k < _len2; _k++) {
+            i = selecteddata[_k];
             _results.push(Math.round(i / this.binSize) * this.binSize);
           }
           return _results;
         }).call(this);
-        tempdict = {};
-        roundedmin = Math.round((data.getMin(this.displayField, groupIndex)) / this.binSize) * this.binSize;
-        roundedmax = Math.round((data.getMax(this.displayField, groupIndex)) / this.binSize) * this.binSize;
-        globalmin = Math.min(globalmin, roundedmin);
-        globalmax = Math.max(globalmax, roundedmax);
-        for (i = _j = roundedmin, _ref1 = this.binSize; roundedmin <= roundedmax ? _j <= roundedmax : _j >= roundedmax; i = _j += _ref1) {
-          tempdict[i] = 0;
+        tempData = {};
+        for (_k = 0, _len2 = binArr.length; _k < _len2; _k++) {
+          bin = binArr[_k];
+          if ((_ref2 = tempData[bin]) == null) {
+            tempData[bin] = 0;
+          }
+          tempData[bin]++;
         }
-        for (_k = 0, _len1 = tempdata.length; _k < _len1; _k++) {
-          i = tempdata[_k];
-          tempdict[i]++;
-        }
-        tempdata = histogramdata = (function() {
+        finalData = (function() {
           var _results;
           _results = [];
-          for (number in tempdict) {
-            occurences = tempdict[number];
+          for (number in tempData) {
+            occurences = tempData[number];
             _results.push([Number(number), occurences]);
           }
           return _results;
@@ -134,9 +210,9 @@
         options = {
           showInLegend: false,
           color: globals.colors[groupIndex % globals.colors.length],
-          name: data.groups[groupIndex]
+          name: data.groups[groupIndex],
+          data: finalData
         };
-        options.data = tempdata;
         this.chart.addSeries(options, false);
       }
       this.chart.xAxis[0].setExtremes(globalmin - (this.binSize / 2), globalmax + (this.binSize / 2), false);
@@ -175,30 +251,8 @@
       controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>";
       controls += "<div class='inner_control_div'>";
       controls += "Bin Size: <input id='binSizeInput' type='text' value='" + this.binSize + "' size='" + 4 + "'></input>";
-      controls += '</div>';
-      controls += '</div>';
-      controls += '</div>';
-      /*
-              for typestring, type in @analysisTypeNames
-              
-                  controls += '<div class="inner_control_div">'
-              
-                  controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='#{type}' #{if type is @analysisType then 'checked' else ''}> #{typestring}</input><br>"
-              
-                  controls += '</div>'
-      */
-
+      controls += '</div></div></div>';
       ($('#controldiv')).append(controls);
-      /*
-              ($ '.analysisType').change (e) =>
-                  @analysisType = Number e.target.value
-                  @delayedUpdate()
-                  
-              ($ '.sortField').change (e) =>
-                  @sortField = Number e.target.value
-                  @delayedUpdate()
-      */
-
       if ((_ref = globals.toolsOpen) == null) {
         globals.toolsOpen = 0;
       }
