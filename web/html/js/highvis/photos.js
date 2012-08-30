@@ -72,9 +72,8 @@
                 ($('#photoTable')).append(thumb);
                 ($('#pic_' + i)).click(function() {
                   var description;
-                  description = tmp.description !== null ? tmp.description : "Description not provided.";
-                  ($('#photoTable')).append("<div id='dialog' style='max-width:800px;overflow-x:hidden'><table><tr><td style='text-align:center'>" + full + "</td></tr><tr><td style='max-width:100%;word-wrap:break-word;'><b>Description: </b>" + description + "</td></tr></table></div>");
-                  console.log(($('#fullpic_' + i)).width());
+                  description = tmp.description !== null ? tmp.description : "No description provided.";
+                  ($('#photoTable')).append("<div id='dialog' style='overflow-x:hidden'><table><tr><td style='text-align:center'>" + full + "</td></tr><tr><td style='word-wrap:word-break;max-width:800px'><b>Description: </b>" + description + "</td></tr></table></div>");
                   return ($('#dialog')).dialog({
                     modal: true,
                     draggable: false,
