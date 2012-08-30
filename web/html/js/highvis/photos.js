@@ -51,7 +51,7 @@
     };
 
     Photos.prototype.update = function() {
-      var i, name, pic, ses, tmp, _results;
+      var i, pic, ses, session, tmp, _results;
       ($('#' + this.canvas)).html('');
       ($('#' + this.canvas)).append('<div id="photoTable"></div>');
       i = 0;
@@ -64,27 +64,28 @@
             _results1 = [];
             for (pic in data.metaData[ses].pictures) {
               tmp = data.metaData[ses].pictures[pic];
-              name = data.metaData[ses].name;
-              _results1.push((function(tmp, name) {
+              session = data.metaData[ses];
+              _results1.push((function(tmp, session) {
                 var full, thumb;
                 thumb = "<img id='pic_" + i + "' class='photoTable_photo' src='" + tmp.provider_url + "'/>";
-                full = "<img id='pic_" + i + "' class='photoTable_openPhoto' src='" + tmp.provider_url + "'/>";
+                full = "<img id='fullpic_" + i + "' class='photoTable_openPhoto' src='" + tmp.provider_url + "'/>";
                 ($('#photoTable')).append(thumb);
                 ($('#pic_' + i)).click(function() {
                   var description;
                   description = tmp.description !== null ? tmp.description : "Description not provided.";
-                  ($('#photoTable')).append("<div id='dialog' style='overflow-x:hidden'><table><tr><td style='text-align:center'>" + full + "</td></tr><tr><td><b>Description: </b>" + description + "</td></tr></table></div>");
+                  ($('#photoTable')).append("<div id='dialog' style='max-width:800px;overflow-x:hidden'><table><tr><td style='text-align:center'>" + full + "</td></tr><tr><td style='max-width:100%;word-wrap:break-word;'><b>Description: </b>" + description + "</td></tr></table></div>");
+                  console.log(($('#fullpic_' + i)).width());
                   return ($('#dialog')).dialog({
                     modal: true,
                     draggable: false,
                     width: 'auto',
                     height: 'auto',
                     resizable: false,
-                    title: 'Session: ' + name
+                    title: "Session: " + session.name + " (" + session.session_id + ")"
                   });
                 });
                 return i++;
-              })(tmp, name));
+              })(tmp, session));
             }
             return _results1;
           }).call(this));

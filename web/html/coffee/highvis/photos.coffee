@@ -53,24 +53,25 @@ class window.Photos extends BaseVis
             if data.metaData[ses].pictures.length > 0
                 for pic of data.metaData[ses].pictures
                     tmp = data.metaData[ses].pictures[pic]
-                    name = data.metaData[ses].name
-                    do (tmp,name) =>
+                    session = data.metaData[ses]
+                    do (tmp,session) =>
                         thumb = "<img id='pic_#{i}' class='photoTable_photo' src='#{tmp.provider_url}'/>"
-                        full = "<img id='pic_#{i}' class='photoTable_openPhoto' src='#{tmp.provider_url}'/>"
+                        full = "<img id='fullpic_#{i}' class='photoTable_openPhoto' src='#{tmp.provider_url}'/>"
                         ($ '#photoTable').append thumb
                         ($ '#pic_'+i).click ->
                             description = if(tmp.description != null)
                                 tmp.description
                             else
                                 "Description not provided."
-                            ($ '#photoTable').append("<div id='dialog' style='overflow-x:hidden'><table><tr><td style='text-align:center'>#{full}</td></tr><tr><td><b>Description: </b>#{description}</td></tr></table></div>")
+                            ($ '#photoTable').append("<div id='dialog' style='max-width:800px;overflow-x:hidden'><table><tr><td style='text-align:center'>#{full}</td></tr><tr><td style='max-width:100%;word-wrap:break-word;'><b>Description: </b>#{description}</td></tr></table></div>")
+                            console.log ($ '#fullpic_'+i).width()
                             ($ '#dialog').dialog
                                 modal: true
                                 draggable:false
                                 width: 'auto'
                                 height: 'auto'
                                 resizable:false
-                                title: 'Session: ' + name
+                                title: "Session: #{session.name} (#{session.session_id})"
                         i++
                       
     end: ->    
