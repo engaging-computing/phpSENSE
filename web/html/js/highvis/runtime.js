@@ -59,7 +59,7 @@
       if (_ref2 = data.allVis[vis], __indexOf.call(data.relVis, _ref2) >= 0) {
         ($('#visTabList')).append("<li class='vis_tab'><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas'>" + data.allVis[vis] + "</a></li>");
       } else {
-        ($('#visTabList')).append("<li class='vis_tab'><s><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas'>" + data.allVis[vis] + "</a><s></li>");
+        ($('#visTabList')).append("<li class='vis_tab' ><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas' style='text-decoration:line-through'>" + data.allVis[vis] + "</a></li>");
       }
     }
     /* Jquery up the tabs

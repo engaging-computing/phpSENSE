@@ -41,7 +41,7 @@ CoffeeScript version of runtime.
         if data.allVis[vis] in data.relVis
             ($ '#visTabList').append "<li class='vis_tab'><a href='##{data.allVis[vis].toLowerCase()}_canvas'>#{data.allVis[vis]}</a></li>"
         else
-            ($ '#visTabList').append "<li class='vis_tab'><s><a href='##{data.allVis[vis].toLowerCase()}_canvas'>#{data.allVis[vis]}</a><s></li>"
+            ($ '#visTabList').append "<li class='vis_tab' ><a href='##{data.allVis[vis].toLowerCase()}_canvas' style='text-decoration:line-through'>#{data.allVis[vis]}</a></li>"
             
     ### Jquery up the tabs ###
     ($ '#viscontainer').tabs()
