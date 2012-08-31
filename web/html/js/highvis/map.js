@@ -205,7 +205,7 @@
       controls += "<div class='outer_control_div'>";
       controls += "<h4 class='clean_shrink'>Heat Maps</h4>";
       controls += '<div class="inner_control_div"> Map By: ';
-      controls += '<select class="heatmap_selector">';
+      controls += '<select id="heatmapSelector" class="control_select">';
       sel = this.heatmapSelection === this.HEATMAP_NONE ? 'selected' : '';
       controls += "<option value=\"" + this.HEATMAP_NONE + "\" " + sel + ">None</option>";
       sel = this.heatmapSelection === this.HEATMAP_MARKERS ? 'selected' : '';
@@ -224,14 +224,14 @@
       controls += "<br>";
       controls += "<h4 class='clean_shrink'>Other</h4>";
       controls += '<div class="inner_control_div">';
-      controls += "<input class='marker_box' type='checkbox' name='marker_selector' " + (this.visibleMarkers ? 'checked' : '') + "/> Markers ";
+      controls += "<input id='markerBox' type='checkbox' name='marker_selector' " + (this.visibleMarkers ? 'checked' : '') + "/> Markers ";
       controls += "</div></div></div>";
       ($('#controldiv')).append(controls);
-      ($('.marker_box')).click(function(e) {
+      ($('#markerBox')).click(function(e) {
         _this.visibleMarkers = !_this.visibleMarkers;
         return _this.delayedUpdate();
       });
-      ($('.heatmap_selector')).change(function(e) {
+      ($('#heatmapSelector')).change(function(e) {
         var element;
         element = e.target || e.srcElement;
         _this.heatmapSelection = Number(element.value);
@@ -261,10 +261,23 @@
       });
     };
 
+    Map.prototype.resize = function(newWidth, newHeight, duration) {
+      var func,
+        _this = this;
+      func = function() {
+        return google.maps.event.trigger(_this.gmap, 'resize');
+      };
+      return setTimeout(func, duration);
+    };
+
     return Map;
 
   })(BaseVis);
 
-  globals.map = new Map("map_canvas");
+  if (__indexOf.call(data.relVis, "Map") >= 0) {
+    globals.map = new Map("map_canvas");
+  } else {
+    globals.map = new DisabledVis("map_canvas");
+  }
 
 }).call(this);

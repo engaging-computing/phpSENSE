@@ -27,11 +27,10 @@
  *
 ###
 
-class window.Motion extends BaseVis
+class window.Photos extends BaseVis
     constructor: (@canvas) -> 
 
     start: ->
-        #Make table visible? (or somthing)
         ($ '#' + @canvas).show()
         
         #Hide the controls
@@ -43,38 +42,39 @@ class window.Motion extends BaseVis
         ($ '#' + @canvas).css
             width:($ "#viscontainer").innerWidth() - ($ "#controlhider").outerWidth()
         
-        
-        dt = new google.visualization.DataTable();
-        
-        if ( data.timeFields.length > 0 )
-            if ( data.timeFields[0] != 1)
-                @shuffleFields()
-   
-        for field,fieldIndex in data.fields
-            switch (Number field.typeID)
-                when data.types.TEXT then dt.addColumn('string', field.fieldName) 
-                when data.types.TIME then dt.addColumn('date', field.fieldName)
-                else dt.addColumn('number', field.fieldName)
-        
-        rows = for dataPoint in data.dataPoints
-            line = for dat, fieldIndex in dataPoint 
-                if((Number data.fields[fieldIndex].typeID) is data.types.TIME)
-                    new Date(dat)
-                else 
-                    dat
-            line
-        
-        dt.addRow(row) for row in rows
-                   
-        chart = new google.visualization.MotionChart(document.getElementById('motion_canvas'));
-        chart.draw(dt, {width: '100%', height: '100%'});
         super()
-
+ 
     #Gets called when the controls are clicked and at start
     update: ->
-        super()
-
-    end: ->
+        #clear the old canvas
+        ($ '#' + @canvas).html('')
+            
+        #Append the photoTable to the canvas    
+        ($ '#' + @canvas).append '<div id="photoTable"></div>'
+        
+        #Build the table of pictures with their onlick handlers
+        i=0
+        for ses of data.metaData
+            if data.metaData[ses].pictures.length > 0
+                for pic of data.metaData[ses].pictures
+                    console.log pic
+                    tmp = data.metaData[ses].pictures[pic]
+                    do (tmp) =>
+                        thumb = "<img id='pic_#{i}' class='photoTable_photo' src='#{tmp.provider_url}'/>"
+                        full = "<img id='pic_#{i}' class='photoTable_openPhoto' src='#{tmp.provider_url}'/>"
+                        ($ '#photoTable').append thumb
+                        ($ '#pic_'+i).click ->
+                            ($ '#photoTable').append("<div id='dialog' style='overflow-x:hidden'>#{full}<div style='float:left'><b>Description: </b>#{tmp.description}</div></div>")
+                            ($ '#dialog').dialog
+                                modal: true
+                                draggable:false
+                                minWidth:688
+                                minHeight:480
+                                resizable:false
+                                title: 'Session: ' +data.metaData[ses].session_id
+                        i++
+                      
+    end: ->    
         ($ '#' + @canvas).hide()
         ($ '#controldiv').css
             width:@controlWidth
@@ -82,26 +82,8 @@ class window.Motion extends BaseVis
         
     drawControls: ->
         super()
-
-    drawChart: ->
-
-    shuffleFields: ->
-    
-        timeField= data.timeFields[0]
         
-        if (timeField != -1 && timeField != 1 )
-            tempa = data.fields[1]
-            tempb = data.fields[timeField]
-            data.fields[1] = tempb
-            data.fields[timeField] = tempa
-            
-            for dataPoint,dpindex in data.dataPoints
-                tempa = dataPoint[1]
-                tempb = dataPoint[timeField]
-                data.dataPoints[dpindex][1] = tempb
-                data.dataPoints[dpindex][timeField] = tempa
-
-if "Motion" in data.relVis
-    globals.motion = new Motion "motion_canvas"      
+if "Photos" in data.relVis
+    globals.photos = new Photos "photos_canvas"
 else
-    globals.motion = new DisabledVis "motion_canvas"
+    globals.photos = new DisabledVis "photos_canvas"

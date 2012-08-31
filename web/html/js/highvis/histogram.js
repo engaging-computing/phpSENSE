@@ -227,6 +227,10 @@
 
   })(BaseHighVis);
 
-  globals.histogram = new Histogram('histogram_canvas');
+  if (__indexOf.call(data.relVis, "Histogram") >= 0) {
+    globals.histogram = new Histogram('histogram_canvas');
+  } else {
+    globals.histogram = new DisabledVis('histogram_canvas');
+  }
 
 }).call(this);

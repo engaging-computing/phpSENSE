@@ -140,6 +140,7 @@ class window.Bar extends BaseHighVis
         for field, fieldIndex in data.fields when fieldIndex in data.normalFields
             count += 1
             dummy =
+                legendIndex: fieldIndex
                 data: []
                 color: '#000'
                 visible: if fieldIndex in globals.fieldSelection then true else false
@@ -155,7 +156,7 @@ class window.Bar extends BaseHighVis
         controls += "<div class='outer_control_div'>"
 
         controls += "<div class='inner_control_div'>"
-        controls += 'Sort by: <select class="sortField">'
+        controls += 'Sort by: <select class="sortField control_select">'
 
         tempFields = for fieldID in data.normalFields
             [fieldID, data.fields[fieldID].fieldName]
@@ -210,4 +211,7 @@ class window.Bar extends BaseHighVis
         @drawToolControls()
     
 
-globals.bar = new Bar 'bar_canvas'
+if "Bar" in data.relVis
+    globals.bar = new Bar 'bar_canvas'
+else
+    globals.bar = new DisabledVis "bar_canvas"

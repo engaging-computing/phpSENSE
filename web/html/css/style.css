@@ -897,3 +897,10 @@ a.rating_browse {
 textarea {
     resize:none;
 }
+
+#vis_disabled {
+    font-size: 20px;
+    text-align: center; 
+    width:100%;
+    margin-top:200px;
+}

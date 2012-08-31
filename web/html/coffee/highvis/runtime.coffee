@@ -34,13 +34,18 @@ globals.curVis = null
 CoffeeScript version of runtime.
 ###
 ($ document).ready ->
-    ($ can).hide() for can in ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas','#motion_canvas']
+    ($ can).hide() for can in ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas','#motion_canvas','#photos_canvas']
     
     ### Generate tabs ###
-    for vis of data.relVis
-        ($ '#visTabList').append "<li class='vis_tab'><a href='##{data.relVis[vis].toLowerCase()}_canvas'>#{data.relVis[vis]}</a></li>"
+    for vis of data.allVis
+        if data.allVis[vis] in data.relVis
+            ($ '#visTabList').append "<li class='vis_tab'><a href='##{data.allVis[vis].toLowerCase()}_canvas'>#{data.allVis[vis]}</a></li>"
+        else
+            ($ '#visTabList').append "<li class='vis_tab'><s><a href='##{data.allVis[vis].toLowerCase()}_canvas'>#{data.allVis[vis]}</a><s></li>"
+            
     ### Jquery up the tabs ###
     ($ '#viscontainer').tabs()
+    ($ '#viscontainer').tabs('select', "##{data.relVis[0].toLowerCase()}_canvas")
 
     ($ '#viscontainer').width ($ '#viscontainer').width() - (($ '#viscontainer').outerWidth() - ($ '#viscontainer').width())
     
@@ -59,19 +64,13 @@ CoffeeScript version of runtime.
         if oldVis is globals.curVis
             return
 
-        (oldVis.chart.showLoading 'Loading...') if oldVis.chart?
-
-        ### Give the renderer a cycle to update the loading state before switching ###
-        switchVis = ->
-            globals.curVis.start()
-            oldVis.end() if oldVis?
-
-        setTimeout switchVis, 1
-
+        oldVis.end() if oldVis?
+        globals.curVis.start()
+        
     #Set initial div sizes
     containerSize = ($ '#viscontainer').width()
     hiderSize     = ($ '#controlhider').outerWidth()
-    controlSize = 200
+    controlSize = 210
 
     visWidth = containerSize - (hiderSize + controlSize)
     visHeight = ($ '#viscontainer').height() - ($ '#visTabList').outerHeight()
@@ -94,7 +93,7 @@ CoffeeScript version of runtime.
         containerSize = ($ '#viscontainer').width()
         hiderSize     = ($ '#controlhider').outerWidth()
         controlSize = if ($ '#controldiv').width() is 0
-            200
+            210
         else
             0
 
@@ -102,7 +101,7 @@ CoffeeScript version of runtime.
 
         ($ '#controldiv').animate {width: controlSize}, 600, 'linear'
         ($ '.vis_canvas').animate {width: newWidth}, 600, 'linear'
-        globals.curVis.resize newWidth, $('.vis_canvas').height()
+        globals.curVis.resize newWidth, $('.vis_canvas').height(), 600
 
     ($ '#control_hide_button').click ->
         if ($ '#controldiv').width() is 0

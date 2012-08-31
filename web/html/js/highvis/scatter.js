@@ -122,6 +122,7 @@
         }
         count += 1;
         options = {
+          legendIndex: fieldIndex,
           data: [],
           color: '#000',
           visible: __indexOf.call(globals.fieldSelection, fieldIndex) >= 0 ? true : false,
@@ -335,6 +336,10 @@
 
   })(BaseHighVis);
 
-  globals.scatter = new Scatter('scatter_canvas');
+  if (__indexOf.call(data.relVis, "Scatter") >= 0) {
+    globals.scatter = new Scatter("scatter_canvas");
+  } else {
+    globals.scatter = new DisabledVis("scatter_canvas");
+  }
 
 }).call(this);

@@ -31,7 +31,8 @@
 
 
 (function() {
-  var _ref;
+  var _ref,
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   if ((_ref = window.globals) == null) {
     window.globals = {};
@@ -45,8 +46,8 @@
 
 
   ($(document)).ready(function() {
-    var can, containerSize, controlSize, hiderSize, resizeVis, vis, visHeight, visWidth, _i, _len, _ref1;
-    _ref1 = ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas', '#motion_canvas'];
+    var can, containerSize, controlSize, hiderSize, resizeVis, vis, visHeight, visWidth, _i, _len, _ref1, _ref2;
+    _ref1 = ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas', '#motion_canvas', '#photos_canvas'];
     for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
       can = _ref1[_i];
       ($(can)).hide();
@@ -54,20 +55,25 @@
     /* Generate tabs
     */
 
-    for (vis in data.relVis) {
-      ($('#visTabList')).append("<li class='vis_tab'><a href='#" + (data.relVis[vis].toLowerCase()) + "_canvas'>" + data.relVis[vis] + "</a></li>");
+    for (vis in data.allVis) {
+      if (_ref2 = data.allVis[vis], __indexOf.call(data.relVis, _ref2) >= 0) {
+        ($('#visTabList')).append("<li class='vis_tab'><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas'>" + data.allVis[vis] + "</a></li>");
+      } else {
+        ($('#visTabList')).append("<li class='vis_tab'><s><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas'>" + data.allVis[vis] + "</a><s></li>");
+      }
     }
     /* Jquery up the tabs
     */
 
     ($('#viscontainer')).tabs();
+    ($('#viscontainer')).tabs('select', "#" + (data.relVis[0].toLowerCase()) + "_canvas");
     ($('#viscontainer')).width(($('#viscontainer')).width() - (($('#viscontainer')).outerWidth() - ($('#viscontainer')).width()));
     globals.curVis = eval('globals.' + data.relVis[0].toLowerCase());
     /* Change vis click handler
     */
 
     ($('#visTabList a')).click(function() {
-      var oldVis, switchVis;
+      var oldVis;
       oldVis = globals.curVis;
       /* innerText does not work in firefox
       */
@@ -80,23 +86,14 @@
       if (oldVis === globals.curVis) {
         return;
       }
-      if (oldVis.chart != null) {
-        oldVis.chart.showLoading('Loading...');
+      if (oldVis != null) {
+        oldVis.end();
       }
-      /* Give the renderer a cycle to update the loading state before switching
-      */
-
-      switchVis = function() {
-        globals.curVis.start();
-        if (oldVis != null) {
-          return oldVis.end();
-        }
-      };
-      return setTimeout(switchVis, 1);
+      return globals.curVis.start();
     });
     containerSize = ($('#viscontainer')).width();
     hiderSize = ($('#controlhider')).outerWidth();
-    controlSize = 200;
+    controlSize = 210;
     visWidth = containerSize - (hiderSize + controlSize);
     visHeight = ($('#viscontainer')).height() - ($('#visTabList')).outerHeight();
     ($('.vis_canvas')).width(visWidth);
@@ -110,7 +107,7 @@
       var newWidth;
       containerSize = ($('#viscontainer')).width();
       hiderSize = ($('#controlhider')).outerWidth();
-      controlSize = ($('#controldiv')).width() === 0 ? 200 : 0;
+      controlSize = ($('#controldiv')).width() === 0 ? 210 : 0;
       newWidth = containerSize - (hiderSize + controlSize);
       ($('#controldiv')).animate({
         width: controlSize
@@ -118,7 +115,7 @@
       ($('.vis_canvas')).animate({
         width: newWidth
       }, 600, 'linear');
-      return globals.curVis.resize(newWidth, $('.vis_canvas').height());
+      return globals.curVis.resize(newWidth, $('.vis_canvas').height(), 600);
     };
     return ($('#control_hide_button')).click(function() {
       if (($('#controldiv')).width() === 0) {

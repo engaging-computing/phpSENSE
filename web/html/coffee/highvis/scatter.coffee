@@ -92,6 +92,7 @@ class window.Scatter extends BaseHighVis
         for field, fieldIndex in data.fields when fieldIndex in data.normalFields
             count += 1
             options =
+                legendIndex: fieldIndex
                 data: []
                 color: '#000'
                 visible: if fieldIndex in globals.fieldSelection then true else false
@@ -260,4 +261,7 @@ class window.Scatter extends BaseHighVis
         ($ '#xAxisControl > h3').click ->
             globals.xAxisOpen = (globals.xAxisOpen + 1) % 2
 
-globals.scatter = new Scatter 'scatter_canvas'
+if "Scatter" in data.relVis
+    globals.scatter = new Scatter "scatter_canvas"
+else
+    globals.scatter = new DisabledVis "scatter_canvas"
