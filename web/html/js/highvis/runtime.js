@@ -59,7 +59,7 @@
       if (_ref2 = data.allVis[vis], __indexOf.call(data.relVis, _ref2) >= 0) {
         ($('#visTabList')).append("<li class='vis_tab'><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas'>" + data.allVis[vis] + "</a></li>");
       } else {
-        ($('#visTabList')).append("<li class='vis_tab'><s><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas'>" + data.allVis[vis] + "</a><s></li>");
+        ($('#visTabList')).append("<li class='vis_tab' ><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas' style='text-decoration:line-through'>" + data.allVis[vis] + "</a></li>");
       }
     }
     /* Jquery up the tabs
@@ -75,7 +75,14 @@
     ($('#visTabList a')).click(function() {
       var oldVis;
       oldVis = globals.curVis;
-      globals.curVis = eval('globals.' + this.innerText.toLowerCase());
+      /* innerText does not work in firefox
+      */
+
+      if (document.all) {
+        globals.curVis = eval('globals.' + this.innerText.toLowerCase());
+      } else {
+        globals.curVis = eval('globals.' + this.textContent.toLowerCase());
+      }
       if (oldVis === globals.curVis) {
         return;
       }
