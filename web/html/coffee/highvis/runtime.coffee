@@ -49,7 +49,12 @@ CoffeeScript version of runtime.
     ### Change vis click handler ###
     ($ '#visTabList a').click ->
         oldVis = globals.curVis
-        globals.curVis = (eval 'globals.' + @innerText.toLowerCase())
+        
+        ### innerText does not work in firefox ###
+        if(document.all)
+            globals.curVis = (eval 'globals.' + @innerText.toLowerCase())
+        else
+            globals.curVis = (eval 'globals.' + @textContent.toLowerCase())
         
         if oldVis is globals.curVis
             return

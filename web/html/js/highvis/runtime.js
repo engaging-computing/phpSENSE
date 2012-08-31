@@ -69,7 +69,14 @@
     ($('#visTabList a')).click(function() {
       var oldVis, switchVis;
       oldVis = globals.curVis;
-      globals.curVis = eval('globals.' + this.innerText.toLowerCase());
+      /* innerText does not work in firefox
+      */
+
+      if (document.all) {
+        globals.curVis = eval('globals.' + this.innerText.toLowerCase());
+      } else {
+        globals.curVis = eval('globals.' + this.textContent.toLowerCase());
+      }
       if (oldVis === globals.curVis) {
         return;
       }
