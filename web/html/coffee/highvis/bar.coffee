@@ -57,7 +57,6 @@ class window.Bar extends BaseHighVis
                 symbolWidth: 0
             tooltip:
                 formatter: ->
-                    console.log this
                     str  = "<div style='width:100%;text-align:center;color:#{@series.color};margin-bottom:5px'> #{@point.name}</div>"
                     str += "<table>"
                     str += "<tr><td>#{@x} (#{self.analysisTypeNames[self.analysisType]}):</td><td><strong>#{@y}</strong></td></tr>"

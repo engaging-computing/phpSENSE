@@ -79,7 +79,6 @@
         tooltip: {
           formatter: function() {
             var str;
-            console.log(this);
             str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";margin-bottom:5px'> " + this.point.name + "</div>";
             str += "<table>";
             str += "<tr><td>" + this.x + " (" + self.analysisTypeNames[self.analysisType] + "):</td><td><strong>" + this.y + "</strong></td></tr>";

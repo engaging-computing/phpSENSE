@@ -53,6 +53,22 @@
   };
 
   /*
+  Tests to see if a and b are within thresh%
+  of the smaller value.
+  */
+
+
+  window.fpEq = function(a, b, thresh) {
+    var diff, e;
+    if (thresh == null) {
+      thresh = 0.0001;
+    }
+    diff = Math.abs(a - b);
+    e = (Math.abs(Math.min(a, b))) * thresh;
+    return diff < e;
+  };
+
+  /*
   This function adds a parameterizable radial marker to Highchart's list of
   marker styles.
   */
