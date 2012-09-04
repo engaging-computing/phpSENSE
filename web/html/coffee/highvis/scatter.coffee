@@ -200,7 +200,6 @@ class window.Scatter extends BaseHighVis
 
         ($ '.tooltip_box').click (e) =>
             @advancedTooltips = not @advancedTooltips
-            console.log @advancedTooltips
 
         #Set up accordion
         globals.toolsOpen ?= 0
