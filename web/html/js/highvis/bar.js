@@ -90,7 +90,7 @@
     };
 
     Bar.prototype.update = function() {
-      var fieldIndex, fieldSortedGroupIDValuePairs, fieldSortedGroupIDs, groupID, groupIndex, groupName, groupValue, options, ret, selection, tempGroupIDValuePairs, visibleCategories, _i, _len;
+      var fieldIndex, fieldSortedGroupIDValuePairs, fieldSortedGroupIDs, groupID, groupIndex, groupName, groupValue, options, order, ret, selection, tempGroupIDValuePairs, visibleCategories, _i, _len;
       Bar.__super__.update.call(this);
       visibleCategories = (function() {
         var _i, _len, _ref, _results;
@@ -172,15 +172,16 @@
       /* ---
       */
 
-      for (_i = 0, _len = fieldSortedGroupIDs.length; _i < _len; _i++) {
-        groupIndex = fieldSortedGroupIDs[_i];
+      for (order = _i = 0, _len = fieldSortedGroupIDs.length; _i < _len; order = ++_i) {
+        groupIndex = fieldSortedGroupIDs[order];
         if (!(__indexOf.call(globals.groupSelection, groupIndex) >= 0)) {
           continue;
         }
         options = {
           showInLegend: false,
           color: globals.colors[groupIndex % globals.colors.length],
-          name: data.groups[groupIndex]
+          name: data.groups[groupIndex],
+          index: order
         };
         options.data = (function() {
           var _j, _len1, _ref, _results;
@@ -305,7 +306,6 @@
       });
       ($('.sortField')).change(function(e) {
         _this.sortField = Number(e.target.value);
-        console.log(_this.sortField);
         return _this.delayedUpdate();
       });
       if ((_ref2 = globals.toolsOpen) == null) {

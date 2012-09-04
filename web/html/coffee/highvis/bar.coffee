@@ -94,14 +94,15 @@ class window.Bar extends BaseHighVis
         else
             fieldSortedGroupIDs = for groupName, groupID in data.groups
                 groupID
-        
         ### --- ###
         
-        for groupIndex in fieldSortedGroupIDs when groupIndex in globals.groupSelection
+        for groupIndex, order in fieldSortedGroupIDs when groupIndex in globals.groupSelection
+            
             options =
                 showInLegend: false
                 color: globals.colors[groupIndex % globals.colors.length]
                 name: data.groups[groupIndex]
+                index: order
                 
             options.data = for fieldIndex in data.normalFields when fieldIndex in globals.fieldSelection
                 switch @analysisType
@@ -191,7 +192,6 @@ class window.Bar extends BaseHighVis
             
         ($ '.sortField').change (e) =>
             @sortField = Number e.target.value
-            console.log @sortField
             @delayedUpdate()
 
         #Set up accordion
