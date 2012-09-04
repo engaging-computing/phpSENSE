@@ -49,7 +49,7 @@
       this.SYMBOLS_LINES_MODE = 3;
       this.LINES_MODE = 2;
       this.SYMBOLS_MODE = 1;
-      this.mode = this.SYMBOLS_LINES_MODE;
+      this.mode = this.SYMBOLS_MODE;
       this.xAxis = data.normalFields[0];
       this.advancedTooltips = false;
     }
@@ -70,7 +70,7 @@
           zoomType: "xy"
         },
         title: {
-          text: "Scatter"
+          text: ""
         },
         tooltip: {
           formatter: function() {
@@ -249,8 +249,7 @@
         return _this.delayedUpdate();
       });
       ($('.tooltip_box')).click(function(e) {
-        _this.advancedTooltips = !_this.advancedTooltips;
-        return console.log(_this.advancedTooltips);
+        return _this.advancedTooltips = !_this.advancedTooltips;
       });
       if ((_ref2 = globals.toolsOpen) == null) {
         globals.toolsOpen = 0;

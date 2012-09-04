@@ -61,7 +61,7 @@
       Timeline.__super__.buildOptions.call(this);
       $.extend(true, this.chartOptions, {
         title: {
-          text: 'Timeline'
+          text: ''
         }
       });
       return this.chartOptions.xAxis = {

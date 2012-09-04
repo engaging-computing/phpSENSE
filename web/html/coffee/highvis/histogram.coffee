@@ -29,9 +29,12 @@
 
 class window.Histogram extends BaseHighVis
     constructor: (@canvas) ->
+        @MAX_NUM_BINS = 1000
     
-    binSize: 1
-    displayField: data.normalFields[0]
+        @displayField = data.normalFields[0]
+        @binNumSug = 1
+        @binSize = @defaultBinSize()
+        
     
     buildOptions: ->
         super()
@@ -42,10 +45,20 @@ class window.Histogram extends BaseHighVis
         $.extend true, @chartOptions,
             chart:
                 type: "column"
-            title:
-                text: "Histogram"
             legend:
                 symbolWidth: 0
+            title:
+                text: ""
+            tooltip:
+                formatter: ->
+                    str  = "<table>"
+                    str += "<tr><td>Bin Location:</td><td>#{@x}<td></tr>"
+                    str += "<tr><td>Bin Total:</td><td>#{@total}<td></tr>"
+                    if @y isnt 0
+                        str += "<tr><td><div style='color:#{@series.color};'> #{@series.name}:</div></td>"
+                        str += "<td>#{@y}</td></tr>"
+                    str += "</table>"
+                useHTML: true
             plotOptions:
                 column:
                     stacking: 'normal'
@@ -56,10 +69,68 @@ class window.Histogram extends BaseHighVis
                         legendItemClick: do => (event) ->
 
                            self.displayField = this.options.legendIndex
+                           self.binSize = self.defaultBinSize()
+                           ($ "#binSizeInput").attr('value', self.binSize)
 
                            self.delayedUpdate()
             
+    ###
+    Returns a rough default 'human-like' bin size selection
+    ###
+    defaultBinSize: ->
+    
+        min = Number.MAX_VALUE
+        max = Number.MIN_VALUE
+
+        for groupIndex in globals.groupSelection
+
+            localMin = data.getMin @displayField, groupIndex
+            if localMin isnt null
+                min = Math.min min, localMin
+
+            localMax = data.getMax @displayField, groupIndex
+            if localMax isnt null
+                max = Math.max max, localMax
+
+        range = max - min
+
+        # No data
+        if max < min
+            return 1
+        
+        curSize = 1
+
+        bestSize = curSize
+        bestNum  = range / curSize
+
+        binNumTarget = Math.pow 10, @binNumSug
+
+        tryNewSize = (size) =>
+            if (Math.abs (binNumTarget - (range / size))) < (Math.abs (binNumTarget - bestNum))
+                bestSize = size
+                bestNum  = range / size
+
+                return true
+            false
+        
+        loop 
+            if (range / curSize) < binNumTarget
+                curSize /= 10
+            else if (range / curSize) > binNumTarget
+                curSize *= 10
+
+            break if not tryNewSize curSize
+
+        tryNewSize (curSize / 2)
+        tryNewSize (curSize * 2)
+        tryNewSize (curSize / 5)
+        tryNewSize (curSize * 5)
+
+        bestSize
+
             
+            
+    
     update: ->
         super()
         
@@ -68,32 +139,61 @@ class window.Histogram extends BaseHighVis
         
         ### --- ###
         
-        globalmin = Number.MAX_VALUE
-        globalmax = Number.MIN_VALUE
+        @globalmin = Number.MAX_VALUE
+        @globalmax = Number.MIN_VALUE
+        
+        for groupIndex in globals.groupSelection
+            
+            min = data.getMin @displayField, groupIndex
+            min = Math.round(min/@binSize)*@binSize
+            @globalmin = Math.min @globalmin, min
+
+            max = data.getMax @displayField, groupIndex
+            max = Math.round(max/@binSize)*@binSize
+            @globalmax = Math.max @globalmax, max
+
+        #### Make 'fake' data to ensure proper bar spacing ###
+        fakeDat = for i in [@globalmin...@globalmax] by @binSize
+            [i, 0]
+
+        options =
+            showInLegend: false
+            data: fakeDat
+        @chart.addSeries options, false
+        ### ###
+
+        # Generate all bin data
+        binObjs = {}
         
         for groupIndex in globals.groupSelection
         
             selecteddata = data.selector @displayField, groupIndex
         
-            tempdata = for i in selecteddata
+            binArr = for i in selecteddata
                 Math.round(i/@binSize)*@binSize
-            
-            tempdict = {}
+
+            binObjs[groupIndex] = {}
         
-            roundedmin = Math.round((data.getMin @displayField, groupIndex)/@binSize)*@binSize
-            roundedmax = Math.round((data.getMax @displayField, groupIndex)/@binSize)*@binSize
-            
-            globalmin = Math.min globalmin, roundedmin
-            globalmax = Math.max globalmax, roundedmax
+            for bin in binArr
+                binObjs[groupIndex][bin] ?= 0
+                binObjs[groupIndex][bin]++
+
+        # Convert bin data into series data
+        for groupIndex in globals.groupSelection
         
-            for i in [roundedmin..roundedmax] by @binSize
-                tempdict[i] = 0;
-        
-            for i in tempdata
-                tempdict[i]++
-            
-            tempdata = histogramdata = for number, occurences of tempdict
-                [(Number number), occurences]
+            finalData = for number, occurences of binObjs[groupIndex]
+
+                sum = 0
+
+                # Get total for this bin
+                for dc, groupData of binObjs
+                    if groupData[number]
+                        sum += groupData[number]
+
+                ret =
+                    x: (Number number)
+                    y: occurences
+                    total: sum
         
             ### --- ###
 
@@ -101,12 +201,11 @@ class window.Histogram extends BaseHighVis
                 showInLegend: false
                 color: globals.colors[groupIndex % globals.colors.length]
                 name: data.groups[groupIndex]
-                
-            options.data = tempdata
+                data: finalData
                         
             @chart.addSeries options, false
             
-        @chart.xAxis[0].setExtremes globalmin-(@binSize/2), globalmax+(@binSize/2), false
+        @chart.xAxis[0].setExtremes @globalmin-(@binSize/2), @globalmax+(@binSize/2), false
         
         @chart.redraw()
         
@@ -132,43 +231,40 @@ class window.Histogram extends BaseHighVis
         controls +=  '<div id="toolControl" class="vis_controls">'
          
         controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>"
+        
+        controls += "<div class='outer_control_div'>"
 
-        controls += "<div class='inner_control_div'>"
-            
-        controls += "Bin Size: <input id='binSizeInput' type='text' value='#{@binSize}' size='#{4}'></input>"
+        controls += "<h4 class='clean_shrink'>Bin Size</h4>"
+
+        controls += "Automatic : <br>"
+        controls += "<div id='binSizeSlider' style='width:90%;margin-left:5%'></div><br>"
+
         
-        controls += '</div>'
+        controls += "Manual: <input id='binSizeInput' class='control_select' value='#{@binSize}'></input>"
         
-        controls += '</div>'
-        
-        controls += '</div>'
-        
-        
-        ###
-        for typestring, type in @analysisTypeNames
-        
-            controls += '<div class="inner_control_div">'
-        
-            controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='#{type}' #{if type is @analysisType then 'checked' else ''}> #{typestring}</input><br>"
-        
-            controls += '</div>'
-        ###
+        controls += '</div></div></div>'
         
         
         # Write HTML
         ($ '#controldiv').append controls
-        
-        
-        ###
-        ($ '.analysisType').change (e) =>
-            @analysisType = Number e.target.value
-            @delayedUpdate()
-            
-        ($ '.sortField').change (e) =>
-            @sortField = Number e.target.value
-            @delayedUpdate()
-        ###
 
+        #Set up slider
+        ($ '#binSizeSlider').slider
+            range: 'min'
+            value: @binNumSug
+            min: 1
+            max: 2.2
+            step: .1
+            slide: (event, ui) =>
+                @binNumSug = Number ui.value
+
+                newBinSize = @defaultBinSize()
+                ($ '#binSizeInput').attr("value", "#{@binSize}")
+                
+                if not fpEq newBinSize, @binSize
+                    @binSize = newBinSize
+                    @delayedUpdate()
+        
         #Set up accordion
         globals.toolsOpen ?= 0
 
@@ -181,8 +277,22 @@ class window.Histogram extends BaseHighVis
             
         ($ "#binSizeInput").keydown =>
             if event.keyCode == 13
-                @binSize = Number ($ '#binSizeInput').val()
-                @update()
+                newBinSize = Number ($ '#binSizeInput').val()
+
+                if isNaN newBinSize
+                    alert "Please enter a valid number."
+                    return
+            
+                if newBinSize <= 0
+                    alert "Please enter a positive bin size."
+                    return
+
+                if ((@globalmax - @globalmin) / newBinSize) < @MAX_NUM_BINS
+                    @binSize = newBinSize
+                    @update()
+                else
+                    alert "Entered bin size would result in too many bins."
+                    
         
     drawControls: ->
         super()
