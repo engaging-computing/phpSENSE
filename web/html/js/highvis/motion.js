@@ -46,14 +46,7 @@
     Motion.prototype.start = function() {
       var chart, dat, dataPoint, dt, field, fieldIndex, line, row, rows, _i, _j, _len, _len1, _ref;
       ($('#' + this.canvas)).show();
-      this.controlWidth = ($('#controldiv')).width();
-      ($('#controldiv')).css({
-        width: 0
-      });
-      ($('#controlhider')).hide();
-      ($('#' + this.canvas)).css({
-        width: ($("#viscontainer")).innerWidth() - ($("#controlhider")).outerWidth()
-      });
+      this.hideControls();
       dt = new google.visualization.DataTable();
       if (data.timeFields.length > 0) {
         if (data.timeFields[0] !== 1) {
@@ -115,10 +108,7 @@
 
     Motion.prototype.end = function() {
       ($('#' + this.canvas)).hide();
-      ($('#controldiv')).css({
-        width: this.controlWidth
-      });
-      return ($('#controlhider')).show();
+      return this.unhideControls();
     };
 
     Motion.prototype.drawControls = function() {
