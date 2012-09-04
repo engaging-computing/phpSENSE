@@ -58,7 +58,7 @@ class window.Table extends BaseVis
         rows = for dataPoint in data.dataPoints when (String dataPoint[data.groupingFieldIndex]).toLowerCase() in visibleGroups
             line = for dat, fieldIndex in dataPoint 
                 if((Number data.fields[fieldIndex].typeID) is data.types.TIME)
-                    "<td>#{new Date(dat)}</td>"
+                    "<td>#{new Date(dat).toUTCString()}</td>"
                 else 
                     "<td>#{dat}</td>"
             "<tr>#{line.reduce (a,b)-> a+b}</tr>"
@@ -72,6 +72,7 @@ class window.Table extends BaseVis
             sScrollX: "100%"
             iDisplayLength: -1
             bDeferRender: true
+            bJQueryUI: true
             
         atable = ($ '#data_table').dataTable(dt)
 

@@ -34,15 +34,7 @@ class window.Motion extends BaseVis
         #Make table visible? (or somthing)
         ($ '#' + @canvas).show()
         
-        #Hide the controls
-        @controlWidth = ($ '#controldiv').width()
-        
-        ($ '#controldiv').css
-            width:0
-        ($ '#controlhider').hide()
-        ($ '#' + @canvas).css
-            width:($ "#viscontainer").innerWidth() - ($ "#controlhider").outerWidth()
-        
+        @hideControls()
         
         dt = new google.visualization.DataTable();
         
@@ -73,12 +65,10 @@ class window.Motion extends BaseVis
     #Gets called when the controls are clicked and at start
     update: ->
         super()
-
+        
     end: ->
         ($ '#' + @canvas).hide()
-        ($ '#controldiv').css
-            width:@controlWidth
-        ($ '#controlhider').show()
+        @unhideControls()
         
     drawControls: ->
         super()

@@ -94,7 +94,7 @@
             for (fieldIndex = _k = 0, _len2 = dataPoint.length; _k < _len2; fieldIndex = ++_k) {
               dat = dataPoint[fieldIndex];
               if ((Number(data.fields[fieldIndex].typeID)) === data.types.TIME) {
-                _results1.push("<td>" + (new Date(dat)) + "</td>");
+                _results1.push("<td>" + (new Date(dat).toUTCString()) + "</td>");
               } else {
                 _results1.push("<td>" + dat + "</td>");
               }
@@ -116,7 +116,8 @@
         sScrollY: 400,
         sScrollX: "100%",
         iDisplayLength: -1,
-        bDeferRender: true
+        bDeferRender: true,
+        bJQueryUI: true
       };
       atable = ($('#data_table')).dataTable(dt);
       return Table.__super__.update.call(this);
