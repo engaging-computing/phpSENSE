@@ -34,7 +34,6 @@ class window.Photos extends BaseVis
         ($ '#' + @canvas).show()
         
         #Hide the controls
-        @controlWidth = ($ '#controldiv').width()
         @hideControls()
         
         super()
@@ -76,7 +75,7 @@ class window.Photos extends BaseVis
                       
     end: ->    
         ($ '#' + @canvas).hide()
-        @unhideControls(@controlWidth)
+        @unhideControls()
         
     drawControls: ->
         super()

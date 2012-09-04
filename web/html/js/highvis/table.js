@@ -116,7 +116,8 @@
         sScrollY: 400,
         sScrollX: "100%",
         iDisplayLength: -1,
-        bDeferRender: true
+        bDeferRender: true,
+        bJQueryUI: true
       };
       atable = ($('#data_table')).dataTable(dt);
       return Table.__super__.update.call(this);

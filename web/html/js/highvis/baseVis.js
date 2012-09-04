@@ -214,6 +214,7 @@
     };
 
     BaseVis.prototype.hideControls = function() {
+      this.controlWidth = ($('#controldiv')).width();
       ($('#controldiv')).css({
         width: 0
       });
@@ -223,9 +224,9 @@
       });
     };
 
-    BaseVis.prototype.unhideControls = function(size) {
+    BaseVis.prototype.unhideControls = function() {
       ($('#controldiv')).css({
-        width: size
+        width: this.controlWidth
       });
       return ($('#controlhider')).show();
     };

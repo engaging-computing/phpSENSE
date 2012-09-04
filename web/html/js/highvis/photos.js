@@ -45,7 +45,6 @@
 
     Photos.prototype.start = function() {
       ($('#' + this.canvas)).show();
-      this.controlWidth = ($('#controldiv')).width();
       this.hideControls();
       return Photos.__super__.start.call(this);
     };
@@ -97,7 +96,7 @@
 
     Photos.prototype.end = function() {
       ($('#' + this.canvas)).hide();
-      return this.unhideControls(this.controlWidth);
+      return this.unhideControls();
     };
 
     Photos.prototype.drawControls = function() {

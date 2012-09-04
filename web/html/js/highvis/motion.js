@@ -46,7 +46,6 @@
     Motion.prototype.start = function() {
       var chart, dat, dataPoint, dt, field, fieldIndex, line, row, rows, _i, _j, _len, _len1, _ref;
       ($('#' + this.canvas)).show();
-      this.controlWidth = ($('#controldiv')).width();
       this.hideControls();
       dt = new google.visualization.DataTable();
       if (data.timeFields.length > 0) {
@@ -109,7 +108,7 @@
 
     Motion.prototype.end = function() {
       ($('#' + this.canvas)).hide();
-      return this.unhideControls(this.controlWidth);
+      return this.unhideControls();
     };
 
     Motion.prototype.drawControls = function() {

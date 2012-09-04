@@ -72,6 +72,7 @@ class window.Table extends BaseVis
             sScrollX: "100%"
             iDisplayLength: -1
             bDeferRender: true
+            bJQueryUI: true
             
         atable = ($ '#data_table').dataTable(dt)
 

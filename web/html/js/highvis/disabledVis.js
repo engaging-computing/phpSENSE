@@ -81,7 +81,6 @@
         case "photos_canvas":
           ($('#' + this.canvas)).html("<div id='vis_disabled'>" + photos_err + "</div>");
       }
-      this.controlWidth = ($('#controldiv')).width();
       return this.hideControls();
     };
 

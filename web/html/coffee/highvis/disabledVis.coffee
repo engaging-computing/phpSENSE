@@ -50,7 +50,6 @@ class window.DisabledVis extends BaseVis
             when "scatter_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{scatter_err}</div>")
             when "photos_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{photos_err}</div>")
         
-        @controlWidth = ($ '#controldiv').width()
         @hideControls()
         
     end: ->

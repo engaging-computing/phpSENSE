@@ -34,7 +34,6 @@ class window.Motion extends BaseVis
         #Make table visible? (or somthing)
         ($ '#' + @canvas).show()
         
-        @controlWidth = ($ '#controldiv').width()
         @hideControls()
         
         dt = new google.visualization.DataTable();
@@ -69,7 +68,7 @@ class window.Motion extends BaseVis
         
     end: ->
         ($ '#' + @canvas).hide()
-        @unhideControls(@controlWidth)
+        @unhideControls()
         
     drawControls: ->
         super()
