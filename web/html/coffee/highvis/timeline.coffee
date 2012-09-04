@@ -45,7 +45,7 @@ class window.Timeline extends Scatter
 
         $.extend true, @chartOptions,
             title:
-                text: 'Timeline'
+                text: ''
 
         @chartOptions.xAxis =
             type: 'datetime'

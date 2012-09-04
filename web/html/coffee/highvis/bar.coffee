@@ -52,7 +52,7 @@ class window.Bar extends BaseHighVis
             chart:
                 type: "column"
             title:
-                text: "Bar"
+                text: ""
             legend:
                 symbolWidth: 0
             tooltip:
@@ -78,16 +78,16 @@ class window.Bar extends BaseHighVis
         
         tempGroupIDValuePairs = for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
             switch @analysisType
-                when @ANALYSISTYPE_MAX      then [groupIndex, data.getMax       @sortField, groupIndex]
-                when @ANALYSISTYPE_MIN      then [groupIndex, data.getMin       @sortField, groupIndex]
-                when @ANALYSISTYPE_MEAN     then [groupIndex, data.getMean      @sortField, groupIndex]
-                when @ANALYSISTYPE_MEDIAN   then [groupIndex, data.getMedian    @sortField, groupIndex]
-                when @ANALYSISTYPE_COUNT    then [groupIndex, data.getCount     @sortField, groupIndex]
-                when @ANALYSISTYPE_TOTAL    then [groupIndex, data.getTotal     @sortField, groupIndex]
+                when @ANALYSISTYPE_MAX      then [groupIndex, (data.getMax       @sortField, groupIndex)]
+                when @ANALYSISTYPE_MIN      then [groupIndex, (data.getMin       @sortField, groupIndex)]
+                when @ANALYSISTYPE_MEAN     then [groupIndex, (data.getMean      @sortField, groupIndex)]
+                when @ANALYSISTYPE_MEDIAN   then [groupIndex, (data.getMedian    @sortField, groupIndex)]
+                when @ANALYSISTYPE_COUNT    then [groupIndex, (data.getCount     @sortField, groupIndex)]
+                when @ANALYSISTYPE_TOTAL    then [groupIndex, (data.getTotal     @sortField, groupIndex)]
         
         if @sortField != null
             fieldSortedGroupIDValuePairs = tempGroupIDValuePairs.sort (a,b) ->
-                if a[1] > b[1] then 1 else -1
+                a[1] - b[1]
         
             fieldSortedGroupIDs = for [groupID, groupValue] in fieldSortedGroupIDValuePairs
                 groupID

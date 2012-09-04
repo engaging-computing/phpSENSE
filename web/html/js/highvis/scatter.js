@@ -49,7 +49,7 @@
       this.SYMBOLS_LINES_MODE = 3;
       this.LINES_MODE = 2;
       this.SYMBOLS_MODE = 1;
-      this.mode = this.SYMBOLS_LINES_MODE;
+      this.mode = this.SYMBOLS_MODE;
       this.xAxis = data.normalFields[0];
       this.advancedTooltips = false;
     }
@@ -70,7 +70,7 @@
           zoomType: "xy"
         },
         title: {
-          text: "Scatter"
+          text: ""
         },
         tooltip: {
           formatter: function() {

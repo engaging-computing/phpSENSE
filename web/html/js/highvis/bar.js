@@ -71,7 +71,7 @@
           type: "column"
         },
         title: {
-          text: "Bar"
+          text: ""
         },
         legend: {
           symbolWidth: 0
@@ -146,11 +146,7 @@
       }).call(this);
       if (this.sortField !== null) {
         fieldSortedGroupIDValuePairs = tempGroupIDValuePairs.sort(function(a, b) {
-          if (a[1] > b[1]) {
-            return 1;
-          } else {
-            return -1;
-          }
+          return a[1] - b[1];
         });
         fieldSortedGroupIDs = (function() {
           var _i, _len, _ref, _results;
