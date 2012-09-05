@@ -252,17 +252,17 @@ class window.Histogram extends BaseHighVis
         ($ '#binSizeSlider').slider
             range: 'min'
             value: @binNumSug
-            min: 1
+            min: .5
             max: 2.2
             step: .1
             slide: (event, ui) =>
                 @binNumSug = Number ui.value
 
                 newBinSize = @defaultBinSize()
-                ($ '#binSizeInput').attr("value", "#{@binSize}")
                 
                 if not fpEq newBinSize, @binSize
                     @binSize = newBinSize
+                    ($ '#binSizeInput').attr("value", "#{@binSize}")
                     @delayedUpdate()
         
         #Set up accordion

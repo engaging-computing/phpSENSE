@@ -293,16 +293,16 @@
       ($('#binSizeSlider')).slider({
         range: 'min',
         value: this.binNumSug,
-        min: 1,
+        min: .5,
         max: 2.2,
         step: .1,
         slide: function(event, ui) {
           var newBinSize;
           _this.binNumSug = Number(ui.value);
           newBinSize = _this.defaultBinSize();
-          ($('#binSizeInput')).attr("value", "" + _this.binSize);
           if (!fpEq(newBinSize, _this.binSize)) {
             _this.binSize = newBinSize;
+            ($('#binSizeInput')).attr("value", "" + _this.binSize);
             return _this.delayedUpdate();
           }
         }
