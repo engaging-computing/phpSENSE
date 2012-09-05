@@ -48,6 +48,21 @@ window.fpEq = (a, b, thresh = 0.0001) ->
     e = (Math.abs (Math.min a, b)) * thresh
 
     return diff < e
+
+###
+Cross platform accessor/mutator for element inner text
+###
+window.innerTextCompat = (self, value = null) ->
+    if document.getElementsByTagName("body")[0].innerText?
+        if value is null
+            return self.innerText
+        else
+            self.innerText = value
+    else
+        if value is null
+            return self.textContent
+        else
+            self.textContent = value
     
 ###
 This function adds a parameterizable radial marker to Highchart's list of

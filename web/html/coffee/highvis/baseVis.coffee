@@ -163,14 +163,12 @@ class window.BaseVis
 
     hideControls: ->
         @controlWidth = ($ '#controldiv').width()
-        ($ '#controldiv').css
-            width:0
+        ($ '#controldiv').width 0
         ($ '#controlhider').hide()
         ($ '#' + @canvas).css
-            width:($ "#viscontainer").innerWidth() - ($ "#controlhider").outerWidth()
+            width: ($ "#viscontainer").innerWidth() - (($ "#controlhider").outerWidth() + globals.VIS_MARGIN)
     unhideControls: ->
-        ($ '#controldiv').css
-            width:@controlWidth
+        ($ '#controldiv').width @controlWidth
         ($ '#controlhider').show()
 
 class window.BaseHighVis extends BaseVis

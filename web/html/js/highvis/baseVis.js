@@ -215,19 +215,15 @@
 
     BaseVis.prototype.hideControls = function() {
       this.controlWidth = ($('#controldiv')).width();
-      ($('#controldiv')).css({
-        width: 0
-      });
+      ($('#controldiv')).width(0);
       ($('#controlhider')).hide();
       return ($('#' + this.canvas)).css({
-        width: ($("#viscontainer")).innerWidth() - ($("#controlhider")).outerWidth()
+        width: ($("#viscontainer")).innerWidth() - (($("#controlhider")).outerWidth() + globals.VIS_MARGIN)
       });
     };
 
     BaseVis.prototype.unhideControls = function() {
-      ($('#controldiv')).css({
-        width: this.controlWidth
-      });
+      ($('#controldiv')).width(this.controlWidth);
       return ($('#controlhider')).show();
     };
 
