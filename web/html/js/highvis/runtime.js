@@ -40,6 +40,10 @@
 
   globals.curVis = null;
 
+  globals.CONTROL_SIZE = 210;
+
+  globals.VIS_MARGIN = 20;
+
   /*
   CoffeeScript version of runtime.
   */
@@ -75,14 +79,7 @@
     ($('#visTabList a')).click(function() {
       var oldVis;
       oldVis = globals.curVis;
-      /* innerText does not work in firefox
-      */
-
-      if (document.all) {
-        globals.curVis = eval('globals.' + this.innerText.toLowerCase());
-      } else {
-        globals.curVis = eval('globals.' + this.textContent.toLowerCase());
-      }
+      globals.curVis = eval('globals.' + innerTextCompat(this).toLowerCase());
       if (oldVis === globals.curVis) {
         return;
       }
@@ -93,8 +90,8 @@
     });
     containerSize = ($('#viscontainer')).width();
     hiderSize = ($('#controlhider')).outerWidth();
-    controlSize = 210;
-    visWidth = containerSize - (hiderSize + controlSize);
+    controlSize = globals.CONTROL_SIZE;
+    visWidth = containerSize - (hiderSize + controlSize + globals.VIS_MARGIN);
     visHeight = ($('#viscontainer')).height() - ($('#visTabList')).outerHeight();
     ($('.vis_canvas')).width(visWidth);
     ($('.vis_canvas')).height(visHeight);
@@ -107,8 +104,8 @@
       var newWidth;
       containerSize = ($('#viscontainer')).width();
       hiderSize = ($('#controlhider')).outerWidth();
-      controlSize = ($('#controldiv')).width() === 0 ? 210 : 0;
-      newWidth = containerSize - (hiderSize + controlSize);
+      controlSize = ($('#controldiv')).width() <= 0 ? globals.CONTROL_SIZE : 0;
+      newWidth = containerSize - (hiderSize + controlSize + globals.VIS_MARGIN);
       ($('#controldiv')).animate({
         width: controlSize
       }, 600, 'linear');
@@ -118,6 +115,7 @@
       return globals.curVis.resize(newWidth, $('.vis_canvas').height(), 600);
     };
     return ($('#control_hide_button')).click(function() {
+      console.log('CLICKED');
       if (($('#controldiv')).width() === 0) {
         $("#" + this.id).html('>');
       } else {

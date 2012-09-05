@@ -69,6 +69,30 @@
   };
 
   /*
+  Cross platform accessor/mutator for element inner text
+  */
+
+
+  window.innerTextCompat = function(self, value) {
+    if (value == null) {
+      value = null;
+    }
+    if (document.getElementsByTagName("body")[0].innerText != null) {
+      if (value === null) {
+        return self.innerText;
+      } else {
+        return self.innerText = value;
+      }
+    } else {
+      if (value === null) {
+        return self.textContent;
+      } else {
+        return self.textContent = value;
+      }
+    }
+  };
+
+  /*
   This function adds a parameterizable radial marker to Highchart's list of
   marker styles.
   */
