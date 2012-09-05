@@ -88,6 +88,7 @@ if(isset($_REQUEST['sessions'])) {
     $head .= '<script type="text/javascript" src="/html/js/highvis/bar.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/table.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/map.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/highvis/highcharts/modules/exporting.js"></script>';
     
     $head .= '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
     $head .= '<script>google.load("visualization", "1", {"packages":["motionchart"]});</script>';
