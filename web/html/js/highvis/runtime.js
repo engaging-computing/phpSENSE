@@ -50,7 +50,8 @@
 
 
   ($(document)).ready(function() {
-    var can, containerSize, controlSize, hiderSize, resizeVis, vis, visHeight, visWidth, _i, _len, _ref1, _ref2;
+    var can, containerSize, controlSize, hiderSize, hydrate, resizeVis, vis, visHeight, visWidth, _i, _len, _ref1, _ref2,
+      _this = this;
     _ref1 = ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas', '#motion_canvas', '#photos_canvas'];
     for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
       can = _ref1[_i];
@@ -114,7 +115,7 @@
       }, 600, 'linear');
       return globals.curVis.resize(newWidth, $('.vis_canvas').height(), 600);
     };
-    return ($('#control_hide_button')).click(function() {
+    ($('#control_hide_button')).click(function() {
       console.log('CLICKED');
       if (($('#controldiv')).width() === 0) {
         $("#" + this.id).html('>');
@@ -122,6 +123,37 @@
         $("#" + this.id).html('<');
       }
       return resizeVis();
+    });
+    hydrate = new Hydrate();
+    ($("#pagetitle")).append(" <button id='stringify'>sfadf</button>");
+    return ($("#stringify")).click(function() {
+      var foo, x;
+      foo = function(obj) {
+        var cpy, fixed, key, val;
+        switch (typeof obj) {
+          case 'number':
+            return obj;
+          case 'string':
+            return obj;
+          case 'function':
+            return void 0;
+          case 'object':
+            cpy = {};
+            for (key in obj) {
+              val = obj[key];
+              fixed = foo(val);
+              if (fixed !== void 0) {
+                cpy[key] = fixed;
+              }
+            }
+            return cpy;
+        }
+      };
+      delete globals.curVis.chart;
+      console.log(foo(globals.curVis));
+      x = hydrate.stringify(foo(globals.curVis));
+      ($("#container")).append(x);
+      return console.log(hydrate.parse(x));
     });
   });
 
