@@ -1,10 +1,16 @@
 <div id="hiddenModalContent" style="display:none;">
 	<div id="wizard_wrapper" style="width:600px;">
 		<div id="step_start" class="wizard_step">
+		    
 			<strong>Will you use the iSENSE PinPoint Board?</strong>
 			<div class="wizard_step_content">
-				<input type="submit" value="Yes" onclick="createWizard.step_start(true);" /> <input type="submit" value="No" onclick="createWizard.step_start(false);" />
+			    <br>
+				<input type="radio" name="fieldSelect" value"manual" checked> Set up fields manually.</input><br>
+				<input type="radio" name="fieldSelect" value"pinpoint"> Set up fields for Pinpoint.</input><br>
+				<input type="radio" name="fieldSelect" value"upinpoint"> Set up fields for uPinpoint.</input><br><br>
+				<button>Next</button>
 			</div>
+			
 		</div>
 		<div id="step_pinpoint" class="wizard_step" style="display:none;">
 			<strong>Select the PinPoint sensors you will use.</strong>
