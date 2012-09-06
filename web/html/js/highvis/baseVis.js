@@ -264,6 +264,13 @@
         credits: {
           enabled: false
         },
+        navigation: {
+          buttonOptions: {
+            align: 'right',
+            verticalAlign: 'bottom',
+            y: -55
+          }
+        },
         legend: {
           symbolWidth: 60,
           itemWidth: 200
