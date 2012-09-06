@@ -194,8 +194,11 @@ class window.BaseHighVis extends BaseVis
             #colors:
             credits:
                 enabled: false
-            #global: {}
-            #labels: {}
+            navigation:
+                buttonOptions:
+                    align: 'right'
+                    verticalAlign: 'bottom'
+                    y: -55
             legend:
                 symbolWidth:60
                 itemWidth: 200
