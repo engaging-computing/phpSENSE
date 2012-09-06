@@ -45,6 +45,9 @@
 
     Table.prototype.start = function() {
       ($('#' + this.canvas)).show();
+      ($("#" + this.canvas)).css('padding-top', globals.VIS_MARGIN / 2);
+      ($("#" + this.canvas)).css('padding-left', globals.VIS_MARGIN / 2);
+      ($("#" + this.canvas)).height(($("#" + this.canvas)).height() - globals.VIS_MARGIN);
       return Table.__super__.start.call(this);
     };
 
@@ -113,11 +116,24 @@
         ($('#table_body')).append(row);
       }
       dt = {
-        sScrollY: 400,
+        sScrollY: "" + (($('#' + this.canvas)).height() - (110 + (globals.VIS_MARGIN / 2))) + "px",
         sScrollX: "100%",
         iDisplayLength: -1,
         bDeferRender: true,
-        bJQueryUI: true
+        bJQueryUI: true,
+        oLanguage: {
+          sLengthMenu: 'Display <select>' + '<option value="10">10</option>' + '<option value="25">25</option>' + '<option value="50">50</option>' + '<option value="100">100</option>' + '<option value="-1">All</option>' + '</select> records'
+        },
+        aoColumnDefs: [
+          {
+            aTargets: [data.groupingFieldIndex],
+            fnCreatedCell: function(nTd, sData, oData, iRow, iCol) {
+              var colorIndex;
+              colorIndex = data.groups.indexOf(sData.toLowerCase());
+              return ($(nTd)).css('color', globals.colors[colorIndex % globals.colors.length]);
+            }
+          }
+        ]
       };
       atable = ($('#data_table')).dataTable(dt);
       return Table.__super__.update.call(this);

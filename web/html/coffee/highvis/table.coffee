@@ -33,6 +33,11 @@ class window.Table extends BaseVis
     start: ->
         #Make table visible? (or somthing)
         ($ '#' + @canvas).show()
+
+        ($ "##{@canvas}").css 'padding-top'    , (globals.VIS_MARGIN / 2)
+        ($ "##{@canvas}").css 'padding-left'   , (globals.VIS_MARGIN / 2)
+        ($ "##{@canvas}").height ($ "##{@canvas}").height() - globals.VIS_MARGIN
+        
         #Calls update
         super()
 
@@ -68,11 +73,25 @@ class window.Table extends BaseVis
         ($ '#table_body').append row for row in rows 
         
         dt = 
-            sScrollY: 400
+            sScrollY: "#{($ '#' + @canvas).height() - (110 + (globals.VIS_MARGIN / 2))}px"
             sScrollX: "100%"
             iDisplayLength: -1
             bDeferRender: true
             bJQueryUI: true
+            oLanguage:
+                sLengthMenu: 'Display <select>'   +
+                             '<option value="10">10</option>' +
+                             '<option value="25">25</option>' +
+                             '<option value="50">50</option>' +
+                             '<option value="100">100</option>' +
+                             '<option value="-1">All</option>'+
+                             '</select> records'
+            aoColumnDefs: [
+                aTargets: [data.groupingFieldIndex]
+                fnCreatedCell: (nTd, sData, oData, iRow, iCol) ->
+                    colorIndex = data.groups.indexOf(sData.toLowerCase())
+                    ($ nTd).css 'color', globals.colors[colorIndex % globals.colors.length]
+                    ]
             
         atable = ($ '#data_table').dataTable(dt)
 

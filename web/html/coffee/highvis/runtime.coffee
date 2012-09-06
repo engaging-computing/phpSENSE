@@ -30,6 +30,9 @@
 window.globals ?= {}
 globals.curVis = null
 
+globals.CONTROL_SIZE = 210
+globals.VIS_MARGIN = 20
+
 ###
 CoffeeScript version of runtime.
 ###
@@ -54,12 +57,8 @@ CoffeeScript version of runtime.
     ### Change vis click handler ###
     ($ '#visTabList a').click ->
         oldVis = globals.curVis
-        
-        ### innerText does not work in firefox ###
-        if(document.all)
-            globals.curVis = (eval 'globals.' + @innerText.toLowerCase())
-        else
-            globals.curVis = (eval 'globals.' + @textContent.toLowerCase())
+
+        globals.curVis = (eval 'globals.' + innerTextCompat(this).toLowerCase())
         
         if oldVis is globals.curVis
             return
@@ -70,9 +69,9 @@ CoffeeScript version of runtime.
     #Set initial div sizes
     containerSize = ($ '#viscontainer').width()
     hiderSize     = ($ '#controlhider').outerWidth()
-    controlSize = 210
+    controlSize = globals.CONTROL_SIZE
 
-    visWidth = containerSize - (hiderSize + controlSize)
+    visWidth = containerSize - (hiderSize + controlSize + globals.VIS_MARGIN)
     visHeight = ($ '#viscontainer').height() - ($ '#visTabList').outerHeight()
 
     ($ '.vis_canvas').width  visWidth
@@ -92,18 +91,19 @@ CoffeeScript version of runtime.
     
         containerSize = ($ '#viscontainer').width()
         hiderSize     = ($ '#controlhider').outerWidth()
-        controlSize = if ($ '#controldiv').width() is 0
-            210
+        controlSize = if ($ '#controldiv').width() <= 0
+            globals.CONTROL_SIZE
         else
             0
 
-        newWidth = containerSize - (hiderSize + controlSize)
-
+        newWidth = containerSize - (hiderSize + controlSize + globals.VIS_MARGIN)
+        
         ($ '#controldiv').animate {width: controlSize}, 600, 'linear'
         ($ '.vis_canvas').animate {width: newWidth}, 600, 'linear'
         globals.curVis.resize newWidth, $('.vis_canvas').height(), 600
 
     ($ '#control_hide_button').click ->
+        console.log 'CLICKED'
         if ($ '#controldiv').width() is 0
             $("##{@id}").html('>');
         else
