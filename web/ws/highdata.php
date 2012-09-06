@@ -35,7 +35,7 @@ class Data {
 
     public $experimentID;
     public $experimentName;
-    public $allVis      = array('Map','Scatter','Timeline','Bar','Histogram','Table','Motion');
+    public $allVis      = array('Map','Timeline','Scatter','Bar','Histogram','Table','Motion','Photos');
     
     public $relVis      = array();
     
@@ -45,6 +45,7 @@ class Data {
     public $normalFields = array();
     public $timeFields   = array();
     public $geoFields = false;
+    public $hasPics = false;
   
     /* Turn on the relevant vizes */
     public function setRelVis() {
@@ -164,7 +165,7 @@ if(isset($_REQUEST['sessions'])) {
         //add the data
         $data->dataPoints = array_merge($data->dataPoints, $tmpData);
         
-        
+        //Figure out the field types for the experiment.
         foreach($fields as $key=>$field){
             $t = $field['type_id'];
             
@@ -183,11 +184,13 @@ if(isset($_REQUEST['sessions'])) {
             }
         }
         
-
-        
         //Get session related meta data
         $data->metaData[$idName] = getSession($ses);
         $data->metaData[$idName]['pictures'] = getSessionPictures($ses);
+
+        if(count($data->metaData[$idName]['pictures'])>0){
+            $data->hasPics = true;
+        }
     }
     
     //Determine witch vises are relevant

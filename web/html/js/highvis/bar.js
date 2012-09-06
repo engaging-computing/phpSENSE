@@ -71,7 +71,7 @@
           type: "column"
         },
         title: {
-          text: "Bar"
+          text: ""
         },
         legend: {
           symbolWidth: 0
@@ -79,7 +79,6 @@
         tooltip: {
           formatter: function() {
             var str;
-            console.log(this);
             str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";margin-bottom:5px'> " + this.point.name + "</div>";
             str += "<table>";
             str += "<tr><td>" + this.x + " (" + self.analysisTypeNames[self.analysisType] + "):</td><td><strong>" + this.y + "</strong></td></tr>";
@@ -91,7 +90,7 @@
     };
 
     Bar.prototype.update = function() {
-      var fieldIndex, fieldSortedGroupIDValuePairs, fieldSortedGroupIDs, groupID, groupIndex, groupName, groupValue, options, ret, selection, tempGroupIDValuePairs, visibleCategories, _i, _len;
+      var fieldIndex, fieldSortedGroupIDValuePairs, fieldSortedGroupIDs, groupID, groupIndex, groupName, groupValue, options, order, ret, selection, tempGroupIDValuePairs, visibleCategories, _i, _len;
       Bar.__super__.update.call(this);
       visibleCategories = (function() {
         var _i, _len, _ref, _results;
@@ -147,11 +146,7 @@
       }).call(this);
       if (this.sortField !== null) {
         fieldSortedGroupIDValuePairs = tempGroupIDValuePairs.sort(function(a, b) {
-          if (a[1] > b[1]) {
-            return 1;
-          } else {
-            return -1;
-          }
+          return a[1] - b[1];
         });
         fieldSortedGroupIDs = (function() {
           var _i, _len, _ref, _results;
@@ -177,15 +172,16 @@
       /* ---
       */
 
-      for (_i = 0, _len = fieldSortedGroupIDs.length; _i < _len; _i++) {
-        groupIndex = fieldSortedGroupIDs[_i];
+      for (order = _i = 0, _len = fieldSortedGroupIDs.length; _i < _len; order = ++_i) {
+        groupIndex = fieldSortedGroupIDs[order];
         if (!(__indexOf.call(globals.groupSelection, groupIndex) >= 0)) {
           continue;
         }
         options = {
           showInLegend: false,
           color: globals.colors[groupIndex % globals.colors.length],
-          name: data.groups[groupIndex]
+          name: data.groups[groupIndex],
+          index: order
         };
         options.data = (function() {
           var _j, _len1, _ref, _results;
@@ -255,6 +251,7 @@
         }
         count += 1;
         _results.push(dummy = {
+          legendIndex: fieldIndex,
           data: [],
           color: '#000',
           visible: __indexOf.call(globals.fieldSelection, fieldIndex) >= 0 ? true : false,
@@ -273,7 +270,7 @@
       controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>";
       controls += "<div class='outer_control_div'>";
       controls += "<div class='inner_control_div'>";
-      controls += 'Sort by: <select class="sortField">';
+      controls += 'Sort by: <select class="sortField control_select">';
       tempFields = (function() {
         var _i, _len, _ref, _results;
         _ref = data.normalFields;
@@ -309,7 +306,6 @@
       });
       ($('.sortField')).change(function(e) {
         _this.sortField = Number(e.target.value);
-        console.log(_this.sortField);
         return _this.delayedUpdate();
       });
       if ((_ref2 = globals.toolsOpen) == null) {

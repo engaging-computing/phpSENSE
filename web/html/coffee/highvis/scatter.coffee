@@ -36,7 +36,7 @@ class window.Scatter extends BaseHighVis
         @LINES_MODE = 2
         @SYMBOLS_MODE = 1
 
-        @mode = @SYMBOLS_LINES_MODE
+        @mode = @SYMBOLS_MODE
 
         @xAxis = data.normalFields[0]
 
@@ -56,7 +56,7 @@ class window.Scatter extends BaseHighVis
                 type: "line"
                 zoomType: "xy"
             title:
-                text: "Scatter"
+                text: ""
             tooltip:
                 formatter: ->
                     if self.advancedTooltips
@@ -92,6 +92,7 @@ class window.Scatter extends BaseHighVis
         for field, fieldIndex in data.fields when fieldIndex in data.normalFields
             count += 1
             options =
+                legendIndex: fieldIndex
                 data: []
                 color: '#000'
                 visible: if fieldIndex in globals.fieldSelection then true else false
@@ -199,7 +200,6 @@ class window.Scatter extends BaseHighVis
 
         ($ '.tooltip_box').click (e) =>
             @advancedTooltips = not @advancedTooltips
-            console.log @advancedTooltips
 
         #Set up accordion
         globals.toolsOpen ?= 0

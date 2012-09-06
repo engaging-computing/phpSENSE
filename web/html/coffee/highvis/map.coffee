@@ -174,7 +174,7 @@ class window.Map extends BaseVis
 
         # Add heatmap selector
         controls += '<div class="inner_control_div"> Map By: '
-        controls += '<select class="heatmap_selector">'
+        controls += '<select id="heatmapSelector" class="control_select">'
 
         sel = if @heatmapSelection is @HEATMAP_NONE then 'selected' else ''
         controls += "<option value=\"#{@HEATMAP_NONE}\" #{sel}>None</option>"
@@ -199,18 +199,18 @@ class window.Map extends BaseVis
 
         #marker checkbox
         controls += '<div class="inner_control_div">'
-        controls += "<input class='marker_box' type='checkbox' name='marker_selector' #{if @visibleMarkers then 'checked' else ''}/> Markers "
+        controls += "<input id='markerBox' type='checkbox' name='marker_selector' #{if @visibleMarkers then 'checked' else ''}/> Markers "
         controls += "</div></div></div>"
 
         # Write HTML
         ($ '#controldiv').append controls
 
-        ($ '.marker_box').click (e) =>
+        ($ '#markerBox').click (e) =>
             @visibleMarkers = not @visibleMarkers
             @delayedUpdate()
 
         # Make heatmap select handler
-        ($ '.heatmap_selector').change (e) =>
+        ($ '#heatmapSelector').change (e) =>
             element = e.target or e.srcElement
             @heatmapSelection = (Number element.value)
             
@@ -238,6 +238,11 @@ class window.Map extends BaseVis
         ($ '#toolControl > h3').click ->
             globals.toolsOpen = (globals.toolsOpen + 1) % 2
 
+    resize: (newWidth, newHeight, duration) ->
+        func = =>
+            google.maps.event.trigger @gmap, 'resize'
+        setTimeout func, duration
+        
 if "Map" in data.relVis
     globals.map = new Map "map_canvas"
 else

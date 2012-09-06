@@ -81,12 +81,14 @@ if(isset($_REQUEST['sessions'])) {
     $head .= '<script type="text/javascript" src="/html/js/highvis/baseVis.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/disabledVis.js"></script>';
     
+    $head .= '<script type="text/javascript" src="/html/js/highvis/photos.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/scatter.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/timeline.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/histogram.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/bar.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/table.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/map.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/highvis/highcharts/modules/exporting.js"></script>';
     
     $head .= '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
     $head .= '<script>google.load("visualization", "1", {"packages":["motionchart"]});</script>';

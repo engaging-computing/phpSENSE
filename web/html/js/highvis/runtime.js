@@ -40,14 +40,18 @@
 
   globals.curVis = null;
 
+  globals.CONTROL_SIZE = 210;
+
+  globals.VIS_MARGIN = 20;
+
   /*
   CoffeeScript version of runtime.
   */
 
 
   ($(document)).ready(function() {
-    var can, containerSize, controlSize, hiderSize, resizeVis, vis, visHeight, visIndex, visWidth, _i, _j, _len, _len1, _ref1, _ref2, _ref3;
-    _ref1 = ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas', '#motion_canvas'];
+    var can, containerSize, controlSize, hiderSize, resizeVis, vis, visHeight, visWidth, _i, _len, _ref1, _ref2;
+    _ref1 = ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas', '#motion_canvas', '#photos_canvas'];
     for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
       can = _ref1[_i];
       ($(can)).hide();
@@ -59,23 +63,14 @@
       if (_ref2 = data.allVis[vis], __indexOf.call(data.relVis, _ref2) >= 0) {
         ($('#visTabList')).append("<li class='vis_tab'><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas'>" + data.allVis[vis] + "</a></li>");
       } else {
-        ($('#visTabList')).append("<li class='vis_tab'><a href='' onclick='return false'>" + data.allVis[vis] + "</a></li>");
+        ($('#visTabList')).append("<li class='vis_tab' ><a href='#" + (data.allVis[vis].toLowerCase()) + "_canvas' style='text-decoration:line-through'>" + data.allVis[vis] + "</a></li>");
       }
     }
-    data.relVis;
-    data.allVis;
     /* Jquery up the tabs
     */
 
-    _ref3 = data.allVis;
-    for (visIndex = _j = 0, _len1 = _ref3.length; _j < _len1; visIndex = ++_j) {
-      vis = _ref3[visIndex];
-      if (vis === data.relVis[0]) {
-        ($('#viscontainer')).tabs({
-          selected: visIndex
-        });
-      }
-    }
+    ($('#viscontainer')).tabs();
+    ($('#viscontainer')).tabs('select', "#" + (data.relVis[0].toLowerCase()) + "_canvas");
     ($('#viscontainer')).width(($('#viscontainer')).width() - (($('#viscontainer')).outerWidth() - ($('#viscontainer')).width()));
     globals.curVis = eval('globals.' + data.relVis[0].toLowerCase());
     /* Change vis click handler
@@ -84,7 +79,7 @@
     ($('#visTabList a')).click(function() {
       var oldVis;
       oldVis = globals.curVis;
-      globals.curVis = eval('globals.' + this.innerText.toLowerCase());
+      globals.curVis = eval('globals.' + innerTextCompat(this).toLowerCase());
       if (oldVis === globals.curVis) {
         return;
       }
@@ -95,8 +90,8 @@
     });
     containerSize = ($('#viscontainer')).width();
     hiderSize = ($('#controlhider')).outerWidth();
-    controlSize = 200;
-    visWidth = containerSize - (hiderSize + controlSize);
+    controlSize = globals.CONTROL_SIZE;
+    visWidth = containerSize - (hiderSize + controlSize + globals.VIS_MARGIN);
     visHeight = ($('#viscontainer')).height() - ($('#visTabList')).outerHeight();
     ($('.vis_canvas')).width(visWidth);
     ($('.vis_canvas')).height(visHeight);
@@ -109,17 +104,18 @@
       var newWidth;
       containerSize = ($('#viscontainer')).width();
       hiderSize = ($('#controlhider')).outerWidth();
-      controlSize = ($('#controldiv')).width() === 0 ? 200 : 0;
-      newWidth = containerSize - (hiderSize + controlSize);
+      controlSize = ($('#controldiv')).width() <= 0 ? globals.CONTROL_SIZE : 0;
+      newWidth = containerSize - (hiderSize + controlSize + globals.VIS_MARGIN);
       ($('#controldiv')).animate({
         width: controlSize
       }, 600, 'linear');
       ($('.vis_canvas')).animate({
         width: newWidth
       }, 600, 'linear');
-      return globals.curVis.resize(newWidth, $('.vis_canvas').height());
+      return globals.curVis.resize(newWidth, $('.vis_canvas').height(), 600);
     };
     return ($('#control_hide_button')).click(function() {
+      console.log('CLICKED');
       if (($('#controldiv')).width() === 0) {
         $("#" + this.id).html('>');
       } else {

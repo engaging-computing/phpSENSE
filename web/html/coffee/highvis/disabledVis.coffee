@@ -36,8 +36,11 @@ class window.DisabledVis extends BaseVis
     histogram_err = "Histogram could not be displayed<br>Either no numeric fields were found, or there were not enough data"
     bar_err = "Bar Chart could not be displayed<br>Either no numeric fields were found, or there were not enough data"
     map_err = "Map could not be displayed<br>No geographic data were found"
+    photos_err = "There are no photos to display"
     
-    start: ->
+    start: ->  
+        ($ '#' + @canvas).show()
+        
         switch @canvas
             when "map_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{map_err}</div>")
             when "motion_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{motion_err}</div>")
@@ -45,12 +48,10 @@ class window.DisabledVis extends BaseVis
             when "histogram_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{histogram_err}</div>")
             when "timeline_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{time_err}</div>")
             when "scatter_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{scatter_err}</div>")
-            
-        ($ '#controlhider').hide();
-        ($ '#controldiv').hide();
-        ($ '#' + @canvas).show()
-
+            when "photos_canvas" then ($ '#' + @canvas).html("<div id='vis_disabled'>#{photos_err}</div>")
+        
+        @hideControls()
+        
     end: ->
         ($ '#' + @canvas).hide()
-        ($ '#controlhider').show();
-        ($ '#controldiv').show();
+        @unhideControls(@controlWidth)

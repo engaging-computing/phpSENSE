@@ -35,7 +35,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   window.DisabledVis = (function(_super) {
-    var bar_err, histogram_err, map_err, motion_err, scatter_err, time_err;
+    var bar_err, histogram_err, map_err, motion_err, photos_err, scatter_err, time_err;
 
     __extends(DisabledVis, _super);
 
@@ -55,7 +55,10 @@
 
     map_err = "Map could not be displayed<br>No geographic data were found";
 
+    photos_err = "There are no photos to display";
+
     DisabledVis.prototype.start = function() {
+      ($('#' + this.canvas)).show();
       switch (this.canvas) {
         case "map_canvas":
           ($('#' + this.canvas)).html("<div id='vis_disabled'>" + map_err + "</div>");
@@ -74,16 +77,16 @@
           break;
         case "scatter_canvas":
           ($('#' + this.canvas)).html("<div id='vis_disabled'>" + scatter_err + "</div>");
+          break;
+        case "photos_canvas":
+          ($('#' + this.canvas)).html("<div id='vis_disabled'>" + photos_err + "</div>");
       }
-      ($('#controlhider')).hide();
-      ($('#controldiv')).hide();
-      return ($('#' + this.canvas)).show();
+      return this.hideControls();
     };
 
     DisabledVis.prototype.end = function() {
       ($('#' + this.canvas)).hide();
-      ($('#controlhider')).show();
-      return ($('#controldiv')).show();
+      return this.unhideControls(this.controlWidth);
     };
 
     return DisabledVis;
