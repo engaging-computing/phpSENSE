@@ -133,6 +133,9 @@ class window.Histogram extends BaseHighVis
     
     update: ->
         super()
+
+        if globals.groupSelection.length is 0
+            return
         
         while @chart.series.length > data.normalFields.length
             @chart.series[@chart.series.length-1].remove false
