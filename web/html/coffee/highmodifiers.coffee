@@ -215,6 +215,6 @@ data.geoFields = for field, index in data.fields when (Number field.typeID) isnt
 
 
 #Field index of grouping field
-data.groupingFieldIndex = 0
+data.groupingFieldIndex ?= 0
 #Array of current groups
-data.groups = data.makeGroups()
+data.groups ?= data.makeGroups()

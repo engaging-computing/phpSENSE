@@ -33,7 +33,7 @@ globals.groupSelection ?= for vals, keys in data.groups
 globals.fieldSelection ?= data.normalFields[0..0]
 
 class window.BaseVis
-    constructor: ->
+    constructor: (@canvas) ->
 
     ###
     Start sequence used by runtime
@@ -161,15 +161,27 @@ class window.BaseVis
         ($ '#groupControl > h3').click ->
             globals.groupOpen = (globals.groupOpen + 1) % 2
 
+    ###
+    Hides the control div and remembers its previous size.
+    ###
     hideControls: ->
         @controlWidth = ($ '#controldiv').width()
         ($ '#controldiv').width 0
         ($ '#controlhider').hide()
         ($ '#' + @canvas).css
             width: ($ "#viscontainer").innerWidth() - (($ "#controlhider").outerWidth() + globals.VIS_MARGIN)
+
+    ###
+    Returns the control div with its previous size intact.
+    ###
     unhideControls: ->
         ($ '#controldiv').width @controlWidth
         ($ '#controlhider').show()
+
+    ###
+    Do any nessisary cleanup work before serialization.
+    ###
+    serializationCleanup: ->
 
 class window.BaseHighVis extends BaseVis
     ###
@@ -320,9 +332,18 @@ class window.BaseHighVis extends BaseVis
         Should destroy the chart, hide its canvas and remove controls.
     ###
     end: ->
-        @chart.destroy()
-        @chart = undefined;
+        if @chart?
+            @chart.destroy()
+            @chart = undefined;
+            
         ($ '#' + @canvas).hide()
+
+    ###
+    Remove the chart and chart options object
+    ###
+    serializationCleanup: ->
+        delete @chart
+        delete @chartOptions
 
 
             

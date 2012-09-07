@@ -242,6 +242,12 @@ class window.Map extends BaseVis
         func = =>
             google.maps.event.trigger @gmap, 'resize'
         setTimeout func, duration
+
+    ###
+    Remove the gmap
+    ###
+    serializationCleanup: ->
+        delete @gmap
         
 if "Map" in data.relVis
     globals.map = new Map "map_canvas"

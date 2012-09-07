@@ -270,6 +270,15 @@
       return setTimeout(func, duration);
     };
 
+    /*
+        Remove the gmap
+    */
+
+
+    Map.prototype.serializationCleanup = function() {
+      return delete this.gmap;
+    };
+
     return Map;
 
   })(BaseVis);

@@ -59,7 +59,9 @@
 
   window.BaseVis = (function() {
 
-    function BaseVis() {}
+    function BaseVis(canvas) {
+      this.canvas = canvas;
+    }
 
     /*
         Start sequence used by runtime
@@ -213,6 +215,11 @@
       });
     };
 
+    /*
+        Hides the control div and remembers its previous size.
+    */
+
+
     BaseVis.prototype.hideControls = function() {
       this.controlWidth = ($('#controldiv')).width();
       ($('#controldiv')).width(0);
@@ -222,10 +229,22 @@
       });
     };
 
+    /*
+        Returns the control div with its previous size intact.
+    */
+
+
     BaseVis.prototype.unhideControls = function() {
       ($('#controldiv')).width(this.controlWidth);
       return ($('#controlhider')).show();
     };
+
+    /*
+        Do any nessisary cleanup work before serialization.
+    */
+
+
+    BaseVis.prototype.serializationCleanup = function() {};
 
     return BaseVis;
 
@@ -406,9 +425,21 @@
 
 
     BaseHighVis.prototype.end = function() {
-      this.chart.destroy();
-      this.chart = void 0;
+      if (this.chart != null) {
+        this.chart.destroy();
+        this.chart = void 0;
+      }
       return ($('#' + this.canvas)).hide();
+    };
+
+    /*
+        Remove the chart and chart options object
+    */
+
+
+    BaseHighVis.prototype.serializationCleanup = function() {
+      delete this.chart;
+      return delete this.chartOptions;
     };
 
     return BaseHighVis;

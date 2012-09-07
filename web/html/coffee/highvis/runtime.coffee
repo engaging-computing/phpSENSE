@@ -110,35 +110,12 @@ CoffeeScript version of runtime.
             $("##{@id}").html('<')
         resizeVis()
         
-    hydrate = new Hydrate()
 
     ($ "#pagetitle").append " <button id='stringify'>sfadf</button>"
     
     ($ "#stringify").click =>
         
-        foo = (obj) ->
-            
-            switch typeof obj
-                when 'number'
-                    obj
-                when 'string'
-                    obj
-                when 'function'
-                    undefined
-                when 'object'
-                    cpy = {}
-                    for key, val of obj
-                        fixed = foo val
-                        if fixed isnt undefined
-                            cpy[key] = fixed
-                    cpy
-        
-        delete globals.curVis.chart
-        console.log (foo globals.curVis)
-        
-        x = hydrate.stringify (foo globals.curVis)
-        ($ "#container").append x
-        console.log hydrate.parse x
+        globals.serializeVis()
         
 
                 

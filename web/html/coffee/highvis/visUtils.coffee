@@ -193,6 +193,60 @@ Store the list
 ###
 globals.symbols = symbolList
 
+###
+Serializes all vis data.
+###
+globals.serializeVis = ->
+
+    hydrate = new Hydrate()
+
+    stripFunctions = (obj) ->
+
+        switch typeof obj
+            when 'number'
+                obj
+            when 'string'
+                obj
+            when 'function'
+                undefined
+            when 'object'
+
+                if obj is null
+                    null
+                else
+                    cpy = if $.isArray obj then [] else {}
+                    for key, val of obj
+                        stripped = stripFunctions val
+                        if stripped isnt undefined
+                            cpy[key] = stripped
+
+
+                    cpy.__proto__ = obj.__proto__
+
+                    cpy
+
+    for visName in data.allVis
+        vis  = eval "globals.#{visName.toLowerCase()}"
+        vis.serializationCleanup()
+        
+    globalsCpy = stripFunctions globals
+    dataCpy = stripFunctions data
+    
+    globals.curVis.end()
+    globals.curVis.start()
+
+    delete globalsCpy.curVis
+
+    ret =
+        globals: (hydrate.stringify globalsCpy)
+        data: (hydrate.stringify dataCpy)
+
+globals.deserializeVis = (savedData) ->
+
+    hydrate = new Hydrate()
+    
+    $.extend true, globals, (hydrate.parse savedData.globals)
+    $.extend true, data, (hydrate.parse savedData.data)
 
 
 

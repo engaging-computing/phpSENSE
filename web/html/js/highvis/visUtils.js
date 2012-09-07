@@ -251,4 +251,62 @@
 
   globals.symbols = symbolList;
 
+  /*
+  Serializes all vis data.
+  */
+
+
+  globals.serializeVis = function() {
+    var dataCpy, globalsCpy, hydrate, ret, stripFunctions, vis, visName, _len5, _o, _ref9;
+    hydrate = new Hydrate();
+    stripFunctions = function(obj) {
+      var cpy, key, stripped, val;
+      switch (typeof obj) {
+        case 'number':
+          return obj;
+        case 'string':
+          return obj;
+        case 'function':
+          return void 0;
+        case 'object':
+          if (obj === null) {
+            return null;
+          } else {
+            cpy = $.isArray(obj) ? [] : {};
+            for (key in obj) {
+              val = obj[key];
+              stripped = stripFunctions(val);
+              if (stripped !== void 0) {
+                cpy[key] = stripped;
+              }
+            }
+            cpy.__proto__ = obj.__proto__;
+            return cpy;
+          }
+      }
+    };
+    _ref9 = data.allVis;
+    for (_o = 0, _len5 = _ref9.length; _o < _len5; _o++) {
+      visName = _ref9[_o];
+      vis = eval("globals." + (visName.toLowerCase()));
+      vis.serializationCleanup();
+    }
+    globalsCpy = stripFunctions(globals);
+    dataCpy = stripFunctions(data);
+    globals.curVis.end();
+    globals.curVis.start();
+    delete globalsCpy.curVis;
+    return ret = {
+      globals: hydrate.stringify(globalsCpy),
+      data: hydrate.stringify(dataCpy)
+    };
+  };
+
+  globals.deserializeVis = function(savedData) {
+    var hydrate;
+    hydrate = new Hydrate();
+    $.extend(true, globals, hydrate.parse(savedData.globals));
+    return $.extend(true, data, hydrate.parse(savedData.data));
+  };
+
 }).call(this);
