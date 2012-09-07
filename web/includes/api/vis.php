@@ -253,4 +253,51 @@ function setVisualizationPictureId( $vid, $purl ){
     
 }
 
+
+/**Functions for saved vises for HIGHVIS **/
+function storeSavedVis($owner,$experiment,$title,$description,$json){
+    global $db;
+
+    $sql = "INSERT INTO savedVises (owner_id,experiment_id,title,description,json) VALUES ({$owner},{$experiment},\"{$title}\",\"{$description}\",\"{$json}\")";
+
+    $db->query($sql);
+
+    if($db->numOfRows){
+        return true;
+    }
+
+    return false;
+}
+
+function getSavedVisByExperiment($experiment_id){
+    global $db;
+
+    $sql = "SELECT * FROM savedVises where experiment_id = {$experiment_id}";
+
+    $output = $db->query($sql);
+
+    return $output;
+}
+
+function getSavedVisByOwner($owner_id){
+    global $db;
+
+    $sql = "SELECT * FROM savedVises where owner_id = {$owner_id}";
+    
+    $output = $db->query($sql);
+
+    return $output;
+}
+
+function getAllSavedVises(){
+    global $db;
+
+    $sql = "SELECT * FROM savedVises";
+    
+    $output = $db->query($sql);
+
+    return $output;
+}
+
+
 ?>
