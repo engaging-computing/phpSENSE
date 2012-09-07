@@ -75,6 +75,8 @@ if(isset($_REQUEST['sessions'])) {
 
     $head .= '<script type="text/javascript" src="/html/js/highvis/highcharts/highcharts.js"></script>';
 
+    $head .= '<script type="text/javascript" src="/html/js/lib/Hydrate.js"></script>';
+
     $head .= '<script type="text/javascript" src="/html/js/highvis/visUtils.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highmodifiers.js"></script>';
 
