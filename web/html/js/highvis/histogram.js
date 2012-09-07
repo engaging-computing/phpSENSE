@@ -157,6 +157,9 @@
     Histogram.prototype.update = function() {
       var bin, binArr, binObjs, dc, fakeDat, finalData, groupData, groupIndex, i, max, min, number, occurences, options, ret, selecteddata, sum, _base, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
       Histogram.__super__.update.call(this);
+      if (globals.groupSelection.length === 0) {
+        return;
+      }
       while (this.chart.series.length > data.normalFields.length) {
         this.chart.series[this.chart.series.length - 1].remove(false);
       }
