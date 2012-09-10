@@ -52,21 +52,30 @@ $errors = array();
  */
 
 // if newviz.php gets an arguement called sessions
-if(isset($_REQUEST['sessions'])) {
-    $sessions = explode(' ', $_REQUEST['sessions']);
+if(isset($_REQUEST['sessions']) || isset($_REQUEST['vid'])) {
     
-    //Call data.php and return the JS Data object
-    $head = '<script type="text/javascript" src="/ws/highdata.php?sessions=';
-    
-    //Append the session id for each session requested
-    foreach($sessions as $ses)
-        $head .= $ses . '+';
+    if(isset($_REQUEST['sessions'])){
         
-    //Strip the final '+'
-    $head = substr($head, 0, -1);
+        $sessions = explode(' ', $_REQUEST['sessions']);
+    
+        //Call data.php and return the JS Data object
+        $head = '<script type="text/javascript" src="/ws/highdata.php?sessions=';
+        
+        //Append the session id for each session requested
+        foreach($sessions as $ses)
+            $head .= $ses . '+';
 
-    //Close the script
-    $head .= '"></script>';
+        //Strip the final '+'
+        $head = substr($head, 0, -1);
+        
+        //Close the script
+        $head .= '"></script>';
+    
+    } else if(isset($_REQUEST['vid'])){
+        
+        $head = '<script type="text/javascript" src="/ws/highdata.php?vid='.$_REQUEST['vid'].'"></script>';
+        
+    }
 
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mousewheel.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mCustomScrollbar.js"></script>';
