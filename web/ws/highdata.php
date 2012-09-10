@@ -35,9 +35,9 @@ class Data {
 
     public $experimentID;
     public $experimentName;
-    public $allVis      = array('Map','Timeline','Scatter','Bar','Histogram','Table','Motion','Photos');
+    public $allVis       = array('Map','Timeline','Scatter','Bar','Histogram','Table','Motion','Photos');
     
-    public $relVis      = array();
+    public $relVis       = array();
     
     public $fields       = array();
     public $dataPoints   = array();
@@ -106,6 +106,14 @@ class DataField {
     }
     
 };
+
+if(isset($_REQUEST['vid'])) {
+
+     $vis = getSavedVis($_REQUEST['vid']);
+     
+     echo "var data = {dehyratedData: '{$vis[0]['data']}', dehydratedGlobals: '{$vis[0]['globals']}'};";
+
+}
 
 if(isset($_REQUEST['sessions'])) {
 
