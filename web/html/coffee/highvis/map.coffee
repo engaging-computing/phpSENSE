@@ -75,6 +75,9 @@ class window.Map extends BaseVis
                         else if (Number field.unitID) is data.units.GEOSPATIAL.LONGITUDE
                             lon = dataPoint[fieldIndex]
 
+                if (lat is null) or (lon is null)
+                    return
+
                 groupIndex = data.groups.indexOf dataPoint[data.groupingFieldIndex].toLowerCase()
                 color = globals.colors[groupIndex % globals.colors.length]
 
@@ -87,7 +90,7 @@ class window.Map extends BaseVis
 
                 for field, fieldIndex in data.fields when dataPoint[fieldIndex] isnt null
                     dat = if (Number field.typeID) is data.types.TIME
-                        (globals.dateFormatter Date(@point.datapoint[fieldIndex]))
+                        (globals.dateFormatter Date(dataPoint[fieldIndex]))
                     else
                         dataPoint[fieldIndex]
 
