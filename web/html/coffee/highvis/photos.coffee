@@ -71,6 +71,10 @@ class window.Photos extends BaseVis
                                 height:'auto'
                                 resizable:false
                                 title: "Session: #{session.name} (#{session.session_id})"
+                                open: ->
+                                    ($ ".ui-widget-overlay").click ->
+                                        ($ "#dialog").dialog 'close'
+                                        ($ "#dialog").remove()
                         i++
                       
     end: ->    
