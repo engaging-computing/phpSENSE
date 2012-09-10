@@ -79,7 +79,13 @@
                     width: 'auto',
                     height: 'auto',
                     resizable: false,
-                    title: "Session: " + session.name + " (" + session.session_id + ")"
+                    title: "Session: " + session.name + " (" + session.session_id + ")",
+                    open: function() {
+                      return ($(".ui-widget-overlay")).click(function() {
+                        ($("#dialog")).dialog('close');
+                        return ($("#dialog")).remove();
+                      });
+                    }
                   });
                 });
                 return i++;

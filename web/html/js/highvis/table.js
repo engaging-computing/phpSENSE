@@ -132,6 +132,11 @@
               colorIndex = data.groups.indexOf(sData.toLowerCase());
               return ($(nTd)).css('color', globals.colors[colorIndex % globals.colors.length]);
             }
+          }, {
+            aTargets: data.timeFields,
+            fnRender: function(obj) {
+              return globals.dateFormatter(obj.aData[obj.iDataColumn]);
+            }
           }
         ]
       };

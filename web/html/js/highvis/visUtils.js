@@ -69,6 +69,32 @@
   };
 
   /*
+  Date formatter
+  */
+
+
+  globals.dateFormatter = function(dat) {
+    var minDigits, monthNames, str;
+    dat = new Date(dat);
+    monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    minDigits = function(num, str) {
+      str = String(str);
+      while (str.length < num) {
+        str = '0' + str;
+      }
+      return str;
+    };
+    str = "";
+    str += dat.getUTCFullYear() + "-";
+    str += monthNames[dat.getUTCMonth()] + "-";
+    str += dat.getUTCDate() + " ";
+    str += (minDigits(2, dat.getUTCHours())) + ":";
+    str += (minDigits(2, dat.getUTCMinutes())) + ":";
+    str += (minDigits(2, dat.getUTCSeconds())) + ".";
+    return str += (minDigits(3, dat.getUTCMilliseconds())) + " GMT";
+  };
+
+  /*
   Cross platform accessor/mutator for element inner text
   */
 
