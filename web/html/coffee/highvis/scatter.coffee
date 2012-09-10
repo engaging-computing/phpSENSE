@@ -65,7 +65,7 @@ class window.Scatter extends BaseHighVis
 
                         for field, fieldIndex in data.fields when @point.datapoint[fieldIndex] isnt null
                             dat = if (Number field.typeID) is data.types.TIME
-                                new Date(@point.datapoint[fieldIndex])
+                                (globals.dateFormatter Date(@point.datapoint[fieldIndex]))
                             else
                                 @point.datapoint[fieldIndex]
                                 

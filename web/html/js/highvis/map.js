@@ -107,7 +107,7 @@
           if (!(dataPoint[fieldIndex] !== null)) {
             continue;
           }
-          dat = (Number(field.typeID)) === data.types.TIME ? new Date(dataPoint[fieldIndex]) : dataPoint[fieldIndex];
+          dat = (Number(field.typeID)) === data.types.TIME ? globals.dateFormatter(Date(_this.point.datapoint[fieldIndex])) : dataPoint[fieldIndex];
           label += "<tr><td>" + field.fieldName + "</td>";
           label += "<td><strong>" + dat + "</strong></td></tr>";
         }
