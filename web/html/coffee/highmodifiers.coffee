@@ -27,12 +27,17 @@
  *
 ###
 
-data.types = 
+# Restored saved data
+if data.savedData?
+    hydrate = new Hydrate()
+    $.extend true, data, (hydrate.parse savedData.data)
+
+data.types ?= 
     TIME: 7
     TEXT: 37
     GEOSPATIAL: 19
 
-data.units =
+data.units ?=
     GEOSPATIAL:
         LATITUDE: 57
         LONGITUDE: 58
@@ -212,7 +217,6 @@ Gets a list of geolocation field indicies
 ###
 data.geoFields = for field, index in data.fields when (Number field.typeID) isnt data.types.GEOSPATIAL
     Number index
-
 
 #Field index of grouping field
 data.groupingFieldIndex ?= 0
