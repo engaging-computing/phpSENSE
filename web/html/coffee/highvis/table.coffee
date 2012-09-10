@@ -86,12 +86,15 @@ class window.Table extends BaseVis
                              '<option value="100">100</option>' +
                              '<option value="-1">All</option>'+
                              '</select> records'
-            aoColumnDefs: [
+            aoColumnDefs: [{
                 aTargets: [data.groupingFieldIndex]
                 fnCreatedCell: (nTd, sData, oData, iRow, iCol) ->
                     colorIndex = data.groups.indexOf(sData.toLowerCase())
                     ($ nTd).css 'color', globals.colors[colorIndex % globals.colors.length]
-                    ]
+                    },{
+                aTargets: data.timeFields
+                fnRender: (obj) ->
+                    globals.dateFormatter obj.aData[obj.iDataColumn]}]
             
         atable = ($ '#data_table').dataTable(dt)
 

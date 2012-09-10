@@ -95,6 +95,9 @@
             }
           }
         }
+        if ((lat === null) || (lon === null)) {
+          return;
+        }
         groupIndex = data.groups.indexOf(dataPoint[data.groupingFieldIndex].toLowerCase());
         color = globals.colors[groupIndex % globals.colors.length];
         latlng = new google.maps.LatLng(lat, lon);
@@ -107,7 +110,7 @@
           if (!(dataPoint[fieldIndex] !== null)) {
             continue;
           }
-          dat = (Number(field.typeID)) === data.types.TIME ? new Date(dataPoint[fieldIndex]) : dataPoint[fieldIndex];
+          dat = (Number(field.typeID)) === data.types.TIME ? globals.dateFormatter(Date(dataPoint[fieldIndex])) : dataPoint[fieldIndex];
           label += "<tr><td>" + field.fieldName + "</td>";
           label += "<td><strong>" + dat + "</strong></td></tr>";
         }

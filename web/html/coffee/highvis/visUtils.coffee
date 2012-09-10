@@ -50,6 +50,33 @@ window.fpEq = (a, b, thresh = 0.0001) ->
     return diff < e
 
 ###
+Date formatter
+###
+globals.dateFormatter = (dat) ->
+
+    dat = new Date(dat)
+    
+    monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                  "Jul","Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    minDigits = (num, str) ->
+        str = String str
+        while str.length < num
+            str = '0' + str
+        str
+
+    str = ""
+    str += dat.getUTCFullYear()          + "-"
+    str += monthNames[dat.getUTCMonth()] + "-"
+    str += dat.getUTCDate()              + " "
+    
+
+    str += (minDigits 2, dat.getUTCHours())   + ":"
+    str += (minDigits 2, dat.getUTCMinutes()) + ":"
+    str += (minDigits 2, dat.getUTCSeconds()) + "."
+    str += (minDigits 3, dat.getUTCMilliseconds()) + " GMT"
+    
+###
 Cross platform accessor/mutator for element inner text
 ###
 window.innerTextCompat = (self, value = null) ->

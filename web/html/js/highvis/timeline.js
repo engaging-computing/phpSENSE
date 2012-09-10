@@ -62,6 +62,33 @@
       $.extend(true, this.chartOptions, {
         title: {
           text: ''
+        },
+        tooltip: {
+          formatter: function() {
+            var dat, field, fieldIndex, str, _i, _len, _ref;
+            if (self.advancedTooltips) {
+              str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div><br>";
+              str += "<table>";
+              _ref = data.fields;
+              for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
+                field = _ref[fieldIndex];
+                if (!(this.point.datapoint[fieldIndex] !== null)) {
+                  continue;
+                }
+                dat = (Number(field.typeID)) === data.types.TIME ? globals.dateFormatter(Date(this.point.datapoint[fieldIndex])) : this.point.datapoint[fieldIndex];
+                str += "<tr><td>" + field.fieldName + "</td>";
+                str += "<td><strong>" + dat + "</strong></td></tr>";
+              }
+              return str += "</table>";
+            } else {
+              str = "<div style='width:100%;text-align:center;color:" + this.series.color + ";'> " + this.series.name.group + "</div><br>";
+              str += "<table>";
+              str += "<tr><td>" + this.series.xAxis.options.title.text + ":</td><td><strong>" + (globals.dateFormatter(this.x)) + "</strong></td></tr>";
+              str += "<tr><td>" + this.series.name.field + ":</td><td><strong>" + this.y + "</strong></td></tr>";
+              return str += "</table>";
+            }
+          },
+          useHTML: true
         }
       });
       return this.chartOptions.xAxis = {

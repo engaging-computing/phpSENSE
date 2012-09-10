@@ -134,6 +134,10 @@ class window.Histogram extends BaseHighVis
     update: ->
         super()
 
+        #Name Axis
+        @chart.yAxis[0].setTitle {text: "Quantity"}, false
+        @chart.xAxis[0].setTitle {text: data.fields[@displayField].fieldName}, false
+        
         if globals.groupSelection.length is 0
             return
         
