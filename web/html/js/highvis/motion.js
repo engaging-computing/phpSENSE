@@ -44,18 +44,32 @@
     }
 
     Motion.prototype.start = function() {
-      var chart, dat, dataPoint, dt, field, fieldIndex, line, row, rows, _i, _j, _len, _len1, _ref;
+      var chart, dat, datType, dataPoint, dt, field, fieldIndex, fieldIndexes, i, line, row, rows, tmp, _i, _j, _len, _len1;
       ($('#' + this.canvas)).show();
       this.hideControls();
       dt = new google.visualization.DataTable();
+      fieldIndexes = (function() {
+        var _i, _len, _ref, _results;
+        _ref = data.fields;
+        _results = [];
+        for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
+          field = _ref[fieldIndex];
+          _results.push(fieldIndex);
+        }
+        return _results;
+      })();
+      fieldIndexes[0] = data.groupingFieldIndex;
+      fieldIndexes[data.groupingFieldIndex] = 0;
       if (data.timeFields.length > 0) {
         if (data.timeFields[0] !== 1) {
-          this.shuffleFields();
+          tmp = fieldIndexes[1];
+          fieldIndexes[1] = data.timeFields[0];
+          fieldIndexes[data.timeFields[0]] = tmp;
         }
       }
-      _ref = data.fields;
-      for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
-        field = _ref[fieldIndex];
+      for (_i = 0, _len = fieldIndexes.length; _i < _len; _i++) {
+        i = fieldIndexes[_i];
+        field = data.fields[i];
         switch (Number(field.typeID)) {
           case data.types.TEXT:
             dt.addColumn('string', field.fieldName);
@@ -68,17 +82,19 @@
         }
       }
       rows = (function() {
-        var _j, _len1, _ref1, _results;
-        _ref1 = data.dataPoints;
+        var _j, _len1, _ref, _results;
+        _ref = data.dataPoints;
         _results = [];
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          dataPoint = _ref1[_j];
+        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+          dataPoint = _ref[_j];
           line = (function() {
             var _k, _len2, _results1;
             _results1 = [];
-            for (fieldIndex = _k = 0, _len2 = dataPoint.length; _k < _len2; fieldIndex = ++_k) {
-              dat = dataPoint[fieldIndex];
-              if ((Number(data.fields[fieldIndex].typeID)) === data.types.TIME) {
+            for (_k = 0, _len2 = fieldIndexes.length; _k < _len2; _k++) {
+              i = fieldIndexes[_k];
+              dat = dataPoint[i];
+              datType = Number(data.fields[i].typeID);
+              if (datType === data.types.TIME) {
                 _results1.push(new Date(dat));
               } else {
                 _results1.push(dat);
@@ -116,27 +132,6 @@
     };
 
     Motion.prototype.drawChart = function() {};
-
-    Motion.prototype.shuffleFields = function() {
-      var dataPoint, dpindex, tempa, tempb, timeField, _i, _len, _ref, _results;
-      timeField = data.timeFields[0];
-      if (timeField !== -1 && timeField !== 1) {
-        tempa = data.fields[1];
-        tempb = data.fields[timeField];
-        data.fields[1] = tempb;
-        data.fields[timeField] = tempa;
-        _ref = data.dataPoints;
-        _results = [];
-        for (dpindex = _i = 0, _len = _ref.length; _i < _len; dpindex = ++_i) {
-          dataPoint = _ref[dpindex];
-          tempa = dataPoint[1];
-          tempb = dataPoint[timeField];
-          data.dataPoints[dpindex][1] = tempb;
-          _results.push(data.dataPoints[dpindex][timeField] = tempa);
-        }
-        return _results;
-      }
-    };
 
     return Motion;
 
