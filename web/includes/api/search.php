@@ -46,7 +46,8 @@ function packageBrowseVisualizationsResults($results, $page = 1, $limit = 10) {
 function browseVisualizationsByTimeCreated($page = 1, $limit = 10) {
     global $db;
 
-    $sql = "SELECT visualizations.*, users.firstname, users.lastname FROM visualizations, users WHERE visualizations.owner_id = users.user_id AND visualizations.is_activity = 0 ORDER BY visualizations.timecreated DESC";
+    //$sql = "SELECT visualizations.*, users.firstname, users.lastname FROM visualizations, users WHERE visualizations.owner_id = users.user_id AND visualizations.is_activity = 0 ORDER BY visualizations.timecreated DESC";
+    $sql = "SELECT savedVises.*, users.firstname FROM savedVises, users WHERE savedVises.owner_id = users.user_id ORDER BY savedVises.timecreated DESC";    
     $results = $db->query($sql);
 
     if($db->numOfRows) {

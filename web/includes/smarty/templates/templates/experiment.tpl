@@ -261,7 +261,7 @@
     				<table width="100%">
     					{ foreach from=$vises item=vis }
     						<tr>
-    							<td><a href="visdir.php?id={ $vis.vis_id }">{ $vis.name }</a></td>
+    							<td><a href="highvis.php?vid={ $vis.vid }">{ $vis.title }</a></td>
     						</tr>
     					{ /foreach }
     				</table>

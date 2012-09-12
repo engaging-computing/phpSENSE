@@ -197,7 +197,7 @@ function date_cmp($a, $b) {
 }
 
 function timeobj_cmp($a, $b) {
-        
+
         if($a['timeobj'] == $b['timeobj']) {
                 return 0;
         }
