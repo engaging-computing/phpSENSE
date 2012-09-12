@@ -1,7 +1,6 @@
 <?php
 
     require_once '../includes/config.php';
-
  
     if( isset($_POST['file']) && isset($_POST['matched_columns']) && isset($_POST['eid'])) {
         $session_key = $_COOKIE['isense_login'];
@@ -21,9 +20,9 @@
         
         $sid = createSession(array('uid' => $uid, 'session' => $session_key), $eid, $name, $description, $street, $city, $country, $default_read, $default_contribute, $finalized);
 
-        if( putData($eid, $sid, $data) ) {
+       if( putData($eid, $sid, $data) ) {
             echo $sid;
-        } 
+        }
     }
     
 
