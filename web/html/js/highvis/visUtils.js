@@ -53,6 +53,72 @@
   };
 
   /*
+  Tests to see if a and b are within thresh%
+  of the smaller value.
+  */
+
+
+  window.fpEq = function(a, b, thresh) {
+    var diff, e;
+    if (thresh == null) {
+      thresh = 0.0001;
+    }
+    diff = Math.abs(a - b);
+    e = (Math.abs(Math.min(a, b))) * thresh;
+    return diff < e;
+  };
+
+  /*
+  Date formatter
+  */
+
+
+  globals.dateFormatter = function(dat) {
+    var minDigits, monthNames, str;
+    dat = new Date(dat);
+    monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    minDigits = function(num, str) {
+      str = String(str);
+      while (str.length < num) {
+        str = '0' + str;
+      }
+      return str;
+    };
+    str = "";
+    str += dat.getUTCFullYear() + "-";
+    str += monthNames[dat.getUTCMonth()] + "-";
+    str += dat.getUTCDate() + " ";
+    str += (minDigits(2, dat.getUTCHours())) + ":";
+    str += (minDigits(2, dat.getUTCMinutes())) + ":";
+    str += (minDigits(2, dat.getUTCSeconds())) + ".";
+    return str += (minDigits(3, dat.getUTCMilliseconds())) + " GMT";
+  };
+
+  /*
+  Cross platform accessor/mutator for element inner text
+  */
+
+
+  window.innerTextCompat = function(self, value) {
+    if (value == null) {
+      value = null;
+    }
+    if (document.getElementsByTagName("body")[0].innerText != null) {
+      if (value === null) {
+        return self.innerText;
+      } else {
+        return self.innerText = value;
+      }
+    } else {
+      if (value === null) {
+        return self.textContent;
+      } else {
+        return self.textContent = value;
+      }
+    }
+  };
+
+  /*
   This function adds a parameterizable radial marker to Highchart's list of
   marker styles.
   */

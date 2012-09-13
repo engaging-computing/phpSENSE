@@ -52,12 +52,11 @@ class window.Bar extends BaseHighVis
             chart:
                 type: "column"
             title:
-                text: "Bar"
+                text: ""
             legend:
                 symbolWidth: 0
             tooltip:
                 formatter: ->
-                    console.log this
                     str  = "<div style='width:100%;text-align:center;color:#{@series.color};margin-bottom:5px'> #{@point.name}</div>"
                     str += "<table>"
                     str += "<tr><td>#{@x} (#{self.analysisTypeNames[self.analysisType]}):</td><td><strong>#{@y}</strong></td></tr>"
@@ -79,30 +78,31 @@ class window.Bar extends BaseHighVis
         
         tempGroupIDValuePairs = for groupName, groupIndex in data.groups when groupIndex in globals.groupSelection
             switch @analysisType
-                when @ANALYSISTYPE_MAX      then [groupIndex, data.getMax       @sortField, groupIndex]
-                when @ANALYSISTYPE_MIN      then [groupIndex, data.getMin       @sortField, groupIndex]
-                when @ANALYSISTYPE_MEAN     then [groupIndex, data.getMean      @sortField, groupIndex]
-                when @ANALYSISTYPE_MEDIAN   then [groupIndex, data.getMedian    @sortField, groupIndex]
-                when @ANALYSISTYPE_COUNT    then [groupIndex, data.getCount     @sortField, groupIndex]
-                when @ANALYSISTYPE_TOTAL    then [groupIndex, data.getTotal     @sortField, groupIndex]
+                when @ANALYSISTYPE_MAX      then [groupIndex, (data.getMax       @sortField, groupIndex)]
+                when @ANALYSISTYPE_MIN      then [groupIndex, (data.getMin       @sortField, groupIndex)]
+                when @ANALYSISTYPE_MEAN     then [groupIndex, (data.getMean      @sortField, groupIndex)]
+                when @ANALYSISTYPE_MEDIAN   then [groupIndex, (data.getMedian    @sortField, groupIndex)]
+                when @ANALYSISTYPE_COUNT    then [groupIndex, (data.getCount     @sortField, groupIndex)]
+                when @ANALYSISTYPE_TOTAL    then [groupIndex, (data.getTotal     @sortField, groupIndex)]
         
         if @sortField != null
             fieldSortedGroupIDValuePairs = tempGroupIDValuePairs.sort (a,b) ->
-                if a[1] > b[1] then 1 else -1
+                a[1] - b[1]
         
             fieldSortedGroupIDs = for [groupID, groupValue] in fieldSortedGroupIDValuePairs
                 groupID
         else
             fieldSortedGroupIDs = for groupName, groupID in data.groups
                 groupID
-        
         ### --- ###
         
-        for groupIndex in fieldSortedGroupIDs when groupIndex in globals.groupSelection
+        for groupIndex, order in fieldSortedGroupIDs when groupIndex in globals.groupSelection
+            
             options =
                 showInLegend: false
                 color: globals.colors[groupIndex % globals.colors.length]
                 name: data.groups[groupIndex]
+                index: order
                 
             options.data = for fieldIndex in data.normalFields when fieldIndex in globals.fieldSelection
                 switch @analysisType
@@ -192,7 +192,6 @@ class window.Bar extends BaseHighVis
             
         ($ '.sortField').change (e) =>
             @sortField = Number e.target.value
-            console.log @sortField
             @delayedUpdate()
 
         #Set up accordion

@@ -197,65 +197,7 @@ switch($action) {
 		}
 		break;
 	
-	/* Event Actions */
-	case "eventadd":
-		$title = 'Create New Event';
-		$action_template = 'admin/event-add.tpl';
-		
-		if(isset($_POST['create'])) {
-			$etitle = "";
-			if(isset($_POST['title'])) { 
-                $etitle = safeString($_POST['title']); 
-            }
-			if($etitle == "") { 
-                array_push($errors, 'Title can not be blank'); 
-            }
-			
-			$description = "";
-			if(isset($_POST['description'])) { 
-                $description = safeString($_POST['description']); 
-            }
-			if($description == "") { 
-                array_push($errors, 'Description can not be blank'); 
-            }
-			
-			$location = "";
-			if(isset($_POST['location'])) { 
-                $location = safeString($_POST['location']); 
-            }
-			if($location == "") { 
-                array_push($errors, 'Location can not be blank.'); 
-            }
-			
-			$start = "";
-			if(isset($_POST['start'])) { 
-                $start = safeString($_POST['start']);  
-            } 
-			if($start == "") { 
-                array_push($errors, 'Start date can not be blank.'); 
-            }
-			
-			$end = "";
-			if(isset($_POST['end'])) { 
-                $end = safeString($_POST['end']); 
-            }
-			if($end == "") { 
-                array_push($errors, 'End date can not be blank.'); 
-            }
-    
-           $starttime = new DateTime($start);
-           $endtime = new DateTime($end);
-			    
-			if(count($errors) == 0) {
-				createEvent($session->generateSessionToken(), $etitle, $description, $location, 
-                    $starttime->format("Y-m-d H:i:s"), $endtime->format("Y-m-d H:i:s"));
-				$title = 'Successfully Created New Event';
-				$done = true;
-			}
-		}
-		
-		break;
-	
+
 	case "eventmanage":
 		$title = 'Manage Events';
 		$data = adminGetEvents();
@@ -267,29 +209,6 @@ switch($action) {
 		foreach( $names as $name ) {
 			eventDelete($name);
 		}
-		break;
-	
-	/* News Actions */
-	case "newsadd":
-		$title = 'Create New Article';
-		$action_template = 'admin/news-add.tpl';
-		
-		if(isset($_POST['create'])) {
-			$etitle = "";
-			if(isset($_POST['title'])) { $etitle = safeString($_POST['title']); }
-			if($etitle == "") { array_push($errors, 'Title can not be blank'); }
-			
-			$description = "";
-			if(isset($_POST['content'])) { $description = safeString($_POST['content']); }
-			if($description == "") { array_push($errors, 'Content can not be blank'); }
-			
-			if(count($errors) == 0) {
-				createNewsItem($session->generateSessionToken(), $etitle, $description, $publish = 1); 
-				$title = 'Successfully Created New Article';
-				$done = true;
-			}
-		}
-		
 		break;
 	
 	case "newsmanage":

@@ -213,6 +213,20 @@
       });
     };
 
+    BaseVis.prototype.hideControls = function() {
+      this.controlWidth = ($('#controldiv')).width();
+      ($('#controldiv')).width(0);
+      ($('#controlhider')).hide();
+      return ($('#' + this.canvas)).css({
+        width: ($("#viscontainer")).innerWidth() - (($("#controlhider")).outerWidth() + globals.VIS_MARGIN)
+      });
+    };
+
+    BaseVis.prototype.unhideControls = function() {
+      ($('#controldiv')).width(this.controlWidth);
+      return ($('#controlhider')).show();
+    };
+
     return BaseVis;
 
   })();
@@ -249,6 +263,13 @@
         },
         credits: {
           enabled: false
+        },
+        navigation: {
+          buttonOptions: {
+            align: 'right',
+            verticalAlign: 'bottom',
+            y: -55
+          }
         },
         legend: {
           symbolWidth: 60,

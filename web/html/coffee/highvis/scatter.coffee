@@ -36,7 +36,7 @@ class window.Scatter extends BaseHighVis
         @LINES_MODE = 2
         @SYMBOLS_MODE = 1
 
-        @mode = @SYMBOLS_LINES_MODE
+        @mode = @SYMBOLS_MODE
 
         @xAxis = data.normalFields[0]
 
@@ -56,7 +56,7 @@ class window.Scatter extends BaseHighVis
                 type: "line"
                 zoomType: "xy"
             title:
-                text: "Scatter"
+                text: ""
             tooltip:
                 formatter: ->
                     if self.advancedTooltips
@@ -65,7 +65,7 @@ class window.Scatter extends BaseHighVis
 
                         for field, fieldIndex in data.fields when @point.datapoint[fieldIndex] isnt null
                             dat = if (Number field.typeID) is data.types.TIME
-                                new Date(@point.datapoint[fieldIndex])
+                                (globals.dateFormatter Date(@point.datapoint[fieldIndex]))
                             else
                                 @point.datapoint[fieldIndex]
                                 
@@ -200,7 +200,6 @@ class window.Scatter extends BaseHighVis
 
         ($ '.tooltip_box').click (e) =>
             @advancedTooltips = not @advancedTooltips
-            console.log @advancedTooltips
 
         #Set up accordion
         globals.toolsOpen ?= 0

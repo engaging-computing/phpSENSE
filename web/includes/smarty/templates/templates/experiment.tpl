@@ -27,9 +27,11 @@
  *}
 
 <script> 
+    var default_vis = '{$meta.default_vis}';
 {literal}
     $(document).ready(function(){
                 $( ".exp_tools a").button().width('100px').css({margin:'0px 0px 6px 0px',fontSize:'1em',fontFamily:'Trebuchet MS, sans-serif',fontWeight:'bold'});
+                $("#defult_vis_selector").val(default_vis);
     });
 {/literal}    
 </script>
@@ -101,14 +103,29 @@
 					</tr>
 				{ /if }
 				{ if $user.user_id == $meta.owner_id or $user.administrator == 1 }
-                    <tr>
-                        <td class="heading" valign="top">Closed:</td>
-                        <td>
-                            <input type="checkbox" id="close_experiment" name="close_experiment" value="{$meta.experiment_id}" {if $meta.closed == 1}checked{/if}/>
-                            <span id="close_loading_message" style="display:none;">Loading...</span>
-                        </td>
-                    </tr>
-                { /if }
+                                    <tr>
+                                        <td class="heading" valign="top">Closed:</td>
+                                        <td>
+                                            <input type="checkbox" id="close_experiment" name="close_experiment" value="{$meta.experiment_id}" {if $meta.closed == 1}checked{/if}/>
+                                            <span id="close_loading_message" style="display:none;">Loading...</span>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="heading" valign="top">Default Vis:</td>
+                                        <td>
+                                            <select id="defult_vis_selector">
+                                                <option value="Map">Map</option>
+                                                <option value="Timeline">Timeline</option>
+                                                <option value="Scatter">Scatter</option>
+                                                <option value="Bar">Bar</option>
+                                                <option value="Histogram">Histogram</option>
+                                                <option value="Motion">Motion</option>
+                                                <option value="Pictures" >Pictures</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                { /if }
 			</table>
 		</div>
 	</div>
@@ -144,9 +161,7 @@
     	                    <div class="exp_tools"><a href="pickexpimage.php?id={$meta.experiment_id}">Image</a> - Set the picture that will show should this experiment be featured.</div>
                         { /if }
     	            { /if }
-    	            <div class="exp_tools"><a href="#" onclick="loadVis0({$meta.experiment_id});">Legacy Vis</a> - Select sessions below to visualize data using legacy vis</div>
-    	            <div class="exp_tools"><a href="#" onclick="loadVis({$meta.experiment_id});">Visualize</a> - Select sessions below to visualize data</div>
-            	    <div class="exp_tools"><a href="#" onclick="loadVis2({$meta.experiment_id});">Vis Beta</a> - Use our visualizations beta to examine your data. </div>
+            	    <div class="exp_tools"><a href="#" onclick="loadVis2({$meta.experiment_id});">Visualize</a> - Use our visualizations beta to examine your data. </div>
     	        </div>
     	    </div>
 	    { /if }
@@ -174,7 +189,7 @@
                                     </div>
                                     
                                     <div class="session_name">
-                                        <a href="newvis.php?sessions={ $session.session_id }">{ $session.name|truncate:27 }</a>
+                                        <a href="highvis.php?sessions={ $session.session_id }">{ $session.name|truncate:27 }</a>
                                     </div>
                                     
                                     <div class="pictures_maybe">

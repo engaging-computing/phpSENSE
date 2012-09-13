@@ -40,6 +40,58 @@ window.arrayRemove = (arr, item) ->
     arr
 
 ###
+Tests to see if a and b are within thresh%
+of the smaller value.
+###
+window.fpEq = (a, b, thresh = 0.0001) ->
+    diff = Math.abs (a - b)
+    e = (Math.abs (Math.min a, b)) * thresh
+
+    return diff < e
+
+###
+Date formatter
+###
+globals.dateFormatter = (dat) ->
+
+    dat = new Date(dat)
+    
+    monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                  "Jul","Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    minDigits = (num, str) ->
+        str = String str
+        while str.length < num
+            str = '0' + str
+        str
+
+    str = ""
+    str += dat.getUTCFullYear()          + "-"
+    str += monthNames[dat.getUTCMonth()] + "-"
+    str += dat.getUTCDate()              + " "
+    
+
+    str += (minDigits 2, dat.getUTCHours())   + ":"
+    str += (minDigits 2, dat.getUTCMinutes()) + ":"
+    str += (minDigits 2, dat.getUTCSeconds()) + "."
+    str += (minDigits 3, dat.getUTCMilliseconds()) + " GMT"
+    
+###
+Cross platform accessor/mutator for element inner text
+###
+window.innerTextCompat = (self, value = null) ->
+    if document.getElementsByTagName("body")[0].innerText?
+        if value is null
+            return self.innerText
+        else
+            self.innerText = value
+    else
+        if value is null
+            return self.textContent
+        else
+            self.textContent = value
+    
+###
 This function adds a parameterizable radial marker to Highchart's list of
 marker styles.
 ###

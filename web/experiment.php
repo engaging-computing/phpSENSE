@@ -44,6 +44,8 @@ if(isset($_GET['id'])) {
 		$ownerid = $meta['owner_id'];
 		$meta['create_diff'] = dateDifference(time(), strtotime($meta['timecreated']));
 		$meta['mod_diff'] = dateDifference(time(), strtotime($meta['timemodified']));
+		$meta['default_vis'] = getDefaultVisForExperiment($id);
+		
 		
 		// Make calls to pull data from db
 		$fields = array();

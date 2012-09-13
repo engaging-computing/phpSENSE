@@ -30,14 +30,12 @@
 		<tr>
 			<td valign="top">
 				<h2>Events</h2>
-				<a href="admin.php?action=eventmanage">Manage Events</a><br/>
-				<a href="admin.php?action=eventadd">Create New Event</a><br/>
+				<a href="/blog/wp-admin/post-new.php">Manage Events</a><br/>
 			</td>
 			<td style="border-left:1px solid #CCC;">&nbsp;</td>
 			<td valign="top">
 				<h2>News</h2>
-				<a href="admin.php?action=newsmanage">Manage News</a><br/>
-				<a href="admin.php?action=newsadd">Create New Article</a><br/>
+				<a href="/blog/wp-admin/post-new.php">Manage News</a><br/>
 			</td>
 			<td style="border-left:1px solid #CCC;">&nbsp;</td>
 			<td valign="top">

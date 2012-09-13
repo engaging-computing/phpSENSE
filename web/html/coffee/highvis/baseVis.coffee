@@ -161,6 +161,15 @@ class window.BaseVis
         ($ '#groupControl > h3').click ->
             globals.groupOpen = (globals.groupOpen + 1) % 2
 
+    hideControls: ->
+        @controlWidth = ($ '#controldiv').width()
+        ($ '#controldiv').width 0
+        ($ '#controlhider').hide()
+        ($ '#' + @canvas).css
+            width: ($ "#viscontainer").innerWidth() - (($ "#controlhider").outerWidth() + globals.VIS_MARGIN)
+    unhideControls: ->
+        ($ '#controldiv').width @controlWidth
+        ($ '#controlhider').show()
 
 class window.BaseHighVis extends BaseVis
     ###
@@ -185,8 +194,11 @@ class window.BaseHighVis extends BaseVis
             #colors:
             credits:
                 enabled: false
-            #global: {}
-            #labels: {}
+            navigation:
+                buttonOptions:
+                    align: 'right'
+                    verticalAlign: 'bottom'
+                    y: -55
             legend:
                 symbolWidth:60
                 itemWidth: 200

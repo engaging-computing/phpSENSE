@@ -358,7 +358,7 @@ function putData($eid, $sid, $data) {
     			}
 
                 //fill row with values to enter into mongo
-    			$row[str_replace(".", "", $field_names[$i])] = $value;
+    			$row[str_replace(".", "", $field_names[$i])] = utf8_encode($value);
     		}
 
     		$row['experiment'] = (int) $eid;
@@ -368,7 +368,7 @@ function putData($eid, $sid, $data) {
     		$mdb->insert("e{$eid}", $row);
 
     		$row_count++;	
-    	}
+            }
 	}
 
 	//if successful
@@ -386,65 +386,144 @@ function putData($eid, $sid, $data) {
 
 function getData($eid, $sid, $get_header = false, $strip_keys = true) {
     global $mdb;
-
+    
+    global $db;
+    
     $excluded = array("session", "experiment");
-
+    
     $fields = getFields($eid);
     $data = array();
     
-    // Get the data from MongoDB
-	$results = $mdb->find("e{$eid}", array("session" => (int)$sid));
+    $url = $db->query("SELECT extSrc from sessions where session_id = {$sid}");
+    if($url[0]['extSrc'] != null){
+        //Get the data from Google Docs
+        $results = getDataFromGoogleDocs($fields,$url[0]['extSrc']);
+       
+        return $results;
+    } else {
+        // Get the data from MongoDB
+        $results = $mdb->find("e{$eid}", array("session" => (int)$sid));   
+    }
+    
+    if(count($results) > 0) {
+        if($get_header) {
+            $header = array();
+            $headers = array_keys($results[0]);
+            
+            foreach($headers as $h) {
+                if(!in_array($h, $excluded)) $header[] = $h;
+            }
+            
+            $data[] = $header;
+        }    
+        
+        foreach($results as $i => $r) {
+            foreach($fields as $f) {
+                $data[$i][$f['field_name']] = $r[$f['field_name']];
+            }
+        }
+        
+       $results = $data;
+        unset($data);
+        
+        if($strip_keys) {
+            // Package the data so it makes sense
+            foreach($results as $result) {
+                $row = array();
+                
+                foreach($result as $k => $v) {
+                    if(!in_array($k, $excluded)) $row[] = $v;
+                }
+                
+                $data[] = $row;
+            }        	
+        }
+        else {
+            foreach($results as $result) { 
+                $row = array();
+                
+                foreach($result as $k => $v) {
+                    if(!in_array($k, $excluded)) $row[$k] = $v;
+                }
+                
+                $data[] = $row;
+            }
+        }
+    }
+    
 
-	if(count($results) > 0) {
-	    if($get_header) {
-    	    $header = array();
-    	    $headers = array_keys($results[0]);
-    	    
-    	    foreach($headers as $h) {
-    	        if(!in_array($h, $excluded)) $header[] = $h;
-    	    }
-    	    
-        	$data[] = $header;
-    	}
-
-        //print_r($results);
-
-    	foreach($results as $i => $r) {
-    	    foreach($fields as $f) {
-    	        $data[$i][$f['field_name']] = $r[$f['field_name']];
-    	    }
-    	}
-    	    	
-    	$results = $data;
-    	unset($data);
-
-    	if($strip_keys) {
-    	    // Package the data so it makes sense
-        	foreach($results as $result) {
-        		$row = array();
-
-        		foreach($result as $k => $v) {
-        			if(!in_array($k, $excluded)) $row[] = $v;
-        		}
-
-        		$data[] = $row;
-        	}        	
-    	}
-    	else {
-    	    foreach($results as $result) { 
-    	        $row = array();
-    	        
-    	        foreach($result as $k => $v) {
-        			if(!in_array($k, $excluded)) $row[$k] = $v;
-        		}
-        		
-        		$data[] = $row;
-        	}
-    	}
-	}
+    return $data;
+}
 
 
-	return $data;
+function setExternalDataSourceForSession($sid,$url){
+    global $db;
+    
+    $sql = "UPDATE sessions set extSrc = \"{$url}\" where session_id = {$sid}";
+    
+    $db->query($sql);
+    
+    if($db->numOfRows){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function getDataFromGoogleDocs($fields,$key){
+    $url = "https://spreadsheets.google.com/tq?tqx=out:csv&tq=select%20*&key={$key}";
+    $lines = file($url,FILE_IGNORE_NEW_LINES);
+    
+    
+    $data = array();
+    foreach($lines as $key=>$line){
+        
+        //Should look at headers
+        
+        //Skip the headers to get the data
+        if($key > 0){
+            
+            //Break up the line into separate data.
+            $split = explode(',',$line);
+            $tmpArray = array();
+            
+            //Foreach of the data points check to see if you need to fix a time
+            foreach($split as $k=>$dat){
+                
+                //The first data point is currently considered a time stamp
+                if($k==0){
+                    $preformatted = $dat;
+                    $fixed_time; 
+                    
+                   
+                        if( $loc = strpos($preformatted, '.') ) {
+                            $fixed_time = (strtotime(substr($preformatted, 0, $loc))*1000) + (intval(substr($preformatted, $loc+1)) * 1000);
+                        } else {
+                            $tmp = explode(':', $preformatted);
+                            
+                            if( count($tmp) == 3 ) {
+                                $fixed_time = strtotime($tmp[0].$tmp[1])*1000;
+                                $fixed_time = $fixed_time + ($tmp[2]*1000);
+                            } else {
+                                $tmp = strtotime($preformatted);
+                                //Store $tmp * 1000
+                                $fixed_time = $tmp * 1000;      
+                            }
+                        }
+                        
+                    
+                     $tmpArray[] = ($preformatted == 'null') ? null : $fixed_time;
+                
+                //The rest of the data is currently considered numbers    
+                } else {                    
+                    $tmpArray[] = ($dat == 'null') ?  null : floatval($dat);
+                }
+            }
+            $data[] = $tmpArray;
+        }
+    }
+    
+    return $data; 
 }
 
 function getDataSince($eid, $sid, $since) {

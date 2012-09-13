@@ -45,7 +45,30 @@ class window.Timeline extends Scatter
 
         $.extend true, @chartOptions,
             title:
-                text: 'Timeline'
+                text: ''
+            tooltip:
+                formatter: ->
+                    if self.advancedTooltips
+                        str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                        str += "<table>"
+
+                        for field, fieldIndex in data.fields when @point.datapoint[fieldIndex] isnt null
+                            dat = if (Number field.typeID) is data.types.TIME
+                                (globals.dateFormatter Date(@point.datapoint[fieldIndex]))
+                            else
+                                @point.datapoint[fieldIndex]
+
+                            str += "<tr><td>#{field.fieldName}</td>"
+                            str += "<td><strong>#{dat}</strong></td></tr>"
+
+                        str += "</table>"
+                    else
+                        str  = "<div style='width:100%;text-align:center;color:#{@series.color};'> #{@series.name.group}</div><br>"
+                        str += "<table>"
+                        str += "<tr><td>#{@series.xAxis.options.title.text}:</td><td><strong>#{globals.dateFormatter @x}</strong></td></tr>"
+                        str += "<tr><td>#{@series.name.field}:</td><td><strong>#{@y}</strong></td></tr>"
+                        str += "</table>"
+                useHTML: true
 
         @chartOptions.xAxis =
             type: 'datetime'

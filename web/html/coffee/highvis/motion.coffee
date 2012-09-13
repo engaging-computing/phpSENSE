@@ -34,38 +34,44 @@ class window.Motion extends BaseVis
         #Make table visible? (or somthing)
         ($ '#' + @canvas).show()
         
-        #Hide the controls
-        @controlWidth = ($ '#controldiv').width()
-        
-        ($ '#controldiv').css
-            width:0
-        ($ '#controlhider').hide()
-        ($ '#' + @canvas).css
-            width:($ "#viscontainer").innerWidth() - ($ "#controlhider").outerWidth()
-        
+        @hideControls()
         
         dt = new google.visualization.DataTable();
         
+        #Generate a list of fieldIndexes (incase we need to shuffle)
+        fieldIndexes = for field,fieldIndex in data.fields
+            fieldIndex
+        
+        
+        fieldIndexes[0] = data.groupingFieldIndex
+        fieldIndexes[data.groupingFieldIndex] = 0;
+        
+        # Check to see if we should shuffle a time field to the front. 
         if ( data.timeFields.length > 0 )
             if ( data.timeFields[0] != 1)
-                @shuffleFields()
-   
-        for field,fieldIndex in data.fields
+                tmp = fieldIndexes[1];
+                fieldIndexes[1] = data.timeFields[0]
+                fieldIndexes[data.timeFields[0]] = tmp       
+                
+        for i in fieldIndexes
+            field = data.fields[i]
             switch (Number field.typeID)
                 when data.types.TEXT then dt.addColumn('string', field.fieldName) 
                 when data.types.TIME then dt.addColumn('date', field.fieldName)
                 else dt.addColumn('number', field.fieldName)
-        
+
         rows = for dataPoint in data.dataPoints
-            line = for dat, fieldIndex in dataPoint 
-                if((Number data.fields[fieldIndex].typeID) is data.types.TIME)
+            line = for i in fieldIndexes
+                dat = dataPoint[i]              
+                datType = (Number data.fields[i].typeID)
+                if(datType is data.types.TIME)
                     new Date(dat)
                 else 
                     dat
             line
-        
+ 
         dt.addRow(row) for row in rows
-                   
+        
         chart = new google.visualization.MotionChart(document.getElementById('motion_canvas'));
         chart.draw(dt, {width: '100%', height: '100%'});
         super()
@@ -73,33 +79,15 @@ class window.Motion extends BaseVis
     #Gets called when the controls are clicked and at start
     update: ->
         super()
-
+        
     end: ->
         ($ '#' + @canvas).hide()
-        ($ '#controldiv').css
-            width:@controlWidth
-        ($ '#controlhider').show()
+        @unhideControls()
         
     drawControls: ->
         super()
 
     drawChart: ->
-
-    shuffleFields: ->
-    
-        timeField= data.timeFields[0]
-        
-        if (timeField != -1 && timeField != 1 )
-            tempa = data.fields[1]
-            tempb = data.fields[timeField]
-            data.fields[1] = tempb
-            data.fields[timeField] = tempa
-            
-            for dataPoint,dpindex in data.dataPoints
-                tempa = dataPoint[1]
-                tempb = dataPoint[timeField]
-                data.dataPoints[dpindex][1] = tempb
-                data.dataPoints[dpindex][timeField] = tempa
 
 if "Motion" in data.relVis
     globals.motion = new Motion "motion_canvas"      
