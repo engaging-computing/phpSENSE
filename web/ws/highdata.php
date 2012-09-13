@@ -178,7 +178,7 @@ if(isset($_REQUEST['sessions'])) {
             
             //add normalFields
             if ($t!=7 && $t!=19 && $t!=37){
-                $data->normalFields = array_merge($data->timeFields,array($key));
+                $data->normalFields = array_merge($data->normalFields,array($key));
             }
             
             if($t == 19){
