@@ -358,7 +358,7 @@ function putData($eid, $sid, $data) {
     			}
 
                 //fill row with values to enter into mongo
-    			$row[str_replace(".", "", $field_names[$i])] = $value;
+    			$row[str_replace(".", "", $field_names[$i])] = utf8_encode($value);
     		}
 
     		$row['experiment'] = (int) $eid;
@@ -368,7 +368,7 @@ function putData($eid, $sid, $data) {
     		$mdb->insert("e{$eid}", $row);
 
     		$row_count++;	
-    	}
+            }
 	}
 
 	//if successful
@@ -456,15 +456,41 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
 }
 
 
-function getDataFromGoogleDocs($fields,$url){
+function setExternalDataSourceForSession($sid,$url){
+    global $db;
+    
+    $sql = "UPDATE sessions set extSrc = \"{$url}\" where session_id = {$sid}";
+    
+    $db->query($sql);
+    
+    if($db->numOfRows){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function getDataFromGoogleDocs($fields,$key){
+    $url = "https://spreadsheets.google.com/tq?tqx=out:csv&tq=select%20*&key={$key}";
     $lines = file($url,FILE_IGNORE_NEW_LINES);
+    
     
     $data = array();
     foreach($lines as $key=>$line){
+        
+        //Should look at headers
+        
+        //Skip the headers to get the data
         if($key > 0){
+            
+            //Break up the line into separate data.
             $split = explode(',',$line);
             $tmpArray = array();
+            
+            //Foreach of the data points check to see if you need to fix a time
             foreach($split as $k=>$dat){
+                
+                //The first data point is currently considered a time stamp
                 if($k==0){
                     $preformatted = $dat;
                     $fixed_time; 
@@ -486,9 +512,11 @@ function getDataFromGoogleDocs($fields,$url){
                         }
                         
                     
-                     $tmpArray[] = $fixed_time;
-                } else {
-                    $tmpArray[] = floatval($dat);
+                     $tmpArray[] = ($preformatted == 'null') ? null : $fixed_time;
+                
+                //The rest of the data is currently considered numbers    
+                } else {                    
+                    $tmpArray[] = ($dat == 'null') ?  null : floatval($dat);
                 }
             }
             $data[] = $tmpArray;

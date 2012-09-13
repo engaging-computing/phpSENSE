@@ -24,9 +24,7 @@
         for( var header in uheaders ){
             header_drop_down += "<option value="+uheaders[header][0]+">"+uheaders[header][1]+"</option>"
         }
-
         header_drop_down += "</select>";
-
         $('#mrows').append('<tr><td id="field_'+ufields[field][0]+'">'+ufields[field][1]+'</td><td style=text-align:center;>'+header_drop_down+'</td></tr>');
     }
 
@@ -34,18 +32,16 @@
         var matched = [];
         for( var field in ufields ){
             matched[matched.length] = {field: ufields[field][0], header:$('#header_'+ufields[field][0]).val()}
-        }
-        
+        }      
         $.ajax({
             url: '../../actions/upload.php',
             type: "POST",
             data: {matched_columns: matched, file: filename, eid: eid, sname: sname, sdesc: sdesc, sloc: sloc}
         }).done(function(msg){
-            $('#col_match').dialog('close');
-            
-            window.location = "newvis.php?sessions="+msg;
-            
+            $('#col_match').dialog('close');         
+            window.location = "highvis.php?sessions="+msg;    
         }).fail(function(){
+            $('#col_match').dialog('close');
             alert('Something broke');
         });
         
@@ -68,130 +64,124 @@
         <div>Sorry this experiment is currently closed.</div>
     </div>
 { else }
-
     <div id="main">
-                { include file="parts/errors.tpl" }
-                <form method="POST" id="upload_form" name="upload_form" enctype="multipart/form-data">
-                        <fieldset id="basic-info">
-            
-                            { if $hideName || $hideProcedure || $hideLocation}
-
-                                <legend>Step 1: Session Information</legend>
-                                <p>Your session will be created with the following information.</p>
-                                
-                                { if $hideName }
-                                <label for="session_name">* Name:</label>
-                                <input type="text" name="session_name" id="session_name" class="required urlSafe" value="{$session_name}" onKeyPress="return event.keyCode!=13"/>
-                                <br/>
-                                <span id="session_name_hint" class="hint">Example: "My Super Awesome Test"</span><br/>
-                                
-                                {/if}{ if $hideProcedure }
-                                <label for="session_description">* Procedure:</label>
-                                <textarea name="session_description" id="session_description" class="required">{$session_description}</textarea>
-                                <br/>
-                                <span id="session_description_hint" class="hint">Describe the session procedure and other details.</span><br/>
-                                
-                                {/if}{ if $hideLocation }
-                                <label for="session_citystate">* Location:</label>
-                                <input type="text" name="session_citystate" id="session_citystate" value="{$session_citystate}" class="required" onKeyPress="return event.keyCode!=13"/>
-                                <br/>
-                                <span id="session_citystate_hint" class="hint">Example: "4 Yawkey Way, Boston, MA" or "Boston, Ma" </span><br/>
-                                
-                        {/if}
-                        <legend>Step 2: Add Session Data</legend></br>
-                        {else} 
-                            <legend>Step 1: Add Session Data</legend></br>                 
+        { include file="parts/errors.tpl" }
+        <form method="POST" id="upload_form" name="upload_form" enctype="multipart/form-data">
+            <fieldset id="basic-info">
+                { if $hideName || $hideProcedure || $hideLocation}
+                    <legend>Step 1: Session Information</legend>
+                    <p>Your session will be created with the following information.</p>
+                    { if $hideName }
+                        <label for="session_name">* Name:</label>
+                        <input type="text" name="session_name" id="session_name" class="required urlSafe" value="{$session_name}" onKeyPress="return event.keyCode!=13"/>
+                        <br/>
+                        <span id="session_name_hint" class="hint">Example: "My Super Awesome Test"</span><br/>
                     {/if}
-                                       
-                                        <label for="session_type">Session Type:</label>
-                                        
-    
+                    { if $hideProcedure }
+                        <label for="session_description">* Procedure:</label>
+                        <textarea name="session_description" id="session_description" class="required">{$session_description}</textarea>
+                        <br/>
+                        <span id="session_description_hint" class="hint">Describe the session procedure and other details.</span><br/>       
+                    {/if}
+                    { if $hideLocation }
+                        <label for="session_citystate">* Location:</label>
+                        <input type="text" name="session_citystate" id="session_citystate" value="{$session_citystate}" class="required" onKeyPress="return event.keyCode!=13"/>
+                        <br/>
+                        <span id="session_citystate_hint" class="hint">Example: "4 Yawkey Way, Boston, MA" or "Boston, Ma" </span><br/>
+                    {/if}
+                        <legend>Step 2: Add Session Data</legend></br>
+                    {else} 
+                        <legend>Step 1: Add Session Data</legend></br>                 
+                    {/if}
+                    <label for="session_type">Session Type:</label>
                     <div style="width:480px;">
-                                            <input type="radio" id="manual_upload" name="session_type" group="session_type" value="manual" style="width:20px;" CHECKED /><span>Manual Entry</span>
-                                                <input type="radio" id="file_upload" name="session_type" group="session_type" value="file" style="width:20px;"/><span>Data File</span>
-                                        </div>
-                                        <div id="error_rows" style="display:none;text-align:center"></div><br/>
-                                        
-                                        <div id="type_file" style="display:none;">
-                                                <input type="file" id="session_file" name="session_file"/><br/>
-                                                <span class="hint">Click browse and select your CSV data file.</span><br/>
-                                        </div>
-                                        <div id="type_manual" style="width:480px">
-                                            
-                                                <table width="480px" cellpadding="3" id="manual_table">
-                                                        <tr>
-                                                                { foreach from=$fields item=field }
-                                                                        <td>{ $field.field_name } ({$field.unit_abbreviation})</td>
-                                                                { /foreach }
-                                                        </tr>
-                                                        <tr id="template" style="display:none;">
-                                                                { foreach from=$fields item=field }
-                                                                        <td><input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_xxx" name="{ $field.field_name|replace:' ':'_'  }_xxx"  style="width:90%;"></td>
-                                                                { /foreach }
-                                                        </tr>
-                                                        <tr>
-                                                                { foreach from=$fields item=field }
-                                                                    { if $field.field_name == 'Time' }
-                                                                         <td><input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" class="time"></td>
-                                                                    { else }
-                                                                        <td><input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" ></td>
-                                                                    { /if }
-                                                                { /foreach }
-                                                        </tr>
-                                                </table>
-                                                
-                                                <input type="hidden" id="row_count" name="row_count" value="1" />
-                                                
-                                                <span>
-                                                    <button type="button" id="addManualRowButton">Add Row</button>
-                                                    <button type="button" id="removeManualRowButton" disabled="disabled">Remove Row</button>
-                                                </span>
-                                               
-                                        </div>
+                        <input type="radio" id="manual_upload" name="session_type" group="session_type" value="manual" style="width:20px;" CHECKED /><span>Manual Entry</span>
+                        <input type="radio" id="file_upload" name="session_type" group="session_type" value="file" style="width:20px;"/><span>Data File</span>
+                        <input type="radio" id="google_upload" name="session_type" group="session_type" value="google" style="width:20px;"/><span>Google Doc</span>
+                    </div>
+                    <div id="error_rows" style="display:none;text-align:center"></div><br/>
+                    <div id="type_file" style="display:none;">
+                        <input type="file" id="session_file" name="session_file"/><br/>
+                        <span class="hint">Click browse and select your CSV data file.</span><br/>
+                    </div>
+                    <div id="type_google" style="display:none;">
+                        <td>
+                            <input type="text" onKeyPress="return event.keyCode!=13" id="google_key" name="google_key">
+                        </td>
+                        <span class="hint">Enter the public key for your google spreadsheet.</span><br/>
+                    </div>    
+                    <div id="type_manual" style="width:480px">
+                        <table width="480px" cellpadding="3" id="manual_table">
+                            <tr>
+                                { foreach from=$fields item=field }
+                                    <td>{ $field.field_name } ({$field.unit_abbreviation})</td>
+                                { /foreach }
+                            </tr>
+                            <tr id="template" style="display:none;">
+                                { foreach from=$fields item=field }
+                                    <td>
+                                        <input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_xxx" name="{ $field.field_name|replace:' ':'_'  }_xxx"  style="width:90%;">
+                                    </td>
+                                { /foreach }
+                            </tr>
+                            <tr>
+                                { foreach from=$fields item=field }
+                                    { if $field.field_name == 'Time' }
+                                        <td><input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" class="time"></td>
+                                    { else }
+                                        <td><input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" ></td>
+                                    { /if }
+                                { /foreach }
+                            </tr>
+                       </table>                       
+                       <input type="hidden" id="row_count" name="row_count" value="1" />                   
+                            <span>
+                                <button type="button" id="addManualRowButton">Add Row</button>
+                                <button type="button" id="removeManualRowButton" disabled="disabled">Remove Row</button>
+                            </span>                  
+                    </div>
 
 
-                                <div>
-                                    <input type="hidden" name="id" value="{ $meta.experiment_id }" />
-                                    <button type="submit" name="session_create">Create Session</button> 
-                                </div>
+                   <div>
+                       <input type="hidden" name="id" value="{ $meta.experiment_id }" />
+                       <button type="submit" name="session_create">Create Session</button> 
+                   </div>
 
-                                <div id="col_match" title="Please help us match your headers"></div>
-
-                     </div>           
-                     <div id="sidebar">
+                   <div id="col_match" title="Please help us match your headers"></div>
+    </div>           
+    <div id="sidebar">
+        <div class="module">
+            <h1>Experiment Procedure:</h1>
+                <div id="e_proc">
+                    <p>{$e_proc}</p>
+                </div>
+        </div>    
                          
-                         <div class="module">
-                             <h1>Experiment Procedure:</h1>
-                             <div id="e_proc">
-                                 <p>{$e_proc}</p>
-                             </div>
-                         </div>    
-                         
-                         <div class="module">
-                             <h1>First Time Uploading?</h1>
-                             <div>
-                                 <p>
-                                 Check out our quick step-by-step walkthrough on how to contribute data.
-                             </p>
-                             <p>
-                                 <a href="actions/tutorials.php?tutorial=upload&amp;height=620&amp;width=888" class="thickbox">Watch Tutorial</a> 
-                             </p>
-                         </div>
-                     </div>
+        <div class="module">
+            <h1>First Time Uploading?</h1>
+            <div>
+                <p>
+                Check out our quick step-by-step walkthrough on how to contribute data.
+                </p>
+                <p>
+                    <a href="actions/tutorials.php?tutorial=upload&amp;height=620&amp;width=888" class="thickbox">Watch Tutorial</a> 
+                </p>
+            </div>
+        </div>
                      
-                     <div class="module">
-                         <h1>Uploading from a PinPoint?</h1>
-                         <div>
-                             <p>
-                             First time using a PinPoint? Watch our quick tutorial to learn how to upload data from the PinPoint. 
-                         </p>
-                         <p>
-                             <a href="actions/tutorials.php?tutorial=pincushion&amp;height=570&amp;width=520" class="thickbox">Watch Tutorial</a>
-                         </p>
-                     </div>
-                 </div>
+        <div class="module">
+            <h1>Uploading from a PinPoint?</h1>
+            <div>
+                <p>
+                    First time using a PinPoint? Watch our quick tutorial to learn how to upload data from the PinPoint. 
+                </p>
+                <p>
+                    <a href="actions/tutorials.php?tutorial=pincushion&amp;height=570&amp;width=520" class="thickbox">Watch Tutorial</a>
+                </p>
+            </div>
+        </div>
                  
-             </div>
+    </div>
 
 {/if}
 
