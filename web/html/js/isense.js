@@ -708,7 +708,7 @@ var createWizard = {
     },
     
     clear_field:function() {
-      createWizard.fields = new Array();  
+      createWizard.fields = new Array(); 
     },
     
     next_step:function() {
@@ -726,17 +726,42 @@ var createWizard = {
     step_start:function(pinpoint) {
         createWizard._started = true;
         $('#step_start').hide();
+        
+        /*
         if(pinpoint) {
             createWizard.step_pinpoint();
         }
         else {
             createWizard.step_custom();
+        }*/
+        
+        
+        switch($('input:radio[name=fieldSelect]:checked').val()){
+            
+            case 'custom':
+            
+            createWizard.step_custom();
+            
+            break;
+            case 'pinpoint':
+            
+            createWizard.step_pinpoint();
+            
+            break;
+            case 'upinpoint':
+            
+            createWizard.step_upinpoint();
+            
+            break;
+            
         }
+        
         $('#wizard_options').show();
     },
     
     step_restart:function() {
         createWizard._started = false;
+        $('#step_upinpoint').hide();
         $('#step_pinpoint').hide();
         $('#step_custom').hide();
         $('#wizard_options').hide();
@@ -747,6 +772,12 @@ var createWizard = {
         createWizard.next = createWizard.step_pinpoint_advance;
         createWizard.prev = createWizard.step_restart;
         $('#step_pinpoint').show();
+    },
+    
+    step_upinpoint:function() {
+        createWizard.next = createWizard.step_pinpoint_advance;
+        createWizard.prev = createWizard.step_restart;
+        $('#step_upinpoint').show();
     },
 
     step_pinpoint_advance:function() {
