@@ -75,14 +75,9 @@ if($type=="experiments"){
     $results = $response['data'];
     $count = $response['count'];  
 } elseif ($type == "visualizations"){
-    if($action == "search"){
-        $response = getVisualizations($query, $page, $limit, $sort);
-        $results = $response['data'];
-        $count = $response['count'];  
-    } else {
-        $results = browseVisualizationsByTimeCreated($page, $limit);
-        $count = browseVisualizationsByTimeCreated(-1, $limit);
-    }
+    $response = getVisualizations($query, $page, $limit, $sort);
+    $results = $response['data'];
+    $count = $response['count'];  
 }
 
 // Determine sort text
