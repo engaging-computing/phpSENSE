@@ -23,7 +23,7 @@ function smarty_modifier_date_diff($string) {
 	if($minutes=intval((floor($diff/60)))) $diff = $diff % 60;
 	
 	$diff    =    intval( $diff );
-	
+
 	$date_diff_string = "";
 	if($days != 0) {
 		$date_diff_string .= $days . " days ";
@@ -33,8 +33,8 @@ function smarty_modifier_date_diff($string) {
 		$date_diff_string .= $hours . " hours ";
 	}
 	
-	if($min != 0) {
-		$date_diff_string .= $min . " minutes ";
+	if($minutes != 0) {
+		$date_diff_string .= $minutes . " minutes ";
 	}
 	
 	$date_diff_string .= "ago";
