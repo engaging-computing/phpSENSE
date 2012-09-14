@@ -117,6 +117,15 @@ if(isset($_GET['action'])) {
                 updateExperimentImage($url,$eid);
             }
             break;
+            
+        case "setDefaultVis":
+            setDefaultVisForExperiment($_GET['eid'], $_GET['vis_type']);
+        break;
+        
+        case "getDefaultVis":
+            getDefaultVisForExperiment($_GET['eid']);
+        break;
+        
     }
 }
 

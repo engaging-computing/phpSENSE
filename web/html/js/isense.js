@@ -28,8 +28,8 @@ $(document).ready(function(){
             }
         });
     }
-
-
+    
+    
     
     if($('img.selectexpimage').length > 0){
         $('img.selectexpimage').click(function(){
@@ -265,7 +265,32 @@ $(document).ready(function(){
     }
     
 
-		$('div.rating_canel').css('display', 'none');
+	$('div.rating_canel').css('display', 'none');
+	
+	$('#defult_vis_selector').change(function(){
+	    
+	    /*
+	    
+	    function stop_following(follower, followee) {
+
+            $.ajax({
+                url:'/actions/graph.php',
+                data:'action=unfollow&follower='+follower+'&followee='+followee
+            })
+
+        }
+	    
+	    */
+	    
+	    //alert($(this).val());
+	    
+	    $.ajax({
+            url:'/actions/experiments.php',
+            data:'action=setDefaultVis&eid='+eid+'&vis_type='+$(this).val()
+        });
+	    
+	});
+	
 });
 
 function createActivity(exp_id) {

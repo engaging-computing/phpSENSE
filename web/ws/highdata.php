@@ -46,6 +46,7 @@ class Data {
     public $timeFields   = array();
     public $geoFields = false;
     public $hasPics = false;
+    public $default_vis = null;
   
     /* Turn on the relevant vizes */
     public function setRelVis() {
@@ -119,7 +120,7 @@ if(isset($_REQUEST['sessions'])) {
     
     $data->experimentID     = getSessionExperimentId($sessions[0]);
     $data->experimentName   = getNameFromEid($data->experimentID);
-
+    $data->default_vis      = getDefaultVisForExperiment($data->experimentID);
     //Load fields into Data object
     $fields = getFields($data->experimentID);
     

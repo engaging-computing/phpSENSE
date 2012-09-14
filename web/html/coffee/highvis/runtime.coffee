@@ -48,12 +48,16 @@ CoffeeScript version of runtime.
             
     ### Jquery up the tabs ###
     ($ '#viscontainer').tabs()
-    ($ '#viscontainer').tabs('select', "##{data.relVis[0].toLowerCase()}_canvas")
+    
 
     ($ '#viscontainer').width ($ '#viscontainer').width() - (($ '#viscontainer').outerWidth() - ($ '#viscontainer').width())
     
-    globals.curVis = (eval 'globals.' + data.relVis[0].toLowerCase())
-    
+    if(data.default_vis == null)
+        globals.curVis = (eval 'globals.' + data.relVis[0].toLowerCase())
+        ($ '#viscontainer').tabs('select', "##{data.relVis[0].toLowerCase()}_canvas")
+    else
+        globals.curVis = (eval 'globals.' + data.default_vis.toLowerCase())
+        ($ '#viscontainer').tabs('select', "##{data.default_vis.toLowerCase()}_canvas")
     ### Change vis click handler ###
     ($ '#visTabList a').click ->
         oldVis = globals.curVis
