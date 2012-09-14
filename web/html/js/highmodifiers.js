@@ -35,7 +35,8 @@
 
   if (data.savedData != null) {
     hydrate = new Hydrate();
-    $.extend(true, data, hydrate.parse(savedData.data));
+    globals.extendObject(data, hydrate.parse(data.savedData));
+    delete data.savedData;
   }
 
   if ((_ref = data.types) == null) {

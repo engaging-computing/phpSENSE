@@ -47,6 +47,10 @@ if(isset($_GET['action'])) {
                 makeUserAdmin($_GET['id']);
             }
             break;
+
+        case "verify":
+            echo isUser();
+            break;
     }
 }
 

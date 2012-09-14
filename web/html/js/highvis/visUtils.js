@@ -306,7 +306,6 @@
                 cpy[key] = stripped;
               }
             }
-            cpy.__proto__ = obj.__proto__;
             return cpy;
           }
       }
@@ -328,11 +327,37 @@
     };
   };
 
-  globals.deserializeVis = function(savedData) {
-    var hydrate;
-    hydrate = new Hydrate();
-    $.extend(true, globals, hydrate.parse(savedData.globals));
-    return $.extend(true, data, hydrate.parse(savedData.data));
+  globals.extendObject = function(obj1, obj2) {
+    var key, val;
+    switch (typeof obj2) {
+      case 'number':
+        return obj2;
+      case 'string':
+        return obj2;
+      case 'function':
+        return obj2;
+      case 'object':
+        if (obj2 === null) {
+          return obj2;
+        } else {
+          if ($.isArray(obj2)) {
+            if (obj1 == null) {
+              obj1 = [];
+            }
+          } else {
+            if (obj1 == null) {
+              obj1 = {};
+            }
+          }
+          for (key in obj2) {
+            val = obj2[key];
+            if (key !== '__hydrate_id') {
+              obj1[key] = globals.extendObject(obj1[key], obj2[key]);
+            }
+          }
+          return obj1;
+        }
+    }
   };
 
 }).call(this);

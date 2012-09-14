@@ -30,7 +30,8 @@
 # Restored saved data
 if data.savedData?
     hydrate = new Hydrate()
-    $.extend true, data, (hydrate.parse savedData.data)
+    globals.extendObject data, (hydrate.parse data.savedData)
+    delete data.savedData
 
 data.types ?= 
     TIME: 7

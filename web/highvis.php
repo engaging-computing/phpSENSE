@@ -53,7 +53,9 @@ $errors = array();
 
 // if newviz.php gets an arguement called sessions
 if(isset($_REQUEST['sessions']) || isset($_REQUEST['vid'])) {
-    
+
+    $sessions = Array();
+
     if(isset($_REQUEST['sessions'])){
         
         $sessions = explode(' ', $_REQUEST['sessions']);
@@ -87,6 +89,7 @@ if(isset($_REQUEST['sessions']) || isset($_REQUEST['vid'])) {
     $head .= '<script type="text/javascript" src="/html/js/highvis/highcharts/highcharts.js"></script>';
 
     $head .= '<script type="text/javascript" src="/html/js/lib/Hydrate.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/highvis/savedVis.js"></script>';
 
     $head .= '<script type="text/javascript" src="/html/js/highvis/visUtils.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highmodifiers.js"></script>';
@@ -120,18 +123,26 @@ if(isset($_REQUEST['sessions']) || isset($_REQUEST['vid'])) {
     $smarty->assign('head', $head);
 }
  
-// If there is only one session the title should include it.       
-if(count($sessions) == 1){
-   
-    $session_data = getSession($sessions[0]);
-    $session_name = $session_data['name'];
-    
-    $name = getExperimentNameFromSession($sessions[0]);
-    $link = '<a href="experiment.php?id='.$name['experiment_id'].'">'.$name['name'].'</a> > '. $session_name;
-} else {
-    $name = getExperimentNameFromSession($sessions[0]);
-    $link = '<a href="experiment.php?id='.$name['experiment_id'].'">'.$name['name'].'</a>';
-}    
+// If there is only one session the title should include it.
+if (isset($_REQUEST['sessions'])){
+    if (count($sessions) == 1){
+
+        $session_data = getSession($sessions[0]);
+        $session_name = $session_data['name'];
+
+        $name = getExperimentNameFromSession($sessions[0]);
+        $link = '<a href="experiment.php?id='.$name['experiment_id'].'">'.$name['name'].'</a> > '. $session_name;
+    } else {
+        $name = getExperimentNameFromSession($sessions[0]);
+        $link = '<a href="experiment.php?id='.$name['experiment_id'].'">'.$name['name'].'</a>';
+    }
+}
+else if (isset($_REQUEST['vid'])){
+    $vis_desc = getSavedVisDesc($_REQUEST['vid']);
+
+    $name = getExperimentNameFromVisualization($_REQUEST['vid']);
+    $link = '<a href="experiment.php?id='.$name['experiment_id'].'">'.$name['name'].'</a> > '. $vis_desc['title'];
+}
 
 $smarty->assign('link', $link);
 $smarty->assign('title', $name['name']);

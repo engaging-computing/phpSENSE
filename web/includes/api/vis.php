@@ -263,7 +263,8 @@ function storeSavedVis($owner,$experiment,$title,$description,$data,$globals){
     $db->query($sql);
 
     if($db->numOfRows){
-        return true;
+    
+        return $db->lastInsertId();
     }
 
     return false;
@@ -277,6 +278,20 @@ function getSavedVis($vid){
     $output = $db->query($sql);
 
     return $output;
+}
+
+function getSavedVisDesc($vid){
+    global $db;
+
+    $sql = "SELECT title, description FROM savedVises where vid = {$vid}";
+
+    $output = $db->query($sql);
+
+    if ($db->numOfRows) {
+        return $output[0];
+    }
+    
+    return false;
 }
 
 function getSavedVisByExperiment($experiment_id){

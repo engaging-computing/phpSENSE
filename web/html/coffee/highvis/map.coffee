@@ -32,11 +32,17 @@ class window.Map extends BaseVis
         @HEATMAP_NONE = -2
         @HEATMAP_MARKERS = -1
 
-        @visibleMarkers = true
+        @visibleMarkers = 1
         @heatmapSelection = @HEATMAP_NONE
 
         @heatmapRadius = 30
-        
+
+    serializationCleanup: ->
+        delete @gmap
+        delete @heatPoints
+        delete @markers
+        delete @heatmap
+    
     start: ->
         ($ '#' + @canvas).show()
 
@@ -153,7 +159,7 @@ class window.Map extends BaseVis
         # Set marker visibility
         for markGroup, index in @markers
             for mark in markGroup
-                mark.setVisible ((index in globals.groupSelection) and @visibleMarkers)
+                mark.setVisible ((index in globals.groupSelection) and @visibleMarkers is 1)
         
         
         super()
@@ -166,6 +172,7 @@ class window.Map extends BaseVis
         super()
         @drawGroupControls()
         @drawToolControls()
+        @drawSaveControls()
 
     drawToolControls: ->
         controls =  '<div id="toolControl" class="vis_controls">'
@@ -202,14 +209,14 @@ class window.Map extends BaseVis
 
         #marker checkbox
         controls += '<div class="inner_control_div">'
-        controls += "<input id='markerBox' type='checkbox' name='marker_selector' #{if @visibleMarkers then 'checked' else ''}/> Markers "
+        controls += "<input id='markerBox' type='checkbox' name='marker_selector' #{if @visibleMarkers is 1 then 'checked' else ''}/> Markers "
         controls += "</div></div></div>"
 
         # Write HTML
         ($ '#controldiv').append controls
 
         ($ '#markerBox').click (e) =>
-            @visibleMarkers = not @visibleMarkers
+            @visibleMarkers = (@visibleMarkers + 1) % 2
             @delayedUpdate()
 
         # Make heatmap select handler
@@ -245,12 +252,6 @@ class window.Map extends BaseVis
         func = =>
             google.maps.event.trigger @gmap, 'resize'
         setTimeout func, duration
-
-    ###
-    Remove the gmap
-    ###
-    serializationCleanup: ->
-        delete @gmap
         
 if "Map" in data.relVis
     globals.map = new Map "map_canvas"

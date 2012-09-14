@@ -111,7 +111,7 @@ if(isset($_REQUEST['vid'])) {
 
      $vis = getSavedVis($_REQUEST['vid']);
      
-     echo "var data = {dehyratedData: '{$vis[0]['data']}', dehydratedGlobals: '{$vis[0]['globals']}'};";
+     echo "var data = {savedData: '{$vis[0]['data']}', savedGlobals: '{$vis[0]['globals']}'};";
 
 }
 

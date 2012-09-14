@@ -38,6 +38,13 @@ CoffeeScript version of runtime.
 ###
 ($ document).ready ->
     ($ can).hide() for can in ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas','#motion_canvas','#photos_canvas']
+
+    ### Load saved data if there ###
+    if data.savedGlobals?
+        hydrate = new Hydrate()
+        
+        globals.extendObject globals, (hydrate.parse data.savedGlobals)
+        delete data.savedGlobals
     
     ### Generate tabs ###
     for vis of data.allVis
@@ -110,12 +117,7 @@ CoffeeScript version of runtime.
             $("##{@id}").html('<')
         resizeVis()
         
-
-    ($ "#pagetitle").append " <button id='stringify'>sfadf</button>"
-    
-    ($ "#stringify").click =>
-        
-        globals.serializeVis()
+                
         
 
                 

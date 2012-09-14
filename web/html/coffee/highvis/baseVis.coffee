@@ -28,9 +28,12 @@
 ###
 
 window.globals ?= {}
-globals.groupSelection ?= for vals, keys in data.groups
-    Number keys
-globals.fieldSelection ?= data.normalFields[0..0]
+
+#Only init selections if this is not a saved vis
+if not data.savedGlobals?
+    globals.groupSelection ?= for vals, keys in data.groups
+        Number keys
+    globals.fieldSelection ?= data.normalFields[0..0]
 
 class window.BaseVis
     constructor: (@canvas) ->
@@ -162,6 +165,56 @@ class window.BaseVis
             globals.groupOpen = (globals.groupOpen + 1) % 2
 
     ###
+    Draws vis saving controls
+    ###
+    drawSaveControls: (e) ->
+
+        controls = '<div id="saveControl" class="vis_controls">'
+
+        controls += "<h3 class='clean_shrink'><a href='#'>Saving:</a></h3>"
+        controls += "<div class='outer_control_div' style='text-align:center'>"
+
+        controls += "<div class='inner_control_div'>"
+        controls += "<button id='saveVisButton' class='save_button'>Save Visualization </button>"
+        controls += "</div>"
+
+        if @chart?
+            controls += "<div class='inner_control_div'>"
+            controls += "<button id='downloadVisButton' class='save_button'> Download Visualization </button>"
+            controls += "</div>"
+
+            controls += "<div class='inner_control_div'>"
+            controls += "<button id='printVisButton' class='save_button'> Print Visualization </button>"
+            controls += "</div>"
+
+        controls += '</div></div>'
+
+        # Write HTML
+        ($ '#controldiv').append controls
+
+        ($ "#saveControl button").button()
+        
+        ($ "#saveVisButton").click ->
+            globals.verifyUser (-> globals.savedVisDialog()), (-> alert 'You must be logged in to save a visualization.')
+
+        ($ '#downloadVisButton').click =>
+            @chart.exportChart
+                type: "image/svg+xml"
+
+        ($ '#printVisButton').click =>
+            @chart.print()
+        
+        #Set up accordion
+        globals.saveOpen ?= 0
+
+        ($ '#saveControl').accordion
+            collapsible:true
+            active:globals.saveOpen
+
+        ($ '#saveControl > h3').click ->
+            globals.saveOpen = (globals.saveOpen + 1) % 2
+            
+    ###
     Hides the control div and remembers its previous size.
     ###
     hideControls: ->
@@ -206,11 +259,12 @@ class window.BaseHighVis extends BaseVis
             #colors:
             credits:
                 enabled: false
-            navigation:
-                buttonOptions:
-                    align: 'right'
-                    verticalAlign: 'bottom'
-                    y: -55
+            exporting:
+                buttons:
+                    exportButton:
+                        enabled:false
+                    printButton:
+                        enabled:false
             legend:
                 symbolWidth:60
                 itemWidth: 200

@@ -160,7 +160,8 @@
       Scatter.__super__.drawControls.call(this);
       this.drawGroupControls();
       this.drawXAxisControls();
-      return this.drawToolControls();
+      this.drawToolControls();
+      return this.drawSaveControls();
     };
 
     /*
