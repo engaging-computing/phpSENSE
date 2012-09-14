@@ -75,18 +75,13 @@ if($type=="experiments"){
     $results = $response['data'];
     $count = $response['count'];  
 } elseif ($type == "visualizations"){
-    if($action == "search"){
-        $response = getVisualizations($query, $page, $limit, $sort);
-        $results = $response['data'];
-        $count = $response['count'];  
-    } else {
-        $results = browseVisualizationsByTimeCreated($page, $limit);
-        $count = browseVisualizationsByTimeCreated(-1, $limit);
-    }
+    $response = getVisualizations($query, $page, $limit, $sort);
+    $results = $response['data'];
+    $count = $response['count'];  
 }
 
 // Determine sort text
-$sorttext = "by the date each were created";
+$sorttext = "by when they were last modified";
 if($sorttype == "popularity") {
     $sorttext = "by the number of contributors each contains";
 }
@@ -94,7 +89,7 @@ else if($sorttype == "activity") {
     $sorttext = "by the number of sessions each has";
 }
 else if($sorttype == "rating") {
-    $sorttext = "by each experiments user rating on a five-point scale";
+    $sorttext = "by each experiment's user rating on a five-point scale";
 }
 else if($type == "people") {
     $sorttext = "alphabetically by last name, then first name";
