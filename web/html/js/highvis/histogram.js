@@ -44,8 +44,15 @@
       this.MAX_NUM_BINS = 1000;
       this.displayField = data.normalFields[0];
       this.binNumSug = 1;
-      this.binSize = this.defaultBinSize();
     }
+
+    Histogram.prototype.start = function() {
+      var _ref;
+      if ((_ref = this.binSize) == null) {
+        this.binSize = this.defaultBinSize();
+      }
+      return Histogram.__super__.start.call(this);
+    };
 
     Histogram.prototype.buildOptions = function() {
       var self,
@@ -351,7 +358,8 @@
     Histogram.prototype.drawControls = function() {
       Histogram.__super__.drawControls.call(this);
       this.drawGroupControls();
-      return this.drawToolControls();
+      this.drawToolControls();
+      return this.drawSaveControls();
     };
 
     return Histogram;

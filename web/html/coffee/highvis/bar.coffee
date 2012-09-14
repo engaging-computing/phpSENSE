@@ -208,6 +208,7 @@ class window.Bar extends BaseHighVis
         super()
         @drawGroupControls()
         @drawToolControls()
+        @drawSaveControls()
     
 
 if "Bar" in data.relVis

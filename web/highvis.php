@@ -52,28 +52,44 @@ $errors = array();
  */
 
 // if newviz.php gets an arguement called sessions
-if(isset($_REQUEST['sessions'])) {
-    $sessions = explode(' ', $_REQUEST['sessions']);
-    
-    //Call data.php and return the JS Data object
-    $head = '<script type="text/javascript" src="/ws/highdata.php?sessions=';
-    
-    //Append the session id for each session requested
-    foreach($sessions as $ses)
-        $head .= $ses . '+';
-        
-    //Strip the final '+'
-    $head = substr($head, 0, -1);
+if(isset($_REQUEST['sessions']) || isset($_REQUEST['vid'])) {
 
-    //Close the script
-    $head .= '"></script>';
+    $sessions = Array();
+
+    if(isset($_REQUEST['sessions'])){
+        
+        $sessions = explode(' ', $_REQUEST['sessions']);
+    
+        //Call data.php and return the JS Data object
+        $head = '<script type="text/javascript" src="/ws/highdata.php?sessions=';
+        
+        //Append the session id for each session requested
+        foreach($sessions as $ses)
+            $head .= $ses . '+';
+
+        //Strip the final '+'
+        $head = substr($head, 0, -1);
+        
+        //Close the script
+        $head .= '"></script>';
+    
+    } else if(isset($_REQUEST['vid'])){
+        
+        $head = '<script type="text/javascript" src="/ws/highdata.php?vid='.$_REQUEST['vid'].'"></script>';
+        
+    }
 
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mousewheel.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mCustomScrollbar.js"></script>';
     $head .= '<script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=visualization&sensor=false"></script>';
     $head .= '<script type="text/javascript" src="/html/js/lib/StyledMarker.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/highvis/jquery.dataTables.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/lib/jquery.prettyPhoto.js"></script>';
 
     $head .= '<script type="text/javascript" src="/html/js/highvis/highcharts/highcharts.js"></script>';
+
+    $head .= '<script type="text/javascript" src="/html/js/lib/Hydrate.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/highvis/savedVis.js"></script>';
 
     $head .= '<script type="text/javascript" src="/html/js/highvis/visUtils.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highmodifiers.js"></script>';
@@ -96,9 +112,6 @@ if(isset($_REQUEST['sessions'])) {
     $head .= '<script type="text/javascript" src="/html/js/highvis/motion.js"></script>';
     
     $head .= '<script type="text/javascript" src="/html/js/highvis/runtime.js"></script>';
-    $head .= '<script type="text/javascript" src="/html/js/highvis/jquery.dataTables.js"></script>';
-
-    $head .= '<script type="text/javascript" src="/html/js/lib/jquery.prettyPhoto.js"></script>';
 
     $head .= '<link rel="stylesheet" type="text/css" href="/html/css/jquery-ui.css"></link>';
     $head .= '<link rel="stylesheet" type="text/css" href="/html/css/jquery.dataTables.css"></link>';
@@ -110,18 +123,26 @@ if(isset($_REQUEST['sessions'])) {
     $smarty->assign('head', $head);
 }
  
-// If there is only one session the title should include it.       
-if(count($sessions) == 1){
-   
-    $session_data = getSession($sessions[0]);
-    $session_name = $session_data['name'];
-    
-    $name = getExperimentNameFromSession($sessions[0]);
-    $link = '<a href="experiment.php?id='.$name['experiment_id'].'">'.$name['name'].'</a> > '. $session_name;
-} else {
-    $name = getExperimentNameFromSession($sessions[0]);
-    $link = '<a href="experiment.php?id='.$name['experiment_id'].'">'.$name['name'].'</a>';
-}    
+// If there is only one session the title should include it.
+if (isset($_REQUEST['sessions'])){
+    if (count($sessions) == 1){
+
+        $session_data = getSession($sessions[0]);
+        $session_name = $session_data['name'];
+
+        $name = getExperimentNameFromSession($sessions[0]);
+        $link = '<a href="experiment.php?id='.$name['experiment_id'].'">'.$name['name'].'</a> > '. $session_name;
+    } else {
+        $name = getExperimentNameFromSession($sessions[0]);
+        $link = '<a href="experiment.php?id='.$name['experiment_id'].'">'.$name['name'].'</a>';
+    }
+}
+else if (isset($_REQUEST['vid'])){
+    $vis_desc = getSavedVisDesc($_REQUEST['vid']);
+
+    $name = getExperimentNameFromVisualization($_REQUEST['vid']);
+    $link = '<a href="experiment.php?id='.$name['experiment_id'].'">'.$name['name'].'</a> > '. $vis_desc['title'];
+}
 
 $smarty->assign('link', $link);
 $smarty->assign('title', $name['name']);

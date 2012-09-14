@@ -27,12 +27,18 @@
  *
 ###
 
-data.types = 
+# Restored saved data
+if data.savedData?
+    hydrate = new Hydrate()
+    globals.extendObject data, (hydrate.parse data.savedData)
+    delete data.savedData
+
+data.types ?= 
     TIME: 7
     TEXT: 37
     GEOSPATIAL: 19
 
-data.units =
+data.units ?=
     GEOSPATIAL:
         LATITUDE: 57
         LONGITUDE: 58
@@ -213,8 +219,7 @@ Gets a list of geolocation field indicies
 data.geoFields = for field, index in data.fields when (Number field.typeID) isnt data.types.GEOSPATIAL
     Number index
 
-
 #Field index of grouping field
-data.groupingFieldIndex = 0
+data.groupingFieldIndex ?= 0
 #Array of current groups
-data.groups = data.makeGroups()
+data.groups ?= data.makeGroups()

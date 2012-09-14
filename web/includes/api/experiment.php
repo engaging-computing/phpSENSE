@@ -222,7 +222,19 @@ function getExperimentNameFromSession($sid) {
 		return $output[0];
 	}
 	
-	return 'Visualization';
+	return false;
+}
+
+function getExperimentNameFromVisualization($vid) {
+        global $db;
+
+        $output = $db->query("SELECT experiments.name, experiments.experiment_id FROM savedVises, experiments WHERE savedVises.vid = {$vid} AND experiments.experiment_id = savedVises.experiment_id");
+
+        if($db->numOfRows) {
+                return $output[0];
+        }
+
+        return false;
 }
 
 function getNameFromEid( $eid ) {

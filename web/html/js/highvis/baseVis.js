@@ -40,26 +40,29 @@
     window.globals = {};
   }
 
-  if ((_ref1 = globals.groupSelection) == null) {
-    globals.groupSelection = (function() {
-      var _i, _len, _ref2, _results;
-      _ref2 = data.groups;
-      _results = [];
-      for (keys = _i = 0, _len = _ref2.length; _i < _len; keys = ++_i) {
-        vals = _ref2[keys];
-        _results.push(Number(keys));
-      }
-      return _results;
-    })();
-  }
-
-  if ((_ref2 = globals.fieldSelection) == null) {
-    globals.fieldSelection = data.normalFields.slice(0, 1);
+  if (!(data.savedGlobals != null)) {
+    if ((_ref1 = globals.groupSelection) == null) {
+      globals.groupSelection = (function() {
+        var _i, _len, _ref2, _results;
+        _ref2 = data.groups;
+        _results = [];
+        for (keys = _i = 0, _len = _ref2.length; _i < _len; keys = ++_i) {
+          vals = _ref2[keys];
+          _results.push(Number(keys));
+        }
+        return _results;
+      })();
+    }
+    if ((_ref2 = globals.fieldSelection) == null) {
+      globals.fieldSelection = data.normalFields.slice(0, 1);
+    }
   }
 
   window.BaseVis = (function() {
 
-    function BaseVis() {}
+    function BaseVis(canvas) {
+      this.canvas = canvas;
+    }
 
     /*
         Start sequence used by runtime
@@ -213,6 +216,63 @@
       });
     };
 
+    /*
+        Draws vis saving controls
+    */
+
+
+    BaseVis.prototype.drawSaveControls = function(e) {
+      var controls, _ref3,
+        _this = this;
+      controls = '<div id="saveControl" class="vis_controls">';
+      controls += "<h3 class='clean_shrink'><a href='#'>Saving:</a></h3>";
+      controls += "<div class='outer_control_div' style='text-align:center'>";
+      controls += "<div class='inner_control_div'>";
+      controls += "<button id='saveVisButton' class='save_button'>Save Visualization </button>";
+      controls += "</div>";
+      if (this.chart != null) {
+        controls += "<div class='inner_control_div'>";
+        controls += "<button id='downloadVisButton' class='save_button'> Download Visualization </button>";
+        controls += "</div>";
+        controls += "<div class='inner_control_div'>";
+        controls += "<button id='printVisButton' class='save_button'> Print Visualization </button>";
+        controls += "</div>";
+      }
+      controls += '</div></div>';
+      ($('#controldiv')).append(controls);
+      ($("#saveControl button")).button();
+      ($("#saveVisButton")).click(function() {
+        return globals.verifyUser((function() {
+          return globals.savedVisDialog();
+        }), (function() {
+          return alert('You must be logged in to save a visualization.');
+        }));
+      });
+      ($('#downloadVisButton')).click(function() {
+        return _this.chart.exportChart({
+          type: "image/svg+xml"
+        });
+      });
+      ($('#printVisButton')).click(function() {
+        return _this.chart.print();
+      });
+      if ((_ref3 = globals.saveOpen) == null) {
+        globals.saveOpen = 0;
+      }
+      ($('#saveControl')).accordion({
+        collapsible: true,
+        active: globals.saveOpen
+      });
+      return ($('#saveControl > h3')).click(function() {
+        return globals.saveOpen = (globals.saveOpen + 1) % 2;
+      });
+    };
+
+    /*
+        Hides the control div and remembers its previous size.
+    */
+
+
     BaseVis.prototype.hideControls = function() {
       this.controlWidth = ($('#controldiv')).width();
       ($('#controldiv')).width(0);
@@ -222,10 +282,22 @@
       });
     };
 
+    /*
+        Returns the control div with its previous size intact.
+    */
+
+
     BaseVis.prototype.unhideControls = function() {
       ($('#controldiv')).width(this.controlWidth);
       return ($('#controlhider')).show();
     };
+
+    /*
+        Do any nessisary cleanup work before serialization.
+    */
+
+
+    BaseVis.prototype.serializationCleanup = function() {};
 
     return BaseVis;
 
@@ -264,11 +336,14 @@
         credits: {
           enabled: false
         },
-        navigation: {
-          buttonOptions: {
-            align: 'right',
-            verticalAlign: 'bottom',
-            y: -55
+        exporting: {
+          buttons: {
+            exportButton: {
+              enabled: false
+            },
+            printButton: {
+              enabled: false
+            }
           }
         },
         legend: {
@@ -406,9 +481,21 @@
 
 
     BaseHighVis.prototype.end = function() {
-      this.chart.destroy();
-      this.chart = void 0;
+      if (this.chart != null) {
+        this.chart.destroy();
+        this.chart = void 0;
+      }
       return ($('#' + this.canvas)).hide();
+    };
+
+    /*
+        Remove the chart and chart options object
+    */
+
+
+    BaseHighVis.prototype.serializationCleanup = function() {
+      delete this.chart;
+      return delete this.chartOptions;
     };
 
     return BaseHighVis;

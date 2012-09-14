@@ -43,10 +43,17 @@
       this.canvas = canvas;
       this.HEATMAP_NONE = -2;
       this.HEATMAP_MARKERS = -1;
-      this.visibleMarkers = true;
+      this.visibleMarkers = 1;
       this.heatmapSelection = this.HEATMAP_NONE;
       this.heatmapRadius = 30;
     }
+
+    Map.prototype.serializationCleanup = function() {
+      delete this.gmap;
+      delete this.heatPoints;
+      delete this.markers;
+      return delete this.heatmap;
+    };
 
     Map.prototype.start = function() {
       var dataPoint, group, index, lat, latlngbounds, lon, mapOptions, _fn, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3,
@@ -183,7 +190,7 @@
         markGroup = _ref1[index];
         for (_k = 0, _len2 = markGroup.length; _k < _len2; _k++) {
           mark = markGroup[_k];
-          mark.setVisible((__indexOf.call(globals.groupSelection, index) >= 0) && this.visibleMarkers);
+          mark.setVisible((__indexOf.call(globals.groupSelection, index) >= 0) && this.visibleMarkers === 1);
         }
       }
       return Map.__super__.update.call(this);
@@ -197,7 +204,8 @@
     Map.prototype.drawControls = function() {
       Map.__super__.drawControls.call(this);
       this.drawGroupControls();
-      return this.drawToolControls();
+      this.drawToolControls();
+      return this.drawSaveControls();
     };
 
     Map.prototype.drawToolControls = function() {
@@ -227,11 +235,11 @@
       controls += "<br>";
       controls += "<h4 class='clean_shrink'>Other</h4>";
       controls += '<div class="inner_control_div">';
-      controls += "<input id='markerBox' type='checkbox' name='marker_selector' " + (this.visibleMarkers ? 'checked' : '') + "/> Markers ";
+      controls += "<input id='markerBox' type='checkbox' name='marker_selector' " + (this.visibleMarkers === 1 ? 'checked' : '') + "/> Markers ";
       controls += "</div></div></div>";
       ($('#controldiv')).append(controls);
       ($('#markerBox')).click(function(e) {
-        _this.visibleMarkers = !_this.visibleMarkers;
+        _this.visibleMarkers = (_this.visibleMarkers + 1) % 2;
         return _this.delayedUpdate();
       });
       ($('#heatmapSelector')).change(function(e) {
