@@ -220,8 +220,3 @@ Store the list
 ###
 globals.symbols = symbolList
 
-
-
-
-
-

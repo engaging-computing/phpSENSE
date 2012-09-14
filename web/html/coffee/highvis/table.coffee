@@ -106,5 +106,6 @@ class window.Table extends BaseVis
     drawControls: ->
         super()    
         @drawGroupControls()
+        @drawSaveControls()
 
 globals.table = new Table "table_canvas"

@@ -35,9 +35,9 @@ class Data {
 
     public $experimentID;
     public $experimentName;
-    public $allVis      = array('Map','Timeline','Scatter','Bar','Histogram','Table','Motion','Photos');
+    public $allVis       = array('Map','Timeline','Scatter','Bar','Histogram','Table','Motion','Photos');
     
-    public $relVis      = array();
+    public $relVis       = array();
     
     public $fields       = array();
     public $dataPoints   = array();
@@ -53,36 +53,34 @@ class Data {
         /* See how much data the experiment has */
         $total = count($this->dataPoints);
         
-        if ($total > 1) {         
-
-            if((count($this->timeFields))>0 && (count($this->normalFields))>0 ){
-                $this->relVis = array_merge(array('Motion'), $this->relVis);
-            }
-
-            if($this->hasPics){
-                $this->relVis = array_merge(array('Photos'), $this->relVis);
-            }
-        }
-        
-        $this->relVis = array_merge(array('Table'), $this->relVis);
-        
-        if ($total > 1) {
-            if((count($this->normalFields))>0){
-                $this->relVis = array_merge(array('Bar','Histogram'), $this->relVis);
-            }
+        if ($total > 1) {       
             
             if((count($this->normalFields))>1){
                 $this->relVis = array_merge(array('Scatter'), $this->relVis);     
             }
-            if((count($this->timeFields))>0 && (count($this->normalFields))>0 ){
-                $this->relVis = array_merge(array('Timeline'), $this->relVis);
+            if((count($this->timeFields))>0 && (count($this->normalFields))>0){
+                $this->relVis = array_merge(array('Timeline'), $this->relVis);           
+            }
+            if((count($this->normalFields))>0){
+                $this->relVis = array_merge(array('Bar','Histogram'), $this->relVis);     
             }
             
-            
-        }    
+        }
+        
+        $this->relVis = array_merge(array('Table'), $this->relVis);
+        
         if($this->geoFields){
             $this->relVis = array_merge(array('Map'), $this->relVis);
         }
+        
+        if ($total > 1 && (count($this->timeFields))>0 && (count($this->normalFields))>0){
+            
+            $this->relVis = array_merge(array('Motion'), $this->relVis);
+            
+        }
+        
+        $this->relVis = array_reverse($this->relVis);
+        
     }  
     
 };
@@ -108,6 +106,14 @@ class DataField {
     }
     
 };
+
+if(isset($_REQUEST['vid'])) {
+
+     $vis = getSavedVis($_REQUEST['vid']);
+     
+     echo "var data = {savedData: '{$vis[0]['data']}', savedGlobals: '{$vis[0]['globals']}'};";
+
+}
 
 if(isset($_REQUEST['sessions'])) {
 

@@ -31,20 +31,30 @@
 
 
 (function() {
-  var field, index;
+  var field, hydrate, index, _ref, _ref1, _ref2, _ref3;
 
-  data.types = {
-    TIME: 7,
-    TEXT: 37,
-    GEOSPATIAL: 19
-  };
+  if (data.savedData != null) {
+    hydrate = new Hydrate();
+    globals.extendObject(data, hydrate.parse(data.savedData));
+    delete data.savedData;
+  }
 
-  data.units = {
-    GEOSPATIAL: {
-      LATITUDE: 57,
-      LONGITUDE: 58
-    }
-  };
+  if ((_ref = data.types) == null) {
+    data.types = {
+      TIME: 7,
+      TEXT: 37,
+      GEOSPATIAL: 19
+    };
+  }
+
+  if ((_ref1 = data.units) == null) {
+    data.units = {
+      GEOSPATIAL: {
+        LATITUDE: 57,
+        LONGITUDE: 58
+      }
+    };
+  }
 
   /*
   Selects data in an x,y object format of the given group.
@@ -234,11 +244,11 @@
 
 
   data.makeGroups = function() {
-    var dp, groups, keys, result, _i, _len, _ref;
+    var dp, groups, keys, result, _i, _len, _ref2;
     result = {};
-    _ref = this.dataPoints;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      dp = _ref[_i];
+    _ref2 = this.dataPoints;
+    for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+      dp = _ref2[_i];
       if (dp[this.groupingFieldIndex] !== null) {
         result[String(dp[this.groupingFieldIndex]).toLowerCase()] = true;
       }
@@ -260,11 +270,11 @@
 
 
   data.textFields = (function() {
-    var _i, _len, _ref, _results;
-    _ref = data.fields;
+    var _i, _len, _ref2, _results;
+    _ref2 = data.fields;
     _results = [];
-    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
-      field = _ref[index];
+    for (index = _i = 0, _len = _ref2.length; _i < _len; index = ++_i) {
+      field = _ref2[index];
       if ((Number(field.typeID)) === data.types.TEXT) {
         _results.push(Number(index));
       }
@@ -278,11 +288,11 @@
 
 
   data.timeFields = (function() {
-    var _i, _len, _ref, _results;
-    _ref = data.fields;
+    var _i, _len, _ref2, _results;
+    _ref2 = data.fields;
     _results = [];
-    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
-      field = _ref[index];
+    for (index = _i = 0, _len = _ref2.length; _i < _len; index = ++_i) {
+      field = _ref2[index];
       if ((Number(field.typeID)) === data.types.TIME) {
         _results.push(Number(index));
       }
@@ -296,12 +306,12 @@
 
 
   data.normalFields = (function() {
-    var _i, _len, _ref, _ref1, _results;
-    _ref = data.fields;
+    var _i, _len, _ref2, _ref3, _results;
+    _ref2 = data.fields;
     _results = [];
-    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
-      field = _ref[index];
-      if ((_ref1 = Number(field.typeID)) !== data.types.TEXT && _ref1 !== data.types.TIME && _ref1 !== data.types.GEOSPATIAL) {
+    for (index = _i = 0, _len = _ref2.length; _i < _len; index = ++_i) {
+      field = _ref2[index];
+      if ((_ref3 = Number(field.typeID)) !== data.types.TEXT && _ref3 !== data.types.TIME && _ref3 !== data.types.GEOSPATIAL) {
         _results.push(Number(index));
       }
     }
@@ -314,12 +324,12 @@
 
 
   data.numericFields = (function() {
-    var _i, _len, _ref, _ref1, _results;
-    _ref = data.fields;
+    var _i, _len, _ref2, _ref3, _results;
+    _ref2 = data.fields;
     _results = [];
-    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
-      field = _ref[index];
-      if ((_ref1 = Number(field.typeID)) !== data.types.TEXT) {
+    for (index = _i = 0, _len = _ref2.length; _i < _len; index = ++_i) {
+      field = _ref2[index];
+      if ((_ref3 = Number(field.typeID)) !== data.types.TEXT) {
         _results.push(Number(index));
       }
     }
@@ -332,11 +342,11 @@
 
 
   data.geoFields = (function() {
-    var _i, _len, _ref, _results;
-    _ref = data.fields;
+    var _i, _len, _ref2, _results;
+    _ref2 = data.fields;
     _results = [];
-    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
-      field = _ref[index];
+    for (index = _i = 0, _len = _ref2.length; _i < _len; index = ++_i) {
+      field = _ref2[index];
       if ((Number(field.typeID)) !== data.types.GEOSPATIAL) {
         _results.push(Number(index));
       }
@@ -344,8 +354,12 @@
     return _results;
   })();
 
-  data.groupingFieldIndex = 0;
+  if ((_ref2 = data.groupingFieldIndex) == null) {
+    data.groupingFieldIndex = 0;
+  }
 
-  data.groups = data.makeGroups();
+  if ((_ref3 = data.groups) == null) {
+    data.groups = data.makeGroups();
+  }
 
 }).call(this);
