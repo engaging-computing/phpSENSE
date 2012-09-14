@@ -255,16 +255,15 @@ function setVisualizationPictureId( $vid, $purl ){
 
 
 /**Functions for saved vises for HIGHVIS **/
-function storeSavedVis($owner,$experiment,$title,$description,$data,$globals){
+function storeSavedVis($owner,$experiment,$title,$description,$json){
     global $db;
 
-    $sql = "INSERT INTO savedVises (owner_id,experiment_id,title,description,data,globals) VALUES ({$owner},{$experiment},\"{$title}\",\"{$description}\",\"{$data}\",\"{$globals}\")";
+    $sql = "INSERT INTO savedVises (owner_id,experiment_id,title,description,json) VALUES ({$owner},{$experiment},\"{$title}\",\"{$description}\",\"{$json}\")";
 
     $db->query($sql);
 
     if($db->numOfRows){
-    
-        return $db->lastInsertId();
+        return true;
     }
 
     return false;
@@ -297,7 +296,9 @@ function getSavedVisDesc($vid){
 function getSavedVisByExperiment($experiment_id){
     global $db;
 
-    $sql = "SELECT * FROM savedVises where experiment_id = {$experiment_id}";
+    $sql = "SELECT *,
+            timecreated as `timeobj`
+            FROM savedVises where experiment_id = {$experiment_id}";
 
     $output = $db->query($sql);
 
@@ -307,7 +308,9 @@ function getSavedVisByExperiment($experiment_id){
 function getSavedVisByOwner($owner_id){
     global $db;
 
-    $sql = "SELECT * FROM savedVises where owner_id = {$owner_id}";
+    $sql = "SELECT *,
+            timecreated as `timeobj`
+            FROM savedVises where owner_id = {$owner_id}";
     
     $output = $db->query($sql);
 
@@ -317,11 +320,43 @@ function getSavedVisByOwner($owner_id){
 function getAllSavedVises(){
     global $db;
 
-    $sql = "SELECT * FROM savedVises";
+    $sql = "SELECT *,
+            timecreated as `timeobj`
+            FROM savedVises";
     
     $output = $db->query($sql);
 
     return $output;
+}
+
+function getVisByTag($tag) {
+        global $db;
+        
+        $sql = "SELECT * FROM tagIndex, tagExperimentMap, experiments
+                        WHERE tagIndex.value = '{$tag}' 
+                        AND tagIndex.tag_id = tagExperimentMap.tag_id 
+                        AND experiments.experiment_id = tagExperimentMap.experiment_id 
+                        AND tagIndex.weight = 1";
+                        
+        $output = $db->query($sql);
+        
+        if($db->numOfRows) {
+                $results = array();
+                
+                foreach($output as $out) {
+                        $vises = getSavedVisByExperiment($out['experiment_id']);
+
+                        if($vises) {
+                                foreach($vises as $v) {
+                                        array_push($results, $v);
+                                }
+                        }
+                }
+                                
+                return $results;
+        }
+        
+        return false;
 }
 
 

@@ -60,23 +60,18 @@
                 { if $type == "visualizations" }
 
                     { foreach from=$results item=result }
-                        <div class="result{ if $result.is_activity == 1} activity { else } vis { /if }">
+                        <div class="result vis">
                             <table width="100%" cellpaddding="0" cellspacing="0">
                                 <tr>
                                     <td valign="top">
                                         <div class="name">
-                                            <a href="visdir.php?id={ $result.meta.vis_id }">{ $result.meta.name }</a>
+                                            <a href="highvis.php?vid={ $result.meta.vid }">{ $result.meta.title }</a>
                                         </div>
                                         <div class="description" >{ $result.meta.description|truncate:180:"...":true}</div>
                                         <div class="sub">
-                                            <span> Last Modified { $result.meta.timecreated|date_diff } </span>
+                                            <span> Last Modified { $result.meta.timeobj|date_diff } </span>
                                         </div>
                                     </td>
-                                    <!--
-                                    <td width="48px">
-                                        <img src="picture.php?type=experiment&amp;id={ $result.meta.experiment_id }&amp;w=75&amp;h=75" height="75px" width="75px" />
-                                    </td>
-                                    -->
                                 </tr>
                             </table>
                         </div>
