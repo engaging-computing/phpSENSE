@@ -1,6 +1,6 @@
-/*
- * Copyright (c) 2011, iSENSE Project. All rights reserved.
- *
+<?php
+/* Copyright (c) 2011, iSENSE Project. All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
@@ -26,108 +26,59 @@
  * DAMAGE.
  */
 
-#controlcontainer {
-    float: right;
-    max-width: 20%;
-    height: 100%;
-}
+require_once '../includes/config.php';
+error_reporting(E_ALL);
 
-#controldiv {
-    width:210px;
-    height:100%;
+$errors = array();
+$result = -1;
 
-    float:right;
-    overflow-x:hidden;
-    overflow-y:auto;
-}
-
-#controlhider {
-    float: right;
-    height:100%;
-}
-
-.vis_controls {
-    float: right;
+if(isset($_POST['action'])){
     
+    switch($_POST['action']){
+
+        case "save":
+        if(isUser()){
+            
+            $owner = $session->userid;
+            
+            if(isset($_POST['experiment_id'])){
+                
+                $experiment = $_POST['experiment_id'];
+                
+            } else array_push($errors, 'You did not set the experiment ID.');
+            
+            if(isset($_POST['title'])){
+                
+                $title = $_POST['title'];
+                
+            } else array_push($errors, 'You did not set the title.');
+            
+            if(isset($_POST['description'])){
+                
+                $description = $_POST['description'];
+                
+            } else array_push($errors, 'You did not set the description.');
+
+            $data = $_POST['data'];
+
+            $globals = $_POST['globals'];
+
+            if(count($errors) == 0) {
+                $result = storeSavedVis($owner,$experiment,$title,$description,$data,$globals);
+            }
+
+        } else array_push($errors, 'You are not logged in.');
+        break;
+        
+    }
+
+    if(count($errors) > 0) {
+        foreach($errors as $e) {
+            echo  $e . " ";
+        }
+    } else {
+        echo $result;
+    }
 }
 
-.ui-accordion .ui-accordion-content {
-    padding: 0.5em 0.5em;
-    overflow-y:hidden;
-}
-
-.outer_control_div {
-    font-size: 12px;
-    font-family: Arial;
-    color: #000000;
-
-    overflow-x:hidden;
-    white-space:nowrap;
-}
-
-.inner_control_div {
-    font-size: 12px;
-    font-family: Arial;
-    color: #000000;
-
-    overflow-x:hidden;
-    white-space:nowrap;
-}
-
-.vis_canvas {
-    float:left;
-    overflow: none;
-    padding:2px;
-}
-
-#viscontainer {
-    height: 600px;
-    width: 100%;
-
-    font-size:14px;
-}
-
-.vis_tab {
-    font-size:1.2em;
-}
-
-.clean_shrink{
-    white-space:nowrap;
-    overflow-x:hidden;
-}
-
-.control_select {
-    width:124px;
-}
-
-.hint {
-  margin-left: 40px;
-  margin-bottom: 10px;
-  margin-top: 10px;
-  font-size: 90%;
-  color: #888888;
-}
-
-.save_button {
-    width: 160px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-#photoTable {
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-}
-
-.photoTable_photo{
-    height:120px;
-    width:165px;
-    padding:1px;
-    background:#fff;
-}
-
-.photoTable_openPhoto{
-    padding:1px;
-    background:#fff;
-}
+?>

@@ -123,6 +123,7 @@ class window.Scatter extends BaseHighVis
         @drawGroupControls()
         @drawXAxisControls()
         @drawToolControls()
+        @drawSaveControls()
 
     ###
     Update the chart by removing all current series and recreating them

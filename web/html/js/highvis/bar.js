@@ -323,7 +323,8 @@
     Bar.prototype.drawControls = function() {
       Bar.__super__.drawControls.call(this);
       this.drawGroupControls();
-      return this.drawToolControls();
+      this.drawToolControls();
+      return this.drawSaveControls();
     };
 
     return Bar;

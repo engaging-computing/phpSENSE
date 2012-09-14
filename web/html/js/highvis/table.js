@@ -150,7 +150,8 @@
 
     Table.prototype.drawControls = function() {
       Table.__super__.drawControls.call(this);
-      return this.drawGroupControls();
+      this.drawGroupControls();
+      return this.drawSaveControls();
     };
 
     return Table;

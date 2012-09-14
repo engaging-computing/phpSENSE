@@ -33,8 +33,12 @@ class window.Histogram extends BaseHighVis
     
         @displayField = data.normalFields[0]
         @binNumSug = 1
-        @binSize = @defaultBinSize()
         
+
+    #Wait for global objects to be constructed before getting bin size
+    start: ->
+        @binSize ?= @defaultBinSize()
+        super()
     
     buildOptions: ->
         super()
@@ -305,6 +309,7 @@ class window.Histogram extends BaseHighVis
         super()
         @drawGroupControls()
         @drawToolControls()
+        @drawSaveControls()
     
 if "Histogram" in data.relVis
     globals.histogram = new Histogram 'histogram_canvas'
