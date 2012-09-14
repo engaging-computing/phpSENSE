@@ -61,13 +61,13 @@ if(isset($_GET['id'])) {
 		    $vises	= getResponsesForActivity($id);
 		}
 		else {
-		$fields 	= getFields($id);
-    		$vises		= getVisByExperiment($id);
-    		$tags 		= getTagsForExperiment($id);
-    		$videos 	= getVideosForExperiment($id);
-    		$images 	= getImagesForExperiment($id);
-    		$collabs 	= getExperimentCollaborators($ownerid, $id);
-    		$sessions 	= getSessionsForExperiment($id);
+                    $fields 	= getFields($id);
+                    $vises	= getSavedVisByExperiment($id);
+                    $tags 	= getTagsForExperiment($id);
+                    $videos 	= getVideosForExperiment($id);
+                    $images 	= getImagesForExperiment($id);
+                    $collabs 	= getExperimentCollaborators($ownerid, $id);
+                    $sessions 	= getSessionsForExperiment($id);
 		}
 		
 		
