@@ -43,58 +43,62 @@ function packageBrowseVisualizationsResults($results, $page = 1, $limit = 10) {
     }
 }
 
-function browseVisualizationsByTimeCreated($page = 1, $limit = 10) {
-    global $db;
-
-    $sql = "SELECT visualizations.*, users.firstname, users.lastname FROM visualizations, users WHERE visualizations.owner_id = users.user_id AND visualizations.is_activity = 0 ORDER BY visualizations.timecreated DESC";
-    $results = $db->query($sql);
-
-    if($db->numOfRows) {
-        return packageBrowseVisualizationsResults($results, $page, $limit);
-    }
-
-    return false;
-}
-
 //Search Visualizations
-function getVisualizations($terms, $page = 1, $limit = 10, $sort = "relevancy") {
-    $tags = explode(" ", $terms);
-    $results = array();
-
-    // Build array of search results
-    foreach($tags as $tag) {
-        $search_results = getVisByTag($tag);
-        if($search_results !== false) {
-            $results[$tag] = $search_results;
-        }
-    }
-
-    $experiments = array();
-
-    $total = count($results);
-
-    foreach($results as $resultk => $resultv) {
-        foreach($resultv as $exp) {
-
-            $key = $exp['vis_id'];
-            if(!array_key_exists($key, $experiments)) {
-                $experiments[$key] = array('meta' => $exp, 'tags' => array($resultk), 'relevancy' => 1);
-            }
-            else {
-                $experiments[$key]['tags'][] = $resultk;
-                $experiments[$key]['relevancy'] = count($experiments[$key]['tags']);
+function getVisualizations($terms = null, $page = 1, $limit = 10, $sort = "relevancy") {
+    global $db;
+    
+    if( $terms != null ){
+        $tags = explode(" ", $terms);
+        $results = array();
+        
+        // Build array of search results
+        foreach($tags as $tag) {
+            $search_results = getVisByTag($tag);
+            if($search_results !== false) {
+                $results[$tag] = $search_results;
             }
         }
+        
+        $experiments = array();
+        
+        $total = count($results);
+        
+        foreach($results as $resultk => $resultv) {
+            foreach($resultv as $exp) {
+                
+                $key = $exp['vis_id'];
+                if(!array_key_exists($key, $experiments)) {
+                    $experiments[$key] = array('meta' => $exp, 'tags' => array($resultk), 'relevancy' => 1);
+                }
+                else {
+                    $experiments[$key]['tags'][] = $resultk;
+                    $experiments[$key]['relevancy'] = count($experiments[$key]['tags']);
+                }
+            }
+        }
+        
+        if($sort == "relevancy") {
+            uasort($experiments, "sort_relevancy");
+        }
+              
+        $offset = ($page - 1) * $limit;
+        
+        return array('count'=>$total,'data'=>array_splice($experiments, $offset, $limit));
+        
+    } else {
+        $sql = "SELECT savedVises.*, savedVises.timecreated as `timeobj`, users.firstname FROM savedVises, users WHERE savedVises.owner_id = users.user_id ORDER BY savedVises.timecreated DESC";    
+        
+        $results = $db->query($sql);
+        
+        $total = count($results);
+        
+        if($db->numOfRows) {
+            usort($results,'timeobj_cmp');
+            return array('count' => $total,'data'=>packageBrowseVisualizationsResults($results, $page, $limit));
+        }
+        
+        return false;
     }
-
-    if($sort == "relevancy") {
-        uasort($experiments, "sort_relevancy");
-    }
-
-
-    $offset = ($page - 1) * $limit;
-    return array('count'=>$total,'data'=>array_splice($experiments, $offset, $limit));
-
 }
 
 //Search People
@@ -132,9 +136,8 @@ function getPeople($page, $limit, $query = null){
 
 }
 
-
 //Search Experiments
-function getExperiments($page=1, $limit=10, $hidden=0,$featured="off",$recommended="off", $tags= null, $sort = "recent"){
+function getExperiments($page=1, $limit=10, $hidden=0, $featured="off", $recommended="off", $tags= null, $sort = "recent"){
     global $db;
 
     $result = array();

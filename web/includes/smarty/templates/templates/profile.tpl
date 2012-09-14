@@ -99,7 +99,7 @@
 								<img style="width:40px;height:40px" src="../../../html/img/icons/chart_bar.svg"/>					
 							</div>
 							<div class="info_column" style="float;right;"> 							
-								<div class="name" style="font-size:16px;"><a href="newvis.php?sessions={ $result.sessions }&state={ $result.url_params }">{ $result.name }</a></div>
+								<div class="name" style="font-size:16px;"><a href="highvis.php?vid=$result.title">{ $result.title }</a></div>
 								<div class="description" style="font-size:13px;">{ $result.description }</div>
 								<div class="sub" style="font-size:13px;"><span>Last Modified { $result.timeobj|date_diff }</span></div>
 							</div> 
@@ -171,17 +171,6 @@
 			</div>
 		</div>
 		{ include file="parts/graph.tpl" }
-		<!--
-		<div class="module">
-			<h1>{ $userdata.firstname }'s Stats</h1>
-			<div>
-				{ $counts.experiments } Experiments<br/>
-				{ $counts.sessions } Sessions<br/>
-				{ $counts.vises } Visualizations<br/>
-				{ $counts.videos } Videos<br/>
-				{ $counts.images } Images<br/>
-			</div>
-		</div>
-		-->
+
 	</div>
 { /if }

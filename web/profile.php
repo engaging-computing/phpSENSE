@@ -45,23 +45,11 @@ $data = array();
 $output = array();
 
 // Grab the users meta data
-$data['vis'] = getVisByUser($id);
+$data['vis'] = getSavedVisByOwner($id);
 $data['session'] = browseMySessions($id);
 $data['experiment'] = browseExperimentsByUser($id);
 $data['image'] = getImagesByUser($id);
 $data['video'] = getVideosByUser($id);
-
-/*
-$data['activity_responses'] = array();
-if($is_owner) {
-    $data['activity_responses'] = getFeedFromFollowers($id, -1);
-}
-else {
-    
-}
-*/
-
-$data['activity_responses'] = getResponsesFromUser($id);
 
 foreach($data['experiment'] as &$exp){
     $exp['session_count'] = countNumberOfSessions($exp['experiment_id']);
@@ -95,7 +83,6 @@ $smarty->assign('is_following', $is_following);
 $smarty->assign('followers', $followers);
 $smarty->assign('following', $following);
 $smarty->assign('is_owner', $is_owner);
-
 $smarty->assign('results', $output);
 $smarty->assign('errors', $errors);
 $counts = array('sessions' => count($data['session']), 
