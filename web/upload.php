@@ -157,7 +157,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
                                            1, // Default permission bits
                                            $debug_data);
                                 putData($eid,$sid,$data);
-        header("Location: newvis.php?sessions={$sid}");
+        header("Location: highvis.php?sessions={$sid}");
         
     } else if ($type == "file"){
         if(!isset($_POST['filename'])){
@@ -253,7 +253,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
                                         1, // Default permission bits
                                         $debug_data);
                 putData($eid,$sid,$data);
-                  header("Location: newvis.php?sessions={$sid}");
+                  header("Location: highvis.php?sessions={$sid}");
             }
             
         }
