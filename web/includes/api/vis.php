@@ -329,35 +329,5 @@ function getAllSavedVises(){
     return $output;
 }
 
-function getVisByTag($tag) {
-        global $db;
-        
-        $sql = "SELECT * FROM tagIndex, tagExperimentMap, experiments
-                        WHERE tagIndex.value = '{$tag}' 
-                        AND tagIndex.tag_id = tagExperimentMap.tag_id 
-                        AND experiments.experiment_id = tagExperimentMap.experiment_id 
-                        AND tagIndex.weight = 1";
-                        
-        $output = $db->query($sql);
-        
-        if($db->numOfRows) {
-                $results = array();
-                
-                foreach($output as $out) {
-                        $vises = getSavedVisByExperiment($out['experiment_id']);
-
-                        if($vises) {
-                                foreach($vises as $v) {
-                                        array_push($results, $v);
-                                }
-                        }
-                }
-                                
-                return $results;
-        }
-        
-        return false;
-}
-
 
 ?>
