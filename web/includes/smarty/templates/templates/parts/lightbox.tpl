@@ -246,7 +246,19 @@
 				</tr>
 				<tr>
 					<td><input id="acceleration" name="acceleration" type="checkbox" /></td>
-					<td colspan="2">Acceleration</td>
+					<td colspan="2">Acceleration: X</td>
+				</tr>
+				<tr>
+					<td><input id="acceleration" name="acceleration" type="checkbox" /></td>
+					<td colspan="2">Acceleration: Y</td>
+				</tr>
+				<tr>
+					<td><input id="acceleration" name="acceleration" type="checkbox" /></td>
+					<td colspan="2">Acceleration: Z</td>
+				</tr>
+				<tr>
+					<td><input id="acceleration" name="acceleration" type="checkbox" /></td>
+					<td colspan="2">Acceleration: Magnitude</td>
 				</tr>
 				<tr>
 					<td><input id="light" name="light" type="checkbox" /></td>
