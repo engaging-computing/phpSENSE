@@ -49,23 +49,25 @@ Selects data in an x,y object format of the given group.
 data.xySelector = (xIndex, yIndex, groupIndex) ->
 
     rawData = @dataPoints.filter (dp) =>
-        (String dp[@groupingFieldIndex]).toLowerCase() == @groups[groupIndex]
-
+        ((String dp[@groupingFieldIndex]).toLowerCase() == @groups[groupIndex] and
+         dp[xIndex] != null and dp[yIndex] != null)
+    
     if (Number @fields[xIndex].typeID) is data.types.TIME
         mapFunc = (dp) ->
             obj =
-                x: new Date(dp[xIndex])
-                y: dp[yIndex]
+                x: new Date(Number dp[xIndex])
+                y: Number dp[yIndex]
                 datapoint: dp
     else
         mapFunc = (dp) ->
             obj =
-                x: dp[xIndex]
-                y: dp[yIndex]
+                x: Number dp[xIndex]
+                y: Number dp[yIndex]
                 datapoint: dp
 
     mapped = rawData.map mapFunc
     mapped.sort (a, b) -> (a.x - b.x)
+    
     mapped
 
 ###
