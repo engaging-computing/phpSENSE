@@ -65,14 +65,14 @@
     var mapFunc, mapped, rawData,
       _this = this;
     rawData = this.dataPoints.filter(function(dp) {
-      return (String(dp[_this.groupingFieldIndex])).toLowerCase() === _this.groups[groupIndex];
+      return (String(dp[_this.groupingFieldIndex])).toLowerCase() === _this.groups[groupIndex] && dp[xIndex] !== null && dp[yIndex] !== null;
     });
     if ((Number(this.fields[xIndex].typeID)) === data.types.TIME) {
       mapFunc = function(dp) {
         var obj;
         return obj = {
-          x: new Date(dp[xIndex]),
-          y: dp[yIndex],
+          x: new Date(Number(dp[xIndex])),
+          y: Number(dp[yIndex]),
           datapoint: dp
         };
       };
@@ -80,8 +80,8 @@
       mapFunc = function(dp) {
         var obj;
         return obj = {
-          x: dp[xIndex],
-          y: dp[yIndex],
+          x: Number(dp[xIndex]),
+          y: Number(dp[yIndex]),
           datapoint: dp
         };
       };

@@ -271,6 +271,7 @@ class window.BaseHighVis extends BaseVis
             #loading: {}
             plotOptions:
                 series:
+                    turboThreshold: Number.MAX_VALUE
                     marker:
                         lineWidth:1
                         radius:5
