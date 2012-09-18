@@ -129,7 +129,7 @@ if (isset($_REQUEST['sessions'])){
         $session_data = getSession($sessions[0]);
         $session_name = $session_data['name'];
         $name = getExperimentNameFromSession($sessions[0]);
-        $edit = '<a style="font-size:.8em;" href="session-edit.php?id=' . $sessions[0] . '"> [edit]</a>';
+        $edit = ' <a style="font-size:.8em;" href="session-edit.php?id=' . $sessions[0] . '">[edit]</a>';
         $link = '<a href="experiment.php?id='. $name['experiment_id'].'">'.$name['name'] . '</a> > ' . $session_name . $edit;
     } else {
         $name = getExperimentNameFromSession($sessions[0]);
