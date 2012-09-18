@@ -32,6 +32,8 @@ $sid = -1;
 $created = false;
 $title = "Done";
 
+$smarty->assign('referer', $_SERVER['HTTP_REFERER']);
+
 if(isset($_GET['id'])) {
     
     $sid = (int) safeString($_GET['id']);
@@ -43,7 +45,7 @@ if(isset($_GET['id'])) {
     $smarty->assign('owner', $exp[0]['owner_id'] );
     
     $exp = getExperimentNameFromSession($sid);
-    
+
     $title = "Edit Session > {$exp['name']} > {$values['name']}";
     
     // Output to view
@@ -87,7 +89,6 @@ if(isset($_POST['session_create'])) {
         );
     
     } else {
-        
         $values = array(
                         'name' => safeString($_POST['session_name']),
                         'description' => safeString($_POST['session_description']),
@@ -107,9 +108,8 @@ if(isset($_POST['session_create'])) {
     }
     
     updateSession($sid, $values);
-
-    $created = true;
-    $title = "Successfully Edited Session";
+    
+    header("Location: {$_POST['referer']}");
     
 }
 
