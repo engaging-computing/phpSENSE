@@ -37,6 +37,14 @@
     window.globals = {};
   }
 
+  /*
+  Ajax call to save the vis with the given title and description.
+  Calls the appropriate callback upon completetion. A failed attempt
+  will pass the callback an error string, a success will pass the callback
+  a string with the new VID.
+  */
+
+
   globals.saveVis = function(title, desc, succCallback, failCallback) {
     var req, savedData;
     savedData = globals.serializeVis();
@@ -61,6 +69,12 @@
     });
   };
 
+  /*
+  Ajax call to check if the user is logged in. Calls the appropriate
+  given callback when completed.
+  */
+
+
   globals.verifyUser = function(succCallback, failCallback) {
     var req;
     return req = $.ajax({
@@ -78,6 +92,12 @@
       }
     });
   };
+
+  /*
+  Creates a saved vis dialog form. If the user finishes creating the new saved vis, the dialog will close
+  and the page will be re-directed to the new saved vis.
+  */
+
 
   globals.savedVisDialog = function() {
     var formText;
@@ -124,6 +144,99 @@
         return ($('#dialog-form')).remove();
       }
     });
+  };
+
+  /*
+  Serializes all vis data. Strips functions from the objects bfire serializing
+  since they cannot be serialized.
+  
+  NOTE: Booleans cannot be serialized properly (Hydrate.js issue)
+  */
+
+
+  globals.serializeVis = function() {
+    var dataCpy, globalsCpy, hydrate, ret, stripFunctions, vis, visName, _i, _len, _ref1;
+    hydrate = new Hydrate();
+    stripFunctions = function(obj) {
+      var cpy, key, stripped, val;
+      switch (typeof obj) {
+        case 'number':
+          return obj;
+        case 'string':
+          return obj;
+        case 'function':
+          return void 0;
+        case 'object':
+          if (obj === null) {
+            return null;
+          } else {
+            cpy = $.isArray(obj) ? [] : {};
+            for (key in obj) {
+              val = obj[key];
+              stripped = stripFunctions(val);
+              if (stripped !== void 0) {
+                cpy[key] = stripped;
+              }
+            }
+            return cpy;
+          }
+      }
+    };
+    _ref1 = data.allVis;
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      visName = _ref1[_i];
+      vis = eval("globals." + (visName.toLowerCase()));
+      vis.serializationCleanup();
+    }
+    globalsCpy = stripFunctions(globals);
+    dataCpy = stripFunctions(data);
+    globals.curVis.end();
+    globals.curVis.start();
+    delete globalsCpy.curVis;
+    return ret = {
+      globals: hydrate.stringify(globalsCpy),
+      data: hydrate.stringify(dataCpy)
+    };
+  };
+
+  /*
+  Does a deep copy extend operation similar to $.extend
+  */
+
+
+  globals.extendObject = function(obj1, obj2) {
+    var key, val;
+    switch (typeof obj2) {
+      case 'boolean':
+        return obj2;
+      case 'number':
+        return obj2;
+      case 'string':
+        return obj2;
+      case 'function':
+        return obj2;
+      case 'object':
+        if (obj2 === null) {
+          return obj2;
+        } else {
+          if ($.isArray(obj2)) {
+            if (obj1 == null) {
+              obj1 = [];
+            }
+          } else {
+            if (obj1 == null) {
+              obj1 = {};
+            }
+          }
+          for (key in obj2) {
+            val = obj2[key];
+            if (key !== '__hydrate_id') {
+              obj1[key] = globals.extendObject(obj1[key], obj2[key]);
+            }
+          }
+          return obj1;
+        }
+    }
   };
 
 }).call(this);
