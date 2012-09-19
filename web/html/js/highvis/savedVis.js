@@ -104,14 +104,15 @@
     formText = "<div id=\"dialog-form\" title=\"Save Visualization\">\n\n    <form>\n    <fieldset>\n        <label for=\"title\">Title:</label>\n        <input type=\"text\" size=\"45 maxlength=\"64\" name=\"title\" id=\"savedVisTitle\" class=\"text ui-widget-content ui-corner-all\" /> <br> <span id=\"titleHint\" class=\"hint\"> </span> <br>\n        \n        <label for=\"desc\">Description:</label> <br>\n        <textarea type=\"text\" name=\"desc\" maxlength=\"512\" rows=\"10\" cols=\"50\" id=\"savedVisDesc\" class=\"text ui-widget-content ui-corner-all\" />\n        <br>\n    </fieldset>\n    </form>\n</div>";
     ($("#container")).append(formText);
     return ($("#dialog-form")).dialog({
-      resizeable: false,
+      resizable: false,
+      draggable: false,
       autoOpen: true,
       height: 'auto',
       width: 'auto',
       modal: true,
       open: function() {
         return ($("#dialog-form form")).submit(function(evt) {
-          this.parent().find("#dialog-form").trigger("click");
+          ($("#dialog-form")).parent().find('button').trigger("click");
           return false;
         });
       },

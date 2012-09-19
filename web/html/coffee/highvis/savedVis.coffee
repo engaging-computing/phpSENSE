@@ -98,14 +98,15 @@ globals.savedVisDialog = ->
     
     
     ($ "#dialog-form" ).dialog
-        resizeable: false
+        resizable: false
+        draggable: false
         autoOpen: true
         height: 'auto'
         width: 'auto'
         modal: true
         open: ->
             ($ "#dialog-form form").submit (evt) ->
-                @parent().find("#dialog-form").trigger "click"
+                ($ "#dialog-form").parent().find('button').trigger "click"
                 false
         buttons :
             Save: ->

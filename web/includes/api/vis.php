@@ -108,7 +108,7 @@ function getSavedVis($vid){
 function getSavedVisDesc($vid){
     global $db;
 
-    $sql = "SELECT vid, title, description, hidden, owner_id, timecreated, as `timeobj`
+    $sql = "SELECT vid, title, description, hidden, owner_id, timecreated as `timeobj`
             FROM savedVises where vid = {$vid}";
 
     $output = $db->query($sql);
@@ -123,7 +123,7 @@ function getSavedVisDesc($vid){
 function getSavedVisByExperiment($experiment_id){
     global $db;
 
-    $sql = "SELECT vid, title, description, hidden, owner_id, timecreated, as `timeobj`
+    $sql = "SELECT vid, title, description, hidden, owner_id, timecreated as `timeobj`
             FROM savedVises where experiment_id = {$experiment_id}";
 
     $output = $db->query($sql);
@@ -134,7 +134,7 @@ function getSavedVisByExperiment($experiment_id){
 function getSavedVisByOwner($owner_id){
     global $db;
 
-    $sql = "SELECT vid, title, description, hidden, owner_id, timecreated, as `timeobj`
+    $sql = "SELECT vid, title, description, hidden, owner_id, timecreated as `timeobj`
             FROM savedVises where owner_id = {$owner_id}";
     
     $output = $db->query($sql);
@@ -145,7 +145,7 @@ function getSavedVisByOwner($owner_id){
 function getAllSavedVises(){
     global $db;
 
-    $sql = "SELECT vid, title, description, hidden, owner_id, timecreated, as `timeobj`
+    $sql = "SELECT vid, title, description, hidden, owner_id, timecreated as `timeobj`
             FROM savedVises";
     
     $output = $db->query($sql);
