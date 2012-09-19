@@ -2,6 +2,7 @@
     <link rel="stylesheet" href="./html/css/mobile/jquery.mobile.css" />
     <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
+    <script src="html/js/isense.js"></script>
     <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
 </head>
 
@@ -56,7 +57,7 @@
                 <a data-role="button" data-transition="fade" href="#page1">
                     Contribute
                 </a>
-                <a data-role="button" data-transition="fade" href="#page1">
+                <a href="#" onclick="loadVis2({$meta.experiment_id});" data-role="button" data-transition="fade" href="#page1">
                     Visualize
                 </a>
             </div>
@@ -72,10 +73,12 @@
                     <fieldset data-role="controlgroup" data-type="vertical">
                         {if $sessions != null}
                             { foreach from=$sessions item=session key=j }
-                                <input name="" id="{$session.session_id}" type="checkbox" {if $j==0}checked="checked"{/if}>
-                                <label for="{$session.session_id}">
-                                    {$session.name}
-                                </label>
+                                <div class="session_select">
+                                    <input name="sessions" id="{$session.session_id}" value="{$session.session_id}" type="checkbox" {if $j==0}checked="checked"{/if}>
+                                    <label for="{$session.session_id}">
+                                        {$session.name}
+                                    </label>
+                                </div>
                             {/foreach}
                         {else}
                         <b>No sessions were found.<b>
