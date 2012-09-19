@@ -1,5 +1,5 @@
 <head>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
+    <link rel="stylesheet" href="./html/css/mobile/jquery.mobile.css" />
     <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
     <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
@@ -8,12 +8,45 @@
 <div id="main">
     <div data-theme="a" data-role="header">
         <h3>
-            {$exp}
+            {$title}
         </h3>
     </div>
 
     <div data-role="content" style="padding: 15px">
 
+
+        <div data-role="collapsible-set" data-theme="b" data-content-theme="">
+            <div data-role="collapsible" data-collapsed="false">
+                <h3>
+                    Session Info
+                </h3>
+                <div class="session_info">
+                 <table>
+                    <tr>
+                        <td><h3 >Description:</h3></td>
+                        <td><p>{$meta.description}</p></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><h3 >Fields:</h3></td>
+                        <td><p>
+                            { section name=foo loop=$fields }                           
+                                    { $fields[foo].field_name } ({ $fields[foo].unit_abbreviation }){ if $smarty.section.foo.total-1 != $smarty.section.foo.index }, { /if }         
+                            { /section }
+                        </p></td>
+                    </tr>
+                    <tr>    
+                        <td><h3 >Creator:</h3></td>
+                        <td><p>{$meta.firstname}</p></td>
+                    </tr>
+                    <tr>
+                        <td><h3 >Created:</h3></td>
+                        <td><p>{ $meta.timecreated }</p></td>
+                    </tr>
+                   </table>
+                </div>
+            </div>
+        </div>
 
         <div data-role="collapsible-set" data-theme="b" data-content-theme="">
             <div data-role="collapsible" data-collapsed="false">
@@ -37,12 +70,16 @@
 
                 <div data-role="fieldcontain">
                     <fieldset data-role="controlgroup" data-type="vertical">
-                        { foreach from=$sessions item=session key=j }
-                            <input name="" id="checkbox{$session.session_id}" type="checkbox">
-                            <label for="checkbox{$session.session_id}">
-                                {$session.name}
-                            </label>
-                        {/foreach}
+                        {if $sessions != null}
+                            { foreach from=$sessions item=session key=j }
+                                <input name="" id="{$session.session_id}" type="checkbox" {if $j==0}checked="checked"{/if}>
+                                <label for="{$session.session_id}">
+                                    {$session.name}
+                                </label>
+                            {/foreach}
+                        {else}
+                        <b>No sessions were found.<b>
+                        {/if}
                     </fieldset>
                 </div>
             </div>
