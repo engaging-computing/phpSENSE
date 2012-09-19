@@ -50,7 +50,7 @@
 
 
   ($(document)).ready(function() {
-    var can, containerSize, controlSize, hiderSize, hydrate, resizeVis, vis, visHeight, visWidth, _i, _len, _ref1, _ref2;
+    var can, containerSize, controlSize, hiderSize, hydrate, resizeVis, vis, visHeight, visWidth, _i, _len, _ref1, _ref2, _ref3;
     _ref1 = ['#map_canvas', '#timeline_canvas', '#scatter_canvas', '#bar_canvas', '#histogram_canvas', '#table_canvas', '#viscanvas', '#motion_canvas', '#photos_canvas'];
     for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
       can = _ref1[_i];
@@ -79,12 +79,15 @@
 
     ($('#viscontainer')).tabs();
     ($('#viscontainer')).width(($('#viscontainer')).width() - (($('#viscontainer')).outerWidth() - ($('#viscontainer')).width()));
-    if (data.default_vis === null) {
+    /* Pick vis
+    */
+
+    if (!(_ref3 = data.defaultVis, __indexOf.call(data.relVis, _ref3) >= 0)) {
       globals.curVis = eval('globals.' + data.relVis[0].toLowerCase());
       ($('#viscontainer')).tabs('select', "#" + (data.relVis[0].toLowerCase()) + "_canvas");
     } else {
-      globals.curVis = eval('globals.' + data.default_vis.toLowerCase());
-      ($('#viscontainer')).tabs('select', "#" + (data.default_vis.toLowerCase()) + "_canvas");
+      globals.curVis = eval('globals.' + data.defaultVis.toLowerCase());
+      ($('#viscontainer')).tabs('select', "#" + (data.defaultVis.toLowerCase()) + "_canvas");
     }
     /* Change vis click handler
     */

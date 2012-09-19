@@ -31,7 +31,7 @@
 
 
 (function() {
-  var keys, vals, _ref, _ref1, _ref2,
+  var keys, vals, _ref, _ref1, _ref2, _ref3,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -40,20 +40,24 @@
     window.globals = {};
   }
 
+  if ((_ref1 = globals.logY) == null) {
+    globals.logY = 0;
+  }
+
   if (!(data.savedGlobals != null)) {
-    if ((_ref1 = globals.groupSelection) == null) {
+    if ((_ref2 = globals.groupSelection) == null) {
       globals.groupSelection = (function() {
-        var _i, _len, _ref2, _results;
-        _ref2 = data.groups;
+        var _i, _len, _ref3, _results;
+        _ref3 = data.groups;
         _results = [];
-        for (keys = _i = 0, _len = _ref2.length; _i < _len; keys = ++_i) {
-          vals = _ref2[keys];
+        for (keys = _i = 0, _len = _ref3.length; _i < _len; keys = ++_i) {
+          vals = _ref3[keys];
           _results.push(Number(keys));
         }
         return _results;
       })();
     }
-    if ((_ref2 = globals.fieldSelection) == null) {
+    if ((_ref3 = globals.fieldSelection) == null) {
       globals.fieldSelection = data.normalFields.slice(0, 1);
     }
   }
@@ -141,7 +145,7 @@
 
 
     BaseVis.prototype.drawGroupControls = function(startOnGroup) {
-      var controls, counter, fieldIndex, gIndex, group, sel, _i, _j, _len, _len1, _ref3, _ref4, _ref5, _ref6,
+      var controls, counter, fieldIndex, gIndex, group, sel, _i, _j, _len, _len1, _ref4, _ref5, _ref6, _ref7,
         _this = this;
       if (startOnGroup == null) {
         startOnGroup = false;
@@ -151,19 +155,19 @@
       controls += "<div class='outer_control_div'>";
       controls += '<div class="inner_control_div"> Group By: ';
       controls += '<select id="groupSelector" class="control_select">';
-      _ref3 = data.textFields;
-      for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
-        fieldIndex = _ref3[_i];
+      _ref4 = data.textFields;
+      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
+        fieldIndex = _ref4[_i];
         sel = fieldIndex === data.groupingFieldIndex ? 'selected' : '';
         controls += "<option value='" + (Number(fieldIndex)) + "' " + sel + ">" + data.fields[fieldIndex].fieldName + "</option>";
       }
       controls += "</select></div>";
       counter = 0;
-      _ref4 = data.groups;
-      for (gIndex = _j = 0, _len1 = _ref4.length; _j < _len1; gIndex = ++_j) {
-        group = _ref4[gIndex];
+      _ref5 = data.groups;
+      for (gIndex = _j = 0, _len1 = _ref5.length; _j < _len1; gIndex = ++_j) {
+        group = _ref5[gIndex];
         controls += "<div class='inner_control_div' style=\"color:" + globals.colors[counter % globals.colors.length] + ";\">";
-        controls += "<input class='group_input' type='checkbox' value='" + gIndex + "' " + ((_ref5 = Number(gIndex), __indexOf.call(globals.groupSelection, _ref5) >= 0) ? "checked" : "") + "/>&nbsp";
+        controls += "<input class='group_input' type='checkbox' value='" + gIndex + "' " + ((_ref6 = Number(gIndex), __indexOf.call(globals.groupSelection, _ref6) >= 0) ? "checked" : "") + "/>&nbsp";
         controls += "" + group;
         controls += "</div>";
         counter += 1;
@@ -175,11 +179,11 @@
         element = e.target || e.srcElement;
         data.setGroupIndex(Number(element.value));
         globals.groupSelection = (function() {
-          var _k, _len2, _ref6, _results;
-          _ref6 = data.groups;
+          var _k, _len2, _ref7, _results;
+          _ref7 = data.groups;
           _results = [];
-          for (keys = _k = 0, _len2 = _ref6.length; _k < _len2; keys = ++_k) {
-            vals = _ref6[keys];
+          for (keys = _k = 0, _len2 = _ref7.length; _k < _len2; keys = ++_k) {
+            vals = _ref7[keys];
             _results.push(Number(keys));
           }
           return _results;
@@ -204,7 +208,7 @@
           return _this.delayedUpdate();
         }
       });
-      if ((_ref6 = globals.groupOpen) == null) {
+      if ((_ref7 = globals.groupOpen) == null) {
         globals.groupOpen = 0;
       }
       ($('#groupControl')).accordion({
@@ -222,7 +226,7 @@
 
 
     BaseVis.prototype.drawSaveControls = function(e) {
-      var controls, _ref3,
+      var controls, _ref4,
         _this = this;
       controls = '<div id="saveControl" class="vis_controls">';
       controls += "<h3 class='clean_shrink'><a href='#'>Saving:</a></h3>";
@@ -256,7 +260,7 @@
       ($('#printVisButton')).click(function() {
         return _this.chart.print();
       });
-      if ((_ref3 = globals.saveOpen) == null) {
+      if ((_ref4 = globals.saveOpen) == null) {
         globals.saveOpen = 0;
       }
       ($('#saveControl')).accordion({
@@ -376,6 +380,7 @@
         series: [],
         title: {},
         yAxis: {
+          minorTickInterval: 'auto',
           title: {
             text: globals.fieldSelection.length !== 1 ? 'Y-Values' : data.fields[globals.fieldSelection[0]].fieldName
           }
@@ -426,7 +431,7 @@
 
 
     BaseHighVis.prototype.update = function() {
-      var options, temp, title, _i, _len, _ref3, _results;
+      var options, temp, title, _i, _len, _ref4, _results;
       title = globals.fieldSelection.length !== 1 ? temp = {
         text: 'Y-Values'
       } : temp = {
@@ -436,10 +441,10 @@
       while (this.chart.series.length !== 0) {
         this.chart.series[0].remove(false);
       }
-      _ref3 = this.buildLegendSeries();
+      _ref4 = this.buildLegendSeries();
       _results = [];
-      for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
-        options = _ref3[_i];
+      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
+        options = _ref4[_i];
         _results.push(this.chart.addSeries(options, false));
       }
       return _results;

@@ -85,6 +85,9 @@
             return str += "</table>";
           },
           useHTML: true
+        },
+        yAxis: {
+          type: globals.logY === 1 ? 'logarithmic' : 'linear'
         }
       });
     };
@@ -295,6 +298,12 @@
         controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='" + type + "' " + (type === this.analysisType ? 'checked' : '') + "> " + typestring + "</input><br>";
         controls += '</div>';
       }
+      controls += "<h4 class='clean_shrink'>Other</h4>";
+      if (data.logSafe === 1) {
+        controls += '<div class="inner_control_div">';
+        controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' " + (globals.logY === 1 ? 'checked' : '') + "/> Logarithmic Y Axis ";
+        controls += "</div>";
+      }
       controls += '</div></div>';
       /* ---
       */
@@ -307,6 +316,10 @@
       ($('.sortField')).change(function(e) {
         _this.sortField = Number(e.target.value);
         return _this.delayedUpdate();
+      });
+      ($('.logY_box')).click(function(e) {
+        globals.logY = (globals.logY + 1) % 2;
+        return _this.start();
       });
       if ((_ref2 = globals.toolsOpen) == null) {
         globals.toolsOpen = 0;
