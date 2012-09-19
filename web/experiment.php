@@ -127,7 +127,7 @@ $smarty->assign('activity',	$is_activity);
 $smarty->assign('user', 	$session->getUser());
 $smarty->assign('title', 	$title);
 
-if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= false){
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= true){
     $smarty->assign('head', 	$smarty->fetch('parts/experiment-head.tpl'));
     $smarty->assign('content', 	$smarty->fetch('experiment.tpl'));
     $smarty->display('skeleton.tpl');
