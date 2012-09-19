@@ -129,10 +129,14 @@ $smarty->assign('id',		$id);
 $smarty->assign('activity',	$is_activity);
 $smarty->assign('user', 	$session->getUser());
 $smarty->assign('title', 	$title);
-$smarty->assign('head', 	$smarty->fetch('parts/experiment-head.tpl'));
-$smarty->assign('content', 	$smarty->fetch('experiment.tpl'));
-$smarty->display('skeleton.tpl')
 
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= false){
+    $smarty->assign('head', 	$smarty->fetch('parts/experiment-head.tpl'));
+    $smarty->assign('content', 	$smarty->fetch('experiment.tpl'));
+    $smarty->display('skeleton.tpl');
+} else {
+    $smarty->display('mobileexperiment.tpl');
+}
 
 
 ?>
