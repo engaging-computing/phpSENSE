@@ -2,7 +2,6 @@
     <link rel="stylesheet" href="./html/css/mobile/jquery.mobile.css" />
     <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
-    <script src="html/js/isense.js"></script>
     <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
 </head>
 

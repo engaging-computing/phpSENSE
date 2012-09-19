@@ -132,7 +132,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= true){
     $smarty->assign('content', 	$smarty->fetch('experiment.tpl'));
     $smarty->display('skeleton.tpl');
 } else {
-    $smarty->display('mobileexperiment.tpl');
+    $smarty->display('mobile/experiment.tpl');
 }
 
 
