@@ -56,7 +56,7 @@
                 <a data-role="button" data-transition="fade" href="#page1">
                     Contribute
                 </a>
-                <a data-role="button" data-transition="fade" href="#page1">
+                <a href="#" onclick="loadVis2({$meta.experiment_id});" data-role="button" data-transition="fade" href="#page1">
                     Visualize
                 </a>
             </div>
@@ -72,10 +72,12 @@
                     <fieldset data-role="controlgroup" data-type="vertical">
                         {if $sessions != null}
                             { foreach from=$sessions item=session key=j }
-                                <input name="" id="{$session.session_id}" type="checkbox" {if $j==0}checked="checked"{/if}>
-                                <label for="{$session.session_id}">
-                                    {$session.name}
-                                </label>
+                                <div class="session_select">
+                                    <input name="sessions" id="{$session.session_id}" value="{$session.session_id}" type="checkbox" {if $j==0}checked="checked"{/if}>
+                                    <label for="{$session.session_id}">
+                                        {$session.name}
+                                    </label>
+                                </div>
                             {/foreach}
                         {else}
                         <b>No sessions were found.<b>
