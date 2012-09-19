@@ -649,4 +649,40 @@ function unrecommendExperiment($eid){
     return true;
 }
 
+//Set an experiments default visualization
+function setDefaultVisForExperiment($eid, $vis_type){
+    global $db;
+
+    //The user has to be logged in
+    if(isset($_COOKIE['isense_login'])){
+        
+        //The user has to be the experiment owner or an admin
+        if(isAdmin() || isExperimentOwner($eid)){
+        
+            $sql = "UPDATE experiments SET default_vis=\"{$vis_type}\" WHERE experiment_id = {$eid}";
+        
+            $result = $db->query($sql);
+        
+            if($db->numOfRows){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+//Get an experiments defualt visualization
+function getDefaultVisForExperiment($eid){
+    global $db;
+
+    $sql = "SELECT default_vis FROM experiments where experiment_id={$eid} LIMIT 1";
+
+    $result = $db->query($sql);
+
+    if($db->numOfRows){
+        return $result[0]['default_vis'];
+    }
+
+    return null;
+}
 ?>
