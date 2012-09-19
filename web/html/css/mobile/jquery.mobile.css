@@ -10,6 +10,13 @@
 /* Swatches */
 /* A
 -----------------------------------------------------------------------------------------------------------*/
+div.featureditem {
+    padding:5px 5px 5px 5px;
+}
+
+a {
+    data-ajax:false;
+}
 
 .session_info {
     display:inline;
