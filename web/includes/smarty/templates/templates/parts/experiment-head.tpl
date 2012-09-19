@@ -32,3 +32,9 @@
 <script type="text/javascript" src="html/js/lib/jquery.experimentPaginate.js"></script>
 <link rel="stylesheet" type="text/css" href="html/css/experimentPaginate.css" />
 <script type="text/javascript" src="html/js/experimentPaginate.js"></script>
+
+<script type="text/javascript">
+    
+    var eid = { $eid };
+    
+</script>

@@ -44,6 +44,8 @@ if(isset($_GET['id'])) {
 		$ownerid = $meta['owner_id'];
 		$meta['create_diff'] = dateDifference(time(), strtotime($meta['timecreated']));
 		$meta['mod_diff'] = dateDifference(time(), strtotime($meta['timemodified']));
+		$meta['default_vis'] = getDefaultVisForExperiment($id);
+		
 		
 		// Make calls to pull data from db
 		$fields = array();
@@ -85,9 +87,10 @@ if(isset($_GET['id'])) {
 		$smarty->assign('vises', 	$vises);
 		$smarty->assign('fields', 	$fields);
 		$smarty->assign('pictures',	$image_urls);
-		$smarty->assign('expimages',	$images);
+		$smarty->assign('expimages',$images);
 		$smarty->assign('videos', 	$videos);
 		$smarty->assign('collabs', 	$collabs);
+		$smarty->assign('eid',      $id);
 		
 		//Get user avatars
                 $userAvatars = array();
