@@ -123,7 +123,6 @@
       return globals.curVis.resize(newWidth, $('.vis_canvas').height(), 600);
     };
     return ($('#control_hide_button')).click(function() {
-      console.log('CLICKED');
       if (($('#controldiv')).width() === 0) {
         $("#" + this.id).html('>');
       } else {

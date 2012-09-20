@@ -110,7 +110,7 @@ CoffeeScript version of runtime.
         globals.curVis.resize newWidth, $('.vis_canvas').height(), 600
 
     ($ '#control_hide_button').click ->
-        console.log 'CLICKED'
+        
         if ($ '#controldiv').width() is 0
             $("##{@id}").html('>')
         else
