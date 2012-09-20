@@ -10,17 +10,20 @@
 /* Swatches */
 /* A
 -----------------------------------------------------------------------------------------------------------*/
+
 div.featureditem {
     padding:5px 5px 5px 5px;
-}
-
-a {
-    data-ajax:false;
 }
 
 .session_info {
     display:inline;
 }
+
+.session_info td.fc{     
+        font-size: 1.17em;
+        font-weight: bold;
+}
+
 .session_info h3 {
         font-size: 1.17em;
         font-weight: bold;
@@ -2102,8 +2105,8 @@ ol.ui-listview .ui-li-jsnumbering:before { content: "" !important; } /* to avoid
 .ui-li-has-arrow.ui-li-has-count .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li-has-arrow.ui-li-has-count { padding-right: 75px; }
 .ui-li-heading { font-size: 16px; font-weight: bold; display: block; margin: .6em 0; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 .ui-li-desc {  font-size: 12px; font-weight: normal; display: block; margin: -.5em 0 .6em; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
-.ui-li-thumb, .ui-listview .ui-li-icon { position: absolute; left: 1px; top: 0; max-height: 80px; max-width: 80px; }
-.ui-listview .ui-li-icon { max-height: 16px; max-width: 16px; left: 10px; top: .9em; }
+.ui-li-thumb, .ui-listview .ui-li-icon {  }
+.ui-listview .ui-li-icon {  left: 10px; top: .9em; }
 .ui-li-thumb, .ui-listview .ui-li-icon, .ui-li-content { float: left; margin-right: 10px; }
 .ui-li-aside { float: right; width: 50%; text-align: right; margin: .3em 0; }
 @media all and (min-width: 480px){
