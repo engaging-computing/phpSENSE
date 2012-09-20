@@ -259,7 +259,7 @@ echo "<h1>Gets User Profile Test</h1>";
 //Verifies that we have received a user profile
 echo "<h2>Tests that we got a user profile..</h2>";
 
-$id = 2;
+$id = 1;
 $getUserProfile_response = getUserProfileTest($id);
 
 if ($getUserProfile_response['status'] == 200) {
