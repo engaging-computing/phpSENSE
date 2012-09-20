@@ -36,6 +36,7 @@ define('STORE',                     4);
 
 define('TIME_TYPE_ID',      7);
 
+
 //Notes: Smarty isn't writing the timefix and columnfix values out like it should
 $state = -1;
 $timefix = 0;
@@ -129,10 +130,11 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
         $tmt = 0;
         
         $man_off = 0;
-        
+
         // Iterate through each row of data
         for($i = 1; $i < $row_count; $i++) {
             $x = array();
+            
             foreach($fields as $key => $field) {
                 $name = str_replace(" ", "_", $field['field_name']) . "_" . $i;
                 $val = safeString($_POST[$name]); 
@@ -142,6 +144,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
         }
         
         $data = $data_set;
+        
         $data = fixTime($data,$eid);
         
         // Create the session record
@@ -274,17 +277,18 @@ $smarty->assign('hideName', $req_name);
 $smarty->assign('hideProcedure', $req_procedure);
 $smarty->assign('hideLocation', $req_loc);
 
+
+
+// Assign values required for all views
+$smarty->assign('user',             $session->getUser());
 $smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>' . 
                         '<script src="/html/js/lib/validate.js"></script>'.
                         '<link rel="stylesheet" type="text/css" href="/html/css/jquery-ui.css"></link>');
 
-// Assign values required for all views
-$smarty->assign('user',             $session->getUser());
-$smarty->assign('content',          $smarty->fetch('upload.tpl'));
-
-
-
-// Send this Bad Larry to standard out
-$smarty->display('skeleton.tpl');
-
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= false){
+    $smarty->assign('content',          $smarty->fetch('upload.tpl'));
+    $smarty->display('skeleton.tpl');
+} else {
+    $smarty->display('mobile/contribute.tpl');
+}
 ?>

@@ -45,7 +45,7 @@
         <div data-role="collapsible-set" data-theme="b" data-content-theme="">
             <div data-role="collapsible" data-collapsed="false">
                 <h3>Experiment Tools</h3>
-                <a data-role="button" data-transition="fade" href="#page1">Contribute</a>
+                <a href="upload.php?id={$meta.experiment_id}" data-role="button" data-transition="fade" data-ajax="false">Contribute</a>
                 <a href="#" onclick="loadVis2({$meta.experiment_id});" data-role="button" data-transition="fade" href="#page1">Visualize</a>
             </div>
         </div>
