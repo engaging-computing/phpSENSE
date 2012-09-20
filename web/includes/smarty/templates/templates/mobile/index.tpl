@@ -11,6 +11,14 @@
 
 <div data-role="content" style="padding:15px;">
 
+    <div class="ui-grid-a">
+        <div class="ui-block-a">
+            <a href="login.php" id="mLogin" data-ajax="false" data-role="button">Login</a>
+        </div>
+        <div class="ui-block-b">
+            <a id="mExperiments" data-ajax="false"data-role="button">Experiments</a>
+        </div>
+    </div>
     <div id="featured">
         {if $six}
             { foreach from=$six item=exp }

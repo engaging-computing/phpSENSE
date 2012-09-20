@@ -10,17 +10,20 @@
 /* Swatches */
 /* A
 -----------------------------------------------------------------------------------------------------------*/
+
 div.featureditem {
     padding:5px 5px 5px 5px;
-}
-
-a {
-    data-ajax:false;
 }
 
 .session_info {
     display:inline;
 }
+
+.session_info td.fc{     
+        font-size: 1.17em;
+        font-weight: bold;
+}
+
 .session_info h3 {
         font-size: 1.17em;
         font-weight: bold;
