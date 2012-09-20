@@ -250,6 +250,7 @@ function getFeaturedExperimentsWithPhotos($limit = 6) {
     $sql = "SELECT experiments.experiment_id,
                    experiments.exp_image,
                    experiments.name,
+                   experiments.description,
                    users.user_id,
                    users.firstname,
                    users.lastname,
