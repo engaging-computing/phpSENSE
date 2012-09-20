@@ -63,7 +63,7 @@ $smarty->assign('count_sessions', $count_sessions);
 $smarty->assign('title', 'Featured Experiments');
 $smarty->assign('user', $session->getUser());
 
-if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= false){
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= true){
     $smarty->assign('content', $smarty->fetch('index.tpl'));
     $smarty->display('skeleton.tpl');
 } else {
