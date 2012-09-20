@@ -138,8 +138,11 @@ function getSavedVisByOwner($owner_id){
             FROM savedVises where owner_id = {$owner_id}";
     
     $output = $db->query($sql);
-
-    return $output;
+    
+    if($db->numOfRows){
+        return $output;
+    }
+    return false;
 }
 
 function getAllSavedVises(){
