@@ -131,7 +131,12 @@ $smarty->assign('navbarpages',  $navbarpages);
 $smarty->assign('numpages',     $numpages);
 $smarty->assign('sorttype',     $sorttype);
 $smarty->assign('user',         $session->getUser());
-$smarty->assign('content',      $smarty->fetch('browse.tpl'));
-$smarty->display('skeleton.tpl');
+
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= false){
+    $smarty->assign('content', $smarty->fetch('browse.tpl'));
+    $smarty->display('skeleton.tpl');
+} else {
+    $smarty->display('mobile/browse.tpl');
+}
 
 ?>
