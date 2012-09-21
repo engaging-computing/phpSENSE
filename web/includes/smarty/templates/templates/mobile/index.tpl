@@ -1,8 +1,7 @@
 <head>
     <link rel="stylesheet" href="./html/css/mobile/jquery.mobile.css" />
     <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-    <script src="/html/js/jquery.mobile-1.1.1.js"></script>
-   <!-- <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.mobile/1.1.1/jquery.mobile-1.1.1.min.css" />-->
+    <script src="/html/js/jquery.mobile-1.1.1.js"></script>s
 </head>
 
 <div data-theme="a" data-role="header">
@@ -26,15 +25,13 @@
             { foreach from=$six item=exp }
                 <li class = "featuredimage" data-theme="c" style="text-align:center">
                     <a href="./experiment.php?id={$exp.experiment_id}" data-transition="slide" data-ajax="false" >
-                        <img src="picture.php?url={$exp.exp_image}&h=200&w=287">
-                        <table class="session_info">
-                            <tr><td colspan="2"><b>{ $exp.name|capitalize|truncate:32:"":true }</b></td></tr>
-                            <tr><td>{ $exp.description}</td></tr>
-                        </table>
+                        <img src="picture.php?url={$exp.exp_image}&h=200&w=287"/>
+                        <b>{ $exp.name|capitalize|truncate:32:"":true }</b>
+                        <br><br>
+                        <p>{ $exp.description}</p>
                     </a>
                 </li>
             { /foreach }
         {/if}
     </ul>
-
 </div>
