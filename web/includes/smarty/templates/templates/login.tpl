@@ -47,7 +47,7 @@
 				<td>&nbsp;</td>
 				<td>
 				    <div style="padding-top:8px;">
-				        <button type="submit" name="submit">Login</button> or <a href='reset.php'>Forgot password?</a>
+				        <button type="submit" name="submit" data-ajax="false">Login</button> or <a href='reset.php'>Forgot password?</a>
 				    </div>
 				</td>
 			</tr>

@@ -272,7 +272,7 @@ if(isset($_REQUEST['method'])) {
                     $vid = getVideosByUser($user);
                     $ses = browseMySessions($user);
                     $img = getImagesByUser($user);
-                    $vis = getVisByUser($user);
+                    $vis = getSavedVisByOwner($user);
 
                     if(is_array($exp)) {
                         $dataset['experiments'] = $exp;
