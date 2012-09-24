@@ -154,11 +154,13 @@ echo "<br>";
 //Verifies that we did not get the experiment tags
 echo "<h2>Tests that we did not get the experiment tags...</h2>";
 
-$exp = 0;
+$exp = -1;
 $getExperimentTags_response = getExperimentTagsTest($exp);
 
 if ($getExperimentTags_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unable to get experiment tags.<br>";
+    print_r($getExperimentTags_response);
+    echo "<br>";
 } elseif ($getExperimentTags_response['status'] == 200) {
     echo "<div class='failure'>FAILURE</div>, Got experiment tags. JSON: ";
     print_r($getExperimentTags_response);
