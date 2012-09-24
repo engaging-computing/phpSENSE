@@ -132,7 +132,7 @@ $smarty->assign('numpages',     $numpages);
 $smarty->assign('sorttype',     $sorttype);
 $smarty->assign('user',         $session->getUser());
 
-if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= false){
+if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= true){
     $smarty->assign('content', $smarty->fetch('browse.tpl'));
     $smarty->display('skeleton.tpl');
 } else {

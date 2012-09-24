@@ -2,6 +2,51 @@
     <link rel="stylesheet" href="./html/css/mobile/jquery.mobile.css" />
     <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
     <script src="/html/js/jquery.mobile-1.1.1.js"></script>
+    <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
+    
+    
+     <script>
+     {literal}
+	$(document).ready(function(){
+	  $('#searchinput1').bind('keyup', function(e){  
+	    var code = (e.keyCode ? e.keyCode : e.which);
+	      if(code == 13) {
+		 uri = window.location.search.substr(1).split('&');
+		 
+		 parts = Object();
+
+		 for( part in uri ) {
+		   tmp = uri[part].split('=');
+		   parts[tmp[0]] = tmp[1];
+		 }
+		 
+		 parts.query = e.currentTarget.value;
+		 		 
+		 if(typeof parts.query == 'undefined') {
+		      parts.query = '';
+		 }
+		 if(typeof parts.type == 'undefined') {
+		      parts.type = 'experiments';
+		 }
+                 if(typeof parts.action == 'undefined'){
+		      parts.action = 'Search';
+		 }
+		 if(typeof parts.sorttype == 'undefined') {
+                     parts.sorttype = 'recent';
+		 }
+		 
+		uri = '?'; 
+		uri += 'query=' + parts.query + '&'; 
+		uri += 'type=' + parts.type + '&'; 
+		uri += 'action=' + parts.action + '&'; 
+		uri += 'sorttype=' + parts.sorttype;
+		 
+	        window.location = window.location.origin + '/browse.php' + uri; 
+	      }
+	  });
+	});
+     {/literal}
+     </script>
     
 </head>
 
