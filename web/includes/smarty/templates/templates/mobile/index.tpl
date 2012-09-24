@@ -15,7 +15,7 @@
             <a href="login.php" id="mLogin" data-ajax="false" data-role="button">Login</a>
         </div>
         <div class="ui-block-b">
-            <a id="mExperiments" data-ajax="false"data-role="button">Experiments</a>
+            <a href="browse.php" id="mExperiments" data-ajax="false" data-role="button">Experiments</a>
         </div>
     </div>
 
@@ -28,7 +28,7 @@
                         <div style="height:100%;float:left;padding-right:5px;"><img src="picture.php?url={$exp.exp_image}&h=200&w=287"/></div>                   
                         <b>{ $exp.name|capitalize|truncate:32:"":true }</b>
                         <br><br>
-                        <p>{ $exp.description}</p>
+                        <p>{ $exp.description }</p>
                     </a>
                 </li>
             { /foreach }
