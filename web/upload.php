@@ -36,7 +36,6 @@ define('STORE',                     4);
 
 define('TIME_TYPE_ID',      7);
 
-
 //Notes: Smarty isn't writing the timefix and columnfix values out like it should
 $state = -1;
 $timefix = 0;
@@ -260,7 +259,24 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
             }
             
         }
-    } 
+    } else if ($type == 'google'){
+        
+            $sid = createSession(   $session->generateSessionToken(), 
+                                    $eid, 
+                                    safeString($post_data['session_name']), 
+                                    safeString($post_data['session_description']), 
+                                    safeString(""), 
+                                    safeString($post_data['session_citystate']), 
+                                    "", // Default country
+                                    1, // Default permission bits
+                                    1, // Default permission bits
+                                    1, // Default permission bits
+                                    $debug_data);
+            
+        
+        if(setExternalDataSourceForSession($sid,$_POST['google_key']));
+        header("Location: highvis.php?sessions={$sid}");
+    }
 }
 
 
