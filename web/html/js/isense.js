@@ -810,11 +810,70 @@ var createWizard = {
     },
     
     step_upinpoint:function() {
-        createWizard.next = createWizard.step_pinpoint_advance;
+        createWizard.next = createWizard.step_upinpoint_advance;
         createWizard.prev = createWizard.step_restart;
         $('#step_upinpoint').show();
     },
+    
+    step_upinpoint_advance:function() {
+        
+        $('#error_msg_custom').children().remove();
+        
+        var errors		= false;
+		var errormessage = "";
+		
+		var sensortypes = [
+			
+			{name: 'Time', pagename: 'Time', type_id: 7, unit_id: 22},
+			{name: 'ElapsedTime', pagename: 'ElapsedTime', type_id: 21, unit_id: 66},
+			{name: 'Temperature', pagename: 'Temperature', type_id: 1, unit_id: 2},
+			{name: 'Pressure', pagename: 'Pressure', type_id: 27, unit_id: 75},
+			{name: 'Altitude', pagename: 'Altitude', type_id: 3, unit_id: 5},
+			{name: 'AccelX', pagename: 'AccelX', type_id: 25, unit_id: 71},
+			{name: 'AccelY', pagename: 'AccelY', type_id: 25, unit_id: 71},
+			{name: 'AccelZ', pagename: 'AccelZ', type_id: 25, unit_id: 71},
+			{name: 'AccelMag', pagename: 'AccelMag', type_id: 25, unit_id: 71},
+			{name: 'Light', pagename: 'Light', type_id: 9, unit_id: 31}
+			
+		];
+		
+		if(!errors){
+		
+    		for(i=0;i<sensortypes.length;i++){
+		    
+    		    if($('#' + sensortypes[i].pagename).attr('checked')){
+    		        
+    		        createWizard.store_field(sensortypes[i].name, sensortypes[i].type_id, sensortypes[i].unit_id);
+    		        
+		        } else {
+		            
+		        }
+		    
+    		}
+		
+		    if(!errors){
+		
+				createWizard.next = createWizard.step_post_process;
 
+	            $('#step_pinpoint').hide();
+	            $('#step_upinpoint').hide();
+	            $('#step_done').show();
+	            $('#create_advance').val('Done');
+	            $('#create_previous').hide();
+				$('div#wizard_error').hide();
+			
+			}
+			
+		} else {
+			
+			$('div#wizard_error').html(errormessage);
+
+			$('div#wizard_error').show();
+			
+		}
+        
+    },
+    
     step_pinpoint_advance:function() {
 	
 			/*
