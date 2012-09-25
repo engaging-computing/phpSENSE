@@ -62,6 +62,8 @@ class window.Bar extends BaseHighVis
                     str += "<tr><td>#{@x} (#{self.analysisTypeNames[self.analysisType]}):</td><td><strong>#{@y}</strong></td></tr>"
                     str += "</table>"
                 useHTML: true
+            yAxis:
+                type: if globals.logY is 1 then 'logarithmic' else 'linear'
             
     update: ->
         super()
@@ -178,7 +180,14 @@ class window.Bar extends BaseHighVis
             controls += "<input class='analysisType' type='radio' name='analysisTypeSelector' value='#{type}' #{if type is @analysisType then 'checked' else ''}> #{typestring}</input><br>"
         
             controls += '</div>'
+
+        controls += "<h4 class='clean_shrink'>Other</h4>"
             
+        if data.logSafe is 1
+            controls += '<div class="inner_control_div">'
+            controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' #{if globals.logY is 1 then 'checked' else ''}/> Logarithmic Y Axis "
+            controls += "</div>"
+        
         controls += '</div></div>'
         
         ### --- ###
@@ -193,6 +202,10 @@ class window.Bar extends BaseHighVis
         ($ '.sortField').change (e) =>
             @sortField = Number e.target.value
             @delayedUpdate()
+
+        ($ '.logY_box').click (e) =>
+            globals.logY = (globals.logY + 1) % 2
+            @start()
 
         #Set up accordion
         globals.toolsOpen ?= 0

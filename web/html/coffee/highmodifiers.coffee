@@ -225,3 +225,11 @@ data.geoFields = for field, index in data.fields when (Number field.typeID) isnt
 data.groupingFieldIndex ?= 0
 #Array of current groups
 data.groups ?= data.makeGroups()
+
+#Check if data is log safe
+data.logSafe ?= do ->
+    for dataPoint in data.dataPoints
+        for field, fieldIndex in data.fields when fieldIndex in data.normalFields
+            if (Number dataPoint[fieldIndex] <= 0) and (dataPoint[fieldIndex] isnt null)
+                return 0
+    1
