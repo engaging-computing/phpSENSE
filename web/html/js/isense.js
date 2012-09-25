@@ -248,15 +248,25 @@ $(document).ready(function(){
     
     if($('#file_upload').length > 0) {
         $('#file_upload').click(function(){
-            $('#type_file').toggle();
-            $('#type_manual').toggle();
+            $('#type_file').show();
+            $('#type_manual').hide();
+            $('#type_google').hide();
         });
     }
     
     if($('#manual_upload').length > 0) {
         $('#manual_upload').click(function(){
-            $('#type_file').toggle();
-            $('#type_manual').toggle();
+            $('#type_file').hide();
+            $('#type_manual').show();
+            $('#type_google').hide();
+        });
+    }
+    
+    if($('#google_upload').length > 0) {
+        $('#google_upload').click(function(){
+            $('#type_file').hide();
+            $('#type_manual').hide();
+            $('#type_google').show();
         });
     }
     
