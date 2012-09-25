@@ -64,7 +64,7 @@
       var self;
       Scatter.__super__.buildOptions.call(this);
       self = this;
-      $.extend(true, this.chartOptions, {
+      return $.extend(true, this.chartOptions, {
         chart: {
           type: "line",
           zoomType: "xy"
@@ -98,11 +98,18 @@
             }
           },
           useHTML: true
+        },
+        xAxis: [
+          {
+            type: 'linear',
+            gridLineWidth: 1,
+            minorTickInterval: 'auto'
+          }
+        ],
+        yAxis: {
+          type: globals.logY === 1 ? 'logarithmic' : 'linear'
         }
       });
-      return this.chartOptions.xAxis = {
-        type: 'linear'
-      };
     };
 
     /*
@@ -243,7 +250,13 @@
       controls += "<h4 class='clean_shrink'>Other</h4>";
       controls += '<div class="inner_control_div">';
       controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' " + (this.advancedTooltips ? 'checked' : '') + "/> Advanced Tooltips ";
-      controls += "</div></div></div>";
+      controls += "</div>";
+      if (data.logSafe === 1) {
+        controls += '<div class="inner_control_div">';
+        controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' " + (globals.logY === 1 ? 'checked' : '') + "/> Logarithmic Y Axis ";
+        controls += "</div>";
+      }
+      controls += "</div></div>";
       ($('#controldiv')).append(controls);
       ($('.mode_radio')).click(function(e) {
         _this.mode = Number(e.target.value);
@@ -251,6 +264,10 @@
       });
       ($('.tooltip_box')).click(function(e) {
         return _this.advancedTooltips = !_this.advancedTooltips;
+      });
+      ($('.logY_box')).click(function(e) {
+        globals.logY = (globals.logY + 1) % 2;
+        return _this.start();
       });
       if ((_ref2 = globals.toolsOpen) == null) {
         globals.toolsOpen = 0;

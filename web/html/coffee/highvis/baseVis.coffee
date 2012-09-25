@@ -29,6 +29,8 @@
 
 window.globals ?= {}
 
+globals.logY ?= 0
+
 #Only init selections if this is not a saved vis
 if not data.savedGlobals?
     globals.groupSelection ?= for vals, keys in data.groups
@@ -294,6 +296,7 @@ class window.BaseHighVis extends BaseVis
             #tooltop: {}
             #xAxis: {}
             yAxis:
+                minorTickInterval: 'auto'
                 title:
                     text: if globals.fieldSelection.length isnt 1
                         'Y-Values'

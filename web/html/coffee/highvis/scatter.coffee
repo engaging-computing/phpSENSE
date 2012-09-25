@@ -80,9 +80,12 @@ class window.Scatter extends BaseHighVis
                         str += "<tr><td>#{@series.name.field}:</td><td><strong>#{@y}</strong></td></tr>"
                         str += "</table>"
                 useHTML: true
-                
-        @chartOptions.xAxis =
-            type: 'linear'
+            xAxis: [{
+                type: 'linear'
+                gridLineWidth: 1
+                minorTickInterval: 'auto'}]
+            yAxis:
+                type: if globals.logY is 1 then 'logarithmic' else 'linear'
 
     ###
     Build the dummy series for the legend.
@@ -190,7 +193,14 @@ class window.Scatter extends BaseHighVis
             
         controls += '<div class="inner_control_div">'
         controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' #{if @advancedTooltips then 'checked' else ''}/> Advanced Tooltips "
-        controls += "</div></div></div>"
+        controls += "</div>"
+
+        if data.logSafe is 1
+            controls += '<div class="inner_control_div">'
+            controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' #{if globals.logY is 1 then 'checked' else ''}/> Logarithmic Y Axis "
+            controls += "</div>"
+
+        controls+= "</div></div>"
         
         # Write HTML
         ($ '#controldiv').append controls
@@ -201,6 +211,10 @@ class window.Scatter extends BaseHighVis
 
         ($ '.tooltip_box').click (e) =>
             @advancedTooltips = not @advancedTooltips
+
+        ($ '.logY_box').click (e) =>
+            globals.logY = (globals.logY + 1) % 2
+            @start()
 
         #Set up accordion
         globals.toolsOpen ?= 0
