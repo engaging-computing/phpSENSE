@@ -1,5 +1,8 @@
 <?php
 
+global $success_count;
+global $failure_count;
+
 function getExperimentTest($exp){
     //The target for this test
     $target = "localhost/ws/api.php?method=getExperiment";
@@ -117,8 +120,10 @@ $getExperiment_response = getExperimentTest($exp);
 
   if($getExperiment_response['data']['experiment_id'] == $exp){
       echo "<div class='success'>SUCCESS</div>, The experiments ids matched.<br>";
+      $success_count++;
   } else{
       echo "<div class='failure'>FAILURE</div>, The experiment ids did not match.<br>";
+      $failure_count++;
   }
 
 echo "<br>";
@@ -161,8 +166,10 @@ foreach($getExperiments_response['data'] as $tmp){
 
   if($successflag == 0){
       echo "<div class='failure'>FAILURE</div>, Page 1 and 2 are not different.<br>";
+      $failure_count++;
   } elseif($successflag == 1){
       echo "<div class='success'>SUCCESS</div>, Page 1 and 2 are different.<br>";
+      $success_count++;
   }
 
 echo "<br>";
@@ -180,8 +187,10 @@ $getExperiments_response = getExperimentsTest($page, $limits, $query, $sort, $ac
 
   if(count($getExperiments_response['data']) > $limits){
       echo "<div class='failure'>FAILURE</div>, Page 1 does not satisfy the limit requirement.<br>";
+      $failure_count++;
   } else{
       echo "<div class='success'>SUCCESS</div>, Page 1 satisfies the limit requirement.<br>";
+      $success_count++;
   }
 
 $page = 2;
@@ -196,8 +205,10 @@ $result1=Array();
 
   if(count($getExperiments_response['data'])  > $limits){
       echo "<div class='failure'>FAILURE</div>, Page 2 does not satisfy the limit requirement.<br>";
+      $failure_count++;
   } else{
       echo "<div class='success'>SUCCESS</div>, Page 2 satisfies the limit requirement.<br>";
+      $success_count++;
   }
 
 echo "<br>";
@@ -224,8 +235,10 @@ for($j=0; $j<$limits; $j++){
 
 if($successflag == 0){
   echo "<div class='failure'>FAILURE</div>, Page 1 did not sort correctly.<br>";
+  $failure_count++;
 } else{
   echo "<div class='success'>SUCCESS</div>, Page 1 sorted correctly.<br>";
+  $success_count++;
 }
 
 echo "<br>";
@@ -252,8 +265,10 @@ for($j=0; $j<$limits; $j++){
 
 if($successflag == 0){
   echo "<div class='failure'>FAILURE</div>, Page 1 did not sort correctly.<br>";
+  $failure_count++;
 } else{
   echo "<div class='success'>SUCCESS</div>, Page 1 sorted correctly.<br>";
+  $success_count++;
 }
 
 echo "<br>";
@@ -280,8 +295,10 @@ for($j=1; $j<count($getExperiments_response['data']); $j++){
 
 if($successflag == 0){
   echo "<div class='failure'>FAILURE</div>, Page 1 did not sort correctly.<br>";
+  $failure_count++;
 } else{
   echo "<div class='success'>SUCCESS</div>, Page 1 sorted correctly.<br>";
+  $success_count++;
 }
 
 echo "<br>";
@@ -310,8 +327,10 @@ for($j=1; $j<count($getExperiments_response['data']); $j++){
 
 if($successflag == 0){
   echo "<div class='failure'>FAILURE</div>, Page 1 did not sort correctly.<br>";
+  $failure_count++;
 } else{
   echo "<div class='success'>SUCCESS</div>, Page 1 sorted correctly.<br>";
+  $success_count++;
 }
 
 echo "<br>";
@@ -354,8 +373,10 @@ foreach($getPeople_response['data'] as $tmp){
 
   if($successflag == 0){
       echo "<div class='failure'>FAILURE</div>, Page 1 and 2 are not different.<br>";
+      $failure_count++;
   } elseif($successflag == 1){
       echo "<div class='success'>SUCCESS</div>, Page 1 and 2 are different.<br>";
+      $success_count++;
   }
 
 echo "<br>";
@@ -372,8 +393,10 @@ $getPeople_response = getPeopleTest($page, $limits, $query, $sort, $action);
 
   if(count($getPeople_response['data']) > $limits){
       echo "<div class='failure'>FAILURE</div>, Page 1 does not satisfy the limit requirement.<br>";
+      $failure_count++;
   } else{
       echo "<div class='success'>SUCCESS</div>, Page 1 satisfies the limit requirement.<br>";
+      $success_count++;
   }
 
 $page = 2;
@@ -390,8 +413,10 @@ $getPeople_response = getPeopleTest($page, $limits, $query, $sort, $action);
 
   if(count($getPeople_response['data']) > $limits){
       echo "<div class='failure'>FAILURE</div>, Page 2 does not satisfy the limit requirement.<br>";
+      $failure_count++;
   } else{
       echo "<div class='success'>SUCCESS</div>, Page 2 satisfies the limit requirement.<br>";
+      $success_count++;
   }
 
 echo "<br>";
@@ -411,10 +436,12 @@ $getSessions_response = getSessionsTest($exp);
 
 if ($getSessions_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Successfully got session(s).<br>";
+    $success_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Unable to get session(s). JSON: ";
     print_r($getSessions_response);
     echo "<br>";
+    $failure_count++;
 }
 
 echo "<br>";
@@ -427,14 +454,17 @@ $getSessions_response = getSessionsTest($exp);
 
 if ($getSessions_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unable to session(s).<br>";
+    $success_count++;
 } elseif ($getSessions_response['status'] == 200) {
     echo "<div class='failure'>FAILURE</div>, Successfully got session(s). JSON: ";
     print_r($getSessions_response);
     echo "<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
     print_r($getSessions_response);
     echo "<br>";
+    $failure_count++;
 }
 
 // echo "More tests to come!"; What does this mean?

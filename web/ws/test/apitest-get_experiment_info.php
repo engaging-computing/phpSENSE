@@ -1,5 +1,8 @@
 <?php
 
+global $success_count;
+global $failure_count;
+
 function getExperimentFieldsTest($exp){
     //The target for this test
     $target = "localhost/ws/api.php?method=getExperimentFields";
@@ -102,10 +105,12 @@ $getExperimentFields_response = getExperimentFieldsTest($exp);
 
 if ($getExperimentFields_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Got experiment fields.<br>";
+    $success_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Unable to get experiment fields. JSON: ";
     print_r($getExperimentFields_response);
     echo"<br>";
+    $failure_count++;
 }
 
 echo "<br>";
@@ -118,14 +123,17 @@ $getExperimentFields_response = getExperimentFieldsTest($exp);
 
 if ($getExperimentFields_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unable to get experiment fields.<br>";
+    $success_count++;
 } elseif ($getExperimentFields_response['status'] == 200) {
     echo "<div class='failure'>FAILURE</div>, Got experiment fields. JSON: ";
     print_r($getExperimentFields_response);
     echo"<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getExperimentFields_response);
     echo"<br>";
+    $failure_count++;
 }
 
 echo"<hr>";
@@ -143,10 +151,12 @@ $getExperimentTags_response = getExperimentTagsTest($exp);
 
 if ($getExperimentTags_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Got experiment tags.<br>";
+    $success_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Unable to get experiment tags. JSON: ";
     print_r($getExperimentTags_response);
     echo"<br>";
+    $failure_count++;
 }
 
 echo "<br>";
@@ -161,14 +171,17 @@ if ($getExperimentTags_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unable to get experiment tags.<br>";
     print_r($getExperimentTags_response);
     echo "<br>";
+    $success_count++;
 } elseif ($getExperimentTags_response['status'] == 200) {
     echo "<div class='failure'>FAILURE</div>, Got experiment tags. JSON: ";
     print_r($getExperimentTags_response);
     echo"<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getExperimentTags_response);
     echo"<br>";
+    $failure_count++;
 }
 
 echo"<hr>";
@@ -186,10 +199,12 @@ $getExperimentVideos_response = getExperimentVideosTest($exp);
 
 if ($getExperimentVideos_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Got experiment videos.<br>";
+    $success_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Unable to get experiment videos. JSON: ";
     print_r($getExperimentVideos_response);
     echo"<br>";
+    $failure_count++;
 }
 
 echo "<br>";
@@ -202,14 +217,17 @@ $getExperimentVideos_response = getExperimentVideosTest($exp);
 
 if ($getExperimentVideos_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unable to get experiment videos.<br>";
+    $success_count++;
 } elseif ($getExperimentVideos_response['status'] == 200) {
     echo "<div class='failure'>FAILURE</div>, Got experiment videos. JSON: ";
     print_r($getExperimentVideos_response);
     echo"<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getExperimentVideos_response);
     echo"<br>";
+    $failure_count++;
 }
 
 echo"<hr>";
@@ -227,10 +245,12 @@ $getExperimentImages_response = getExperimentImagesTest($exp);
 
 if ($getExperimentImages_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Got experiment images.<br>";
+    $success_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Unable to get experiment images. JSON: ";
     print_r($getExperimentImages_response);
     echo"<br>";
+    $failure_count++;
 }
 
 echo "<br>";
@@ -243,14 +263,17 @@ $getExperimentImages_response = getExperimentImagesTest($exp);
 
 if ($getExperimentImages_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unable to get experiment images.<br>";
+    $success_count++;
 } elseif ($getExperimentImages_response['status'] == 200) {
     echo "<div class='failure'>FAILURE</div>, Got experiment images. JSON: ";
     print_r($getExperimentImages_response);
     echo "<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getExperimentImages_response);
     echo "<br>";
+    $failure_count++;
 }
 
 echo "<hr>";
