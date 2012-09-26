@@ -1,5 +1,8 @@
 <?php
 
+global $success_count;
+global $failure_count;
+
 function loginTest($user,$pass){
     //The target for this test
     $target =  "localhost/ws/api.php?method=login";
@@ -41,10 +44,12 @@ if ($login_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Successful login. UID: ";
     echo "<a href=\"http://localhost/profile.php?id=" . $uid ."\">" . $uid . "</a>";
     echo ", Session Key: " . $session_key . '<br>';
+    $success_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Unsuccessful login. JSON: ";
     print_r($login_response);
     echo "<br>";
+    $failure_count++;
 }
 
 echo '<br>';
@@ -56,14 +61,17 @@ $login_response = loginTest('sor','');
 
 if ($login_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unsuccessful login.<br>";
+    $success_count++;
 } elseif ($login_response['status'] == 200) {
     echo "<div class='failure'>FAILURE</div>, Successful login. JSON: ";
     print_r($login_response);
     echo "<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($login_response);
     echo "<br>";
+    $failure_count++;
 }
 
 echo '<hr>';
