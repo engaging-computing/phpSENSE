@@ -1,5 +1,8 @@
 <?php
 
+global $success_count;
+global $failure_count;
+
 require_once('apitest-login.php') ;
 
 function createSessionTest($params){
@@ -65,6 +68,7 @@ $createSession_response = createSessionTest($params);
 
 if ($createSession_response['status'] == 400) {
     echo "<div class='success'>SUCCESS</div>, Unable to create a session on a closed experiment.<br>";
+    $success_count++;
 } elseif ($createSession_response['status'] == 200) {
     $session_id = $createSession_response['data']['sessionId'];
     echo "<div class='failure'>FAILURE</div>, Created a session on a closed experiment. Exp: ";
@@ -72,10 +76,12 @@ if ($createSession_response['status'] == 400) {
     echo "<a href=\"http://localhost/newvis.php?sessions=" . $session_id  ."\">" . $session_id . "</a>.  JSON: ";
     print_r($createSession_response);
     echo "<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($login_response);
     echo "<br>";
+    $failure_count++;
 }
 
 
@@ -112,11 +118,13 @@ if ($createSession_response['status'] == 400){
     echo "<div class='success'>SUCCESS</div>, ";
     echo $createSession_response['data']['msg'];
     echo "<br><br>";
+    $success_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, ";
     echo $createSession_response['data']['msg'];
     print_r($createSession_response);
     echo "<br><br>";
+    $failure_count++;
 }
 
 //Session on an open experiment
@@ -129,10 +137,12 @@ if ($createSession_response['status'] == 200 ){
     $session_id = $createSession_response['data']['sessionId'];
     echo "<div class='success'>SUCCESS</div>, Successfully created a session on an open experiment. ";
     echo "<br>";
+    $success_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Could not create session on open experiment. JSON: ";
     print_r($createSession_response);
     echo "<br>";
+    $failure_count++;
 }
 
 print_r ($createSession_response);
@@ -167,18 +177,22 @@ if($putSessionData_response['status'] == 200){
     echo "<div class='success'>SUCCESS</div>, ";
     echo $putSessionData_response['data']['msg'];
     echo "<br>";
+    $success_count++;
 }elseif($putSessionData_response['status'] == 400){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
     echo "<br>";
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 550){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
     echo "<br>";
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 551){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
     echo "<br>";
+    $failure_count++;
 }
 
 echo "<br>";
@@ -193,18 +207,22 @@ if($putSessionData_response['status'] == 400){
     echo "<div class='success'>SUCCESS</div>, ";
     echo $putSessionData_response['data']['msg'];
     echo "<br>";
+    $success_count++;
 }elseif($putSessionData_response['status'] == 200){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
     echo "<br>";
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 550){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
     echo "<br>";
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 551){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
     echo "<br>";
+    $failure_count++;
 }
 
 echo "<br>";
@@ -220,18 +238,22 @@ if($putSessionData_response['status'] == 550){
     echo "<div class='success'>SUCCESS</div>, ";
     echo $putSessionData_response['data']['msg'];
     echo "<br>";
+    $success_count++;
 }elseif($putSessionData_response['status'] == 400){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
     echo "<br>";
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 200){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
     echo "<br>";
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 551){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
     echo "<br>";
+    $failure_count++;
 }
 
 echo "<br>";
@@ -245,15 +267,19 @@ $putSessionData_response = putSessionDataTest($params);
 if($putSessionData_response['status'] == 551){
     echo "<div class='success'>SUCCESS</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $success_count++;
 }elseif($putSessionData_response['status'] == 400){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 200){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 550){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $failure_count++;
 }
 
 echo "<br><br>";
@@ -267,15 +293,19 @@ $putSessionData_response = putSessionDataTest($params);
 if($putSessionData_response['status'] == 551){
     echo "<div class='success'>SUCCESS</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $success_count++;
 }elseif($putSessionData_response['status'] == 400){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 200){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 550){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $failure_count++;
 }
 
 echo "<br><br>";
@@ -289,15 +319,19 @@ $putSessionData_response = putSessionDataTest($params);
 if($putSessionData_response['status'] == 551){
     echo "<div class='success'>SUCCESS</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $success_count++;
 }elseif($putSessionData_response['status'] == 400){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 200){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 550){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $failure_count++;
 }
 
 echo "<br><br>";
@@ -311,15 +345,19 @@ $putSessionData_response = putSessionDataTest($params);
 if($putSessionData_response['status'] == 551){
     echo "<div class='success'>SUCCESS</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $success_count++;
 }elseif($putSessionData_response['status'] == 400){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 200){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $failure_count++;
 }elseif($putSessionData_response['status'] == 550){
     echo "<div class ='failure'>FAILURE</div>, ";
     echo $putSessionData_response['data']['msg'];
+    $failure_count++;
 }
 
 echo "<br>";
