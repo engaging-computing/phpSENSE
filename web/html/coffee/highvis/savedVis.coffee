@@ -172,9 +172,6 @@ globals.serializeVis = ->
     globalsCpy = stripFunctions globals
     dataCpy = stripFunctions data
 
-    globals.curVis.end()
-    globals.curVis.start()
-
     delete globalsCpy.curVis
 
     ret =

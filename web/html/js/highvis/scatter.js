@@ -309,7 +309,7 @@
       }
       controls += '</div></div>';
       ($('#controldiv')).append(controls);
-      ($('.xAxis_input')).click(function(e) {
+      ($('.xAxis_input')).change(function(e) {
         var selection;
         selection = null;
         ($('.xAxis_input')).each(function() {
@@ -318,7 +318,8 @@
           }
         });
         _this.xAxis = Number(selection);
-        return _this.delayedUpdate();
+        _this.update();
+        return _this.resetExtremes();
       });
       if ((_ref1 = globals.xAxisOpen) == null) {
         globals.xAxisOpen = 0;
@@ -330,6 +331,69 @@
       return ($('#xAxisControl > h3')).click(function() {
         return globals.xAxisOpen = (globals.xAxisOpen + 1) % 2;
       });
+    };
+
+    Scatter.prototype.resetExtremes = function() {
+      if (this.chart !== void 0) {
+        this.xAxisExtremes = this.chart.xAxis[0].getExtremes();
+        this.yAxisExtremes = this.chart.yAxis[0].getExtremes();
+        if (this.xAxisExtremes !== void 0) {
+          this.chart.xAxis[0].setExtremes(this.xAxisExtremes['dataMin'], this.xAxisExtremes['dataMax'], true);
+        }
+        if (this.yAxisExtremes !== void 0) {
+          return this.chart.yAxis[0].setExtremes(this.yAxisExtremes['dataMin'], this.yAxisExtremes['dataMax'], true);
+        }
+      }
+    };
+
+    Scatter.prototype.getExtremes = function() {
+      if (this.chart !== void 0) {
+        this.xAxisExtremes = this.chart.xAxis[0].getExtremes();
+        return this.yAxisExtremes = this.chart.yAxis[0].getExtremes();
+      }
+    };
+
+    Scatter.prototype.setExtremes = function() {
+      if ((this.xAxisExtremes !== void 0) && (this.yAxisExtremes !== void 0)) {
+        this.chart.xAxis[0].setExtremes(this.xAxisExtremes['min'], this.xAxisExtremes['max'], true);
+        this.chart.yAxis[0].setExtremes(this.yAxisExtremes['min'], this.yAxisExtremes['max'], true);
+        return this.chart.showResetZoom();
+      }
+    };
+
+    Scatter.prototype.clearExtremes = function() {
+      this.xAxisExtremes = void 0;
+      return this.yAxisExtremes = void 0;
+    };
+
+    /*
+        Saves the current zoom level
+    */
+
+
+    Scatter.prototype.end = function() {
+      this.getExtremes();
+      return Scatter.__super__.end.call(this);
+    };
+
+    /*
+        Sets the previous zoom level
+    */
+
+
+    Scatter.prototype.start = function() {
+      Scatter.__super__.start.call(this);
+      return this.setExtremes();
+    };
+
+    /*
+        Saves the zoom level before cleanup
+    */
+
+
+    Scatter.prototype.serializationCleanup = function() {
+      this.getExtremes();
+      return Scatter.__super__.serializationCleanup.call(this);
     };
 
     return Scatter;
