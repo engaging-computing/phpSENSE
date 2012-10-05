@@ -7,7 +7,7 @@
 			    <br>
 				<input type="radio" name="fieldSelect" value="custom" checked> Set up fields manually.</input><br>
 				<input type="radio" name="fieldSelect" value="pinpoint"> Set up fields for Pinpoint.</input><br>
-				<!--<input type="radio" name="fieldSelect" value="upinpoint"> Set up fields for uPinpoint.</input><br>--><br>
+				<input type="radio" name="fieldSelect" value="upinpoint"> Set up fields for uPinpoint.</input><br><br>
 				<button onclick="createWizard.step_start();">Next</button>
 			</div>
 			
