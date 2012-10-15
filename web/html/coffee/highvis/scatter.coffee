@@ -256,14 +256,16 @@ class window.Scatter extends BaseHighVis
         ($ '#controldiv').append controls
 
         # Make xAxis radio handler
-        ($ '.xAxis_input').click (e) =>
+        ($ '.xAxis_input').change (e) =>
             selection = null
             ($ '.xAxis_input').each ()->
                 if @checked
                     selection = @value
             @xAxis = Number selection
 
-            @delayedUpdate()
+            #@delayedUpdate()
+            @update()
+            @resetExtremes()
 
         #Set up accordion
         globals.xAxisOpen ?= 0
@@ -274,6 +276,52 @@ class window.Scatter extends BaseHighVis
 
         ($ '#xAxisControl > h3').click ->
             globals.xAxisOpen = (globals.xAxisOpen + 1) % 2
+
+    resetExtremes: ->
+        if @chart isnt undefined
+            @xAxisExtremes = @chart.xAxis[0].getExtremes()
+            @yAxisExtremes = @chart.yAxis[0].getExtremes()
+            
+            if @xAxisExtremes isnt undefined then @chart.xAxis[0].setExtremes(@xAxisExtremes['dataMin'],@xAxisExtremes['dataMax'],true)
+            if @yAxisExtremes isnt undefined then @chart.yAxis[0].setExtremes(@yAxisExtremes['dataMin'],@yAxisExtremes['dataMax'],true)
+            #@chart.hideResetZoom()
+            
+    getExtremes: ->
+        if @chart isnt undefined
+            @xAxisExtremes = @chart.xAxis[0].getExtremes()
+            @yAxisExtremes = @chart.yAxis[0].getExtremes()
+
+    setExtremes: ->
+        if (@xAxisExtremes isnt undefined) and (@yAxisExtremes isnt undefined)
+            @chart.xAxis[0].setExtremes(@xAxisExtremes['min'],@xAxisExtremes['max'],true)
+            @chart.yAxis[0].setExtremes(@yAxisExtremes['min'],@yAxisExtremes['max'],true)
+            @chart.showResetZoom()
+            
+    clearExtremes: ->
+        @xAxisExtremes = undefined;
+        @yAxisExtremes = undefined;
+
+    ###
+    Saves the current zoom level
+    ###
+    end: ->
+        @getExtremes()
+        super()
+        
+    ###
+    Sets the previous zoom level
+    ###
+    start: ->
+        super()
+        @setExtremes()
+        
+    ###
+    Saves the zoom level before cleanup
+    ###
+    serializationCleanup: ->
+        @getExtremes()
+        super()
+        
 
 if "Scatter" in data.relVis
     globals.scatter = new Scatter "scatter_canvas"

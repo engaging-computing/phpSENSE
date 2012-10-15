@@ -33,7 +33,7 @@ function packageBrowseVisualizationsResults($results, $page = 1, $limit = 10) {
         $results =  array_splice($results, $offset, $limit);
 
         foreach($results as $result) {
-            $output[$result['vis_id']] = array("meta" => $result, "tags" => array(), "relevancy" => 0);
+            $output[$result['vid']] = array("meta" => $result, "tags" => array(), "relevancy" => 0);
         }
 
         return $output;

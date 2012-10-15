@@ -194,8 +194,6 @@
     }
     globalsCpy = stripFunctions(globals);
     dataCpy = stripFunctions(data);
-    globals.curVis.end();
-    globals.curVis.start();
     delete globalsCpy.curVis;
     return ret = {
       globals: hydrate.stringify(globalsCpy),
