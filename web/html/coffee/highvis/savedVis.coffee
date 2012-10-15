@@ -141,6 +141,11 @@ NOTE: Booleans cannot be serialized properly (Hydrate.js issue)
 ###
 globals.serializeVis = ->
 
+    # set current vis to default
+    current = (globals.curVis.canvas.match /([A-z]*)_canvas/)[1]
+    current = current[0].toUpperCase() + current.slice 1
+    data.defaultVis = current
+
     hydrate = new Hydrate()
 
     stripFunctions = (obj) ->

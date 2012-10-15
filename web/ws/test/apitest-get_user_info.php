@@ -1,4 +1,8 @@
-    <?php
+<?php
+
+global $success_count;
+global $failure_count;
+
 require_once('apitest-login.php') ;
 function getExperimentByUserTest($id){
     global $session_key;
@@ -133,14 +137,17 @@ $getExperimentByUser_response = getExperimentByUserTest($id);
 
 if ($getExperimentByUser_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Got experiment from user.<br>";
+    $success_count++;
 } elseif ($getExperimentByUser_response['status'] == 600) {
     echo "<div class='failure'>FAILURE</div>, Did not get experiment from user. JSON: ";
     print_r($getExperimentByUser_response);
     echo"<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
     print_r($getExperimentByUser_response);
     echo"<br>";
+    $failure_count++;
 }
 
 echo"<br>";
@@ -153,14 +160,17 @@ $getExperimentByUser_response = getExperimentByUserTest($id);
 
 if ($getExperimentByUser_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unable to get experiment(s) from user.<br>";
+    $success_count++;
 } elseif ($getExperimentByUser_response['status'] == 200) {
     echo "<div class='failure'>FAILURE</div>, Got experiment(s) from user. JSON: ";
     print_r($getExperimentByUser_response);
     echo "<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getExperimentByUser_response);
     echo "<br>";
+    $failure_count++;
 }
 
 echo "<hr>";
@@ -178,10 +188,12 @@ $getImagesByUser_response = getImagesByUserTest($id);
 
 if ($getImagesByUser_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Able to get images.<br>";
+    $success_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Unable to get images. JSON: ";
     print_r($getImagesByUser_response);
     echo "<br>";
+    $failure_count++;
 }
 
 echo "<br>";
@@ -194,14 +206,17 @@ $getImagesByUser_response = getImagesByUserTest($id);
 
 if ($getImagesByUser_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unable to get images from user.<br>";
+    $success_count++;
 } elseif ($getImagesByUser_response['status'] == 200) {
     echo "<div class='failure'>FAILURE</div>, Got images from user. JSON: ";
     print_r($getImagesByUser_response);
     echo "<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getImagesByUser_response);
     echo "<br>";
+    $failure_count++;
 }
 
 echo "<hr>";
@@ -219,14 +234,17 @@ $getVideosByUser_response = getVideosByUserTest($id);
 
 if ($getVideosByUser_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Got video(s) from user.<br>";
+    $success_count++;
 } elseif ($getVideosByUser_response['status'] == 600) {
     echo "<div class='failure'>FAILURE</div>, Did not get video(s) from user. JSON: ";
     print_r($getVideosByUser_response);
     echo"<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
     print_r($getVideosByUser_response);
     echo"<br>";
+    $failure_count++;
 }
 
 echo"<br>";
@@ -239,14 +257,17 @@ $getVideosByUser_response = getVideosByUserTest($id);
 
 if ($getVideosByUser_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unable to get video(s) from user.<br>";
+    $success_count++;
 } elseif ($getVideosByUser_response['status'] == 200) {
     echo "<div class='failure'>FAILURE</div>, Got video(s) from user. JSON: ";
     print_r($getExperimentByUser_response);
     echo "<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getVideosByUser_response);
     echo "<br>";
+    $failure_count++;
 }
 
 echo "<hr>";
@@ -259,19 +280,22 @@ echo "<h1>Gets User Profile Test</h1>";
 //Verifies that we have received a user profile
 echo "<h2>Tests that we got a user profile..</h2>";
 
-$id = 1;
+$id = 2;
 $getUserProfile_response = getUserProfileTest($id);
 
 if ($getUserProfile_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Got user profile.<br>";
+    $success_count++;
 } elseif ($getUserProfile_response['status'] == 600) {
     echo "<div class='failure'>FAILURE</div>, Did not get user profile. JSON: ";
     print_r($getUserProfile_response);
     echo"<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON:";
     print_r($getUserProfile_response);
     echo"<br>";
+    $failure_count++;
 }
 
 echo"<br>";
@@ -284,10 +308,12 @@ $getUserProfile_response = getUserProfileTest($id);
 
 if (count($getUserProfile_response['data']) == 0) {
     echo "<div class='success'>SUCCESS</div>, Unable to get user profile.<br>";
+    $success_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, You got the user profile. JSON: ";
     print_r($getUserProfile_response);
     echo "<br>";
+    $failure_count++;
 }
 
 echo "<hr>";
@@ -305,10 +331,12 @@ $getSessionsByUser_response = getSessionsByUserTest($id);
 
 if ($getSessionsByUser_response['status'] == 200) {
     echo "<div class='success'>SUCCESS</div>, Able to get sessions.<br>";
+    $success_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Unable to get sessions. JSON: ";
     print_r($getSessionsByUser_response);
     echo "<br>";
+    $failure_count++;
 }
 
 echo "<br>";
@@ -321,14 +349,17 @@ $getSessionsByUser_response = getSessionsByUserTest($id);
 
 if ($getSessionsByUser_response['status'] == 600) {
     echo "<div class='success'>SUCCESS</div>, Unable to get sessions from user.<br>";
+    $success_count++;
 } elseif ($getSessionsByUser_response['status'] == 200) {
     echo "<div class='failure'>FAILURE</div>, Got sessions from user. JSON: ";
     print_r($getSessionsByUser_response);
     echo "<br>";
+    $failure_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Something unexpected happened. JSON: ";
     print_r($getSessionsByUser_response);
     echo "<br>";
+    $failure_count++;
 }
 
 echo "<hr>";

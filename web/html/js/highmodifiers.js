@@ -31,7 +31,8 @@
 
 
 (function() {
-  var field, hydrate, index, _ref, _ref1, _ref2, _ref3;
+  var field, hydrate, index, _ref, _ref1, _ref2, _ref3, _ref4,
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   if (data.savedData != null) {
     hydrate = new Hydrate();
@@ -360,6 +361,26 @@
 
   if ((_ref3 = data.groups) == null) {
     data.groups = data.makeGroups();
+  }
+
+  if ((_ref4 = data.logSafe) == null) {
+    data.logSafe = (function() {
+      var dataPoint, fieldIndex, _i, _j, _len, _len1, _ref5, _ref6;
+      _ref5 = data.dataPoints;
+      for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+        dataPoint = _ref5[_i];
+        _ref6 = data.fields;
+        for (fieldIndex = _j = 0, _len1 = _ref6.length; _j < _len1; fieldIndex = ++_j) {
+          field = _ref6[fieldIndex];
+          if (__indexOf.call(data.normalFields, fieldIndex) >= 0) {
+            if ((Number(dataPoint[fieldIndex] <= 0)) && (dataPoint[fieldIndex] !== null)) {
+              return 0;
+            }
+          }
+        }
+      }
+      return 1;
+    })();
   }
 
 }).call(this);

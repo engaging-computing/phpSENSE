@@ -62,6 +62,13 @@ $session_id = null;
 //User id for logged in user
 $uid = null;
 
+//Sucess counter
+$success_count = 0;
+
+//Failure counter
+$failure_count = 0;
+
+
 function initialize(){
     global $db;
     echo "Setting experiment 1 to open...<br>";
@@ -85,9 +92,11 @@ echo "<h1>Initialization</h1>";
 //setting up closed and open experiments
 echo "<h2>Initializing database....</h2>";
 if(initialize()){
-    echo "<div class='success'>SUCCESS</div>, Initialization completed!<br>";	
+    echo "<div class='success'>SUCCESS</div>, Initialization completed!<br>";
+    $success_count++;
 } else {
     echo "<div class='failure'>FAILURE</div>, Initialization failed!<br>";
+    $failure_count++;
 }
 echo "<hr>";
 
@@ -117,6 +126,19 @@ echo "<div class=\"testheading\">Starting Get Experiment Info Test...<br></div>"
 
 require_once('apitest-get_experiment_info.php');
 
+//--------------------------------------------------------------------------------------------------------------------
+//Success and Failure Counts
+echo "<div class=\"testheading\">Success and Failure Counts....<br></div>";
+//counts the number of successful tests and the number of tests that are failing
+echo "<div class='success'>Successes:</div>";
+      echo $success_count;
+      echo "/44";
+echo "<br><br>";
+    echo "<div class='failure'>Failures:</div>";
+    echo $failure_count;
+    echo "/44";
+echo "<br>";
+echo "<hr>";
 ?>
 </body>
 </html>

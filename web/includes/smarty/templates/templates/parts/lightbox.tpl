@@ -7,7 +7,7 @@
 			    <br>
 				<input type="radio" name="fieldSelect" value="custom" checked> Set up fields manually.</input><br>
 				<input type="radio" name="fieldSelect" value="pinpoint"> Set up fields for Pinpoint.</input><br>
-				<!--<input type="radio" name="fieldSelect" value="upinpoint"> Set up fields for uPinpoint.</input><br>--><br>
+				<input type="radio" name="fieldSelect" value="upinpoint"> Set up fields for uPinpoint.</input><br><br>
 				<button onclick="createWizard.step_start();">Next</button>
 			</div>
 			
@@ -233,23 +233,43 @@
 					<th colspan="2" align="left" width="169px">Sensor</th>
 				</tr>
 				<tr>
-					<td><input id="temperature" name="temperature" type="checkbox" /></td>
+					<td><input id="Time" name="Time" type="checkbox" /></td>
+					<td colspan="2">Time</td>
+				</tr>
+				<tr>
+					<td><input id="ElapsedTime" name="ElapsedTime" type="checkbox" /></td>
+					<td colspan="2">Elapsed Time</td>
+				</tr>
+				<tr>
+					<td><input id="Temperature" name="Temperature" type="checkbox" /></td>
 					<td colspan="2">Air Temperature</td>
 				</tr>
 				<tr>
-					<td><input id="pressure" name="pressure" type="checkbox" /></td>
+					<td><input id="Pressure" name="Pressure" type="checkbox" /></td>
 					<td colspan="2">Pressure</td>
 				</tr>
 				<tr>
-					<td><input id="altitude" name="altitude" type="checkbox" /></td>
+					<td><input id="Altitude" name="Altitude" type="checkbox" /></td>
 					<td colspan="2">Altitude</td>
 				</tr>
 				<tr>
-					<td><input id="acceleration" name="acceleration" type="checkbox" /></td>
-					<td colspan="2">Acceleration</td>
+					<td><input id="AccelX" name="AccelX" type="checkbox" /></td>
+					<td colspan="2">Acceleration: X</td>
 				</tr>
 				<tr>
-					<td><input id="light" name="light" type="checkbox" /></td>
+					<td><input id="AccelY" name="AccelY" type="checkbox" /></td>
+					<td colspan="2">Acceleration: Y</td>
+				</tr>
+				<tr>
+					<td><input id="AccelZ" name="AccelZ" type="checkbox" /></td>
+					<td colspan="2">Acceleration: Z</td>
+				</tr>
+				<tr>
+					<td><input id="AccelMag" name="AccelMag" type="checkbox" /></td>
+					<td colspan="2">Acceleration: Magnitude</td>
+				</tr>
+				<tr>
+					<td><input id="Light" name="Light" type="checkbox" /></td>
 					<td colspan="2">Light</td>
 				</tr>
 				

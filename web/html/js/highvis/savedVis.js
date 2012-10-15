@@ -156,7 +156,10 @@
 
 
   globals.serializeVis = function() {
-    var dataCpy, globalsCpy, hydrate, ret, stripFunctions, vis, visName, _i, _len, _ref1;
+    var current, dataCpy, globalsCpy, hydrate, ret, stripFunctions, vis, visName, _i, _len, _ref1;
+    current = (globals.curVis.canvas.match(/([A-z]*)_canvas/))[1];
+    current = current[0].toUpperCase() + current.slice(1);
+    data.defaultVis = current;
     hydrate = new Hydrate();
     stripFunctions = function(obj) {
       var cpy, key, stripped, val;
