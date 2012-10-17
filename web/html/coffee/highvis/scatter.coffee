@@ -124,8 +124,8 @@ class window.Scatter extends BaseHighVis
     drawControls: ->
         super()
         @drawGroupControls()
-        @drawYAxisControls()
         @drawXAxisControls()
+        @drawYAxisControls()
         @drawToolControls()
         @drawSaveControls()
 
