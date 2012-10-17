@@ -220,6 +220,7 @@ class window.Bar extends BaseHighVis
     drawControls: ->
         super()
         @drawGroupControls()
+        @drawYAxisControls()
         @drawToolControls()
         @drawSaveControls()
     

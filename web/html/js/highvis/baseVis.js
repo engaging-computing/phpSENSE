@@ -329,8 +329,7 @@
 
 
     BaseHighVis.prototype.buildOptions = function() {
-      var self,
-        _this = this;
+      var self;
       self = this;
       this.chartOptions = {
         chart: {
@@ -362,18 +361,9 @@
               radius: 5
             },
             events: {
-              legendItemClick: (function() {
-                return function(event) {
-                  var index;
-                  index = this.options.legendIndex;
-                  if (__indexOf.call(globals.fieldSelection, index) >= 0) {
-                    arrayRemove(globals.fieldSelection, index);
-                  } else {
-                    globals.fieldSelection.push(index);
-                  }
-                  return self.delayedUpdate();
-                };
-              })()
+              legendItemClick: function(event) {
+                return false;
+              }
             }
           }
         },
@@ -464,6 +454,67 @@
       };
       setTimeout(update, 1);
       return this.chart.hideLoading();
+    };
+
+    /*
+        Draws y axis controls
+            This includes a series of checkboxes or radio buttons for selecting
+            the active y axis field(s).
+    */
+
+
+    BaseHighVis.prototype.drawYAxisControls = function(radio) {
+      var controls, fIndex, _i, _len, _ref4, _ref5, _ref6,
+        _this = this;
+      if (radio == null) {
+        radio = false;
+      }
+      controls = '<div id="yAxisControl" class="vis_controls">';
+      controls += "<h3 class='clean_shrink'><a href='#'>Y Axis:</a></h3>";
+      controls += "<div class='outer_control_div'>";
+      _ref4 = data.normalFields;
+      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
+        fIndex = _ref4[_i];
+        controls += "<div class='inner_control_div' >";
+        if (radio) {
+          controls += "<input class='y_axis_input' name='y_axis_group' type='radio' value='" + fIndex + "' " + ((Number(fIndex)) === this.displayField ? "checked" : "") + "/>&nbsp";
+        } else {
+          controls += "<input class='y_axis_input' type='checkbox' value='" + fIndex + "' " + ((_ref5 = Number(fIndex), __indexOf.call(globals.fieldSelection, _ref5) >= 0) ? "checked" : "") + "/>&nbsp";
+        }
+        controls += "" + data.fields[fIndex].fieldName;
+        controls += "</div>";
+      }
+      controls += '</div></div>';
+      ($('#controldiv')).append(controls);
+      if (radio) {
+        ($('.y_axis_input')).click(function(e) {
+          _this.displayField = Number(e.target.value);
+          _this.binSize = _this.defaultBinSize();
+          ($("#binSizeInput")).attr('value', _this.binSize);
+          return _this.delayedUpdate();
+        });
+      } else {
+        ($('.y_axis_input')).click(function(e) {
+          var index;
+          index = Number(e.target.value);
+          if (__indexOf.call(globals.fieldSelection, index) >= 0) {
+            arrayRemove(globals.fieldSelection, index);
+          } else {
+            globals.fieldSelection.push(index);
+          }
+          return _this.delayedUpdate();
+        });
+      }
+      if ((_ref6 = globals.yAxisOpen) == null) {
+        globals.yAxisOpen = 0;
+      }
+      ($('#yAxisControl')).accordion({
+        collapsible: true,
+        active: globals.yAxisOpen
+      });
+      return ($('#yAxisControl > h3')).click(function() {
+        return globals.yAxisOpen = (globals.yAxisOpen + 1) % 2;
+      });
     };
 
     /*

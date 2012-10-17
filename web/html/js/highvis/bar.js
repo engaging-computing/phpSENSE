@@ -336,6 +336,7 @@
     Bar.prototype.drawControls = function() {
       Bar.__super__.drawControls.call(this);
       this.drawGroupControls();
+      this.drawYAxisControls();
       this.drawToolControls();
       return this.drawSaveControls();
     };
