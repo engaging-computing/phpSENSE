@@ -111,8 +111,13 @@ class DataField {
 if(isset($_REQUEST['vid'])) {
 
      $vis = getSavedVis($_REQUEST['vid']);
-     
-     echo "var data = {savedData: '{$vis[0]['data']}', savedGlobals: '{$vis[0]['globals']}'};";
+
+     $vis[0]['savedData'] = $vis[0]['data'];
+     $vis[0]['savedGlobals'] = $vis[0]['globals'];
+
+     unset($vis[0]['data'], $vis[0]['globals']);
+
+     echo "var data = " . json_encode($vis[0]);
 
 }
 
