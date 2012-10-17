@@ -55,8 +55,7 @@
     };
 
     Histogram.prototype.buildOptions = function() {
-      var self,
-        _this = this;
+      var self;
       Histogram.__super__.buildOptions.call(this);
       self = this;
       this.chartOptions;
@@ -92,14 +91,9 @@
           },
           series: {
             events: {
-              legendItemClick: (function() {
-                return function(event) {
-                  self.displayField = this.options.legendIndex;
-                  self.binSize = self.defaultBinSize();
-                  ($("#binSizeInput")).attr('value', self.binSize);
-                  return self.delayedUpdate();
-                };
-              })()
+              legendItemClick: function(event) {
+                return false;
+              }
             }
           }
         }
@@ -358,6 +352,7 @@
     Histogram.prototype.drawControls = function() {
       Histogram.__super__.drawControls.call(this);
       this.drawGroupControls();
+      this.drawYAxisControls(true);
       this.drawToolControls();
       return this.drawSaveControls();
     };
