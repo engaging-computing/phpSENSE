@@ -166,8 +166,8 @@
     Scatter.prototype.drawControls = function() {
       Scatter.__super__.drawControls.call(this);
       this.drawGroupControls();
-      this.drawYAxisControls();
       this.drawXAxisControls();
+      this.drawYAxisControls();
       this.drawToolControls();
       return this.drawSaveControls();
     };
