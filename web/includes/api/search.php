@@ -48,34 +48,12 @@ function getVisualizations($terms = null, $page = 1, $limit = 10, $sort = "relev
     global $db;
     
     if( $terms != null ){
-        $tags = explode(" ", $terms);
-        $results = array();
-        
-        // Build array of search results
-        foreach($tags as $tag) {
-            $search_results = getVisByTag($tag);
-            if($search_results !== false) {
-                $results[$tag] = $search_results;
-            }
-        }
-        
-        $experiments = array();
-        
+
+        $query = "\"%" . $terms . "%\"";
+      	$sql = "SELECT savedVises.*, savedVises.timecreated as `timeobj` FROM savedVises WHERE title LIKE {$query}" ;
+      	$results= $db->query($sql);
+
         $total = count($results);
-        
-        foreach($results as $resultk => $resultv) {
-            foreach($resultv as $exp) {
-                
-                $key = $exp['vis_id'];
-                if(!array_key_exists($key, $experiments)) {
-                    $experiments[$key] = array('meta' => $exp, 'tags' => array($resultk), 'relevancy' => 1);
-                }
-                else {
-                    $experiments[$key]['tags'][] = $resultk;
-                    $experiments[$key]['relevancy'] = count($experiments[$key]['tags']);
-                }
-            }
-        }
         
         if($sort == "relevancy") {
             uasort($experiments, "sort_relevancy");
@@ -83,8 +61,10 @@ function getVisualizations($terms = null, $page = 1, $limit = 10, $sort = "relev
               
         $offset = ($page - 1) * $limit;
         
-        return array('count'=>$total,'data'=>array_splice($experiments, $offset, $limit));
+        //return array('count'=>$total,'data'=>array_splice($experiments, $offset, $limit));
         
+        return (array('count' => $total,'data'=>packageBrowseVisualizationsResults($results, $page, $limit)));
+       
     } else {
         $sql = "SELECT savedVises.*, savedVises.timecreated as `timeobj`, users.firstname FROM savedVises, users WHERE savedVises.owner_id = users.user_id ORDER BY savedVises.timecreated DESC";    
         
