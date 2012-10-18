@@ -268,6 +268,8 @@ class window.BaseHighVis extends BaseVis
                     printButton:
                         enabled:false
             legend:
+                itemHoverStyle: ''
+                backgroundColor: 'white'
                 symbolWidth:60
                 itemWidth: 200
             #loading: {}

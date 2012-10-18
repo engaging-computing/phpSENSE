@@ -64,7 +64,7 @@
           type: "column"
         },
         legend: {
-          symbolWidth: 0
+          enabled: false
         },
         title: {
           text: ""
