@@ -54,7 +54,7 @@ class window.Bar extends BaseHighVis
             title:
                 text: ""
             legend:
-                symbolWidth: 0
+                enabled: false
             tooltip:
                 formatter: ->
                     str  = "<div style='width:100%;text-align:center;color:#{@series.color};margin-bottom:5px'> #{@point.name}</div>"

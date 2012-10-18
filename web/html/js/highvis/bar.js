@@ -74,7 +74,7 @@
           text: ""
         },
         legend: {
-          symbolWidth: 0
+          enabled: false
         },
         tooltip: {
           formatter: function() {

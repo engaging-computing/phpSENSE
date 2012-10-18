@@ -50,7 +50,7 @@ class window.Histogram extends BaseHighVis
             chart:
                 type: "column"
             legend:
-                symbolWidth: 0
+                enabled: false
             title:
                 text: ""
             tooltip:
