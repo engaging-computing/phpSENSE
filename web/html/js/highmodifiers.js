@@ -130,7 +130,7 @@
     rawData = this.selector(fieldIndex, groupIndex);
     if (rawData.length > 0) {
       return rawData.reduce(function(a, b) {
-        return Math.max(a, b);
+        return Math.max(Number(a), Number(b));
       });
     } else {
       return null;
@@ -148,7 +148,7 @@
     rawData = this.selector(fieldIndex, groupIndex);
     if (rawData.length > 0) {
       return rawData.reduce(function(a, b) {
-        return Math.min(a, b);
+        return Math.min(Number(a), Number(b));
       });
     } else {
       return null;
@@ -166,7 +166,7 @@
     rawData = this.selector(fieldIndex, groupIndex);
     if (rawData.length > 0) {
       return (rawData.reduce(function(a, b) {
-        return a + b;
+        return (Number(a)) + (Number(b));
       })) / rawData.length;
     } else {
       return null;
@@ -186,9 +186,9 @@
     mid = Math.floor(rawData.length / 2);
     if (rawData.length > 0) {
       if (rawData.length % 2) {
-        return rawData[mid];
+        return Number(rawData[mid]);
       } else {
-        return (rawData[mid - 1] + rawData[mid]) / 2.0;
+        return ((Number(rawData[mid - 1])) + (Number(rawData[mid]))) / 2.0;
       }
     } else {
       return null;
@@ -220,7 +220,7 @@
       total = 0;
       for (_i = 0, _len = rawData.length; _i < _len; _i++) {
         value = rawData[_i];
-        total = total + value;
+        total = total + (Number(value));
       }
       return total;
     } else {
