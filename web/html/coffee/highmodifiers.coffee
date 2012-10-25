@@ -33,7 +33,7 @@ if data.savedData?
     globals.extendObject data, (hydrate.parse data.savedData)
     delete data.savedData
 
-data.types ?= 
+data.types ?=
     TIME: 7
     TEXT: 37
     GEOSPATIAL: 19
@@ -51,7 +51,7 @@ data.xySelector = (xIndex, yIndex, groupIndex) ->
     rawData = @dataPoints.filter (dp) =>
         ((String dp[@groupingFieldIndex]).toLowerCase() == @groups[groupIndex] and
          dp[xIndex] != null and dp[yIndex] != null)
-    
+
     if (Number @fields[xIndex].typeID) is data.types.TIME
         mapFunc = (dp) ->
             obj =
@@ -67,7 +67,7 @@ data.xySelector = (xIndex, yIndex, groupIndex) ->
 
     mapped = rawData.map mapFunc
     mapped.sort (a, b) -> (a.x - b.x)
-    
+
     mapped
 
 ###
@@ -79,14 +79,14 @@ data.selector = (fieldIndex, groupIndex, nans = false) ->
 
     filterFunc = (dp) =>
         (String dp[@groupingFieldIndex]).toLowerCase() == @groups[groupIndex]
-        
+
     newFilterFunc = if nans
         filterFunc
-    else 
+    else
         (dp) -> (filterFunc dp) and (not isNaN dp[fieldIndex]) and (dp[fieldIndex] isnt null)
-        
+
     rawData = @dataPoints.filter newFilterFunc
-    
+
     rawData.map (dp) -> dp[fieldIndex]
 
 ###
@@ -97,7 +97,7 @@ data.getMax = (fieldIndex, groupIndex) ->
     rawData = @selector(fieldIndex, groupIndex)
 
     if rawData.length > 0
-        rawData.reduce (a,b) -> Math.max(a,b)
+        rawData.reduce (a,b) -> Math.max((Number a), (Number b))
     else
         null
 
@@ -109,7 +109,7 @@ data.getMin = (fieldIndex, groupIndex) ->
     rawData = @selector(fieldIndex, groupIndex)
 
     if rawData.length > 0
-        rawData.reduce (a,b) -> Math.min(a,b)
+        rawData.reduce (a,b) -> Math.min((Number a), (Number b))
     else
         null
 
@@ -121,7 +121,7 @@ data.getMean = (fieldIndex, groupIndex) ->
     rawData = @selector(fieldIndex, groupIndex)
 
     if rawData.length > 0
-        (rawData.reduce (a,b) -> a + b) / rawData.length
+        (rawData.reduce (a,b) -> (Number a) + (Number b)) / rawData.length
     else
         null
 
@@ -132,14 +132,14 @@ All included datapoints must pass the given filter (defaults to all datapoints).
 data.getMedian = (fieldIndex, groupIndex) ->
     rawData = @selector(fieldIndex, groupIndex)
     rawData.sort()
-    
+
     mid = Math.floor (rawData.length / 2)
 
     if rawData.length > 0
         if rawData.length % 2
-            return rawData[mid]
+            return Number rawData[mid]
         else
-            return (rawData[mid - 1] + rawData[mid]) / 2.0
+            return ((Number rawData[mid - 1]) + (Number rawData[mid])) / 2.0
     else
         null
 
@@ -162,11 +162,11 @@ data.getTotal = (fieldIndex, groupIndex) ->
     if rawData.length > 0
         total = 0
         for value in rawData
-            total = total + value
+            total = total + (Number value)
         return total;
     else
         null
-     
+
 ###
 Gets a list of unique, non-null, stringified vals from the given field index.
 All included datapoints must pass the given filter (defaults to all datapoints).
@@ -179,18 +179,18 @@ data.setGroupIndex = (index) ->
 Gets a list of unique, non-null, stringified vals from the group field index.
 ###
 data.makeGroups = ->
-    
+
     result = {}
-    
+
     for dp in @dataPoints
         if dp[@groupingFieldIndex] isnt null
             result[String(dp[@groupingFieldIndex]).toLowerCase()] = true
-        
+
     groups = for keys of result
         keys
-        
+
     groups.sort()
-    
+
 ###
 Gets a list of text field indicies
 ###
