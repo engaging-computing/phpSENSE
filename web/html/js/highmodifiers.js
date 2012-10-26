@@ -383,4 +383,39 @@
     })();
   }
 
+  data.generateRelativeTime = function(name, sourceField) {
+    var curTime, datapoint, group, time, timeMins, _i, _j, _k, _len, _len1, _len2, _ref5, _ref6, _ref7;
+    timeMins = [];
+    _ref5 = data.groups;
+    for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+      group = _ref5[_i];
+      timeMins.push(Number.MAX_VALUE);
+    }
+    _ref6 = data.dataPoints;
+    for (_j = 0, _len1 = _ref6.length; _j < _len1; _j++) {
+      datapoint = _ref6[_j];
+      group = data.groups.indexOf((String(datapoint[this.groupingFieldIndex])).toLowerCase());
+      time = new Date(datapoint[sourceField]).valueOf();
+      timeMins[group] = Math.min(timeMins[group], datapoint[sourceField]);
+    }
+    _ref7 = data.dataPoints;
+    for (_k = 0, _len2 = _ref7.length; _k < _len2; _k++) {
+      datapoint = _ref7[_k];
+      group = data.groups.indexOf((String(datapoint[this.groupingFieldIndex])).toLowerCase());
+      curTime = new Date(datapoint[sourceField]).valueOf();
+      datapoint.push((curTime - timeMins[group]) / 1000.0);
+    }
+    data.fields.push({
+      fieldID: -1,
+      fieldName: name,
+      typeID: 21,
+      typeName: 'Numeric',
+      unitAbbreviation: 's',
+      unitID: 66,
+      unitName: "Number"
+    });
+    data.numericFields.push(data.fields.length - 1);
+    return data.normalFields.push(data.fields.length - 1);
+  };
+
 }).call(this);
