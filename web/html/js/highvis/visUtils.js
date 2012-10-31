@@ -277,4 +277,102 @@
 
   globals.symbols = symbolList;
 
+  /*
+  Generates an elasped time field with given name from given
+  time field.
+  */
+
+
+  data.generateElaspedTime = function(name, sourceField) {
+    var curTime, datapoint, group, time, timeMins, _len5, _len6, _len7, _o, _p, _q, _ref10, _ref11, _ref9;
+    timeMins = [];
+    _ref9 = data.groups;
+    for (_o = 0, _len5 = _ref9.length; _o < _len5; _o++) {
+      group = _ref9[_o];
+      timeMins.push(Number.MAX_VALUE);
+    }
+    _ref10 = data.dataPoints;
+    for (_p = 0, _len6 = _ref10.length; _p < _len6; _p++) {
+      datapoint = _ref10[_p];
+      group = data.groups.indexOf((String(datapoint[this.groupingFieldIndex])).toLowerCase());
+      time = new Date(datapoint[sourceField]).valueOf();
+      timeMins[group] = Math.min(timeMins[group], datapoint[sourceField]);
+    }
+    _ref11 = data.dataPoints;
+    for (_q = 0, _len7 = _ref11.length; _q < _len7; _q++) {
+      datapoint = _ref11[_q];
+      group = data.groups.indexOf((String(datapoint[this.groupingFieldIndex])).toLowerCase());
+      curTime = new Date(datapoint[sourceField]).valueOf();
+      datapoint.push((curTime - timeMins[group]) / 1000.0);
+    }
+    data.fields.push({
+      fieldID: -1,
+      fieldName: name,
+      typeID: 21,
+      typeName: 'Numeric',
+      unitAbbreviation: 's',
+      unitID: 66,
+      unitName: "Number"
+    });
+    data.numericFields.push(data.fields.length - 1);
+    return data.normalFields.push(data.fields.length - 1);
+  };
+
+  /*
+  If there is only one time field, generates an appropriate
+  elasped time field. Otherwise it prompts using a dialog for
+  which time field to use.
+  */
+
+
+  globals.generateElaspedTimeDialog = function() {
+    var fieldIndex, formText, name, sel, selectedTime, _len5, _o, _ref9,
+      _this = this;
+    if (data.timeFields.length === 1) {
+      name = 'Elasped Time (';
+      name += data.fields[data.timeFields[0]].fieldName + ')';
+      data.generateElaspedTime(name, data.timeFields[0]);
+      globals.curVis.end();
+      globals.curVis.start();
+      return;
+    }
+    formText = "<div id=\"dialog-form\" title=\"Generate Elasped Time\">\n\n    <form>\n    <fieldset>";
+    formText += '<select id="timeSelector" class="control_select">';
+    _ref9 = data.timeFields;
+    for (index = _o = 0, _len5 = _ref9.length; _o < _len5; index = ++_o) {
+      fieldIndex = _ref9[index];
+      sel = index === 0 ? 'selected' : '';
+      formText += "<option value='" + (Number(fieldIndex)) + "' " + sel + ">" + data.fields[fieldIndex].fieldName + "</option>";
+    }
+    formText += "    </fieldset>\n    </form>\n</div>";
+    selectedTime = data.timeFields[0];
+    ($('#groupSelector')).change(function(e) {
+      var element;
+      element = e.target || e.srcElement;
+      return selectedTime = Number(element.value);
+    });
+    ($("#container")).append(formText);
+    return ($("#dialog-form")).dialog({
+      resizable: false,
+      draggable: false,
+      autoOpen: true,
+      height: 'auto',
+      width: 'auto',
+      modal: true,
+      buttons: {
+        Generate: function() {
+          name = 'Elasped Time (';
+          name += data.fields[selectedTime].fieldName + ')';
+          data.generateElaspedTime(name, selectedTime);
+          globals.curVis.end();
+          globals.curVis.start();
+          return ($("#dialog-form")).dialog('close');
+        }
+      },
+      close: function() {
+        return ($("#dialog-form")).remove();
+      }
+    });
+  };
+
 }).call(this);

@@ -233,9 +233,12 @@
     */
 
 
-    Scatter.prototype.drawToolControls = function() {
+    Scatter.prototype.drawToolControls = function(elaspedTimeButton) {
       var controls, mode, modeText, _i, _len, _ref, _ref1, _ref2,
         _this = this;
+      if (elaspedTimeButton == null) {
+        elaspedTimeButton = true;
+      }
       controls = '<div id="toolControl" class="vis_controls">';
       controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>";
       controls += "<div class='outer_control_div'>";
@@ -257,6 +260,11 @@
         controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' " + (globals.logY === 1 ? 'checked' : '') + "/> Logarithmic Y Axis ";
         controls += "</div>";
       }
+      if (elaspedTimeButton) {
+        controls += "<div class='inner_control_div'>";
+        controls += "<button id='elaspedTimeButton' class='save_button'>Generate Elasped Time </button>";
+        controls += "</div>";
+      }
       controls += "</div></div>";
       ($('#controldiv')).append(controls);
       ($('.mode_radio')).click(function(e) {
@@ -269,6 +277,10 @@
       ($('.logY_box')).click(function(e) {
         globals.logY = (globals.logY + 1) % 2;
         return _this.start();
+      });
+      ($('#elaspedTimeButton')).button();
+      ($('#elaspedTimeButton')).click(function(e) {
+        return globals.generateElaspedTimeDialog();
       });
       if ((_ref2 = globals.toolsOpen) == null) {
         globals.toolsOpen = 0;

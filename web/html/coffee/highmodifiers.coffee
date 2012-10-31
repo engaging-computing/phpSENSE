@@ -233,3 +233,5 @@ data.logSafe ?= do ->
             if (Number dataPoint[fieldIndex] <= 0) and (dataPoint[fieldIndex] isnt null)
                 return 0
     1
+
+            
