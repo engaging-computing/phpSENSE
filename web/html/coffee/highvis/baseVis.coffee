@@ -181,10 +181,11 @@ class window.BaseVis
         controls += "</div>"
 
         if @chart?
+            ###
             controls += "<div class='inner_control_div'>"
             controls += "<button id='downloadVisButton' class='save_button'> Download Visualization </button>"
             controls += "</div>"
-
+            ###
             controls += "<div class='inner_control_div'>"
             controls += "<button id='printVisButton' class='save_button'> Print Visualization </button>"
             controls += "</div>"
@@ -199,9 +200,11 @@ class window.BaseVis
         ($ "#saveVisButton").click ->
             globals.verifyUser (-> globals.savedVisDialog()), (-> alert 'You must be logged in to save a visualization.')
 
+        ###
         ($ '#downloadVisButton').click =>
             @chart.exportChart
                 type: "image/svg+xml"
+        ###
 
         ($ '#printVisButton').click =>
             @chart.print()
