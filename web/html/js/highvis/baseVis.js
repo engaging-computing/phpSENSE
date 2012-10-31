@@ -235,9 +235,12 @@
       controls += "<button id='saveVisButton' class='save_button'>Save Visualization </button>";
       controls += "</div>";
       if (this.chart != null) {
-        controls += "<div class='inner_control_div'>";
-        controls += "<button id='downloadVisButton' class='save_button'> Download Visualization </button>";
-        controls += "</div>";
+        /*
+                    controls += "<div class='inner_control_div'>"
+                    controls += "<button id='downloadVisButton' class='save_button'> Download Visualization </button>"
+                    controls += "</div>"
+        */
+
         controls += "<div class='inner_control_div'>";
         controls += "<button id='printVisButton' class='save_button'> Print Visualization </button>";
         controls += "</div>";
@@ -252,11 +255,12 @@
           return alert('You must be logged in to save a visualization.');
         }));
       });
-      ($('#downloadVisButton')).click(function() {
-        return _this.chart.exportChart({
-          type: "image/svg+xml"
-        });
-      });
+      /*
+              ($ '#downloadVisButton').click =>
+                  @chart.exportChart
+                      type: "image/svg+xml"
+      */
+
       ($('#printVisButton')).click(function() {
         return _this.chart.print();
       });

@@ -220,3 +220,95 @@ Store the list
 ###
 globals.symbols = symbolList
 
+###
+Generates an elasped time field with given name from given
+time field.
+###
+data.generateElaspedTime = (name, sourceField) ->
+    timeMins = []
+
+    for group in data.groups
+        timeMins.push Number.MAX_VALUE
+
+    for datapoint in data.dataPoints
+        group = data.groups.indexOf (String datapoint[@groupingFieldIndex]).toLowerCase()
+        time = new Date(datapoint[sourceField]).valueOf()
+        timeMins[group] = Math.min timeMins[group], datapoint[sourceField]
+
+    for datapoint in data.dataPoints
+        group = data.groups.indexOf (String datapoint[@groupingFieldIndex]).toLowerCase()
+        curTime = new Date(datapoint[sourceField]).valueOf()
+        datapoint.push (curTime - timeMins[group]) / 1000.0
+
+    data.fields.push
+            fieldID: -1
+            fieldName: name
+            typeID: 21
+            typeName: 'Numeric'
+            unitAbbreviation: 's'
+            unitID: 66
+            unitName: "Number"
+
+    data.numericFields.push (data.fields.length - 1)
+    data.normalFields.push (data.fields.length - 1)
+
+###
+If there is only one time field, generates an appropriate
+elasped time field. Otherwise it prompts using a dialog for
+which time field to use.
+###
+globals.generateElaspedTimeDialog = ->
+
+    if data.timeFields.length is 1
+        name  = 'Elasped Time ('
+        name += data.fields[data.timeFields[0]].fieldName + ')'
+        data.generateElaspedTime name, data.timeFields[0]
+        globals.curVis.end()
+        globals.curVis.start()
+        return
+
+    formText = """
+    <div id="dialog-form" title="Generate Elasped Time">
+
+        <form>
+        <fieldset>
+    """
+
+    formText += '<select id="timeSelector" class="control_select">'
+
+    for fieldIndex, index in data.timeFields
+            sel = if index is 0 then 'selected' else ''
+            formText += "<option value='#{Number fieldIndex}' #{sel}>#{data.fields[fieldIndex].fieldName}</option>"
+    
+    formText += """
+        </fieldset>
+        </form>
+    </div>
+    """
+
+    selectedTime = data.timeFields[0]
+    
+    ($ '#groupSelector').change (e) =>
+        element = e.target or e.srcElement
+        selectedTime = (Number element.value)
+
+    ($ "#container").append(formText)
+    
+    ($ "#dialog-form" ).dialog
+        resizable: false
+        draggable: false
+        autoOpen: true
+        height: 'auto'
+        width: 'auto'
+        modal: true
+        buttons:
+            Generate: =>
+                name  = 'Elasped Time ('
+                name += data.fields[selectedTime].fieldName + ')'
+                data.generateElaspedTime name, selectedTime
+                globals.curVis.end()
+                globals.curVis.start()
+                ($ "#dialog-form").dialog 'close'
+        close: ->
+            ($ "#dialog-form").remove()
+        
