@@ -75,7 +75,6 @@
 
   globals.dateFormatter = function(dat) {
     var minDigits, monthNames, str;
-    dat = new Date(dat);
     monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     minDigits = function(num, str) {
       str = String(str);
@@ -295,14 +294,14 @@
     for (_p = 0, _len6 = _ref10.length; _p < _len6; _p++) {
       datapoint = _ref10[_p];
       group = data.groups.indexOf((String(datapoint[this.groupingFieldIndex])).toLowerCase());
-      time = new Date(datapoint[sourceField]).valueOf();
+      time = datapoint[sourceField].valueOf();
       timeMins[group] = Math.min(timeMins[group], datapoint[sourceField]);
     }
     _ref11 = data.dataPoints;
     for (_q = 0, _len7 = _ref11.length; _q < _len7; _q++) {
       datapoint = _ref11[_q];
       group = data.groups.indexOf((String(datapoint[this.groupingFieldIndex])).toLowerCase());
-      curTime = new Date(datapoint[sourceField]).valueOf();
+      curTime = datapoint[sourceField].valueOf();
       datapoint.push((curTime - timeMins[group]) / 1000.0);
     }
     data.fields.push({
