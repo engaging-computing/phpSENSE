@@ -240,7 +240,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
                 
                 /*Fields do not need to be matched by hand, still need to shuffle and time fix*/
                 $data = shuffleColumns($filename,$eid);
-                $data = fixTime($data,$eid);
+                //$data = fixTime($data,$eid);
                 
                 // Create the session record
                 $sid = createSession(   $session->generateSessionToken(), 

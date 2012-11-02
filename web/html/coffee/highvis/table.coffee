@@ -61,11 +61,9 @@ class window.Table extends BaseVis
             group
         
         rows = for dataPoint in data.dataPoints when (String dataPoint[data.groupingFieldIndex]).toLowerCase() in visibleGroups
-            line = for dat, fieldIndex in dataPoint 
-                if((Number data.fields[fieldIndex].typeID) is data.types.TIME)
-                    "<td>#{new Date((Number dat)).toUTCString()}</td>"
-                else 
-                    "<td>#{dat}</td>"
+            line = for dat, fieldIndex in dataPoint
+                "<td>#{dat}</td>"
+                
             "<tr>#{line.reduce (a,b)-> a+b}</tr>"
         
         ($ '#data_table').append '<tbody id="table_body"></tbody>'

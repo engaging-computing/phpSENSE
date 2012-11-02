@@ -164,7 +164,7 @@ if(isset($_REQUEST['sessions'])) {
         //Validate Numerics
         foreach ($tmpData as $j=>$dataPoint) {
             foreach ($data->fields as $k=>$field) {
-                if ($field->typeID != 37)
+                if ($field->typeID != 37 && $field->typeID != 7)
                 {
                     if(!is_numeric($dataPoint[$k])){
                     
