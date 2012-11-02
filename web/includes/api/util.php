@@ -398,7 +398,7 @@ function fixTime($data, $eid){
                 $timefields[]=$key;
             }
         }
-        error_log("HEELO OVER HERE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        
         //If there are time fields check them else return data.
         if(count($timefields) > 0){
             foreach($data as $row_key=>$row){
