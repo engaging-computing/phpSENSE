@@ -421,4 +421,6 @@
     return _results;
   };
 
+  data.sanitizeData();
+
 }).call(this);

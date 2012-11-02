@@ -253,3 +253,5 @@ data.sanitizeData = ->
                     dp[fIndex].replace /"/g, ""
                     dp[fIndex].replace /'/g, ""
                     break
+
+data.sanitizeData()
