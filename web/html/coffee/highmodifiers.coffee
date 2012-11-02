@@ -237,11 +237,23 @@ data.logSafe ?= do ->
 ###
 Check various type-related issues
 ###
-data.sanitizeData = ->
+data.preprocessData = ->
     for dp in data.dataPoints
         for field, fIndex in data.fields
             if (typeof dp[fIndex] == "string")
                 dp[fIndex] = dp[fIndex].replace /"/g, ""
                 dp[fIndex] = dp[fIndex].replace /'/g, ""
 
-data.sanitizeData()
+            switch Number field.typeID
+                when data.types.TIME
+                    if isNaN Number dp[fIndex]
+                        dp[fIndex] = new Date(dp[fIndex])
+                    else
+                        dp[fIndex] = new Date(Number dp[fIndex])
+                when data.types.TEXT
+                    NaN
+                else
+                    dp[fIndex] = Number dp[fIndex]
+    1
+
+data.preprocessData()

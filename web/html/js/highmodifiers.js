@@ -388,31 +388,38 @@
   */
 
 
-  data.sanitizeData = function() {
-    var dp, fIndex, _i, _len, _ref5, _results;
+  data.preprocessData = function() {
+    var dp, fIndex, _i, _j, _len, _len1, _ref5, _ref6;
     _ref5 = data.dataPoints;
-    _results = [];
     for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
       dp = _ref5[_i];
-      _results.push((function() {
-        var _j, _len1, _ref6, _results1;
-        _ref6 = data.fields;
-        _results1 = [];
-        for (fIndex = _j = 0, _len1 = _ref6.length; _j < _len1; fIndex = ++_j) {
-          field = _ref6[fIndex];
-          if (typeof dp[fIndex] === "string") {
-            dp[fIndex] = dp[fIndex].replace(/"/g, "");
-            _results1.push(dp[fIndex] = dp[fIndex].replace(/'/g, ""));
-          } else {
-            _results1.push(void 0);
-          }
+      _ref6 = data.fields;
+      for (fIndex = _j = 0, _len1 = _ref6.length; _j < _len1; fIndex = ++_j) {
+        field = _ref6[fIndex];
+        if (typeof dp[fIndex] === "string") {
+          dp[fIndex] = dp[fIndex].replace(/"/g, "");
+          dp[fIndex] = dp[fIndex].replace(/'/g, "");
         }
-        return _results1;
-      })());
+        switch (Number(field.typeID)) {
+          case data.types.TIME:
+            if (isNaN(Number(dp[fIndex]))) {
+              dp[fIndex] = new Date(dp[fIndex]);
+            } else {
+              dp[fIndex] = new Date(Number(dp[fIndex]));
+            }
+            break;
+          case data.types.TEXT:
+            NaN;
+
+            break;
+          default:
+            dp[fIndex] = Number(dp[fIndex]);
+        }
+      }
     }
-    return _results;
+    return 1;
   };
 
-  data.sanitizeData();
+  data.preprocessData();
 
 }).call(this);
