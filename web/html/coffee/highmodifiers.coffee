@@ -240,18 +240,8 @@ Check various type-related issues
 data.sanitizeData = ->
     for dp in data.dataPoints
         for field, fIndex in data.fields
-            switch Number field.typeID
-                when data.types.TIME
-                    dp[fIndex].replace /"/g, ""
-                    dp[fIndex].replace /'/g, ""
-                    break
-                when data.types.TEXT
-                    dp[fIndex].replace /"/g, ""
-                    dp[fIndex].replace /'/g, ""
-                    break
-                else
-                    dp[fIndex].replace /"/g, ""
-                    dp[fIndex].replace /'/g, ""
-                    break
+            if (typeof dp[fIndex] == "string")
+                dp[fIndex] = dp[fIndex].replace /"/g, ""
+                dp[fIndex] = dp[fIndex].replace /'/g, ""
 
 data.sanitizeData()
