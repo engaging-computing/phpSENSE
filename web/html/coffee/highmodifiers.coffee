@@ -234,4 +234,22 @@ data.logSafe ?= do ->
                 return 0
     1
 
-            
+###
+Check various type-related issues
+###
+data.sanitizeData = ->
+    for dp in data.dataPoints
+        for field, fIndex in data.fields
+            switch Number field.typeID
+                when data.types.TIME
+                    dp[fIndex].replace /"/g, ""
+                    dp[fIndex].replace /'/g, ""
+                    break
+                when data.types.TEXT
+                    dp[fIndex].replace /"/g, ""
+                    dp[fIndex].replace /'/g, ""
+                    break
+                else
+                    dp[fIndex].replace /"/g, ""
+                    dp[fIndex].replace /'/g, ""
+                    break
