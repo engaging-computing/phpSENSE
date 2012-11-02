@@ -53,8 +53,8 @@ window.fpEq = (a, b, thresh = 0.0001) ->
 Date formatter
 ###
 globals.dateFormatter = (dat) ->
-
-    dat = new Date(dat)
+    
+    #dat = new Date(dat)
     
     monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                   "Jul","Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -232,12 +232,12 @@ data.generateElaspedTime = (name, sourceField) ->
 
     for datapoint in data.dataPoints
         group = data.groups.indexOf (String datapoint[@groupingFieldIndex]).toLowerCase()
-        time = new Date(datapoint[sourceField]).valueOf()
+        time = datapoint[sourceField].valueOf()
         timeMins[group] = Math.min timeMins[group], datapoint[sourceField]
 
     for datapoint in data.dataPoints
         group = data.groups.indexOf (String datapoint[@groupingFieldIndex]).toLowerCase()
-        curTime = new Date(datapoint[sourceField]).valueOf()
+        curTime = datapoint[sourceField].valueOf()
         datapoint.push (curTime - timeMins[group]) / 1000.0
 
     data.fields.push
