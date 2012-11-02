@@ -55,7 +55,7 @@ data.xySelector = (xIndex, yIndex, groupIndex) ->
     if (Number @fields[xIndex].typeID) is data.types.TIME
         mapFunc = (dp) ->
             obj =
-                x: new Date(Number dp[xIndex])
+                x: new Date(dp[xIndex])
                 y: Number dp[yIndex]
                 datapoint: dp
     else

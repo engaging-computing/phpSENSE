@@ -16,7 +16,8 @@
         //Shuffle the data to correct columns.
         $data = shuffleColumns($_POST['file'], $eid, $_POST['matched_columns']);      
 
-        $data = fixTime($data,$eid);    
+        // Removed to allow time to pass through
+        //$data = fixTime($data,$eid);    
         
         $sid = createSession(array('uid' => $uid, 'session' => $session_key), $eid, $name, $description, $street, $city, $country, $default_read, $default_contribute, $finalized);
 
