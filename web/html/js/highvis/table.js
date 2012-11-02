@@ -96,11 +96,7 @@
             _results1 = [];
             for (fieldIndex = _k = 0, _len2 = dataPoint.length; _k < _len2; fieldIndex = ++_k) {
               dat = dataPoint[fieldIndex];
-              if ((Number(data.fields[fieldIndex].typeID)) === data.types.TIME) {
-                _results1.push("<td>" + dat + "</td>");
-              } else {
-                _results1.push("<td>" + dat + "</td>");
-              }
+              _results1.push("<td>" + dat + "</td>");
             }
             return _results1;
           })();

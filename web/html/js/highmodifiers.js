@@ -383,4 +383,44 @@
     })();
   }
 
+  /*
+  Check various type-related issues
+  */
+
+
+  data.sanitizeData = function() {
+    var dp, fIndex, _i, _len, _ref5, _results;
+    _ref5 = data.dataPoints;
+    _results = [];
+    for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+      dp = _ref5[_i];
+      _results.push((function() {
+        var _j, _len1, _ref6, _results1;
+        _ref6 = data.fields;
+        _results1 = [];
+        for (fIndex = _j = 0, _len1 = _ref6.length; _j < _len1; fIndex = ++_j) {
+          field = _ref6[fIndex];
+          switch (Number(field.typeID)) {
+            case data.types.TIME:
+              dp[fIndex].replace(/"/g, "");
+              dp[fIndex].replace(/'/g, "");
+              break;
+            case data.types.TEXT:
+              dp[fIndex].replace(/"/g, "");
+              dp[fIndex].replace(/'/g, "");
+              break;
+            default:
+              dp[fIndex].replace(/"/g, "");
+              dp[fIndex].replace(/'/g, "");
+              break;
+          }
+        }
+        return _results1;
+      })());
+    }
+    return _results;
+  };
+
+  data.sanitizeData();
+
 }).call(this);
