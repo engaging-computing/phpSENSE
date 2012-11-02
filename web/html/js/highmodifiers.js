@@ -72,7 +72,7 @@
       mapFunc = function(dp) {
         var obj;
         return obj = {
-          x: new Date(Number(dp[xIndex])),
+          x: new Date(dp[xIndex]),
           y: Number(dp[yIndex]),
           datapoint: dp
         };
