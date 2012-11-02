@@ -400,19 +400,11 @@
         _results1 = [];
         for (fIndex = _j = 0, _len1 = _ref6.length; _j < _len1; fIndex = ++_j) {
           field = _ref6[fIndex];
-          switch (Number(field.typeID)) {
-            case data.types.TIME:
-              dp[fIndex].replace(/"/g, "");
-              dp[fIndex].replace(/'/g, "");
-              break;
-            case data.types.TEXT:
-              dp[fIndex].replace(/"/g, "");
-              dp[fIndex].replace(/'/g, "");
-              break;
-            default:
-              dp[fIndex].replace(/"/g, "");
-              dp[fIndex].replace(/'/g, "");
-              break;
+          if (typeof dp[fIndex] === "string") {
+            dp[fIndex] = dp[fIndex].replace(/"/g, "");
+            _results1.push(dp[fIndex] = dp[fIndex].replace(/'/g, ""));
+          } else {
+            _results1.push(void 0);
           }
         }
         return _results1;
