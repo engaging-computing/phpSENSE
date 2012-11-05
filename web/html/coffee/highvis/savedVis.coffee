@@ -154,7 +154,7 @@ globals.serializeVis = ->
             when 'number'
                 obj
             when 'string'
-                (obj.replace /"/g, "").replace /'/g, ""
+                obj
             when 'function'
                 undefined
             when 'object'
