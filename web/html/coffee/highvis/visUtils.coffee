@@ -53,8 +53,7 @@ window.fpEq = (a, b, thresh = 0.0001) ->
 Date formatter
 ###
 globals.dateFormatter = (dat) ->
-    
-    #dat = new Date(dat)
+    dat = new Date(Number dat)
     
     monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                   "Jul","Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -66,9 +65,10 @@ globals.dateFormatter = (dat) ->
         str
 
     str = ""
-    str += dat.getUTCFullYear()          + "-"
-    str += monthNames[dat.getUTCMonth()] + "-"
     str += dat.getUTCDate()              + " "
+    str += monthNames[dat.getUTCMonth()] + " "
+    str += dat.getUTCFullYear()          + " "
+    
     
 
     str += (minDigits 2, dat.getUTCHours())   + ":"

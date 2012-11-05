@@ -96,7 +96,7 @@ class window.Map extends BaseVis
 
                 for field, fieldIndex in data.fields when dataPoint[fieldIndex] isnt null
                     dat = if (Number field.typeID) is data.types.TIME
-                        (globals.dateFormatter Date(dataPoint[fieldIndex]))
+                        (globals.dateFormatter dataPoint[fieldIndex])
                     else
                         dataPoint[fieldIndex]
 

@@ -62,10 +62,7 @@ class window.Table extends BaseVis
         
         rows = for dataPoint in data.dataPoints when (String dataPoint[data.groupingFieldIndex]).toLowerCase() in visibleGroups
             line = for dat, fieldIndex in dataPoint
-                if (Number data.fields[fieldIndex].typeID) is data.types.TIME
-                    "<td>#{dat.valueOf()}</td>"
-                else
-                    "<td>#{dat}</td>"
+                "<td>#{dat}</td>"
                 
             "<tr>#{line.reduce (a,b)-> a+b}</tr>"
         
@@ -95,7 +92,7 @@ class window.Table extends BaseVis
                     },{
                 aTargets: data.timeFields
                 fnRender: (obj) ->
-                    globals.dateFormatter (new Date(Number obj.aData[obj.iDataColumn]))}]
+                    globals.dateFormatter obj.aData[obj.iDataColumn]}]
                     
         atable = ($ '#data_table').dataTable(dt)
 
