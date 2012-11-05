@@ -167,7 +167,7 @@
         case 'number':
           return obj;
         case 'string':
-          return (obj.replace(/"/g, "")).replace(/'/g, "");
+          return obj;
         case 'function':
           return void 0;
         case 'object':

@@ -75,6 +75,7 @@
 
   globals.dateFormatter = function(dat) {
     var minDigits, monthNames, str;
+    dat = new Date(Number(dat));
     monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     minDigits = function(num, str) {
       str = String(str);
@@ -84,9 +85,9 @@
       return str;
     };
     str = "";
-    str += dat.getUTCFullYear() + "-";
-    str += monthNames[dat.getUTCMonth()] + "-";
     str += dat.getUTCDate() + " ";
+    str += monthNames[dat.getUTCMonth()] + " ";
+    str += dat.getUTCFullYear() + " ";
     str += (minDigits(2, dat.getUTCHours())) + ":";
     str += (minDigits(2, dat.getUTCMinutes())) + ":";
     str += (minDigits(2, dat.getUTCSeconds())) + ".";
