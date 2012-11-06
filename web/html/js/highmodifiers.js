@@ -66,7 +66,11 @@
     var mapFunc, mapped, rawData,
       _this = this;
     rawData = this.dataPoints.filter(function(dp) {
-      return (String(dp[_this.groupingFieldIndex])).toLowerCase() === _this.groups[groupIndex] && dp[xIndex] !== null && dp[yIndex] !== null;
+      var group, notNaN, notNull;
+      group = (String(dp[_this.groupingFieldIndex])).toLowerCase() === _this.groups[groupIndex];
+      notNull = (dp[xIndex] !== null) && (dp[yIndex] !== null);
+      notNaN = (!isNaN(dp[xIndex])) && (!isNaN(dp[yIndex]));
+      return group && notNull && notNaN;
     });
     if ((Number(this.fields[xIndex].typeID)) === data.types.TIME) {
       mapFunc = function(dp) {
@@ -394,6 +398,9 @@
       var base, d, matches, mili;
       s = s.replace(/-|,|\/|\\/g, " ");
       matches = s.match(/\.([0-9]*)/);
+      if (matches === null || matches.length < 2) {
+        return NaN;
+      }
       base = s.replace(matches[0], "");
       mili = matches[1].substr(0, 3);
       d = new Date(base);
@@ -412,10 +419,10 @@
         }
         switch (Number(field.typeID)) {
           case data.types.TIME:
-            if (isNaN(Number(dp[fIndex]))) {
-              dp[fIndex] = (dateStringParser(dp[fIndex])).valueOf();
-            } else {
+            if ((!isNaN(Number(dp[fIndex]))) && dp[fIndex] !== "") {
               dp[fIndex] = new Date(Number(dp[fIndex])).valueOf();
+            } else {
+              dp[fIndex] = (dateStringParser(dp[fIndex])).valueOf();
             }
             break;
           case data.types.TEXT:

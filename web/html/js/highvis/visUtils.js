@@ -75,6 +75,9 @@
 
   globals.dateFormatter = function(dat) {
     var minDigits, monthNames, str;
+    if (isNaN(dat)) {
+      return "Invalid Date";
+    }
     dat = new Date(Number(dat));
     monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     minDigits = function(num, str) {

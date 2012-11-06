@@ -35,7 +35,10 @@ globals.logY ?= 0
 if not data.savedGlobals?
     globals.groupSelection ?= for vals, keys in data.groups
         Number keys
-    globals.fieldSelection ?= data.normalFields[0..0]
+    if data.normalFields.length > 1
+        globals.fieldSelection ?= data.normalFields[1..1]
+    else
+        globals.fieldSelection ?= data.normalFields[0..0]
 
 class window.BaseVis
     constructor: (@canvas) ->
