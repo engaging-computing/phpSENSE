@@ -49,8 +49,11 @@ Selects data in an x,y object format of the given group.
 data.xySelector = (xIndex, yIndex, groupIndex) ->
 
     rawData = @dataPoints.filter (dp) =>
-        ((String dp[@groupingFieldIndex]).toLowerCase() == @groups[groupIndex] and
-         dp[xIndex] != null and dp[yIndex] != null)
+        group = (String dp[@groupingFieldIndex]).toLowerCase() == @groups[groupIndex]
+        notNull = (dp[xIndex] isnt null) and (dp[yIndex] isnt null)
+        notNaN = (not isNaN(dp[xIndex])) and (not isNaN(dp[yIndex]))
+
+        group and notNull and notNaN
 
     if (Number @fields[xIndex].typeID) is data.types.TIME
         mapFunc = (dp) ->
@@ -245,6 +248,10 @@ data.preprocessData = ->
         s = s.replace /-|,|\/|\\/g, " "
     
         matches = s.match(/\.([0-9]*)/)
+
+        if matches is null or matches.length < 2
+            return NaN
+        
         base = s.replace(matches[0], "")
 
         mili = matches[1].substr(0,3)
@@ -262,11 +269,10 @@ data.preprocessData = ->
 
             switch Number field.typeID
                 when data.types.TIME
-                
-                    if isNaN Number dp[fIndex]
-                        dp[fIndex] = (dateStringParser dp[fIndex]).valueOf()
-                    else
+                    if (not isNaN Number dp[fIndex]) and dp[fIndex] != ""
                         dp[fIndex] = new Date(Number dp[fIndex]).valueOf()
+                    else
+                        dp[fIndex] = (dateStringParser dp[fIndex]).valueOf()
                 when data.types.TEXT
                     NaN
                 else

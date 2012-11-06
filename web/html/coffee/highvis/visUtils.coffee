@@ -53,6 +53,10 @@ window.fpEq = (a, b, thresh = 0.0001) ->
 Date formatter
 ###
 globals.dateFormatter = (dat) ->
+
+    if isNaN dat
+        return "Invalid Date"
+
     dat = new Date(Number dat)
     
     monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
