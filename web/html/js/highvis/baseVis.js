@@ -367,6 +367,7 @@
         },
         plotOptions: {
           series: {
+            stickyTracking: false,
             turboThreshold: Number.MAX_VALUE,
             marker: {
               lineWidth: 0,
