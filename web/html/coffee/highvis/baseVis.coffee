@@ -283,7 +283,7 @@ class window.BaseHighVis extends BaseVis
                 series:
                     turboThreshold: Number.MAX_VALUE
                     marker:
-                        lineWidth:1
+                        lineWidth:0
                         radius:5
                     events:
                         legendItemClick: (event) ->
