@@ -81,7 +81,7 @@
 								<img style="width:40px;height:40px;" src="../../../html/img/icons/folder.svg"/>						
 							</div>
 							<div class="info_column" style="float;right;"> 
-								<div class="name" style="font-size:16px;"><a href="newvis.php?sessions={ $result.session_id }">{ $result.name }</a></div>
+								<div class="name" style="font-size:16px;"><a href="highvis.php?sessions={ $result.session_id }">{ $result.name }</a></div>
 								<div class="description" style="font-size:13px;">{ $result.description }</div>
 								<div class="sub" style="font-size:10px;">
 									<span>Last Modified { $result.timeobj|date_diff }</span>
@@ -99,7 +99,7 @@
 								<img style="width:40px;height:40px" src="../../../html/img/icons/chart_bar.svg"/>					
 							</div>
 							<div class="info_column" style="float;right;"> 							
-								<div class="name" style="font-size:16px;"><a href="highvis.php?vid=$result.title">{ $result.title }</a></div>
+								<div class="name" style="font-size:16px;"><a href="highvis.php?vid={$result.vid}">{$result.title }</a></div>
 								<div class="description" style="font-size:13px;">{ $result.description }</div>
 								<div class="sub" style="font-size:13px;"><span>Last Modified { $result.timeobj|date_diff }</span></div>
 							</div> 
