@@ -389,17 +389,7 @@
 
 
   data.preprocessData = function() {
-    var dateStringParser, dp, fIndex, _i, _j, _len, _len1, _ref5, _ref6;
-    dateStringParser = function(s) {
-      var base, d, matches, mili;
-      s = s.replace(/-|,|\/|\\/g, " ");
-      matches = s.match(/\.([0-9]*)/);
-      base = s.replace(matches[0], "");
-      mili = matches[1].substr(0, 3);
-      d = new Date(base);
-      d.setUTCMilliseconds(Number(mili));
-      return d;
-    };
+    var dp, fIndex, _i, _j, _len, _len1, _ref5, _ref6;
     _ref5 = data.dataPoints;
     for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
       dp = _ref5[_i];
@@ -413,9 +403,9 @@
         switch (Number(field.typeID)) {
           case data.types.TIME:
             if (isNaN(Number(dp[fIndex]))) {
-              dp[fIndex] = (dateStringParser(dp[fIndex])).valueOf();
+              dp[fIndex] = (moment(dp[fIndex])).valueOf();
             } else {
-              dp[fIndex] = new Date(Number(dp[fIndex])).valueOf();
+              dp[fIndex] = (moment(Number(dp[fIndex]))).valueOf();
             }
             break;
           case data.types.TEXT:

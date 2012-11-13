@@ -85,6 +85,7 @@ if(isset($_REQUEST['sessions']) || isset($_REQUEST['vid'])) {
     $head .= '<script type="text/javascript" src="/html/js/lib/StyledMarker.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/jquery.dataTables.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.prettyPhoto.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/lib/moment.js"></script>';
 
     $head .= '<script type="text/javascript" src="/html/js/highvis/highcharts/highcharts.js"></script>';
 

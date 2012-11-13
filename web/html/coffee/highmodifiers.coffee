@@ -239,20 +239,6 @@ Check various type-related issues
 ###
 data.preprocessData = ->
 
-    dateStringParser = (s) ->
-
-        # Strip non-standard seperators
-        s = s.replace /-|,|\/|\\/g, " "
-    
-        matches = s.match(/\.([0-9]*)/)
-        base = s.replace(matches[0], "")
-
-        mili = matches[1].substr(0,3)
-        
-        d = new Date(base)
-        d.setUTCMilliseconds(Number mili)
-        d
-
     for dp in data.dataPoints
         for field, fIndex in data.fields
             if (typeof dp[fIndex] == "string")
@@ -264,9 +250,9 @@ data.preprocessData = ->
                 when data.types.TIME
                 
                     if isNaN Number dp[fIndex]
-                        dp[fIndex] = (dateStringParser dp[fIndex]).valueOf()
+                        dp[fIndex] = (moment dp[fIndex]).valueOf()
                     else
-                        dp[fIndex] = new Date(Number dp[fIndex]).valueOf()
+                        dp[fIndex] = (moment (Number dp[fIndex])).valueOf()
                 when data.types.TEXT
                     NaN
                 else

@@ -144,7 +144,7 @@ if(isset($_POST['session_create']) && count($errors) == 0) {
         
         $data = $data_set;
         
-        $data = fixTime($data,$eid);
+        //$data = fixTime($data,$eid);
         
         // Create the session record
         $sid = createSession(   $session->generateSessionToken(), 
