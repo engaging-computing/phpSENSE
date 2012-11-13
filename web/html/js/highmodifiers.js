@@ -66,7 +66,11 @@
     var mapFunc, mapped, rawData,
       _this = this;
     rawData = this.dataPoints.filter(function(dp) {
-      return (String(dp[_this.groupingFieldIndex])).toLowerCase() === _this.groups[groupIndex] && dp[xIndex] !== null && dp[yIndex] !== null;
+      var group, notNaN, notNull;
+      group = (String(dp[_this.groupingFieldIndex])).toLowerCase() === _this.groups[groupIndex];
+      notNull = (dp[xIndex] !== null) && (dp[yIndex] !== null);
+      notNaN = (!isNaN(dp[xIndex])) && (!isNaN(dp[yIndex]));
+      return group && notNull && notNaN;
     });
     if ((Number(this.fields[xIndex].typeID)) === data.types.TIME) {
       mapFunc = function(dp) {

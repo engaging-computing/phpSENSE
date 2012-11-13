@@ -31,7 +31,7 @@
 
 
 (function() {
-  var keys, vals, _ref, _ref1, _ref2, _ref3,
+  var keys, vals, _ref, _ref1, _ref2, _ref3, _ref4,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -57,8 +57,14 @@
         return _results;
       })();
     }
-    if ((_ref3 = globals.fieldSelection) == null) {
-      globals.fieldSelection = data.normalFields.slice(0, 1);
+    if (data.normalFields.length > 1) {
+      if ((_ref3 = globals.fieldSelection) == null) {
+        globals.fieldSelection = data.normalFields.slice(1, 2);
+      }
+    } else {
+      if ((_ref4 = globals.fieldSelection) == null) {
+        globals.fieldSelection = data.normalFields.slice(0, 1);
+      }
     }
   }
 
@@ -145,7 +151,7 @@
 
 
     BaseVis.prototype.drawGroupControls = function(startOnGroup) {
-      var controls, counter, fieldIndex, gIndex, group, sel, _i, _j, _len, _len1, _ref4, _ref5, _ref6, _ref7,
+      var controls, counter, fieldIndex, gIndex, group, sel, _i, _j, _len, _len1, _ref5, _ref6, _ref7, _ref8,
         _this = this;
       if (startOnGroup == null) {
         startOnGroup = false;
@@ -155,19 +161,19 @@
       controls += "<div class='outer_control_div'>";
       controls += '<div class="inner_control_div"> Group By: ';
       controls += '<select id="groupSelector" class="control_select">';
-      _ref4 = data.textFields;
-      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
-        fieldIndex = _ref4[_i];
+      _ref5 = data.textFields;
+      for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+        fieldIndex = _ref5[_i];
         sel = fieldIndex === data.groupingFieldIndex ? 'selected' : '';
         controls += "<option value='" + (Number(fieldIndex)) + "' " + sel + ">" + data.fields[fieldIndex].fieldName + "</option>";
       }
       controls += "</select></div>";
       counter = 0;
-      _ref5 = data.groups;
-      for (gIndex = _j = 0, _len1 = _ref5.length; _j < _len1; gIndex = ++_j) {
-        group = _ref5[gIndex];
+      _ref6 = data.groups;
+      for (gIndex = _j = 0, _len1 = _ref6.length; _j < _len1; gIndex = ++_j) {
+        group = _ref6[gIndex];
         controls += "<div class='inner_control_div' style=\"color:" + globals.colors[counter % globals.colors.length] + ";\">";
-        controls += "<input class='group_input' type='checkbox' value='" + gIndex + "' " + ((_ref6 = Number(gIndex), __indexOf.call(globals.groupSelection, _ref6) >= 0) ? "checked" : "") + "/>&nbsp";
+        controls += "<input class='group_input' type='checkbox' value='" + gIndex + "' " + ((_ref7 = Number(gIndex), __indexOf.call(globals.groupSelection, _ref7) >= 0) ? "checked" : "") + "/>&nbsp";
         controls += "" + group;
         controls += "</div>";
         counter += 1;
@@ -179,11 +185,11 @@
         element = e.target || e.srcElement;
         data.setGroupIndex(Number(element.value));
         globals.groupSelection = (function() {
-          var _k, _len2, _ref7, _results;
-          _ref7 = data.groups;
+          var _k, _len2, _ref8, _results;
+          _ref8 = data.groups;
           _results = [];
-          for (keys = _k = 0, _len2 = _ref7.length; _k < _len2; keys = ++_k) {
-            vals = _ref7[keys];
+          for (keys = _k = 0, _len2 = _ref8.length; _k < _len2; keys = ++_k) {
+            vals = _ref8[keys];
             _results.push(Number(keys));
           }
           return _results;
@@ -208,7 +214,7 @@
           return _this.delayedUpdate();
         }
       });
-      if ((_ref7 = globals.groupOpen) == null) {
+      if ((_ref8 = globals.groupOpen) == null) {
         globals.groupOpen = 0;
       }
       ($('#groupControl')).accordion({
@@ -226,7 +232,7 @@
 
 
     BaseVis.prototype.drawSaveControls = function(e) {
-      var controls, _ref4,
+      var controls, _ref5,
         _this = this;
       controls = '<div id="saveControl" class="vis_controls">';
       controls += "<h3 class='clean_shrink'><a href='#'>Saving:</a></h3>";
@@ -264,7 +270,7 @@
       ($('#printVisButton')).click(function() {
         return _this.chart.print();
       });
-      if ((_ref4 = globals.saveOpen) == null) {
+      if ((_ref5 = globals.saveOpen) == null) {
         globals.saveOpen = 0;
       }
       ($('#saveControl')).accordion({
@@ -361,9 +367,10 @@
         },
         plotOptions: {
           series: {
+            stickyTracking: false,
             turboThreshold: Number.MAX_VALUE,
             marker: {
-              lineWidth: 1,
+              lineWidth: 0,
               radius: 5
             },
             events: {
@@ -427,7 +434,7 @@
 
 
     BaseHighVis.prototype.update = function() {
-      var options, temp, title, _i, _len, _ref4, _results;
+      var options, temp, title, _i, _len, _ref5, _results;
       title = globals.fieldSelection.length !== 1 ? temp = {
         text: 'Y-Values'
       } : temp = {
@@ -437,10 +444,10 @@
       while (this.chart.series.length !== 0) {
         this.chart.series[0].remove(false);
       }
-      _ref4 = this.buildLegendSeries();
+      _ref5 = this.buildLegendSeries();
       _results = [];
-      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
-        options = _ref4[_i];
+      for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+        options = _ref5[_i];
         _results.push(this.chart.addSeries(options, false));
       }
       return _results;
@@ -470,7 +477,7 @@
 
 
     BaseHighVis.prototype.drawYAxisControls = function(radio) {
-      var controls, fIndex, _i, _len, _ref4, _ref5, _ref6,
+      var controls, fIndex, _i, _len, _ref5, _ref6, _ref7,
         _this = this;
       if (radio == null) {
         radio = false;
@@ -478,14 +485,14 @@
       controls = '<div id="yAxisControl" class="vis_controls">';
       controls += "<h3 class='clean_shrink'><a href='#'>Y Axis:</a></h3>";
       controls += "<div class='outer_control_div'>";
-      _ref4 = data.normalFields;
-      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
-        fIndex = _ref4[_i];
+      _ref5 = data.normalFields;
+      for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+        fIndex = _ref5[_i];
         controls += "<div class='inner_control_div' >";
         if (radio) {
           controls += "<input class='y_axis_input' name='y_axis_group' type='radio' value='" + fIndex + "' " + ((Number(fIndex)) === this.displayField ? "checked" : "") + "/>&nbsp";
         } else {
-          controls += "<input class='y_axis_input' type='checkbox' value='" + fIndex + "' " + ((_ref5 = Number(fIndex), __indexOf.call(globals.fieldSelection, _ref5) >= 0) ? "checked" : "") + "/>&nbsp";
+          controls += "<input class='y_axis_input' type='checkbox' value='" + fIndex + "' " + ((_ref6 = Number(fIndex), __indexOf.call(globals.fieldSelection, _ref6) >= 0) ? "checked" : "") + "/>&nbsp";
         }
         controls += "" + data.fields[fIndex].fieldName;
         controls += "</div>";
@@ -511,7 +518,7 @@
           return _this.delayedUpdate();
         });
       }
-      if ((_ref6 = globals.yAxisOpen) == null) {
+      if ((_ref7 = globals.yAxisOpen) == null) {
         globals.yAxisOpen = 0;
       }
       ($('#yAxisControl')).accordion({

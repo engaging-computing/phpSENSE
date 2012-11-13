@@ -49,8 +49,11 @@ Selects data in an x,y object format of the given group.
 data.xySelector = (xIndex, yIndex, groupIndex) ->
 
     rawData = @dataPoints.filter (dp) =>
-        ((String dp[@groupingFieldIndex]).toLowerCase() == @groups[groupIndex] and
-         dp[xIndex] != null and dp[yIndex] != null)
+        group = (String dp[@groupingFieldIndex]).toLowerCase() == @groups[groupIndex]
+        notNull = (dp[xIndex] isnt null) and (dp[yIndex] isnt null)
+        notNaN = (not isNaN(dp[xIndex])) and (not isNaN(dp[yIndex]))
+
+        group and notNull and notNaN
 
     if (Number @fields[xIndex].typeID) is data.types.TIME
         mapFunc = (dp) ->
