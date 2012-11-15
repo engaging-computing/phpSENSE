@@ -52,7 +52,31 @@
       this.mode = this.SYMBOLS_MODE;
       this.xAxis = data.normalFields[0];
       this.advancedTooltips = false;
+      this.xBounds = {
+        dataMax: void 0,
+        dataMin: void 0,
+        max: void 0,
+        min: void 0,
+        userMax: void 0,
+        userMin: void 0
+      };
+      this.yBounds = {
+        dataMax: void 0,
+        dataMin: void 0,
+        max: void 0,
+        min: void 0,
+        userMax: void 0,
+        userMin: void 0
+      };
     }
+
+    Scatter.prototype.storeXBounds = function(bounds) {
+      return this.xBounds = bounds;
+    };
+
+    Scatter.prototype.storeYBounds = function(bounds) {
+      return this.yBounds = bounds;
+    };
 
     /*
         Build up the chart options specific to scatter chart
@@ -61,7 +85,8 @@
 
 
     Scatter.prototype.buildOptions = function() {
-      var self;
+      var self,
+        _this = this;
       Scatter.__super__.buildOptions.call(this);
       self = this;
       return $.extend(true, this.chartOptions, {
@@ -107,7 +132,13 @@
           }
         ],
         yAxis: {
-          type: globals.logY === 1 ? 'logarithmic' : 'linear'
+          type: globals.logY === 1 ? 'logarithmic' : 'linear',
+          events: {
+            afterSetExtremes: function(e) {
+              _this.storeXBounds(_this.chart.xAxis[0].getExtremes());
+              return _this.storeYBounds(_this.chart.yAxis[0].getExtremes());
+            }
+          }
         }
       });
     };
@@ -225,7 +256,16 @@
           }
         }
       }
-      return this.chart.redraw();
+      if (this.xBounds.userMax !== void 0 && this.xBounds.userMax !== null) {
+        this.chart.xAxis[0].setExtremes(this.xBounds.min, this.xBounds.max, false);
+        this.chart.yAxis[0].setExtremes(this.yBounds.min, this.yBounds.max, false);
+        if (($('g[title="Reset zoom level 1:1"]')).length === 0) {
+          this.chart.showResetZoom();
+        }
+      }
+      this.chart.redraw();
+      this.storeXBounds(this.chart.xAxis[0].getExtremes());
+      return this.storeYBounds(this.chart.yAxis[0].getExtremes());
     };
 
     /*

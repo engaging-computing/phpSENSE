@@ -42,6 +42,29 @@ class window.Scatter extends BaseHighVis
 
         @advancedTooltips = false
 
+        @xBounds =
+            dataMax: undefined
+            dataMin: undefined
+            max: undefined
+            min: undefined
+            userMax: undefined
+            userMin: undefined
+
+        @yBounds =
+            dataMax: undefined
+            dataMin: undefined
+            max: undefined
+            min: undefined
+            userMax: undefined
+            userMin: undefined
+
+    storeXBounds: (bounds) ->
+        @xBounds = bounds
+
+    storeYBounds: (bounds) ->
+        @yBounds = bounds
+        
+            
     ###
     Build up the chart options specific to scatter chart
         The only complex thing here is the html-formatted tooltip.
@@ -83,9 +106,18 @@ class window.Scatter extends BaseHighVis
             xAxis: [{
                 type: 'linear'
                 gridLineWidth: 1
-                minorTickInterval: 'auto'}]
+                minorTickInterval: 'auto'
+#                 events:
+#                     afterSetExtremes: (e) =>
+#                         console.log 'X'
+#                         @storeXBounds e
+                }]
             yAxis:
                 type: if globals.logY is 1 then 'logarithmic' else 'linear'
+                events:
+                    afterSetExtremes: (e) =>
+                        @storeXBounds @chart.xAxis[0].getExtremes()
+                        @storeYBounds @chart.yAxis[0].getExtremes()
 
     ###
     Build the dummy series for the legend.
@@ -168,8 +200,19 @@ class window.Scatter extends BaseHighVis
                         options.dashStyle = globals.dashes[symbolIndex % globals.dashes.length]
 
                 @chart.addSeries options, false
+                
+        if @xBounds.userMax isnt undefined and @xBounds.userMax isnt null
+            @chart.xAxis[0].setExtremes @xBounds.min, @xBounds.max, false
+            @chart.yAxis[0].setExtremes @yBounds.min, @yBounds.max, false
 
+            if ($ 'g[title="Reset zoom level 1:1"]').length is 0
+                @chart.showResetZoom()
+        
         @chart.redraw()
+
+        @storeXBounds @chart.xAxis[0].getExtremes()
+        @storeYBounds @chart.yAxis[0].getExtremes()
+        
 
     ###
     Draws radio buttons for changing symbol/line mode.
