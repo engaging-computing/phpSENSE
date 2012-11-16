@@ -393,7 +393,8 @@
 
 
   data.preprocessData = function() {
-    var dp, fIndex, _i, _j, _len, _len1, _ref5, _ref6;
+    var dateFormats, dp, fIndex, _i, _j, _len, _len1, _ref5, _ref6;
+    dateFormats = ["YYYY MM DD hh:mm:ss.SSS A Z", "YYYY MMM DD hh:mm:ss.SSS A Z", "MM DD YYYY hh:mm:ss.SSS A Z", "MMM DD YYYY hh:mm:ss.SSS A Z"];
     _ref5 = data.dataPoints;
     for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
       dp = _ref5[_i];
@@ -407,7 +408,7 @@
         switch (Number(field.typeID)) {
           case data.types.TIME:
             if (isNaN(Number(dp[fIndex]))) {
-              dp[fIndex] = (moment(dp[fIndex])).valueOf();
+              dp[fIndex] = (moment(dp[fIndex], dateFormats)).valueOf();
             } else {
               dp[fIndex] = (moment(Number(dp[fIndex]))).valueOf();
             }
