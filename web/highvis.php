@@ -93,6 +93,7 @@ if(isset($_REQUEST['sessions']) || isset($_REQUEST['vid'])) {
     $head .= '<script type="text/javascript" src="/html/js/highvis/savedVis.js"></script>';
 
     $head .= '<script type="text/javascript" src="/html/js/highvis/visUtils.js"></script>';
+    $head .= '<script type="text/javascript" src="/html/js/highvis/dataReduction.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highmodifiers.js"></script>';
 
     $head .= '<script type="text/javascript" src="/html/js/highvis/baseVis.js"></script>';
