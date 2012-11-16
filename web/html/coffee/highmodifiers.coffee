@@ -242,6 +242,11 @@ Check various type-related issues
 ###
 data.preprocessData = ->
 
+    dateFormats = ["YYYY MM DD hh:mm:ss.SSS A Z",
+                   "YYYY MMM DD hh:mm:ss.SSS A Z",
+                   "MM DD YYYY hh:mm:ss.SSS A Z",
+                   "MMM DD YYYY hh:mm:ss.SSS A Z"]
+
     for dp in data.dataPoints
         for field, fIndex in data.fields
             if (typeof dp[fIndex] == "string")
@@ -253,7 +258,7 @@ data.preprocessData = ->
                 when data.types.TIME
                 
                     if isNaN Number dp[fIndex]
-                        dp[fIndex] = (moment dp[fIndex]).valueOf()
+                        dp[fIndex] = (moment dp[fIndex], dateFormats).valueOf()
                     else
                         dp[fIndex] = (moment (Number dp[fIndex])).valueOf()
                 when data.types.TEXT
