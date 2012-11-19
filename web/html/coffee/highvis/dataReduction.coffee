@@ -53,3 +53,43 @@ globals.curvatureAnalysis = (arr, num) ->
             result.push(point)
     
     result
+
+globals.blur = (arr, w) ->
+
+    range = arr[arr.length - 1].x - arr[0].x
+    windowSize = (range / arr.length) * w
+
+    res = []
+    globals.extendObject(res, arr)
+    window = []
+
+    sumFunc = (a, b) -> a + b.y
+
+    blurFunc = (win, center) ->
+        weights = []
+
+        for item in win
+            weights.push 1.0 - (Math.abs(item.x - center) / windowSize)
+
+        ws = weights.reduce (a, b) -> a + b
+        result = 0
+
+        for i in [0...win.length]
+            result += (win[i].y * weights[i]) / ws
+            
+        result
+
+    j = 0
+    for i in [0...arr.length]
+
+        while j < arr.length and (arr[j].x - arr[i].x) <= windowSize
+            window.push arr[j]
+            j += 1
+
+        while (arr[i].x - window[0].x) > windowSize
+            window.shift()
+            
+        res[i].y = blurFunc(window, arr[i].x)
+
+    res
+            

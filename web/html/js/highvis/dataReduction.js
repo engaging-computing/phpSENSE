@@ -66,4 +66,44 @@
     return result;
   };
 
+  globals.blur = function(arr, w) {
+    var blurFunc, i, j, range, res, sumFunc, window, windowSize, _i, _ref1;
+    range = arr[arr.length - 1].x - arr[0].x;
+    windowSize = (range / arr.length) * w;
+    res = [];
+    globals.extendObject(res, arr);
+    window = [];
+    sumFunc = function(a, b) {
+      return a + b.y;
+    };
+    blurFunc = function(win, center) {
+      var i, item, result, weights, ws, _i, _j, _len, _ref1;
+      weights = [];
+      for (_i = 0, _len = win.length; _i < _len; _i++) {
+        item = win[_i];
+        weights.push(1.0 - (Math.abs(item.x - center) / windowSize));
+      }
+      ws = weights.reduce(function(a, b) {
+        return a + b;
+      });
+      result = 0;
+      for (i = _j = 0, _ref1 = win.length; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+        result += (win[i].y * weights[i]) / ws;
+      }
+      return result;
+    };
+    j = 0;
+    for (i = _i = 0, _ref1 = arr.length; 0 <= _ref1 ? _i < _ref1 : _i > _ref1; i = 0 <= _ref1 ? ++_i : --_i) {
+      while (j < arr.length && (arr[j].x - arr[i].x) <= windowSize) {
+        window.push(arr[j]);
+        j += 1;
+      }
+      while ((arr[i].x - window[0].x) > windowSize) {
+        window.shift();
+      }
+      res[i].y = blurFunc(window, arr[i].x);
+    }
+    return res;
+  };
+
 }).call(this);

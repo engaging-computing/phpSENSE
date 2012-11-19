@@ -68,6 +68,7 @@
         userMax: void 0,
         userMin: void 0
       };
+      this.myFlag = false;
     }
 
     Scatter.prototype.storeXBounds = function(bounds) {
@@ -209,7 +210,7 @@
 
 
     Scatter.prototype.update = function() {
-      var fieldIndex, group, groupIndex, options, symbolIndex, title, _i, _j, _len, _len1, _ref, _ref1;
+      var dat, fieldIndex, group, groupIndex, options, symbolIndex, title, _i, _j, _len, _len1, _ref, _ref1;
       Scatter.__super__.update.call(this);
       title = {
         text: data.fields[this.xAxis].fieldName
@@ -225,8 +226,9 @@
             if (!(__indexOf.call(globals.groupSelection, groupIndex) >= 0)) {
               continue;
             }
+            dat = this.myFlag ? (console.log(true), globals.blur(data.xySelector(this.xAxis, fieldIndex, groupIndex), 20)) : (console.log(false), data.xySelector(this.xAxis, fieldIndex, groupIndex));
             options = {
-              data: data.xySelector(this.xAxis, fieldIndex, groupIndex),
+              data: dat,
               showInLegend: false,
               color: globals.colors[groupIndex % globals.colors.length],
               name: {

@@ -58,6 +58,8 @@ class window.Scatter extends BaseHighVis
             userMax: undefined
             userMin: undefined
 
+        @myFlag = false
+
     storeXBounds: (bounds) ->
         @xBounds = bounds
 
@@ -176,8 +178,15 @@ class window.Scatter extends BaseHighVis
         #Draw series
         for fieldIndex, symbolIndex in data.normalFields when fieldIndex in globals.fieldSelection
             for group, groupIndex in data.groups when groupIndex in globals.groupSelection
+                dat = if @myFlag
+                    console.log true
+                    globals.blur(data.xySelector(@xAxis, fieldIndex, groupIndex), 20)
+                else
+                    console.log false
+                    data.xySelector(@xAxis, fieldIndex, groupIndex)
+                
                 options =
-                    data: data.xySelector(@xAxis, fieldIndex, groupIndex)
+                    data: dat
                     showInLegend: false
                     color: globals.colors[groupIndex % globals.colors.length]
                     name:
