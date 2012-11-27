@@ -170,7 +170,7 @@ class window.Map extends BaseVis
         
     drawControls: ->
         super()
-        @drawGroupControls()
+        @drawGroupControls(true)
         @drawToolControls()
         @drawSaveControls()
 

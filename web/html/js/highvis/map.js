@@ -203,7 +203,7 @@
 
     Map.prototype.drawControls = function() {
       Map.__super__.drawControls.call(this);
-      this.drawGroupControls();
+      this.drawGroupControls(true);
       this.drawToolControls();
       return this.drawSaveControls();
     };
