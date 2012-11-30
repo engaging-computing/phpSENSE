@@ -81,7 +81,8 @@ if(isset($_REQUEST['sessions']) || isset($_REQUEST['vid'])) {
 
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mousewheel.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.mCustomScrollbar.js"></script>';
-    $head .= '<script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=visualization&sensor=false"></script>';
+    //$head .= '<script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=visualization&sensor=false"></script>';
+    $head .= '<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.9&libraries=visualization&sensor=false"></script>';
     $head .= '<script type="text/javascript" src="/html/js/lib/StyledMarker.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/highvis/jquery.dataTables.js"></script>';
     $head .= '<script type="text/javascript" src="/html/js/lib/jquery.prettyPhoto.js"></script>';
