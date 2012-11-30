@@ -142,7 +142,12 @@ class window.BaseVis
             data.setGroupIndex (Number element.value)
             globals.groupSelection = for vals, keys in data.groups
                 Number keys
-            @delayedUpdate()
+
+            if startOnGroup
+                @start()
+            else
+                @delayedUpdate()
+                
             @drawControls()
 
         # Make group checkbox handler
@@ -154,10 +159,7 @@ class window.BaseVis
                 else
             globals.groupSelection = selection
             
-            if startOnGroup
-                @start()
-            else
-                @delayedUpdate()
+            @delayedUpdate()
 
         #Set up accordion
         globals.groupOpen ?= 0

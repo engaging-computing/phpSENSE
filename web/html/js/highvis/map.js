@@ -56,28 +56,38 @@
     };
 
     Map.prototype.start = function() {
-      var dataPoint, group, index, lat, latlngbounds, lon, mapOptions, _fn, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3,
+      var dataPoint, group, index, lat, latlngbounds, lon, mapOptions, marker, _fn, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _m, _n, _ref, _ref1, _ref2, _ref3, _ref4,
         _this = this;
       ($('#' + this.canvas)).show();
+      if (this.markers != null) {
+        _ref = this.markers;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          group = _ref[_i];
+          for (_j = 0, _len1 = group.length; _j < _len1; _j++) {
+            marker = group[_j];
+            google.maps.event.clearInstanceListeners(marker);
+          }
+        }
+      }
       this.markers = [];
-      _ref = data.groups;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        group = _ref[_i];
+      _ref1 = data.groups;
+      for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+        group = _ref1[_k];
         this.markers.push([]);
       }
       this.heatmaps = {};
       this.heatPoints = {};
       this.heatPoints[this.HEATMAP_NONE] = [];
       this.heatPoints[this.HEATMAP_MARKERS] = [];
-      _ref1 = data.normalFields;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        index = _ref1[_j];
+      _ref2 = data.normalFields;
+      for (_l = 0, _len3 = _ref2.length; _l < _len3; _l++) {
+        index = _ref2[_l];
         this.heatPoints[index] = [];
       }
       for (index in this.heatPoints) {
-        _ref2 = data.groups;
-        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-          group = _ref2[_k];
+        _ref3 = data.groups;
+        for (_m = 0, _len4 = _ref3.length; _m < _len4; _m++) {
+          group = _ref3[_m];
           this.heatPoints[index].push([]);
         }
       }
@@ -88,12 +98,12 @@
         mapTypeId: google.maps.MapTypeId.SATELLITE
       };
       this.gmap = new google.maps.Map(document.getElementById(this.canvas), mapOptions);
-      _ref3 = data.dataPoints;
+      _ref4 = data.dataPoints;
       _fn = function() {
-        var color, dat, field, fieldIndex, groupIndex, iconOptions, info, label, lat, latlng, lon, newMarker, _len4, _len5, _len6, _m, _n, _o, _ref4, _ref5, _ref6;
-        _ref4 = data.fields;
-        for (fieldIndex = _m = 0, _len4 = _ref4.length; _m < _len4; fieldIndex = ++_m) {
-          field = _ref4[fieldIndex];
+        var color, dat, field, fieldIndex, groupIndex, info, label, lat, latlng, lon, newMarker, _len6, _len7, _len8, _o, _p, _q, _ref5, _ref6, _ref7;
+        _ref5 = data.fields;
+        for (fieldIndex = _o = 0, _len6 = _ref5.length; _o < _len6; fieldIndex = ++_o) {
+          field = _ref5[fieldIndex];
           if ((Number(field.typeID)) === data.types.GEOSPATIAL) {
             if ((Number(field.unitID)) === data.units.GEOSPATIAL.LATITUDE) {
               lat = dataPoint[fieldIndex];
@@ -111,9 +121,9 @@
         label = "<div style='font-size:9pt;overflow-x:none;'>";
         label += "<div style='width:100%;text-align:center;color:" + color + ";'> " + dataPoint[data.groupingFieldIndex] + "</div>";
         label += "<table>";
-        _ref5 = data.fields;
-        for (fieldIndex = _n = 0, _len5 = _ref5.length; _n < _len5; fieldIndex = ++_n) {
-          field = _ref5[fieldIndex];
+        _ref6 = data.fields;
+        for (fieldIndex = _p = 0, _len7 = _ref6.length; _p < _len7; fieldIndex = ++_p) {
+          field = _ref6[fieldIndex];
           if (!(dataPoint[fieldIndex] !== null)) {
             continue;
           }
@@ -125,24 +135,23 @@
         info = new google.maps.InfoWindow({
           content: label
         });
-        iconOptions = {
-          color: color
-        };
-        newMarker = new StyledMarker({
-          position: latlng,
-          map: _this.gmap,
-          styleIcon: new StyledIcon(StyledIconTypes.MARKER, iconOptions)
-        });
         if (__indexOf.call(globals.groupSelection, groupIndex) >= 0) {
           latlngbounds.extend(latlng);
         }
+        newMarker = new StyledMarker({
+          styleIcon: new StyledIcon(StyledIconTypes.MARKER, {
+            color: color
+          }),
+          position: latlng,
+          map: _this.gmap
+        });
         google.maps.event.addListener(newMarker, 'click', function() {
           return info.open(_this.gmap, newMarker);
         });
         _this.markers[groupIndex].push(newMarker);
-        _ref6 = data.normalFields;
-        for (_o = 0, _len6 = _ref6.length; _o < _len6; _o++) {
-          index = _ref6[_o];
+        _ref7 = data.normalFields;
+        for (_q = 0, _len8 = _ref7.length; _q < _len8; _q++) {
+          index = _ref7[_q];
           if (dataPoint[index] !== null) {
             _this.heatPoints[index][groupIndex].push({
               weight: dataPoint[index],
@@ -152,8 +161,8 @@
         }
         return _this.heatPoints[_this.HEATMAP_MARKERS][groupIndex].push(latlng);
       };
-      for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
-        dataPoint = _ref3[_l];
+      for (_n = 0, _len5 = _ref4.length; _n < _len5; _n++) {
+        dataPoint = _ref4[_n];
         lat = lon = null;
         _fn();
       }
@@ -203,7 +212,7 @@
 
     Map.prototype.drawControls = function() {
       Map.__super__.drawControls.call(this);
-      this.drawGroupControls();
+      this.drawGroupControls(true);
       this.drawToolControls();
       return this.drawSaveControls();
     };
