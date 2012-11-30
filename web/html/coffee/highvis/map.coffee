@@ -137,6 +137,12 @@ class window.Map extends BaseVis
 
         @gmap.fitBounds(latlngbounds)
 
+        # Hack to fix most occurances of bad default zooms
+        fixZoom = =>
+            if @gmap.getZoom() > 18
+                @gmap.setZoom(18)
+        
+        setTimeout fixZoom, 300
         
         super()
        
