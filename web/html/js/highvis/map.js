@@ -56,7 +56,7 @@
     };
 
     Map.prototype.start = function() {
-      var dataPoint, group, index, lat, latlngbounds, lon, mapOptions, marker, _fn, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _m, _n, _ref, _ref1, _ref2, _ref3, _ref4,
+      var dataPoint, fixZoom, group, index, lat, latlngbounds, lon, mapOptions, marker, _fn, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _m, _n, _ref, _ref1, _ref2, _ref3, _ref4,
         _this = this;
       ($('#' + this.canvas)).show();
       if (this.markers != null) {
@@ -167,6 +167,12 @@
         _fn();
       }
       this.gmap.fitBounds(latlngbounds);
+      fixZoom = function() {
+        if (_this.gmap.getZoom() > 18) {
+          return _this.gmap.setZoom(18);
+        }
+      };
+      setTimeout(fixZoom, 300);
       return Map.__super__.start.call(this);
     };
 
