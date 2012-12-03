@@ -77,4 +77,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= true){
 }
 */
 
+$smarty->assign('content', $smarty->fetch('login.tpl'));
+$smarty->display('skeleton.tpl');
+
 ?>
