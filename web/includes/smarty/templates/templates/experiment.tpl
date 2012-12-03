@@ -161,7 +161,7 @@
     	                    <div class="exp_tools"><a href="pickexpimage.php?id={$meta.experiment_id}">Image</a> - Set the picture that will show should this experiment be featured.</div>
                         { /if }
     	            { /if }
-            	    <div class="exp_tools"><a href="#" onclick="loadVis2({$meta.experiment_id});">Visualize</a> - Use our visualizations beta to examine your data. </div>
+            	    <div class="exp_tools"><a href="#" onclick="loadVis2({$meta.experiment_id});">Visualize</a> - Examine your data. </div>
     	        </div>
     	    </div>
 	    { /if }
