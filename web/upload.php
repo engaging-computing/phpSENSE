@@ -312,4 +312,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= true){
 }
 */
 
+$smarty->assign('content',          $smarty->fetch('upload.tpl'));
+$smarty->display('skeleton.tpl');
+
 ?>
