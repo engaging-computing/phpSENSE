@@ -301,10 +301,18 @@ $smarty->assign('head', '<script src="/html/js/lib/jquery.validate.js"></script>
                         '<script src="/html/js/lib/validate.js"></script>'.
                         '<link rel="stylesheet" type="text/css" href="/html/css/jquery-ui.css"></link>');
 
+///////////////////////////
+/* Disable mobile website /
+///////////////////////////
 if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= true){
     $smarty->assign('content',          $smarty->fetch('upload.tpl'));
     $smarty->display('skeleton.tpl');
 } else {
     $smarty->display('mobile/contribute.tpl');
 }
+*/
+
+$smarty->assign('content',          $smarty->fetch('upload.tpl'));
+$smarty->display('skeleton.tpl');
+
 ?>

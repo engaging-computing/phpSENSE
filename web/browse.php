@@ -132,11 +132,18 @@ $smarty->assign('numpages',     $numpages);
 $smarty->assign('sorttype',     $sorttype);
 $smarty->assign('user',         $session->getUser());
 
+///////////////////////////
+/* Disable mobile website /
+///////////////////////////
 if(strpos($_SERVER['HTTP_USER_AGENT'],'Android')!= true){
     $smarty->assign('content', $smarty->fetch('browse.tpl'));
     $smarty->display('skeleton.tpl');
 } else {
     $smarty->display('mobile/browse.tpl');
 }
+*/
+
+$smarty->assign('content', $smarty->fetch('browse.tpl'));
+$smarty->display('skeleton.tpl');
 
 ?>

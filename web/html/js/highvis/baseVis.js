@@ -194,7 +194,11 @@
           }
           return _results;
         })();
-        _this.delayedUpdate();
+        if (startOnGroup) {
+          _this.start();
+        } else {
+          _this.delayedUpdate();
+        }
         return _this.drawControls();
       });
       ($('.group_input')).click(function(e) {
@@ -208,11 +212,7 @@
           }
         });
         globals.groupSelection = selection;
-        if (startOnGroup) {
-          return _this.start();
-        } else {
-          return _this.delayedUpdate();
-        }
+        return _this.delayedUpdate();
       });
       if ((_ref8 = globals.groupOpen) == null) {
         globals.groupOpen = 0;

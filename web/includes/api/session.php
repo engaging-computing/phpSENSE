@@ -379,6 +379,7 @@ function putData($eid, $sid, $data) {
         //post meta data
     	$db->query("INSERT INTO data (`session_id`, `format`, `uri`) VALUES({$sid}, 'local_csv', '{$filename}')");
     	updateTimeModifiedForSession($sid);
+    	updateTimeModifiedForExperiment($eid);
 	}
 	
 	return $row_count;
