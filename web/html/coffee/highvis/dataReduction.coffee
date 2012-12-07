@@ -92,4 +92,33 @@ globals.blur = (arr, w) ->
         res[i].y = blurFunc(window, arr[i].x)
 
     res
+
+globals.dataReduce = (arr, xBounds, yBounds, xCells, yCells) ->
+
+    xRange = xBounds.max - xBounds.min
+    yRange = yBounds.max - yBounds.min
+
+    xStep = xRange / xCells
+    yStep = yRange / yCells
+
+    cells = {}
+
+    for dataPoint, index in arr
+
+        x = Math.round((dataPoint.x - xBounds.min) / xStep)
+        y = Math.round((dataPoint.y - yBounds.min) / yStep)
+
+        if cells[x] is undefined or cells[x][y] is undefined
+            cells[x] ?= {}
+            cells[x][y] = true
+        else
+            arr[index].delete = true
+            console.log 'del'
+
+    res = arr.filter (dataPoint) -> not dataPoint.delete?
+
+    console.log [xStep, yStep]
+    console.log [arr.length, res.length]
+
+    res
             

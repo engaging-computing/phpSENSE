@@ -106,4 +106,33 @@
     return res;
   };
 
+  globals.dataReduce = function(arr, xBounds, yBounds, xCells, yCells) {
+    var cells, dataPoint, index, res, x, xRange, xStep, y, yRange, yStep, _i, _len, _ref1;
+    xRange = xBounds.max - xBounds.min;
+    yRange = yBounds.max - yBounds.min;
+    xStep = xRange / xCells;
+    yStep = yRange / yCells;
+    cells = {};
+    for (index = _i = 0, _len = arr.length; _i < _len; index = ++_i) {
+      dataPoint = arr[index];
+      x = Math.round((dataPoint.x - xBounds.min) / xStep);
+      y = Math.round((dataPoint.y - yBounds.min) / yStep);
+      if (cells[x] === void 0 || cells[x][y] === void 0) {
+        if ((_ref1 = cells[x]) == null) {
+          cells[x] = {};
+        }
+        cells[x][y] = true;
+      } else {
+        arr[index]["delete"] = true;
+        console.log('del');
+      }
+    }
+    res = arr.filter(function(dataPoint) {
+      return !(dataPoint["delete"] != null);
+    });
+    console.log([xStep, yStep]);
+    console.log([arr.length, res.length]);
+    return res;
+  };
+
 }).call(this);

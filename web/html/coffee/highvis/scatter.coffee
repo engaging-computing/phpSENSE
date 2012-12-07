@@ -120,6 +120,7 @@ class window.Scatter extends BaseHighVis
                     afterSetExtremes: (e) =>
                         @storeXBounds @chart.xAxis[0].getExtremes()
                         @storeYBounds @chart.yAxis[0].getExtremes()
+                        @delayedUpdate()
 
     ###
     Build the dummy series for the legend.
@@ -175,12 +176,29 @@ class window.Scatter extends BaseHighVis
            text: data.fields[@xAxis].fieldName
         @chart.xAxis[0].setTitle title, false
 
+        #Compute max bounds
+        if @xBounds.userMax is undefined or @xBounds.userMax is null
+
+            @yBounds.min = @xBounds.min =  Number.MAX_VALUE
+            @yBounds.max = @xBounds.max = -Number.MAX_VALUE
+        
+            for fieldIndex, symbolIndex in data.normalFields when fieldIndex in globals.fieldSelection
+                for group, groupIndex in data.groups when groupIndex in globals.groupSelection
+                    @yBounds.min = Math.min @yBounds.min, (data.getMin fieldIndex, groupIndex)
+                    @yBounds.max = Math.max @yBounds.max, (data.getMax fieldIndex, groupIndex)
+
+                    @xBounds.min = Math.min @xBounds.min, (data.getMin @xAxis, groupIndex)
+                    @xBounds.max = Math.max @xBounds.max, (data.getMax @xAxis, groupIndex)
+            console.log @xBounds
+            console.log @yBounds
+
         #Draw series
         for fieldIndex, symbolIndex in data.normalFields when fieldIndex in globals.fieldSelection
             for group, groupIndex in data.groups when groupIndex in globals.groupSelection
-                dat = if @myFlag
+                dat = if not @myFlag
                     console.log true
-                    globals.blur(data.xySelector(@xAxis, fieldIndex, groupIndex), 20)
+                    sel = data.xySelector(@xAxis, fieldIndex, groupIndex)
+                    globals.dataReduce(sel, @xBounds, @yBounds, 100, 100)
                 else
                     console.log false
                     data.xySelector(@xAxis, fieldIndex, groupIndex)
@@ -211,11 +229,12 @@ class window.Scatter extends BaseHighVis
                 @chart.addSeries options, false
                 
         if @xBounds.userMax isnt undefined and @xBounds.userMax isnt null
-            @chart.xAxis[0].setExtremes @xBounds.min, @xBounds.max, false
-            @chart.yAxis[0].setExtremes @yBounds.min, @yBounds.max, false
+            if @chart.xAxis[0].getExtremes().min is undefined
+                @chart.xAxis[0].setExtremes @xBounds.min, @xBounds.max, false
+                @chart.yAxis[0].setExtremes @yBounds.min, @yBounds.max, false
 
-            if ($ 'g[title="Reset zoom level 1:1"]').length is 0
-                @chart.showResetZoom()
+                if ($ 'g[title="Reset zoom level 1:1"]').length is 0
+                    @chart.showResetZoom()
         
         @chart.redraw()
 
