@@ -36,6 +36,11 @@ class window.Scatter extends BaseHighVis
         @LINES_MODE = 2
         @SYMBOLS_MODE = 1
 
+        @MAX_SERIES_SIZE = 600
+        @INITIAL_GRID_SIZE = 150
+
+        @xGridSize = @yGridSize = @INITIAL_GRID_SIZE
+            
         @mode = @SYMBOLS_MODE
 
         @xAxis = data.normalFields[0]
@@ -57,6 +62,8 @@ class window.Scatter extends BaseHighVis
             min: undefined
             userMax: undefined
             userMin: undefined
+
+        @fullDetail = false
 
     storeXBounds: (bounds) ->
         @xBounds = bounds
@@ -118,6 +125,7 @@ class window.Scatter extends BaseHighVis
                     afterSetExtremes: (e) =>
                         @storeXBounds @chart.xAxis[0].getExtremes()
                         @storeYBounds @chart.yAxis[0].getExtremes()
+                        @delayedUpdate()
 
     ###
     Build the dummy series for the legend.
@@ -173,11 +181,42 @@ class window.Scatter extends BaseHighVis
            text: data.fields[@xAxis].fieldName
         @chart.xAxis[0].setTitle title, false
 
+        #Compute max bounds
+        if @xBounds.userMax is undefined or @xBounds.userMax is null
+
+            @yBounds.min = @xBounds.min =  Number.MAX_VALUE
+            @yBounds.max = @xBounds.max = -Number.MAX_VALUE
+        
+            for fieldIndex, symbolIndex in data.normalFields when fieldIndex in globals.fieldSelection
+                for group, groupIndex in data.groups when groupIndex in globals.groupSelection
+                    @yBounds.min = Math.min @yBounds.min, (data.getMin fieldIndex, groupIndex)
+                    @yBounds.max = Math.max @yBounds.max, (data.getMax fieldIndex, groupIndex)
+
+                    @xBounds.min = Math.min @xBounds.min, (data.getMin @xAxis, groupIndex)
+                    @xBounds.max = Math.max @xBounds.max, (data.getMax @xAxis, groupIndex)
+
+        #Calculate grid spacing for data reduction
+        width = ($ '#' + @canvas).width()
+        height = ($ '#' + @canvas).height()
+
+        @xGridSize = @yGridSize = @INITIAL_GRID_SIZE
+        
+        if width > height
+            @yGridSize = Math.round (height / width * @INITIAL_GRID_SIZE)
+        else
+            @xGridSize = Math.round (width / height * @INITIAL_GRID_SIZE)
+
         #Draw series
         for fieldIndex, symbolIndex in data.normalFields when fieldIndex in globals.fieldSelection
             for group, groupIndex in data.groups when groupIndex in globals.groupSelection
+                dat = if not @fullDetail
+                    sel = data.xySelector(@xAxis, fieldIndex, groupIndex)
+                    globals.dataReduce sel, @xBounds, @yBounds, @xGridSize, @yGridSize, @MAX_SERIES_SIZE
+                else
+                    data.xySelector(@xAxis, fieldIndex, groupIndex)
+                
                 options =
-                    data: data.xySelector(@xAxis, fieldIndex, groupIndex)
+                    data: dat
                     showInLegend: false
                     color: globals.colors[groupIndex % globals.colors.length]
                     name:
@@ -202,11 +241,12 @@ class window.Scatter extends BaseHighVis
                 @chart.addSeries options, false
                 
         if @xBounds.userMax isnt undefined and @xBounds.userMax isnt null
-            @chart.xAxis[0].setExtremes @xBounds.min, @xBounds.max, false
-            @chart.yAxis[0].setExtremes @yBounds.min, @yBounds.max, false
+            if @chart.xAxis[0].getExtremes().min is undefined
+                @chart.xAxis[0].setExtremes @xBounds.min, @xBounds.max, false
+                @chart.yAxis[0].setExtremes @yBounds.min, @yBounds.max, false
 
-            if ($ 'g[title="Reset zoom level 1:1"]').length is 0
-                @chart.showResetZoom()
+                if ($ 'g[title="Reset zoom level 1:1"]').length is 0
+                    @chart.showResetZoom()
         
         @chart.redraw()
 
@@ -239,6 +279,10 @@ class window.Scatter extends BaseHighVis
         controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' #{if @advancedTooltips then 'checked' else ''}/> Advanced Tooltips "
         controls += "</div>"
 
+        controls += '<div class="inner_control_div">'
+        controls += "<input class='full_detail_box' type='checkbox' name='full_detail_selector' #{if @fullDetail then 'checked' else ''}/> Full Detail "
+        controls += "</div>"
+
         if data.logSafe is 1
             controls += '<div class="inner_control_div">'
             controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' #{if globals.logY is 1 then 'checked' else ''}/> Logarithmic Y Axis "
@@ -259,7 +303,13 @@ class window.Scatter extends BaseHighVis
             @delayedUpdate()
 
         ($ '.tooltip_box').click (e) =>
-            @advancedTooltips = not @advancedTooltips
+            @advancedTooltips = ($ '.tooltip_box').is(':checked')
+            true
+
+        ($ '.full_detail_box').click (e) =>
+            @fullDetail = ($ '.full_detail_box').is(':checked')
+            @delayedUpdate()
+            true
 
         ($ '.logY_box').click (e) =>
             globals.logY = (globals.logY + 1) % 2

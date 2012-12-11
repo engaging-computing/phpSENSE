@@ -49,6 +49,9 @@
       this.SYMBOLS_LINES_MODE = 3;
       this.LINES_MODE = 2;
       this.SYMBOLS_MODE = 1;
+      this.MAX_SERIES_SIZE = 600;
+      this.INITIAL_GRID_SIZE = 150;
+      this.xGridSize = this.yGridSize = this.INITIAL_GRID_SIZE;
       this.mode = this.SYMBOLS_MODE;
       this.xAxis = data.normalFields[0];
       this.advancedTooltips = false;
@@ -68,6 +71,7 @@
         userMax: void 0,
         userMin: void 0
       };
+      this.fullDetail = false;
     }
 
     Scatter.prototype.storeXBounds = function(bounds) {
@@ -136,7 +140,8 @@
           events: {
             afterSetExtremes: function(e) {
               _this.storeXBounds(_this.chart.xAxis[0].getExtremes());
-              return _this.storeYBounds(_this.chart.yAxis[0].getExtremes());
+              _this.storeYBounds(_this.chart.yAxis[0].getExtremes());
+              return _this.delayedUpdate();
             }
           }
         }
@@ -209,24 +214,54 @@
 
 
     Scatter.prototype.update = function() {
-      var fieldIndex, group, groupIndex, options, symbolIndex, title, _i, _j, _len, _len1, _ref, _ref1;
+      var dat, fieldIndex, group, groupIndex, height, options, sel, symbolIndex, title, width, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
       Scatter.__super__.update.call(this);
       title = {
         text: data.fields[this.xAxis].fieldName
       };
       this.chart.xAxis[0].setTitle(title, false);
-      _ref = data.normalFields;
-      for (symbolIndex = _i = 0, _len = _ref.length; _i < _len; symbolIndex = ++_i) {
-        fieldIndex = _ref[symbolIndex];
+      if (this.xBounds.userMax === void 0 || this.xBounds.userMax === null) {
+        this.yBounds.min = this.xBounds.min = Number.MAX_VALUE;
+        this.yBounds.max = this.xBounds.max = -Number.MAX_VALUE;
+        _ref = data.normalFields;
+        for (symbolIndex = _i = 0, _len = _ref.length; _i < _len; symbolIndex = ++_i) {
+          fieldIndex = _ref[symbolIndex];
+          if (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0) {
+            _ref1 = data.groups;
+            for (groupIndex = _j = 0, _len1 = _ref1.length; _j < _len1; groupIndex = ++_j) {
+              group = _ref1[groupIndex];
+              if (!(__indexOf.call(globals.groupSelection, groupIndex) >= 0)) {
+                continue;
+              }
+              this.yBounds.min = Math.min(this.yBounds.min, data.getMin(fieldIndex, groupIndex));
+              this.yBounds.max = Math.max(this.yBounds.max, data.getMax(fieldIndex, groupIndex));
+              this.xBounds.min = Math.min(this.xBounds.min, data.getMin(this.xAxis, groupIndex));
+              this.xBounds.max = Math.max(this.xBounds.max, data.getMax(this.xAxis, groupIndex));
+            }
+          }
+        }
+      }
+      width = ($('#' + this.canvas)).width();
+      height = ($('#' + this.canvas)).height();
+      this.xGridSize = this.yGridSize = this.INITIAL_GRID_SIZE;
+      if (width > height) {
+        this.yGridSize = Math.round(height / width * this.INITIAL_GRID_SIZE);
+      } else {
+        this.xGridSize = Math.round(width / height * this.INITIAL_GRID_SIZE);
+      }
+      _ref2 = data.normalFields;
+      for (symbolIndex = _k = 0, _len2 = _ref2.length; _k < _len2; symbolIndex = ++_k) {
+        fieldIndex = _ref2[symbolIndex];
         if (__indexOf.call(globals.fieldSelection, fieldIndex) >= 0) {
-          _ref1 = data.groups;
-          for (groupIndex = _j = 0, _len1 = _ref1.length; _j < _len1; groupIndex = ++_j) {
-            group = _ref1[groupIndex];
+          _ref3 = data.groups;
+          for (groupIndex = _l = 0, _len3 = _ref3.length; _l < _len3; groupIndex = ++_l) {
+            group = _ref3[groupIndex];
             if (!(__indexOf.call(globals.groupSelection, groupIndex) >= 0)) {
               continue;
             }
+            dat = !this.fullDetail ? (sel = data.xySelector(this.xAxis, fieldIndex, groupIndex), globals.dataReduce(sel, this.xBounds, this.yBounds, this.xGridSize, this.yGridSize, this.MAX_SERIES_SIZE)) : data.xySelector(this.xAxis, fieldIndex, groupIndex);
             options = {
-              data: data.xySelector(this.xAxis, fieldIndex, groupIndex),
+              data: dat,
               showInLegend: false,
               color: globals.colors[groupIndex % globals.colors.length],
               name: {
@@ -257,10 +292,12 @@
         }
       }
       if (this.xBounds.userMax !== void 0 && this.xBounds.userMax !== null) {
-        this.chart.xAxis[0].setExtremes(this.xBounds.min, this.xBounds.max, false);
-        this.chart.yAxis[0].setExtremes(this.yBounds.min, this.yBounds.max, false);
-        if (($('g[title="Reset zoom level 1:1"]')).length === 0) {
-          this.chart.showResetZoom();
+        if (this.chart.xAxis[0].getExtremes().min === void 0) {
+          this.chart.xAxis[0].setExtremes(this.xBounds.min, this.xBounds.max, false);
+          this.chart.yAxis[0].setExtremes(this.yBounds.min, this.yBounds.max, false);
+          if (($('g[title="Reset zoom level 1:1"]')).length === 0) {
+            this.chart.showResetZoom();
+          }
         }
       }
       this.chart.redraw();
@@ -295,6 +332,9 @@
       controls += '<div class="inner_control_div">';
       controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' " + (this.advancedTooltips ? 'checked' : '') + "/> Advanced Tooltips ";
       controls += "</div>";
+      controls += '<div class="inner_control_div">';
+      controls += "<input class='full_detail_box' type='checkbox' name='full_detail_selector' " + (this.fullDetail ? 'checked' : '') + "/> Full Detail ";
+      controls += "</div>";
       if (data.logSafe === 1) {
         controls += '<div class="inner_control_div">';
         controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' " + (globals.logY === 1 ? 'checked' : '') + "/> Logarithmic Y Axis ";
@@ -312,7 +352,13 @@
         return _this.delayedUpdate();
       });
       ($('.tooltip_box')).click(function(e) {
-        return _this.advancedTooltips = !_this.advancedTooltips;
+        _this.advancedTooltips = ($('.tooltip_box')).is(':checked');
+        return true;
+      });
+      ($('.full_detail_box')).click(function(e) {
+        _this.fullDetail = ($('.full_detail_box')).is(':checked');
+        _this.delayedUpdate();
+        return true;
       });
       ($('.logY_box')).click(function(e) {
         globals.logY = (globals.logY + 1) % 2;
