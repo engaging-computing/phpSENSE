@@ -49,6 +49,9 @@
       this.SYMBOLS_LINES_MODE = 3;
       this.LINES_MODE = 2;
       this.SYMBOLS_MODE = 1;
+      this.MAX_SERIES_SIZE = 600;
+      this.INITIAL_GRID_SIZE = 150;
+      this.xGridSize = this.yGridSize = this.INITIAL_GRID_SIZE;
       this.mode = this.SYMBOLS_MODE;
       this.xAxis = data.normalFields[0];
       this.advancedTooltips = false;
@@ -68,7 +71,7 @@
         userMax: void 0,
         userMin: void 0
       };
-      this.myFlag = false;
+      this.fullDetail = false;
     }
 
     Scatter.prototype.storeXBounds = function(bounds) {
@@ -211,7 +214,7 @@
 
 
     Scatter.prototype.update = function() {
-      var dat, fieldIndex, group, groupIndex, options, sel, symbolIndex, title, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
+      var dat, fieldIndex, group, groupIndex, height, options, sel, symbolIndex, title, width, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
       Scatter.__super__.update.call(this);
       title = {
         text: data.fields[this.xAxis].fieldName
@@ -237,8 +240,14 @@
             }
           }
         }
-        console.log(this.xBounds);
-        console.log(this.yBounds);
+      }
+      width = ($('#' + this.canvas)).width();
+      height = ($('#' + this.canvas)).height();
+      this.xGridSize = this.yGridSize = this.INITIAL_GRID_SIZE;
+      if (width > height) {
+        this.yGridSize = Math.round(height / width * this.INITIAL_GRID_SIZE);
+      } else {
+        this.xGridSize = Math.round(width / height * this.INITIAL_GRID_SIZE);
       }
       _ref2 = data.normalFields;
       for (symbolIndex = _k = 0, _len2 = _ref2.length; _k < _len2; symbolIndex = ++_k) {
@@ -250,7 +259,7 @@
             if (!(__indexOf.call(globals.groupSelection, groupIndex) >= 0)) {
               continue;
             }
-            dat = !this.myFlag ? (console.log(true), sel = data.xySelector(this.xAxis, fieldIndex, groupIndex), globals.dataReduce(sel, this.xBounds, this.yBounds, 100, 100, 600)) : (console.log(false), data.xySelector(this.xAxis, fieldIndex, groupIndex));
+            dat = !this.fullDetail ? (sel = data.xySelector(this.xAxis, fieldIndex, groupIndex), globals.dataReduce(sel, this.xBounds, this.yBounds, this.xGridSize, this.yGridSize, this.MAX_SERIES_SIZE)) : data.xySelector(this.xAxis, fieldIndex, groupIndex);
             options = {
               data: dat,
               showInLegend: false,
@@ -323,6 +332,9 @@
       controls += '<div class="inner_control_div">';
       controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' " + (this.advancedTooltips ? 'checked' : '') + "/> Advanced Tooltips ";
       controls += "</div>";
+      controls += '<div class="inner_control_div">';
+      controls += "<input class='full_detail_box' type='checkbox' name='full_detail_selector' " + (this.fullDetail ? 'checked' : '') + "/> Full Detail ";
+      controls += "</div>";
       if (data.logSafe === 1) {
         controls += '<div class="inner_control_div">';
         controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' " + (globals.logY === 1 ? 'checked' : '') + "/> Logarithmic Y Axis ";
@@ -340,7 +352,13 @@
         return _this.delayedUpdate();
       });
       ($('.tooltip_box')).click(function(e) {
-        return _this.advancedTooltips = !_this.advancedTooltips;
+        _this.advancedTooltips = ($('.tooltip_box')).is(':checked');
+        return true;
+      });
+      ($('.full_detail_box')).click(function(e) {
+        _this.fullDetail = ($('.full_detail_box')).is(':checked');
+        _this.delayedUpdate();
+        return true;
       });
       ($('.logY_box')).click(function(e) {
         globals.logY = (globals.logY + 1) % 2;

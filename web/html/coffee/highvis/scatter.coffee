@@ -36,6 +36,11 @@ class window.Scatter extends BaseHighVis
         @LINES_MODE = 2
         @SYMBOLS_MODE = 1
 
+        @MAX_SERIES_SIZE = 600
+        @INITIAL_GRID_SIZE = 150
+
+        @xGridSize = @yGridSize = @INITIAL_GRID_SIZE
+            
         @mode = @SYMBOLS_MODE
 
         @xAxis = data.normalFields[0]
@@ -58,7 +63,7 @@ class window.Scatter extends BaseHighVis
             userMax: undefined
             userMin: undefined
 
-        @myFlag = false
+        @fullDetail = false
 
     storeXBounds: (bounds) ->
         @xBounds = bounds
@@ -189,18 +194,25 @@ class window.Scatter extends BaseHighVis
 
                     @xBounds.min = Math.min @xBounds.min, (data.getMin @xAxis, groupIndex)
                     @xBounds.max = Math.max @xBounds.max, (data.getMax @xAxis, groupIndex)
-            console.log @xBounds
-            console.log @yBounds
+
+        #Calculate grid spacing for data reduction
+        width = ($ '#' + @canvas).width()
+        height = ($ '#' + @canvas).height()
+
+        @xGridSize = @yGridSize = @INITIAL_GRID_SIZE
+        
+        if width > height
+            @yGridSize = Math.round (height / width * @INITIAL_GRID_SIZE)
+        else
+            @xGridSize = Math.round (width / height * @INITIAL_GRID_SIZE)
 
         #Draw series
         for fieldIndex, symbolIndex in data.normalFields when fieldIndex in globals.fieldSelection
             for group, groupIndex in data.groups when groupIndex in globals.groupSelection
-                dat = if not @myFlag
-                    console.log true
+                dat = if not @fullDetail
                     sel = data.xySelector(@xAxis, fieldIndex, groupIndex)
-                    globals.dataReduce sel, @xBounds, @yBounds, 100, 100, 600
+                    globals.dataReduce sel, @xBounds, @yBounds, @xGridSize, @yGridSize, @MAX_SERIES_SIZE
                 else
-                    console.log false
                     data.xySelector(@xAxis, fieldIndex, groupIndex)
                 
                 options =
@@ -267,6 +279,10 @@ class window.Scatter extends BaseHighVis
         controls += "<input class='tooltip_box' type='checkbox' name='tooltip_selector' #{if @advancedTooltips then 'checked' else ''}/> Advanced Tooltips "
         controls += "</div>"
 
+        controls += '<div class="inner_control_div">'
+        controls += "<input class='full_detail_box' type='checkbox' name='full_detail_selector' #{if @fullDetail then 'checked' else ''}/> Full Detail "
+        controls += "</div>"
+
         if data.logSafe is 1
             controls += '<div class="inner_control_div">'
             controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' #{if globals.logY is 1 then 'checked' else ''}/> Logarithmic Y Axis "
@@ -287,7 +303,13 @@ class window.Scatter extends BaseHighVis
             @delayedUpdate()
 
         ($ '.tooltip_box').click (e) =>
-            @advancedTooltips = not @advancedTooltips
+            @advancedTooltips = ($ '.tooltip_box').is(':checked')
+            true
+
+        ($ '.full_detail_box').click (e) =>
+            @fullDetail = ($ '.full_detail_box').is(':checked')
+            @delayedUpdate()
+            true
 
         ($ '.logY_box').click (e) =>
             globals.logY = (globals.logY + 1) % 2

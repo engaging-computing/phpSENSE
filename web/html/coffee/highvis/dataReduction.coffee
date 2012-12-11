@@ -29,77 +29,18 @@
 
 window.globals ?= {}
 
-globals.curvatureAnalysis = (arr, num) ->
-
-    curves = new Array(arr.length)
-
-    for i in [1...(arr.length - 1)]
-        postSlope = (arr[i + 1].y - arr[i].y) / (arr[i + 1].x - arr[i].x)
-        preSlope  = (arr[i].y - arr[i - 1].y) / (arr[i].x - arr[i - 1].x)
-
-        curves[i] =
-            curve: Math.abs(postSlope - preSlope)
-            index: i
-
-    curves.sort (a, b) -> (a.curve - b.curve)
-
-    for curve in curves[0...(arr.length - num)]
-        arr[curve.index].marked = true
-
-    result = []
-
-    for point, index in arr
-        if not point.marked?
-            result.push(point)
-    
-    result
-
-globals.blur = (arr, w) ->
-
-    range = arr[arr.length - 1].x - arr[0].x
-    windowSize = (range / arr.length) * w
-
-    res = []
-    globals.extendObject(res, arr)
-    window = []
-
-    sumFunc = (a, b) -> a + b.y
-
-    blurFunc = (win, center) ->
-        weights = []
-
-        for item in win
-            weights.push 1.0 - (Math.abs(item.x - center) / windowSize)
-
-        ws = weights.reduce (a, b) -> a + b
-        result = 0
-
-        for i in [0...win.length]
-            result += (win[i].y * weights[i]) / ws
-            
-        result
-
-    j = 0
-    for i in [0...arr.length]
-
-        while j < arr.length and (arr[j].x - arr[i].x) <= windowSize
-            window.push arr[j]
-            j += 1
-
-        while (arr[i].x - window[0].x) > windowSize
-            window.shift()
-            
-        res[i].y = blurFunc(window, arr[i].x)
-
-    res
-
+###
+Clips data array arr using the Cohen-Sutherland algorithm
+See http://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland
+###
 globals.clip = (arr, xBounds, yBounds) ->
 
     LEFT   = 1
     RIGHT  = 2
     BOTTOM = 4
     TOP    = 8
-    
+
+    # Encode an xy coordinate to one of the 9 clipping rects
     coder = (x, y) ->
         code = 0
 
@@ -115,6 +56,7 @@ globals.clip = (arr, xBounds, yBounds) ->
 
         code
 
+    # Test to see if a line segment passes through the visible rect
     test = (x1, y1, x2, y2) ->
 
         code1 = coder x1, y1
@@ -153,6 +95,7 @@ globals.clip = (arr, xBounds, yBounds) ->
                     y2 = y
                     code2 = coder x2, y2
 
+    #Remove points that are not connected to any valid line segments
     prev = false
     for index in [1...arr.length]
         
@@ -168,7 +111,12 @@ globals.clip = (arr, xBounds, yBounds) ->
 
     arr.filter (dataPoint) -> not dataPoint.delete?
                     
-    
+###
+Reduces data based on a first-to-enter grid cell approach.
+
+Based on Curran Kelleher's Quadstream algorithm, see
+https://github.com/curran/quadstream
+###
 globals.dataReduce = (arr, xBounds, yBounds, xCells, yCells, target) ->
 
     arr = globals.clip arr, xBounds, yBounds
@@ -191,12 +139,8 @@ globals.dataReduce = (arr, xBounds, yBounds, xCells, yCells, target) ->
             cells[x][y] = true
         else
             arr[index].delete = true
-            console.log 'del'
 
     res = arr.filter (dataPoint) -> not dataPoint.delete?
-
-    console.log [xStep, yStep]
-    console.log [arr.length, res.length]
 
     if res.length > target
         return globals.dataReduce res, xBounds, yBounds, (xCells / 2), (yCells / 2), target

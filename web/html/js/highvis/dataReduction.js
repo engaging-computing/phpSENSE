@@ -106,6 +106,12 @@
     return res;
   };
 
+  /*
+  Clips data array arr using the Cohen-Sutherland algorithm
+  See http://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland
+  */
+
+
   globals.clip = function(arr, xBounds, yBounds) {
     var BOTTOM, LEFT, RIGHT, TOP, coder, cur, index, prev, test, _i, _ref1;
     LEFT = 1;
@@ -199,14 +205,11 @@
         cells[x][y] = true;
       } else {
         arr[index]["delete"] = true;
-        console.log('del');
       }
     }
     res = arr.filter(function(dataPoint) {
       return !(dataPoint["delete"] != null);
     });
-    console.log([xStep, yStep]);
-    console.log([arr.length, res.length]);
     if (res.length > target) {
       return globals.dataReduce(res, xBounds, yBounds, xCells / 2, yCells / 2, target);
     }

@@ -58,7 +58,9 @@
 
 
     Timeline.prototype.buildOptions = function() {
+      var self;
       Timeline.__super__.buildOptions.call(this);
+      self = this;
       $.extend(true, this.chartOptions, {
         title: {
           text: ''
