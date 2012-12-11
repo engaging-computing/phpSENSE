@@ -43,6 +43,8 @@ class window.Timeline extends Scatter
     buildOptions: ->
         super()
 
+        self = this
+
         $.extend true, @chartOptions,
             title:
                 text: ''
