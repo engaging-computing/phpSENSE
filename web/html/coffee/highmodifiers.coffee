@@ -253,6 +253,7 @@ data.preprocessData = ->
                 # Strip all quote characters
                 dp[fIndex] = dp[fIndex].replace /"/g, ""
                 dp[fIndex] = dp[fIndex].replace /'/g, ""
+                dp[fIndex] = dp[fIndex].replace /-/g, " "
 
             switch Number field.typeID
                 when data.types.TIME
