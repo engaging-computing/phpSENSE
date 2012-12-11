@@ -198,7 +198,7 @@ class window.Scatter extends BaseHighVis
                 dat = if not @myFlag
                     console.log true
                     sel = data.xySelector(@xAxis, fieldIndex, groupIndex)
-                    globals.dataReduce(sel, @xBounds, @yBounds, 100, 100)
+                    globals.dataReduce sel, @xBounds, @yBounds, 100, 100, 600
                 else
                     console.log false
                     data.xySelector(@xAxis, fieldIndex, groupIndex)

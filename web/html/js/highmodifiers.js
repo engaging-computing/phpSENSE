@@ -404,6 +404,7 @@
         if (typeof dp[fIndex] === "string") {
           dp[fIndex] = dp[fIndex].replace(/"/g, "");
           dp[fIndex] = dp[fIndex].replace(/'/g, "");
+          dp[fIndex] = dp[fIndex].replace(/-/g, " ");
         }
         switch (Number(field.typeID)) {
           case data.types.TIME:

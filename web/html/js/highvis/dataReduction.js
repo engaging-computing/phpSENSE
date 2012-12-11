@@ -106,8 +106,83 @@
     return res;
   };
 
-  globals.dataReduce = function(arr, xBounds, yBounds, xCells, yCells) {
+  globals.clip = function(arr, xBounds, yBounds) {
+    var BOTTOM, LEFT, RIGHT, TOP, coder, cur, index, prev, test, _i, _ref1;
+    LEFT = 1;
+    RIGHT = 2;
+    BOTTOM = 4;
+    TOP = 8;
+    coder = function(x, y) {
+      var code;
+      code = 0;
+      if (x < xBounds.min) {
+        code |= LEFT;
+      } else if (x > xBounds.max) {
+        code |= RIGHT;
+      }
+      if (y < yBounds.min) {
+        code |= BOTTOM;
+      } else if (y > yBounds.max) {
+        code |= TOP;
+      }
+      return code;
+    };
+    test = function(x1, y1, x2, y2) {
+      var code1, code2, outcode, x, y;
+      code1 = coder(x1, y1);
+      code2 = coder(x2, y2);
+      while (true) {
+        if (!(code1 | code2)) {
+          return true;
+        } else if (code1 & code2) {
+          return false;
+        } else {
+          x = y = 0;
+          outcode = code1 ? code1 : code2;
+          if (outcode & TOP) {
+            x = x1 + (x2 - x1) * (yBounds.max - y1) / (y2 - y1);
+            y = yBounds.max;
+          } else if (outcode & BOTTOM) {
+            x = x1 + (x2 - x1) * (yBounds.min - y1) / (y2 - y1);
+            y = yBounds.min;
+          } else if (outcode & RIGHT) {
+            y = y1 + (y2 - y1) * (xBounds.max - x1) / (x2 - x1);
+            x = xBounds.max;
+          } else if (outcode & LEFT) {
+            y = y1 + (y2 - y1) * (xBounds.min - x1) / (x2 - x1);
+            x = xBounds.min;
+          }
+          if (outcode === code1) {
+            x1 = x;
+            y1 = y;
+            code1 = coder(x1, y1);
+          } else {
+            x2 = x;
+            y2 = y;
+            code2 = coder(x2, y2);
+          }
+        }
+      }
+    };
+    prev = false;
+    for (index = _i = 1, _ref1 = arr.length; 1 <= _ref1 ? _i < _ref1 : _i > _ref1; index = 1 <= _ref1 ? ++_i : --_i) {
+      cur = test(arr[index - 1].x, arr[index - 1].y, arr[index].x, arr[index].y);
+      if ((!prev) && (!cur)) {
+        arr[index]["delete"] = true;
+      }
+      prev = cur;
+    }
+    if (!prev) {
+      arr[arr.length - 1]["delete"] = true;
+    }
+    return arr.filter(function(dataPoint) {
+      return !(dataPoint["delete"] != null);
+    });
+  };
+
+  globals.dataReduce = function(arr, xBounds, yBounds, xCells, yCells, target) {
     var cells, dataPoint, index, res, x, xRange, xStep, y, yRange, yStep, _i, _len, _ref1;
+    arr = globals.clip(arr, xBounds, yBounds);
     xRange = xBounds.max - xBounds.min;
     yRange = yBounds.max - yBounds.min;
     xStep = xRange / xCells;
@@ -132,6 +207,9 @@
     });
     console.log([xStep, yStep]);
     console.log([arr.length, res.length]);
+    if (res.length > target) {
+      return globals.dataReduce(res, xBounds, yBounds, xCells / 2, yCells / 2, target);
+    }
     return res;
   };
 

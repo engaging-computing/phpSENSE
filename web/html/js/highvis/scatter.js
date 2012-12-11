@@ -250,7 +250,7 @@
             if (!(__indexOf.call(globals.groupSelection, groupIndex) >= 0)) {
               continue;
             }
-            dat = !this.myFlag ? (console.log(true), sel = data.xySelector(this.xAxis, fieldIndex, groupIndex), globals.dataReduce(sel, this.xBounds, this.yBounds, 100, 100)) : (console.log(false), data.xySelector(this.xAxis, fieldIndex, groupIndex));
+            dat = !this.myFlag ? (console.log(true), sel = data.xySelector(this.xAxis, fieldIndex, groupIndex), globals.dataReduce(sel, this.xBounds, this.yBounds, 100, 100, 600)) : (console.log(false), data.xySelector(this.xAxis, fieldIndex, groupIndex));
             options = {
               data: dat,
               showInLegend: false,
