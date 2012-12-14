@@ -37,75 +37,6 @@
     window.globals = {};
   }
 
-  globals.curvatureAnalysis = function(arr, num) {
-    var curve, curves, i, index, point, postSlope, preSlope, result, _i, _j, _k, _len, _len1, _ref1, _ref2;
-    curves = new Array(arr.length);
-    for (i = _i = 1, _ref1 = arr.length - 1; 1 <= _ref1 ? _i < _ref1 : _i > _ref1; i = 1 <= _ref1 ? ++_i : --_i) {
-      postSlope = (arr[i + 1].y - arr[i].y) / (arr[i + 1].x - arr[i].x);
-      preSlope = (arr[i].y - arr[i - 1].y) / (arr[i].x - arr[i - 1].x);
-      curves[i] = {
-        curve: Math.abs(postSlope - preSlope),
-        index: i
-      };
-    }
-    curves.sort(function(a, b) {
-      return a.curve - b.curve;
-    });
-    _ref2 = curves.slice(0, arr.length - num);
-    for (_j = 0, _len = _ref2.length; _j < _len; _j++) {
-      curve = _ref2[_j];
-      arr[curve.index].marked = true;
-    }
-    result = [];
-    for (index = _k = 0, _len1 = arr.length; _k < _len1; index = ++_k) {
-      point = arr[index];
-      if (!(point.marked != null)) {
-        result.push(point);
-      }
-    }
-    return result;
-  };
-
-  globals.blur = function(arr, w) {
-    var blurFunc, i, j, range, res, sumFunc, window, windowSize, _i, _ref1;
-    range = arr[arr.length - 1].x - arr[0].x;
-    windowSize = (range / arr.length) * w;
-    res = [];
-    globals.extendObject(res, arr);
-    window = [];
-    sumFunc = function(a, b) {
-      return a + b.y;
-    };
-    blurFunc = function(win, center) {
-      var i, item, result, weights, ws, _i, _j, _len, _ref1;
-      weights = [];
-      for (_i = 0, _len = win.length; _i < _len; _i++) {
-        item = win[_i];
-        weights.push(1.0 - (Math.abs(item.x - center) / windowSize));
-      }
-      ws = weights.reduce(function(a, b) {
-        return a + b;
-      });
-      result = 0;
-      for (i = _j = 0, _ref1 = win.length; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-        result += (win[i].y * weights[i]) / ws;
-      }
-      return result;
-    };
-    j = 0;
-    for (i = _i = 0, _ref1 = arr.length; 0 <= _ref1 ? _i < _ref1 : _i > _ref1; i = 0 <= _ref1 ? ++_i : --_i) {
-      while (j < arr.length && (arr[j].x - arr[i].x) <= windowSize) {
-        window.push(arr[j]);
-        j += 1;
-      }
-      while ((arr[i].x - window[0].x) > windowSize) {
-        window.shift();
-      }
-      res[i].y = blurFunc(window, arr[i].x);
-    }
-    return res;
-  };
-
   /*
   Clips data array arr using the Cohen-Sutherland algorithm
   See http://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland
@@ -185,6 +116,14 @@
       return !(dataPoint["delete"] != null);
     });
   };
+
+  /*
+  Reduces data based on a first-to-enter grid cell approach.
+  
+  Based on Curran Kelleher's Quadstream algorithm, see
+  https://github.com/curran/quadstream
+  */
+
 
   globals.dataReduce = function(arr, xBounds, yBounds, xCells, yCells, target) {
     var cells, dataPoint, index, res, x, xRange, xStep, y, yRange, yStep, _i, _len, _ref1;
