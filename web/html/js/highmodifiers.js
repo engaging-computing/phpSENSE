@@ -394,7 +394,7 @@
 
   data.preprocessData = function() {
     var dateFormats, dp, fIndex, _i, _j, _len, _len1, _ref5, _ref6;
-    dateFormats = ["YYYY MM DD hh:mm:ss.SSS A Z", "YYYY MMM DD hh:mm:ss.SSS A Z", "MM DD YYYY hh:mm:ss.SSS A Z", "MMM DD YYYY hh:mm:ss.SSS A Z"];
+    dateFormats = ["YYYY MM DD hh:mm:ss.SSS A Z", "YYYY MMM DD hh:mm:ss.SSS A Z", "MM DD YYYY hh:mm:ss.SSS A Z", "MMM DD YYYY hh:mm:ss.SSS A Z", "YYYY MM DD hh:mm:ss.SSS Z", "YYYY MMM DD hh:mm:ss.SSS Z", "MM DD YYYY hh:mm:ss.SSS Z", "MMM DD YYYY hh:mm:ss.SSS Z"];
     _ref5 = data.dataPoints;
     for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
       dp = _ref5[_i];
