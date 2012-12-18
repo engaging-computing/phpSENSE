@@ -236,7 +236,7 @@ data.logSafe ?= do ->
             if (Number dataPoint[fieldIndex] <= 0) and (dataPoint[fieldIndex] isnt null)
                 return 0
     1
-
+    
 ###
 Check various type-related issues
 ###
@@ -245,7 +245,12 @@ data.preprocessData = ->
     dateFormats = ["YYYY MM DD hh:mm:ss.SSS A Z",
                    "YYYY MMM DD hh:mm:ss.SSS A Z",
                    "MM DD YYYY hh:mm:ss.SSS A Z",
-                   "MMM DD YYYY hh:mm:ss.SSS A Z"]
+                   "MMM DD YYYY hh:mm:ss.SSS A Z",
+                   
+                   "YYYY MM DD hh:mm:ss.SSS Z",
+                   "YYYY MMM DD hh:mm:ss.SSS Z",
+                   "MM DD YYYY hh:mm:ss.SSS Z",
+                   "MMM DD YYYY hh:mm:ss.SSS Z"]
 
     for dp in data.dataPoints
         for field, fIndex in data.fields
