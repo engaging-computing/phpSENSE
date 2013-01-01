@@ -359,23 +359,15 @@
     return _results;
   })();
 
-  if ((_ref2 = data.groupingFieldIndex) == null) {
-    data.groupingFieldIndex = 0;
-  }
-
-  if ((_ref3 = data.groups) == null) {
-    data.groups = data.makeGroups();
-  }
-
-  if ((_ref4 = data.logSafe) == null) {
+  if ((_ref2 = data.logSafe) == null) {
     data.logSafe = (function() {
-      var dataPoint, fieldIndex, _i, _j, _len, _len1, _ref5, _ref6;
-      _ref5 = data.dataPoints;
-      for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
-        dataPoint = _ref5[_i];
-        _ref6 = data.fields;
-        for (fieldIndex = _j = 0, _len1 = _ref6.length; _j < _len1; fieldIndex = ++_j) {
-          field = _ref6[fieldIndex];
+      var dataPoint, fieldIndex, _i, _j, _len, _len1, _ref3, _ref4;
+      _ref3 = data.dataPoints;
+      for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+        dataPoint = _ref3[_i];
+        _ref4 = data.fields;
+        for (fieldIndex = _j = 0, _len1 = _ref4.length; _j < _len1; fieldIndex = ++_j) {
+          field = _ref4[fieldIndex];
           if (__indexOf.call(data.normalFields, fieldIndex) >= 0) {
             if ((Number(dataPoint[fieldIndex] <= 0)) && (dataPoint[fieldIndex] !== null)) {
               return 0;
@@ -393,23 +385,21 @@
 
 
   data.preprocessData = function() {
-    var dateFormats, dp, fIndex, _i, _j, _len, _len1, _ref5, _ref6;
-    dateFormats = ["YYYY MM DD hh:mm:ss.SSS A Z", "YYYY MMM DD hh:mm:ss.SSS A Z", "MM DD YYYY hh:mm:ss.SSS A Z", "MMM DD YYYY hh:mm:ss.SSS A Z", "YYYY MM DD hh:mm:ss.SSS Z", "YYYY MMM DD hh:mm:ss.SSS Z", "MM DD YYYY hh:mm:ss.SSS Z", "MMM DD YYYY hh:mm:ss.SSS Z"];
-    _ref5 = data.dataPoints;
-    for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
-      dp = _ref5[_i];
-      _ref6 = data.fields;
-      for (fIndex = _j = 0, _len1 = _ref6.length; _j < _len1; fIndex = ++_j) {
-        field = _ref6[fIndex];
+    var dp, fIndex, _i, _j, _len, _len1, _ref3, _ref4;
+    _ref3 = data.dataPoints;
+    for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+      dp = _ref3[_i];
+      _ref4 = data.fields;
+      for (fIndex = _j = 0, _len1 = _ref4.length; _j < _len1; fIndex = ++_j) {
+        field = _ref4[fIndex];
         if (typeof dp[fIndex] === "string") {
           dp[fIndex] = dp[fIndex].replace(/"/g, "");
           dp[fIndex] = dp[fIndex].replace(/'/g, "");
-          dp[fIndex] = dp[fIndex].replace(/-/g, " ");
         }
         switch (Number(field.typeID)) {
           case data.types.TIME:
             if (isNaN(Number(dp[fIndex]))) {
-              dp[fIndex] = (moment(dp[fIndex], dateFormats)).valueOf();
+              dp[fIndex] = (data.parseDate(dp[fIndex])).valueOf();
             } else {
               dp[fIndex] = (moment(Number(dp[fIndex]))).valueOf();
             }
@@ -426,6 +416,41 @@
     return 1;
   };
 
+  data.parseDate = function(str) {
+    var dateFormats, digits, hourAdj, ret, splStr, tz;
+    if (!isNaN(Number(str))) {
+      return moment(Number(str));
+    }
+    dateFormats = [];
+    splStr = str.replace(/-/g, " ");
+    splStr = splStr.replace(/\//g, " ");
+    splStr = splStr.replace(/\\/g, " ");
+    digits = splStr.split(" ");
+    if (Number(digits[0] <= 12)) {
+      dateFormats = ["MM DD YYYY hh:mm:ss.SSS", "MMM DD YYYY hh:mm:ss.SSS"];
+    } else {
+      dateFormats = ["YYYY MM DD hh:mm:ss.SSS", "YYYY MMM DD hh:mm:ss.SSS"];
+    }
+    hourAdj = 0;
+    if (str.match(/pm/gi !== null)) {
+      hourAdj += 12;
+    }
+    tz = str.match(/[\+\-]\d\d\d\d/gi);
+    if (tz !== null) {
+      hourAdj += -((Number(tz[0])) / 100);
+    }
+    ret = moment(str, dateFormats);
+    return ret.hours(ret.hours() + hourAdj);
+  };
+
   data.preprocessData();
+
+  if ((_ref3 = data.groupingFieldIndex) == null) {
+    data.groupingFieldIndex = 0;
+  }
+
+  if ((_ref4 = data.groups) == null) {
+    data.groups = data.makeGroups();
+  }
 
 }).call(this);
