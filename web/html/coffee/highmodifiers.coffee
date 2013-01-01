@@ -224,11 +224,6 @@ Gets a list of geolocation field indicies
 data.geoFields = for field, index in data.fields when (Number field.typeID) isnt data.types.GEOSPATIAL
     Number index
 
-#Field index of grouping field
-data.groupingFieldIndex ?= 0
-#Array of current groups
-data.groups ?= data.makeGroups()
-
 #Check if data is log safe
 data.logSafe ?= do ->
     for dataPoint in data.dataPoints
@@ -242,29 +237,18 @@ Check various type-related issues
 ###
 data.preprocessData = ->
 
-    dateFormats = ["YYYY MM DD hh:mm:ss.SSS A Z",
-                   "YYYY MMM DD hh:mm:ss.SSS A Z",
-                   "MM DD YYYY hh:mm:ss.SSS A Z",
-                   "MMM DD YYYY hh:mm:ss.SSS A Z",
-                   
-                   "YYYY MM DD hh:mm:ss.SSS Z",
-                   "YYYY MMM DD hh:mm:ss.SSS Z",
-                   "MM DD YYYY hh:mm:ss.SSS Z",
-                   "MMM DD YYYY hh:mm:ss.SSS Z"]
-
     for dp in data.dataPoints
         for field, fIndex in data.fields
             if (typeof dp[fIndex] == "string")
                 # Strip all quote characters
                 dp[fIndex] = dp[fIndex].replace /"/g, ""
                 dp[fIndex] = dp[fIndex].replace /'/g, ""
-                dp[fIndex] = dp[fIndex].replace /-/g, " "
 
             switch Number field.typeID
                 when data.types.TIME
                 
                     if isNaN Number dp[fIndex]
-                        dp[fIndex] = (moment dp[fIndex], dateFormats).valueOf()
+                        dp[fIndex] = (data.parseDate dp[fIndex]).valueOf()
                     else
                         dp[fIndex] = (moment (Number dp[fIndex])).valueOf()
                 when data.types.TEXT
@@ -273,4 +257,47 @@ data.preprocessData = ->
                     dp[fIndex] = Number dp[fIndex]
     1
 
+
+    
+data.parseDate = (str) ->
+
+    if not isNaN (Number str)
+        return moment (Number str)
+        
+    dateFormats = []
+
+    # Try to infer the location of the year in the date format
+    splStr = str.replace /-/g, " "
+    splStr = splStr.replace /\//g, " "
+    splStr = splStr.replace /\\/g, " "
+
+    digits = splStr.split " "
+    
+    if Number digits[0] <= 12
+        dateFormats = ["MM DD YYYY hh:mm:ss.SSS",
+                       "MMM DD YYYY hh:mm:ss.SSS"]
+    else
+        dateFormats = ["YYYY MM DD hh:mm:ss.SSS",
+                       "YYYY MMM DD hh:mm:ss.SSS"]
+
+    # Account for any given PM or timezone offset
+    hourAdj = 0
+
+    if str.match /pm/gi isnt null
+        hourAdj += 12
+
+    tz = str.match /[\+\-]\d\d\d\d/gi
+    if tz isnt null
+        hourAdj += -((Number tz[0]) / 100)
+
+    # Actually parse the date
+    ret = moment str, dateFormats
+    ret.hours(ret.hours() + hourAdj)
+    
+
+#preprocess
 data.preprocessData()
+#Field index of grouping field
+data.groupingFieldIndex ?= 0
+#Array of current groups
+data.groups ?= data.makeGroups()
