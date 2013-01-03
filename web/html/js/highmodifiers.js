@@ -446,7 +446,7 @@
         year = Number(terms[2]);
       }
       clock = terms[3].split(":");
-      hours += (Number(clock[0])) + hourAdj;
+      hours = (Number(clock[0])) + hourAdj;
       minutes = Number(clock[1]);
       seconds = Math.floor(Number(clock[2]));
       milliseconds = ((Number(clock[2])) - seconds) * 1000;
