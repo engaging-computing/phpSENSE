@@ -399,9 +399,9 @@
         switch (Number(field.typeID)) {
           case data.types.TIME:
             if (isNaN(Number(dp[fIndex]))) {
-              dp[fIndex] = (data.parseDate(dp[fIndex])).valueOf();
+              dp[fIndex] = data.parseDate(dp[fIndex]);
             } else {
-              dp[fIndex] = (moment(Number(dp[fIndex]))).valueOf();
+              dp[fIndex] = (new Date(Number(dp[fIndex]))).valueOf();
             }
             break;
           case data.types.TEXT:
@@ -417,30 +417,48 @@
   };
 
   data.parseDate = function(str) {
-    var dateFormats, digits, hourAdj, ret, splStr, tz;
-    if (!isNaN(Number(str))) {
-      return moment(Number(str));
+    var clock, day, hours, milliseconds, minutes, month, seconds, terms, tz, year;
+    year = month = day = hours = minutes = seconds = milliseconds = 0;
+    if ((str.match(/pm/gi)) !== null) {
+      hours += 12;
     }
-    dateFormats = [];
-    splStr = str.replace(/-/g, " ");
-    splStr = splStr.replace(/\//g, " ");
-    splStr = splStr.replace(/\\/g, " ");
-    digits = splStr.split(" ");
-    if (Number(digits[0] <= 12)) {
-      dateFormats = ["MM DD YYYY hh:mm:ss.SSS", "MMM DD YYYY hh:mm:ss.SSS"];
-    } else {
-      dateFormats = ["YYYY MM DD hh:mm:ss.SSS", "YYYY MMM DD hh:mm:ss.SSS"];
-    }
-    hourAdj = 0;
-    if (str.match(/pm/gi !== null)) {
-      hourAdj += 12;
-    }
-    tz = str.match(/[\+\-]\d\d\d\d/gi);
+    str = str.replace(/[ap]m/gi, "");
+    tz = str.match(/[\+\-]\d\d\d\d/g);
     if (tz !== null) {
-      hourAdj += -((Number(tz[0])) / 100);
+      hours += -((Number(tz[0])) / 100);
+      str = str.replace(/[\+\-]\d\d\d\d/g, "");
     }
-    ret = moment(str, dateFormats);
-    return ret.hours(ret.hours() + hourAdj);
+    str = str.replace(/[\\\/\-,]/g, " ");
+    terms = str.split(" ");
+    try {
+      if (((Number(terms[0])) > 12) || (isNaN(Number(terms[0])))) {
+        year = Number(terms[0]);
+        month = (new Date(terms[1] + " 20 1970")).getMonth();
+        day = Number(terms[2]);
+      } else {
+        month = (new Date(terms[0] + " 20 1970")).getMonth();
+        day = Number(terms[1]);
+        year = Number(terms[2]);
+      }
+      clock = terms[3].split(":");
+      hours += Number(clock[0]);
+      minutes = Number(clock[1]);
+      seconds = Math.floor(Number(clock[2]));
+      milliseconds = ((Number(clock[2])) - seconds) * 1000;
+    } catch (_error) {}
+    if (isNaN(hours)) {
+      hours = 0;
+    }
+    if (isNaN(minutes)) {
+      minutes = 0;
+    }
+    if (isNaN(seconds)) {
+      seconds = 0;
+    }
+    if (isNaN(milliseconds)) {
+      milliseconds = 0;
+    }
+    return Date.UTC(year, month, day, hours, minutes, seconds, milliseconds);
   };
 
   data.preprocessData();
