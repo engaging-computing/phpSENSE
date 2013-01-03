@@ -258,23 +258,28 @@ data.preprocessData = ->
     1
 
 data.parseDate = (str) ->
-    year = month = day = hours = minutes = seconds = milliseconds = 0
+    year = month = day = minutes = seconds = milliseconds = 0
+    hours = 12
+    hourAdj = 0
 
     # Find and extract AM/PM information
     if (str.match /pm/gi) isnt null
-        hours += 12
+        hourAdj = 12
     str = str.replace /[ap]m/gi, ""
     
     # Find and extract timezone information
-    tz = str.match /[\+\-]\d\d\d\d/g
+    tz = str.match /\ [\+\-]\d\d\d\d/g
     if tz isnt null
-        hours += -((Number tz[0]) / 100)
-        str = str.replace /[\+\-]\d\d\d\d/g, ""
+        hourAdj += -((Number tz[0]) / 100)
+        str = str.replace /\ [\+\-]\d\d\d\d/g, " "
 
     # Replace spacing characters with whitespace
     str = str.replace /[\\\/\-,]/g, " "
     
     terms = str.split " "
+
+    terms = terms.filter (item) ->
+        item isnt ""
 
     try
         # Detect date format
@@ -289,18 +294,17 @@ data.parseDate = (str) ->
 
         # Parse hh:mm:ss.sss
         clock = terms[3].split ":"
-
-        hours += Number clock[0]
+        hours += (Number clock[0]) + hourAdj
         minutes = Number clock[1]
         seconds = Math.floor (Number clock[2])
         milliseconds = ((Number clock[2]) - seconds) * 1000
 
     # Ignore any missed clock values
-    hours = 0 if isNaN hours
+    hours = 12 if isNaN hours
     minutes = 0 if isNaN minutes
     seconds = 0 if isNaN seconds
     milliseconds = 0 if isNaN milliseconds
-
+    
     Date.UTC year, month, day, hours, minutes, seconds, milliseconds
 
     

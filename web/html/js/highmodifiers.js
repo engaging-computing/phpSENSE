@@ -417,19 +417,24 @@
   };
 
   data.parseDate = function(str) {
-    var clock, day, hours, milliseconds, minutes, month, seconds, terms, tz, year;
-    year = month = day = hours = minutes = seconds = milliseconds = 0;
+    var clock, day, hourAdj, hours, milliseconds, minutes, month, seconds, terms, tz, year;
+    year = month = day = minutes = seconds = milliseconds = 0;
+    hours = 12;
+    hourAdj = 0;
     if ((str.match(/pm/gi)) !== null) {
-      hours += 12;
+      hourAdj = 12;
     }
     str = str.replace(/[ap]m/gi, "");
-    tz = str.match(/[\+\-]\d\d\d\d/g);
+    tz = str.match(/\ [\+\-]\d\d\d\d/g);
     if (tz !== null) {
-      hours += -((Number(tz[0])) / 100);
-      str = str.replace(/[\+\-]\d\d\d\d/g, "");
+      hourAdj += -((Number(tz[0])) / 100);
+      str = str.replace(/\ [\+\-]\d\d\d\d/g, " ");
     }
     str = str.replace(/[\\\/\-,]/g, " ");
     terms = str.split(" ");
+    terms = terms.filter(function(item) {
+      return item !== "";
+    });
     try {
       if (((Number(terms[0])) > 12) || (isNaN(Number(terms[0])))) {
         year = Number(terms[0]);
@@ -441,13 +446,13 @@
         year = Number(terms[2]);
       }
       clock = terms[3].split(":");
-      hours += Number(clock[0]);
+      hours += (Number(clock[0])) + hourAdj;
       minutes = Number(clock[1]);
       seconds = Math.floor(Number(clock[2]));
       milliseconds = ((Number(clock[2])) - seconds) * 1000;
     } catch (_error) {}
     if (isNaN(hours)) {
-      hours = 0;
+      hours = 12;
     }
     if (isNaN(minutes)) {
       minutes = 0;
