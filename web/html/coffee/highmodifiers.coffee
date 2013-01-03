@@ -248,53 +248,63 @@ data.preprocessData = ->
                 when data.types.TIME
                 
                     if isNaN Number dp[fIndex]
-                        dp[fIndex] = (data.parseDate dp[fIndex]).valueOf()
+                        dp[fIndex] = data.parseDate dp[fIndex]
                     else
-                        dp[fIndex] = (moment (Number dp[fIndex])).valueOf()
+                        dp[fIndex] = (new Date (Number dp[fIndex])).valueOf()
                 when data.types.TEXT
                     NaN
                 else
                     dp[fIndex] = Number dp[fIndex]
     1
 
-
-    
 data.parseDate = (str) ->
+    year = month = day = hours = minutes = seconds = milliseconds = 0
 
-    if not isNaN (Number str)
-        return moment (Number str)
-        
-    dateFormats = []
-
-    # Try to infer the location of the year in the date format
-    splStr = str.replace /-/g, " "
-    splStr = splStr.replace /\//g, " "
-    splStr = splStr.replace /\\/g, " "
-
-    digits = splStr.split " "
+    # Find and extract AM/PM information
+    if (str.match /pm/gi) isnt null
+        hours += 12
+    str = str.replace /[ap]m/gi, ""
     
-    if Number digits[0] <= 12
-        dateFormats = ["MM DD YYYY hh:mm:ss.SSS",
-                       "MMM DD YYYY hh:mm:ss.SSS"]
-    else
-        dateFormats = ["YYYY MM DD hh:mm:ss.SSS",
-                       "YYYY MMM DD hh:mm:ss.SSS"]
-
-    # Account for any given PM or timezone offset
-    hourAdj = 0
-
-    if str.match /pm/gi isnt null
-        hourAdj += 12
-
-    tz = str.match /[\+\-]\d\d\d\d/gi
+    # Find and extract timezone information
+    tz = str.match /[\+\-]\d\d\d\d/g
     if tz isnt null
-        hourAdj += -((Number tz[0]) / 100)
+        hours += -((Number tz[0]) / 100)
+        str = str.replace /[\+\-]\d\d\d\d/g, ""
 
-    # Actually parse the date
-    ret = moment str, dateFormats
-    ret.hours(ret.hours() + hourAdj)
+    # Replace spacing characters with whitespace
+    str = str.replace /[\\\/\-,]/g, " "
     
+    terms = str.split " "
 
+    try
+        # Detect date format
+        if ((Number terms[0]) > 12) or (isNaN Number terms[0])
+            year  = Number terms[0]
+            month = (new Date terms[1] + " 20 1970").getMonth()
+            day   = Number terms[2]
+        else
+            month = (new Date terms[0] + " 20 1970").getMonth()
+            day   = Number terms[1]
+            year  = Number terms[2]
+
+        # Parse hh:mm:ss.sss
+        clock = terms[3].split ":"
+
+        hours += Number clock[0]
+        minutes = Number clock[1]
+        seconds = Math.floor (Number clock[2])
+        milliseconds = ((Number clock[2]) - seconds) * 1000
+
+    # Ignore any missed clock values
+    hours = 0 if isNaN hours
+    minutes = 0 if isNaN minutes
+    seconds = 0 if isNaN seconds
+    milliseconds = 0 if isNaN milliseconds
+
+    Date.UTC year, month, day, hours, minutes, seconds, milliseconds
+
+    
+    
 #preprocess
 data.preprocessData()
 #Field index of grouping field
