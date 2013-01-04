@@ -430,7 +430,7 @@
       hourAdj += -((Number(tz[0])) / 100);
       str = str.replace(/\ [\+\-]\d\d\d\d/g, " ");
     }
-    str = str.replace(/[\\\/\-,]/g, " ");
+    str = str.replace(/[\\\/\-,_]/g, " ");
     terms = str.split(" ");
     terms = terms.filter(function(item) {
       return item !== "";
