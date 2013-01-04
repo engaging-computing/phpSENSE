@@ -274,7 +274,7 @@ data.parseDate = (str) ->
         str = str.replace /\ [\+\-]\d\d\d\d/g, " "
 
     # Replace spacing characters with whitespace
-    str = str.replace /[\\\/\-,]/g, " "
+    str = str.replace /[\\\/\-,_]/g, " "
     
     terms = str.split " "
 
