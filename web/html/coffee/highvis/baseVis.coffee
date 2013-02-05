@@ -353,10 +353,11 @@ class window.BaseHighVis extends BaseVis
         #Name Y Axis
         title = if globals.fieldSelection.length isnt 1
             temp =
-                text: 'Y-Values'
+              text: 'Y-Values'
         else
             temp =
-                text: data.fields[globals.fieldSelection[0]].fieldName
+              text: globals.getAxisLabel globals.fieldSelection[0]
+            
         @chart.yAxis[0].setTitle title, false
     
         #Remove curent data
@@ -385,11 +386,11 @@ class window.BaseHighVis extends BaseVis
         This includes a series of checkboxes or radio buttons for selecting
         the active y axis field(s).
     ###
-    drawYAxisControls: (radio = false) ->
+    drawYAxisControls: (radio = false, label = "Y Axis") ->
 
         controls = '<div id="yAxisControl" class="vis_controls">'
 
-        controls += "<h3 class='clean_shrink'><a href='#'>Y Axis:</a></h3>"
+        controls += "<h3 class='clean_shrink'><a href='#'>#{label}:</a></h3>"
 
         controls += "<div class='outer_control_div'>"
 

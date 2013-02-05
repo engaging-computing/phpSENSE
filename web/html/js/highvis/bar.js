@@ -102,7 +102,7 @@
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           selection = _ref[_i];
           if (__indexOf.call(globals.fieldSelection, selection) >= 0) {
-            _results.push(data.fields[selection].fieldName);
+            _results.push(globals.getAxisLabel(selection));
           }
         }
         return _results;
@@ -258,7 +258,7 @@
           data: [],
           color: '#000',
           visible: __indexOf.call(globals.fieldSelection, fieldIndex) >= 0 ? true : false,
-          name: field.fieldName,
+          name: globals.getAxisLabel(fieldIndex),
           type: 'area',
           xAxis: 1
         });
@@ -336,7 +336,7 @@
     Bar.prototype.drawControls = function() {
       Bar.__super__.drawControls.call(this);
       this.drawGroupControls();
-      this.drawYAxisControls();
+      this.drawYAxisControls(false, "Fields");
       this.drawToolControls();
       return this.drawSaveControls();
     };

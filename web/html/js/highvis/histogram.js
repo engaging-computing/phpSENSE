@@ -162,7 +162,7 @@
         text: "Quantity"
       }, false);
       this.chart.xAxis[0].setTitle({
-        text: data.fields[this.displayField].fieldName
+        text: globals.getAxisLabel(this.displayField)
       }, false);
       if (globals.groupSelection.length === 0) {
         return;
@@ -352,7 +352,7 @@
     Histogram.prototype.drawControls = function() {
       Histogram.__super__.drawControls.call(this);
       this.drawGroupControls();
-      this.drawYAxisControls(true);
+      this.drawYAxisControls(true, "Field");
       this.drawToolControls();
       return this.drawSaveControls();
     };
