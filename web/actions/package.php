@@ -39,8 +39,6 @@ if(count($sids) == 1) {
 
     $data = getData($eid, $sids[0], true);
     
-    
-    
     $output_str = "";
     
     foreach($data as $datum) {

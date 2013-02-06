@@ -438,7 +438,7 @@
       title = globals.fieldSelection.length !== 1 ? temp = {
         text: 'Y-Values'
       } : temp = {
-        text: data.fields[globals.fieldSelection[0]].fieldName
+        text: globals.getAxisLabel(globals.fieldSelection[0])
       };
       this.chart.yAxis[0].setTitle(title, false);
       while (this.chart.series.length !== 0) {
@@ -476,14 +476,17 @@
     */
 
 
-    BaseHighVis.prototype.drawYAxisControls = function(radio) {
+    BaseHighVis.prototype.drawYAxisControls = function(radio, label) {
       var controls, fIndex, _i, _len, _ref5, _ref6, _ref7,
         _this = this;
       if (radio == null) {
         radio = false;
       }
+      if (label == null) {
+        label = "Y Axis";
+      }
       controls = '<div id="yAxisControl" class="vis_controls">';
-      controls += "<h3 class='clean_shrink'><a href='#'>Y Axis:</a></h3>";
+      controls += "<h3 class='clean_shrink'><a href='#'>" + label + ":</a></h3>";
       controls += "<div class='outer_control_div'>";
       _ref5 = data.normalFields;
       for (_i = 0, _len = _ref5.length; _i < _len; _i++) {

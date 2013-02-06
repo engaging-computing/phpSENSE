@@ -178,7 +178,7 @@ class window.Scatter extends BaseHighVis
 
         #Set axis title
         title =
-           text: data.fields[@xAxis].fieldName
+           text: globals.getAxisLabel @xAxis
         @chart.xAxis[0].setTitle title, false
 
         #Compute max bounds
