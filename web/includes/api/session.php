@@ -390,10 +390,11 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
     
     global $db;
     
-    $excluded = array("session", "experiment");
+    $excluded = array("session", "experiment", "_id");
     
     $fields = getFields($eid);
     $data = array();
+    $header_ar = array();
     
     $url = $db->query("SELECT extSrc from sessions where session_id = {$sid}");
     if($url[0]['extSrc'] != null){
@@ -415,7 +416,7 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
                 if(!in_array($h, $excluded)) $header[] = $h;
             }
             
-            $data[] = $header;
+            $header_ar[] = $header;
         }    
         
         foreach($results as $i => $r) {
@@ -424,7 +425,7 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
             }
         }
         
-       $results = $data;
+        $results = $data;
         unset($data);
         
         if($strip_keys) {
@@ -451,9 +452,8 @@ function getData($eid, $sid, $get_header = false, $strip_keys = true) {
             }
         }
     }
-    
 
-    return $data;
+    return array_merge($header_ar, $data);
 }
 
 
