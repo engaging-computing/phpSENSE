@@ -31,7 +31,8 @@
 
 
 (function() {
-  var addRadialMarkerStyle, direction, fanMagList, halfmoonMagList, i, index, phase, pieMagList, starMagList, symbolList, tempSymbolsMatrix, tempSymbolsMatrixCount, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _n, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+  var addRadialMarkerStyle, direction, fanMagList, halfmoonMagList, i, index, phase, pieMagList, starMagList, symbolList, tempSymbolsMatrix, tempSymbolsMatrixCount, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _n, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8,
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   if ((_ref = window.globals) == null) {
     window.globals = {};
@@ -376,6 +377,19 @@
         return ($("#dialog-form")).remove();
       }
     });
+  };
+
+  /*
+  Generate an axis label
+  */
+
+
+  globals.getAxisLabel = function(fieldIndex) {
+    if (__indexOf.call(data.timeFields, fieldIndex) >= 0) {
+      return data.fields[fieldIndex].fieldName;
+    } else {
+      return "" + data.fields[fieldIndex].fieldName + " (" + data.fields[fieldIndex].unitAbbreviation + ")";
+    }
   };
 
 }).call(this);

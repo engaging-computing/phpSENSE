@@ -69,7 +69,7 @@ class window.Bar extends BaseHighVis
         super()
         
         visibleCategories = for selection in data.normalFields when selection in globals.fieldSelection
-            data.fields[selection].fieldName
+            globals.getAxisLabel selection
         
         @chart.xAxis[0].setCategories visibleCategories, false
         
@@ -146,7 +146,7 @@ class window.Bar extends BaseHighVis
                 data: []
                 color: '#000'
                 visible: if fieldIndex in globals.fieldSelection then true else false
-                name: field.fieldName
+                name: globals.getAxisLabel fieldIndex
                 type: 'area'
                 xAxis: 1
     
@@ -220,7 +220,7 @@ class window.Bar extends BaseHighVis
     drawControls: ->
         super()
         @drawGroupControls()
-        @drawYAxisControls()
+        @drawYAxisControls(false, "Fields")
         @drawToolControls()
         @drawSaveControls()
     

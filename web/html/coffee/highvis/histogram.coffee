@@ -135,7 +135,7 @@ class window.Histogram extends BaseHighVis
 
         #Name Axis
         @chart.yAxis[0].setTitle {text: "Quantity"}, false
-        @chart.xAxis[0].setTitle {text: data.fields[@displayField].fieldName}, false
+        @chart.xAxis[0].setTitle {text: globals.getAxisLabel @displayField}, false
         
         if globals.groupSelection.length is 0
             return
@@ -303,7 +303,7 @@ class window.Histogram extends BaseHighVis
     drawControls: ->
         super()
         @drawGroupControls()
-        @drawYAxisControls(true)
+        @drawYAxisControls(true, "Field")
         @drawToolControls()
         @drawSaveControls()
     

@@ -316,3 +316,11 @@ globals.generateElaspedTimeDialog = ->
         close: ->
             ($ "#dialog-form").remove()
         
+###
+Generate an axis label
+###
+globals.getAxisLabel = (fieldIndex) ->
+  if fieldIndex in data.timeFields
+    data.fields[fieldIndex].fieldName
+  else
+    "#{data.fields[fieldIndex].fieldName} (#{data.fields[fieldIndex].unitAbbreviation})"

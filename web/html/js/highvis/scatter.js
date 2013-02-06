@@ -217,7 +217,7 @@
       var dat, fieldIndex, group, groupIndex, height, options, sel, symbolIndex, title, width, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
       Scatter.__super__.update.call(this);
       title = {
-        text: data.fields[this.xAxis].fieldName
+        text: globals.getAxisLabel(this.xAxis)
       };
       this.chart.xAxis[0].setTitle(title, false);
       if (this.xBounds.userMax === void 0 || this.xBounds.userMax === null) {
