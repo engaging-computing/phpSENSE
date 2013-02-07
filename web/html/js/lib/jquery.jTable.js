@@ -30,7 +30,7 @@
 					tmp += '</tr></thead><tbody><tr>';
 					//Populate value input
 					$(root).find('tbody tr').eq(0).children().each(function(index) {
-						tmp += '<td><input type="text" value="fillVal" /></td>';
+						tmp += '<td><input type="text" value=" " /></td>';
 					});
 					
 					//End table
@@ -110,7 +110,7 @@
 					tmp += '</tr></thead><tbody><tr>';
 					//Populate value input
 					$(root).find('tbody tr').eq(0).children().each(function(index) {
-						tmp += '<td><input type="text" value="fillVal" /></td>';
+						tmp += '<td><input type="text" value=" " /></td>';
 					});
 					
 					//End table
@@ -422,13 +422,14 @@
             
             save_table.eid = $('#ExperimentID').text();
             save_table.sid = $('#SessionID').text();            
-                                                
+
+            console.log(save_table.body);
             $.ajax({
                 type: "POST",
                 url: "../../ses-update.php",
                 data: { t_eid : save_table.eid, t_sid : save_table.sid , t_head : save_table.header, t_data : save_table.body },
                 success: function(data, status) { 
-                    console.log(data);
+                    alert(data);
                 } 
             });
             
