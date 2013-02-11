@@ -12,7 +12,7 @@
 	    });
 		//Add edit buttons
 		if( !$('.new_row_active').length ){
-			$(this).find('table').addClass('edit_table').before('<div class="edit_controls"><button type="button" class="new_row_active">New Row!</button><button type="button" class="edit_row_not">Edit Row!</button><button type="button" class="delete_row_not">Delete Row!</button></div><div class="save_controls"><button type="button" class="jTable_save">Save!</button></div>');
+			$(this).find('table').addClass('edit_table').before('<div class="edit_controls"><button type="button" class="new_row_active">New Row</button><button type="button" class="edit_row_not">Edit Row</button><button type="button" class="delete_row_not">Delete Row</button></div><div class="save_controls"><button type="button" class="jTable_save">Save</button></div>');
 			
 			//Deal with adding a new row
 			if($('.new_row_active')) {
@@ -36,7 +36,7 @@
 					//End table
 					tmp += '</tr></tbody>';
 					//Add buttons
-					tmp += '</table></div><div class="jTable_lightbox_buttons"><button id="jTable_ok_row">Ok!</button><button id="jTable_cancel_row">Cancel!</button></div>';
+					tmp += '</table></div><div class="jTable_lightbox_buttons"><button id="jTable_ok_row">Ok</button><button id="jTable_cancel_row">Cancel</button></div>';
 					//Populate lightbox
 					$('.jTable_lightbox_body').append(tmp);
 					//Lightbox handelers
@@ -116,7 +116,7 @@
 					//End table
 					tmp += '</tr></tbody>';
 					//Add buttons
-					tmp += '</table></div><div class="jTable_lightbox_buttons"><button id="jTable_ok_row">Ok!</button><button id="jTable_cancel_row">Cancel!</button></div>';
+					tmp += '</table></div><div class="jTable_lightbox_buttons"><button id="jTable_ok_row">Ok</button><button id="jTable_cancel_row">Cancel</button></div>';
 					//Populate lightbox
 					$('.jTable_lightbox_body').append(tmp);
 					//Lightbox handelers
@@ -220,7 +220,7 @@
 						//End table
 						tmp += '</tr></tbody>';
 						//Add buttons
-						tmp += '</table></div><div class="jTable_lightbox_buttons"><button id="jTable_ok_row">Ok!</button><button id="jTable_cancel_row">Cancel!</button></div>';
+						tmp += '</table></div><div class="jTable_lightbox_buttons"><button id="jTable_ok_row">Ok</button><button id="jTable_cancel_row">Cancel</button></div>';
 						
 						//Populate lightbox
 						$('.jTable_lightbox_body').append(tmp);
@@ -424,12 +424,13 @@
             save_table.sid = $('#SessionID').text();            
 
             console.log(save_table.body);
+            console.log({ t_eid : save_table.eid, t_sid : save_table.sid , t_head : save_table.header, t_data : save_table.body });
             $.ajax({
                 type: "POST",
                 url: "../../ses-update.php",
                 data: { t_eid : save_table.eid, t_sid : save_table.sid , t_head : save_table.header, t_data : save_table.body },
                 success: function(data, status) { 
-                    alert(data);
+                    console.log([data, status]);
                 } 
             });
             
