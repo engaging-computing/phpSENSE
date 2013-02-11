@@ -73,6 +73,45 @@
         }
       }
 
+      //When you click the save button at the top right of the table
+      //Save functionality
+      $('.jTable_save').click(function() {
+        //Build an object to save the table
+        save_table = new Array();
+        save_table.header = new Array();
+        save_table.body = new Array();
+
+        //this should go through each table header and add it to the save_table.header array
+        $(root).find('table thead tr').children().each( function(index) {
+          save_table.header[index] = $(this).text();
+        });
+
+        $(root).find('table tbody tr').each(function(indexI){
+
+          cur_row = new Array();
+
+          $(this).children().each(function(indexJ) {
+            cur_row[indexJ] = $(this).text();
+          });
+
+          save_table.body[indexI] = cur_row;
+
+        });
+        
+        save_table.eid = Number($('#ExperimentID').text());
+        save_table.sid = Number($('#SessionID').text());
+
+        $.ajax({
+          type: "POST",
+          url: "../../ses-update.php",
+          data: { t_eid : save_table.eid, t_sid : save_table.sid , t_head : save_table.header, t_data : save_table.body },
+          success: function(data, status) {
+            alert("Changes saved.");
+          }
+        });
+
+      });
+
       //Update
       $(root).jTable('update');
     },
@@ -393,45 +432,6 @@
            });
          }
        });
-   });
-
-   //When you click the save button at the top right of the table
-   //Save functionality
-   $('.jTable_save').click(function() {
-     //Build an object to save the table
-     save_table = new Array();
-     save_table.header = new Array();
-     save_table.body = new Array();
-
-     //this should go through each table header and add it to the save_table.header array
-     $(root).find('table thead tr').children().each( function(index) {
-       save_table.header[index] = $(this).text();
-     });
-
-     $(root).find('table tbody tr').each(function(indexI){
-
-       cur_row = new Array();
-
-       $(this).children().each(function(indexJ) {
-         cur_row[indexJ] = $(this).text();
-       });
-
-       save_table.body[indexI] = cur_row;
-
-     });
-
-     save_table.eid = Number($('#ExperimentID').text());
-     save_table.sid = Number($('#SessionID').text());
-     
-     $.ajax({
-       type: "POST",
-       url: "../../ses-update.php",
-       data: { t_eid : save_table.eid, t_sid : save_table.sid , t_head : save_table.header, t_data : save_table.body },
-       success: function(data, status) {
-         alert("Changes saved.");
-       }
-     });
-
    });
 
  }
