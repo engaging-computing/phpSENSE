@@ -75,6 +75,9 @@ if(isset($_REQUEST['exp'])) {
     $i_ses = "<a href='/highvis.php?sessions=" . $sid . "'>" . $session_name . "</a>";
     $i_exp = "<a href='/experiment.php?id=" . $eid . "'>" . $name['name'] . "</a> >    ";
 
+    $smarty->assign('sid', $sid);
+    $smarty->assign('eid', $eid);
+    
     $smarty->assign('title', 'Experiment session');
     $smarty->assign('link', $i_exp . $i_ses);
     $smarty->assign('tableKeys', $keys);

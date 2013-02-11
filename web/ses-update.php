@@ -51,6 +51,7 @@ if( isset($_POST['t_head']) && isset($_POST['t_data']) && isset($_POST['t_eid'])
         
         //Insert each row        
         foreach( $newData as $data ) {
+            print_r($data);
             $worked[] = $mdb->insert('e' . $eid, $data);
         }
         
