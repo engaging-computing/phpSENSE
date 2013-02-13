@@ -261,7 +261,6 @@
            tmp += '</tr></thead><tbody><tr>';
            //Populate value input
            $('.jTable_selected').children().each(function(index) {
-             console.log($(this).text());
              tmp += '<td><input type="text" value="' + $(this).text() + '" /></td>';
            });
            //End table
