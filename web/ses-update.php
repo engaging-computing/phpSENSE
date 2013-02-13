@@ -28,8 +28,13 @@ if( isset($_POST['t_head']) && isset($_POST['t_data']) && isset($_POST['t_eid'])
             }
         }
 
+        $newData = array();
+        
         //Create newData object with field names as array keys
         foreach( $t_data as $key => $data ) {
+
+            $tmp = array();
+        
             foreach( $t_head as $index => $header ){
                 $tmp[$header] = $data[$index];
             }
