@@ -567,7 +567,7 @@ $(document).ready( function() {
             
             $(this).attr('id', id);
             $(this).attr('name', name);
-            $(this).addClass('required');
+            //$(this).addClass('required');
             //$(this).addClass('numeric');
             });
             

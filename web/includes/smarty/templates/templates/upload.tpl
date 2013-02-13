@@ -114,22 +114,22 @@
                         <table width="480px" cellpadding="3" id="manual_table">
                             <tr>
                                 { foreach from=$fields item=field }
-                                    <td>{ $field.field_name } ({$field.unit_abbreviation})</td>
+                                    <th>{ $field.field_name } ({$field.unit_abbreviation})</th>
                                 { /foreach }
                             </tr>
                             <tr id="template" style="display:none;">
                                 { foreach from=$fields item=field }
                                     <td>
-                                        <input type="text" class="required" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_xxx" name="{ $field.field_name|replace:' ':'_'  }_xxx"  style="width:90%;">
+                                        <input type="text" class="" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_xxx" name="{ $field.field_name|replace:' ':'_'  }_xxx"  style="width:90%;">
                                     </td>
                                 { /foreach }
                             </tr>
                             <tr>
                                 { foreach from=$fields item=field }
                                     { if $field.field_name == 'Time' }
-                                        <td><input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" class="time required"></td>
+                                        <td><input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" class="time "></td>
                                     { else }
-                                        <td><input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" class="required" ></td>
+                                        <td><input type="text" onKeyPress="return event.keyCode!=13" id="{ $field.field_name|replace:' ':'_' }_1" name="{ $field.field_name|replace:' ':'_' }_1" style="width:90%;" class="" ></td>
                                     { /if }
                                 { /foreach }
                             </tr>
