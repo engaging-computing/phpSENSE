@@ -95,7 +95,7 @@
 	color: black;
 }
 
-.new_row_active :hover {
+.new_row_active:hover {
 	background-color: #CCC;
 }
 
@@ -128,7 +128,14 @@
 	width : 7em;
 	border: solid 1px black;
 	position:relative;
-	left:50%;
+	/*left:50%;*/
+        float:right;
+
+        background-color:#EEE;
+}
+
+.jTable_save:hover {
+  background-color:#CCC;
 }
 
 .jTable_selected {

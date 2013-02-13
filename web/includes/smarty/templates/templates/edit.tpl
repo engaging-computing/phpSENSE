@@ -10,7 +10,7 @@
             <tr > 
                 {foreach from=$row key=d item=dp}
                         {foreach from=$dp item=point}
-                            <td>{if $point=='' or $point == 0}0{else}{$point}{/if}</td>
+                            <td>{$point}</td>
                         {/foreach}
                 {/foreach}
             </tr>
@@ -21,3 +21,6 @@
         ohhh noez
     {/if}
 </div>
+
+<div id="ExperimentID" style="display:none"> {$eid} </div>
+<div id="SessionID" style="display:none"> {$sid} </div>

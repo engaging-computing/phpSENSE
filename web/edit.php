@@ -68,8 +68,18 @@ if(isset($_REQUEST['exp'])) {
     $smarty->assign('title', 'Experiment # <span id="experimentID"> ' . $_GET['exp'] . '</span> : ' . getNameFromEid($_GET['exp']) . '</div><div id="sessionID" style="display:none;"> ' . $_GET['ses'] );
     $smarty->assign('user', $session->getUser());
 
-    $smarty->assign('i_ses', $i_ses);
-    $smarty->assign('i_exp', $i_exp);
+    $name = getExperimentNameFromSession($sid);
+    $session_data = getSession($sid);
+    $session_name = $session_data['name'];
+    
+    $i_ses = "<a href='/highvis.php?sessions=" . $sid . "'>" . $session_name . "</a>";
+    $i_exp = "<a href='/experiment.php?id=" . $eid . "'>" . $name['name'] . "</a> >    ";
+
+    $smarty->assign('sid', $sid);
+    $smarty->assign('eid', $eid);
+    
+    $smarty->assign('title', 'Experiment session');
+    $smarty->assign('link', $i_exp . $i_ses);
     $smarty->assign('tableKeys', $keys);
     $smarty->assign('sortArray', $sortArray);
     $smarty->assign('content', $smarty->fetch('edit.tpl'));
