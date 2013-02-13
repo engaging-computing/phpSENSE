@@ -10,6 +10,13 @@
       $(this).find('table thead tr').children().each(function() {
         $(this).html($(this).text() + '  <img src="../html/images/forward_enabled.png" />');
       });
+
+      //Hack quote issues
+      $("table.edit_table tbody tr td").each(function(i, k)
+      {
+        $(k).text($(k).text().replace(/\\|"/g, ""))
+      });
+      
       //Add edit buttons
       if( !$('.new_row_active').length ){
         $(this).find('table').addClass('edit_table').before('<div class="edit_controls"><button type="button" class="new_row_active">New Row</button><button type="button" class="edit_row_not">Edit Row</button><button type="button" class="delete_row_not">Delete Row</button></div><div class="save_controls"><button type="button" class="jTable_save">Save</button></div>');
