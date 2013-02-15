@@ -133,6 +133,15 @@
             fnRender: function(obj) {
               return globals.dateFormatter(obj.aData[obj.iDataColumn]);
             }
+          }, {
+            aTargets: data.normalFields,
+            fnRender: function(obj) {
+              if (isNaN(obj.aData[obj.iDataColumn])) {
+                return "";
+              } else {
+                return obj.aData[obj.iDataColumn];
+              }
+            }
           }
         ]
       };
