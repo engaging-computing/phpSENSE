@@ -395,6 +395,7 @@
         if (typeof dp[fIndex] === "string") {
           dp[fIndex] = dp[fIndex].replace(/"/g, "");
           dp[fIndex] = dp[fIndex].replace(/'/g, "");
+          dp[fIndex] = dp[fIndex].replace(/\\/g, "");
         }
         switch (Number(field.typeID)) {
           case data.types.TIME:
@@ -409,7 +410,11 @@
 
             break;
           default:
-            dp[fIndex] = Number(dp[fIndex]);
+            if (dp[fIndex] === "" || dp[fIndex] === null) {
+              dp[fIndex] = NaN;
+            } else {
+              dp[fIndex] = Number(dp[fIndex]);
+            }
         }
       }
     }

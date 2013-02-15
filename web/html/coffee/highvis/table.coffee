@@ -92,7 +92,15 @@ class window.Table extends BaseVis
                     },{
                 aTargets: data.timeFields
                 fnRender: (obj) ->
-                    globals.dateFormatter obj.aData[obj.iDataColumn]}]
+                    globals.dateFormatter obj.aData[obj.iDataColumn]
+                    },{
+                aTargets: data.normalFields
+                fnRender: (obj) ->
+                    if isNaN obj.aData[obj.iDataColumn]
+                      ""
+                    else
+                      obj.aData[obj.iDataColumn]
+                      }]
                     
         atable = ($ '#data_table').dataTable(dt)
 
