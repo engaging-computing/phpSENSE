@@ -243,6 +243,7 @@ data.preprocessData = ->
                 # Strip all quote characters
                 dp[fIndex] = dp[fIndex].replace /"/g, ""
                 dp[fIndex] = dp[fIndex].replace /'/g, ""
+                dp[fIndex] = dp[fIndex].replace /\\/g, ""
 
             switch Number field.typeID
                 when data.types.TIME
@@ -254,7 +255,10 @@ data.preprocessData = ->
                 when data.types.TEXT
                     NaN
                 else
-                    dp[fIndex] = Number dp[fIndex]
+                    if dp[fIndex] is "" or dp[fIndex] is null
+                      dp[fIndex] = NaN                      
+                    else
+                      dp[fIndex] = Number dp[fIndex]
     1
 
 data.parseDate = (str) ->
