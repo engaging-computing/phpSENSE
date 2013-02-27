@@ -45,7 +45,7 @@
 
   globals.clip = function(arr, xBounds, yBounds) {
     var BOTTOM, LEFT, RIGHT, TOP, coder, cur, index, prev, test, _i, _ref1;
-    if (arr.length === 1) {
+    if (arr.length <= 1) {
       return arr;
     }
     LEFT = 1;
