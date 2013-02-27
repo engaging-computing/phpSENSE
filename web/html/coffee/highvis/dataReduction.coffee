@@ -35,7 +35,7 @@ See http://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland
 ###
 globals.clip = (arr, xBounds, yBounds) ->
 
-    if arr.length is 1
+    if arr.length <= 1
       return arr
 
     LEFT   = 1

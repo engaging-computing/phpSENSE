@@ -64,6 +64,7 @@ class window.Scatter extends BaseHighVis
             userMin: undefined
 
         @fullDetail = false
+        @lockZoom = false
 
     storeXBounds: (bounds) ->
         @xBounds = bounds
@@ -125,7 +126,8 @@ class window.Scatter extends BaseHighVis
                     afterSetExtremes: (e) =>
                         @storeXBounds @chart.xAxis[0].getExtremes()
                         @storeYBounds @chart.yAxis[0].getExtremes()
-                        @delayedUpdate()
+                        if not @lockZoom
+                          @delayedUpdate()
 
     ###
     Build the dummy series for the legend.
@@ -182,7 +184,7 @@ class window.Scatter extends BaseHighVis
         @chart.xAxis[0].setTitle title, false
 
         #Compute max bounds
-        if @xBounds.userMax is undefined or @xBounds.userMax is null
+        if (@xBounds.userMax is undefined or @xBounds.userMax is null) and not @lockZoom
 
             @yBounds.min = @xBounds.min =  Number.MAX_VALUE
             @yBounds.max = @xBounds.max = -Number.MAX_VALUE
@@ -240,13 +242,14 @@ class window.Scatter extends BaseHighVis
 
                 @chart.addSeries options, false
                 
-        if @xBounds.userMax isnt undefined and @xBounds.userMax isnt null
-            if @chart.xAxis[0].getExtremes().min is undefined
-                @chart.xAxis[0].setExtremes @xBounds.min, @xBounds.max, false
-                @chart.yAxis[0].setExtremes @yBounds.min, @yBounds.max, false
+        if (@xBounds.userMax isnt undefined and @xBounds.userMax isnt null) or @lockZoom
+          if (@chart.xAxis[0].getExtremes().min is undefined) or @lockZoom
+            @chart.xAxis[0].setExtremes @xBounds.min, @xBounds.max, false
+            @chart.yAxis[0].setExtremes @yBounds.min, @yBounds.max, false
 
-                if ($ 'g[title="Reset zoom level 1:1"]').length is 0
-                    @chart.showResetZoom()
+            if (@xBounds.userMax isnt undefined and @xBounds.userMax isnt null)
+              if ($ 'g[title="Reset zoom level 1:1"]').length is 0
+                @chart.showResetZoom()
         
         @chart.redraw()
 
@@ -283,6 +286,10 @@ class window.Scatter extends BaseHighVis
         controls += "<input class='full_detail_box' type='checkbox' name='full_detail_selector' #{if @fullDetail then 'checked' else ''}/> Full Detail "
         controls += "</div>"
 
+        controls += '<div class="inner_control_div">'
+        controls += "<input class='lock_zoom_box' type='checkbox' name='lock_zoom_selector' #{if @fullDetail then 'checked' else ''}/> Lock Zoom "
+        controls += "</div>"
+
         if data.logSafe is 1
             controls += '<div class="inner_control_div">'
             controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' #{if globals.logY is 1 then 'checked' else ''}/> Logarithmic Y Axis "
@@ -309,6 +316,10 @@ class window.Scatter extends BaseHighVis
         ($ '.full_detail_box').click (e) =>
             @fullDetail = ($ '.full_detail_box').is(':checked')
             @delayedUpdate()
+            true
+
+        ($ '.lock_zoom_box').click (e) =>
+            @lockZoom = ($ '.lock_zoom_box').is(':checked')
             true
 
         ($ '.logY_box').click (e) =>
