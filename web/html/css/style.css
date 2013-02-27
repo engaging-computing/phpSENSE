@@ -741,7 +741,7 @@ div#featuredsix {
   min-height:250px;
   max-height:500px;
   */
-  height:500px;
+  height:540px;
   padding:0px 0px 15px 0px;
   margin:0px 0px 10px 0px;
   border-bottom:1px solid #CCC;
@@ -750,7 +750,7 @@ div#featuredsix {
 div.featureditemwrapper {
   float:left;
   width:33%;
-  height:250px;
+  height:270px;
   margin:10px 0px 0px 0px;
 }
 
