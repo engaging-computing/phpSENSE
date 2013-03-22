@@ -60,9 +60,13 @@
         var _i, _len, _ref, _results;
         _ref = data.fields;
         _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          field = _ref[_i];
-          _results.push("<td>" + field.fieldName + "</td>");
+        for (fieldIndex = _i = 0, _len = _ref.length; _i < _len; fieldIndex = ++_i) {
+          field = _ref[fieldIndex];
+          if (fieldIndex === data.COMBINED_FIELD) {
+            _results.push("<td style='display:none'>" + field.fieldName + "</td>");
+          } else {
+            _results.push("<td>" + field.fieldName + "</td>");
+          }
         }
         return _results;
       })();
@@ -96,7 +100,11 @@
             _results1 = [];
             for (fieldIndex = _k = 0, _len2 = dataPoint.length; _k < _len2; fieldIndex = ++_k) {
               dat = dataPoint[fieldIndex];
-              _results1.push("<td>" + dat + "</td>");
+              if (fieldIndex === data.COMBINED_FIELD) {
+                _results1.push("<td style='display:none'>" + dat + "</td>");
+              } else {
+                _results1.push("<td>" + dat + "</td>");
+              }
             }
             return _results1;
           })();

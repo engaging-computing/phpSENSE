@@ -40,6 +40,8 @@
     delete data.savedData;
   }
 
+  data.COMBINED_FIELD = 1;
+
   if ((_ref = data.types) == null) {
     data.types = {
       TIME: 7,

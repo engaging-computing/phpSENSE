@@ -33,10 +33,12 @@ if data.savedData?
     globals.extendObject data, (hydrate.parse data.savedData)
     delete data.savedData
 
+data.COMBINED_FIELD = 1
+
 data.types ?=
     TIME: 7
     TEXT: 37
-    GEOSPATIAL: 19
+    GEOSPATIAL:19
 
 data.units ?=
     GEOSPATIAL:
