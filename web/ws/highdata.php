@@ -143,6 +143,7 @@ if(isset($_REQUEST['sessions'])) {
 
     }
     
+    array_unshift($data->fields, new DataField(-1, "Combined Sessions", 37, 81, "Text", "Text", ""));
     array_unshift($data->fields, new DataField(-1, "Session Name(ID)", 37, 81, "Text", "Text", ""));
     
     $newdata = array();
@@ -158,6 +159,7 @@ if(isset($_REQUEST['sessions'])) {
         //Add Session ID-Name field to data
         $tmpData = getData($data->experimentID, $ses);
         foreach ($tmpData as $j=>$dataPoint) {
+            array_unshift($tmpData[$j], "All");
             array_unshift($tmpData[$j], $idName);
         }
         
