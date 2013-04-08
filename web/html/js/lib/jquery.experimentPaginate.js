@@ -16,7 +16,7 @@
     } else {
       end = settings.start + settings.limit;
     }
-    page_controls = "<div id='page_controls'>\n    <div id='page_back'>\n        <input type=\"button\" class='page_button' value=\"Back\" />\n    </div>\n    <div id='page_info'>\n        <p>Displaying Session #" + settings.start + " to Session #" + end + "</p>\n    </div>\n    <div id='page_forward'>\n        <input type=\"button\" class='page_button' value=\"Next\" />\n    </div>\n</div>";
+    page_controls = "<div id='page_controls'>\n    <div id='page_back'>\n        <input type=\"button\" class='page_button' value=\"Back\" />\n    </div>\n    <div id='page_info'>\n        <p>Displaying Session #" + settings.start + " to Session #" + end + " of <b>" + $('#session_list').children().length +"</b></p>\n    </div>\n    <div id='page_forward'>\n        <input type=\"button\" class='page_button' value=\"Next\" />\n    </div>\n</div>";
     update = function(target, settings) {
       if ($('#page_controls')) $('#page_controls').remove();
       $(target).parent().append(page_controls);
