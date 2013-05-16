@@ -51,7 +51,10 @@ class window.Table extends BaseVis
         ($ '#data_table').append '<thead><tr id="table_headers"></tr></thead>'
         
         #Build the headers for the table
-        headers = for field in data.fields
+        headers = for field, fieldIndex in data.fields
+          if (fieldIndex is data.COMBINED_FIELD)
+            "<td style='display:none'>#{field.fieldName}</td>"
+          else
             "<td>#{field.fieldName}</td>"
             
         ($ '#table_headers').append header for header in headers
@@ -62,6 +65,9 @@ class window.Table extends BaseVis
         
         rows = for dataPoint in data.dataPoints when (String dataPoint[data.groupingFieldIndex]).toLowerCase() in visibleGroups
             line = for dat, fieldIndex in dataPoint
+              if (fieldIndex is data.COMBINED_FIELD)
+                "<td style='display:none'>#{dat}</td>"
+              else
                 "<td>#{dat}</td>"
                 
             "<tr>#{line.reduce (a,b)-> a+b}</tr>"

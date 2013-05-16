@@ -52,7 +52,7 @@ $.fn.experimentPaginate = ( options = null ) ->
                             <input type="button" class='page_button' value="Back" />
                         </div>
                         <div id='page_info'>
-                            <p>Displaying Session ##{settings.start} to Session ##{end}</p>
+                            <p>Displaying Session ##{settings.start} to Session ##{end} of #{$('#session_list').children().length}</p>
                         </div>
                         <div id='page_forward'>
                             <input type="button" class='page_button' value="Next" />
