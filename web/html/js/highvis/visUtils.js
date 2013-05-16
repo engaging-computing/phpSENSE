@@ -282,12 +282,12 @@
   globals.symbols = symbolList;
 
   /*
-  Generates an elasped time field with given name from given
+  Generates an elapsed time field with given name from given
   time field.
   */
 
 
-  data.generateElaspedTime = function(name, sourceField) {
+  data.generateElapsedTime = function(name, sourceField) {
     var curTime, datapoint, group, time, timeMins, _len5, _len6, _len7, _o, _p, _q, _ref10, _ref11, _ref9;
     timeMins = [];
     _ref9 = data.groups;
@@ -324,23 +324,23 @@
 
   /*
   If there is only one time field, generates an appropriate
-  elasped time field. Otherwise it prompts using a dialog for
+  elapsed time field. Otherwise it prompts using a dialog for
   which time field to use.
   */
 
 
-  globals.generateElaspedTimeDialog = function() {
+  globals.generateElapsedTimeDialog = function() {
     var fieldIndex, formText, name, sel, selectedTime, _len5, _o, _ref9,
       _this = this;
     if (data.timeFields.length === 1) {
-      name = 'Elasped Time (';
+      name = 'Elapsed Time (';
       name += data.fields[data.timeFields[0]].fieldName + ')';
-      data.generateElaspedTime(name, data.timeFields[0]);
+      data.generateElapsedTime(name, data.timeFields[0]);
       globals.curVis.end();
       globals.curVis.start();
       return;
     }
-    formText = "<div id=\"dialog-form\" title=\"Generate Elasped Time\">\n\n    <form>\n    <fieldset>";
+    formText = "<div id=\"dialog-form\" title=\"Generate Elapsed Time\">\n\n    <form>\n    <fieldset>";
     formText += '<select id="timeSelector" class="control_select">';
     _ref9 = data.timeFields;
     for (index = _o = 0, _len5 = _ref9.length; _o < _len5; index = ++_o) {
@@ -365,9 +365,9 @@
       modal: true,
       buttons: {
         Generate: function() {
-          name = 'Elasped Time (';
+          name = 'Elapsed Time (';
           name += data.fields[selectedTime].fieldName + ')';
-          data.generateElaspedTime(name, selectedTime);
+          data.generateElapsedTime(name, selectedTime);
           globals.curVis.end();
           globals.curVis.start();
           return ($("#dialog-form")).dialog('close');
