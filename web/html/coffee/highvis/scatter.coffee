@@ -260,7 +260,7 @@ class window.Scatter extends BaseHighVis
     ###
     Draws radio buttons for changing symbol/line mode.
     ###
-    drawToolControls: (elaspedTimeButton = true) ->
+    drawToolControls: (elapsedTimeButton = true) ->
         controls =  '<div id="toolControl" class="vis_controls">'
 
         controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>"
@@ -295,9 +295,9 @@ class window.Scatter extends BaseHighVis
             controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' #{if globals.logY is 1 then 'checked' else ''}/> Logarithmic Y Axis "
             controls += "</div>"
 
-        if elaspedTimeButton
+        if elapsedTimeButton
             controls += "<div class='inner_control_div'>"
-            controls += "<button id='elaspedTimeButton' class='save_button'>Generate Elasped Time </button>"
+            controls += "<button id='elapsedTimeButton' class='save_button'>Generate Elapsed Time </button>"
             controls += "</div>"
             
         controls+= "</div></div>"
@@ -326,9 +326,9 @@ class window.Scatter extends BaseHighVis
             globals.logY = (globals.logY + 1) % 2
             @start()
 
-        ($ '#elaspedTimeButton').button()
-        ($ '#elaspedTimeButton').click (e) =>
-            globals.generateElaspedTimeDialog()
+        ($ '#elapsedTimeButton').button()
+        ($ '#elapsedTimeButton').click (e) =>
+            globals.generateElapsedTimeDialog()
 
         #Set up accordion
         globals.toolsOpen ?= 0

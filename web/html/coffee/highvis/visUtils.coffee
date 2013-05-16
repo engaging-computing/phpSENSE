@@ -225,10 +225,10 @@ Store the list
 globals.symbols = symbolList
 
 ###
-Generates an elasped time field with given name from given
+Generates an elapsed time field with given name from given
 time field.
 ###
-data.generateElaspedTime = (name, sourceField) ->
+data.generateElapsedTime = (name, sourceField) ->
     timeMins = []
 
     for group in data.groups
@@ -258,21 +258,21 @@ data.generateElaspedTime = (name, sourceField) ->
 
 ###
 If there is only one time field, generates an appropriate
-elasped time field. Otherwise it prompts using a dialog for
+elapsed time field. Otherwise it prompts using a dialog for
 which time field to use.
 ###
-globals.generateElaspedTimeDialog = ->
+globals.generateElapsedTimeDialog = ->
 
     if data.timeFields.length is 1
-        name  = 'Elasped Time ('
+        name  = 'Elapsed Time ('
         name += data.fields[data.timeFields[0]].fieldName + ')'
-        data.generateElaspedTime name, data.timeFields[0]
+        data.generateElapsedTime name, data.timeFields[0]
         globals.curVis.end()
         globals.curVis.start()
         return
 
     formText = """
-    <div id="dialog-form" title="Generate Elasped Time">
+    <div id="dialog-form" title="Generate Elapsed Time">
 
         <form>
         <fieldset>
@@ -307,9 +307,9 @@ globals.generateElaspedTimeDialog = ->
         modal: true
         buttons:
             Generate: =>
-                name  = 'Elasped Time ('
+                name  = 'Elapsed Time ('
                 name += data.fields[selectedTime].fieldName + ')'
-                data.generateElaspedTime name, selectedTime
+                data.generateElapsedTime name, selectedTime
                 globals.curVis.end()
                 globals.curVis.start()
                 ($ "#dialog-form").dialog 'close'
