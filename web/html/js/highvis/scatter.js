@@ -54,7 +54,7 @@
       this.xGridSize = this.yGridSize = this.INITIAL_GRID_SIZE;
       this.mode = this.SYMBOLS_MODE;
       this.xAxis = data.normalFields[0];
-      this.advancedTooltips = false;
+      this.advancedTooltips = 0;
       this.xBounds = {
         dataMax: void 0,
         dataMin: void 0,
@@ -71,8 +71,7 @@
         userMax: void 0,
         userMin: void 0
       };
-      this.fullDetail = false;
-      this.lockZoom = false;
+      this.fullDetail = 0;
     }
 
     Scatter.prototype.storeXBounds = function(bounds) {
@@ -97,7 +96,12 @@
       return $.extend(true, this.chartOptions, {
         chart: {
           type: "line",
-          zoomType: "xy"
+          zoomType: "xy",
+          resetZoomButton: {
+            theme: {
+              display: "none"
+            }
+          }
         },
         title: {
           text: ""
@@ -142,8 +146,11 @@
             afterSetExtremes: function(e) {
               _this.storeXBounds(_this.chart.xAxis[0].getExtremes());
               _this.storeYBounds(_this.chart.yAxis[0].getExtremes());
-              if (!_this.lockZoom) {
-                return _this.delayedUpdate();
+              if (!_this.isZoomLocked()) {
+                _this.delayedUpdate();
+                return ($('#zoomResetButton')).button("disable");
+              } else {
+                return ($('#zoomResetButton')).button("enable");
               }
             }
           }
@@ -223,7 +230,7 @@
         text: globals.getAxisLabel(this.xAxis)
       };
       this.chart.xAxis[0].setTitle(title, false);
-      if ((this.xBounds.userMax === void 0 || this.xBounds.userMax === null) && !this.lockZoom) {
+      if (!this.isZoomLocked()) {
         this.yBounds.min = this.xBounds.min = Number.MAX_VALUE;
         this.yBounds.max = this.xBounds.max = -Number.MAX_VALUE;
         _ref = data.normalFields;
@@ -294,16 +301,9 @@
           }
         }
       }
-      if ((this.xBounds.userMax !== void 0 && this.xBounds.userMax !== null) || this.lockZoom) {
-        if ((this.chart.xAxis[0].getExtremes().min === void 0) || this.lockZoom) {
-          this.chart.xAxis[0].setExtremes(this.xBounds.min, this.xBounds.max, false);
-          this.chart.yAxis[0].setExtremes(this.yBounds.min, this.yBounds.max, false);
-          if (this.xBounds.userMax !== void 0 && this.xBounds.userMax !== null) {
-            if (($('g[title="Reset zoom level 1:1"]')).length === 0) {
-              this.chart.showResetZoom();
-            }
-          }
-        }
+      if (this.isZoomLocked()) {
+        this.chart.xAxis[0].setExtremes(this.xBounds.min, this.xBounds.max, false);
+        this.chart.yAxis[0].setExtremes(this.yBounds.min, this.yBounds.max, false);
       }
       this.chart.redraw();
       this.storeXBounds(this.chart.xAxis[0].getExtremes());
@@ -324,6 +324,10 @@
       controls = '<div id="toolControl" class="vis_controls">';
       controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>";
       controls += "<div class='outer_control_div'>";
+      controls += "<h4 class='clean_shrink'>Zoom</h4>";
+      controls += '<div class="inner_control_div">';
+      controls += "<button id='zoomResetButton' class='zoom_reset_button'>Reset Zoom </button>";
+      controls += "<button id='zoomOutButton' class='zoom_out_button'>Zoom Out </button>";
       controls += "<h4 class='clean_shrink'>Display Mode</h4>";
       _ref = [[this.SYMBOLS_LINES_MODE, "Symbols and Lines"], [this.LINES_MODE, "Lines Only"], [this.SYMBOLS_MODE, "Symbols Only"]];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -340,12 +344,9 @@
       controls += '<div class="inner_control_div">';
       controls += "<input class='full_detail_box' type='checkbox' name='full_detail_selector' " + (this.fullDetail ? 'checked' : '') + "/> Full Detail ";
       controls += "</div>";
-      controls += '<div class="inner_control_div">';
-      controls += "<input class='lock_zoom_box' type='checkbox' name='lock_zoom_selector' " + (this.fullDetail ? 'checked' : '') + "/> Lock Zoom ";
-      controls += "</div>";
       if (data.logSafe === 1) {
         controls += '<div class="inner_control_div">';
-        controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' " + (globals.logY === 1 ? 'checked' : '') + "/> Logarithmic Y Axis ";
+        controls += "<input class='logY_box' type='checkbox' name='log_selector' " + (globals.logY === 1 ? 'checked' : '') + "/> Logarithmic Y Axis ";
         controls += "</div>";
       }
       if (elapsedTimeButton) {
@@ -355,21 +356,31 @@
       }
       controls += "</div></div>";
       ($('#controldiv')).append(controls);
+      ($('#zoomResetButton')).button();
+      ($('#zoomResetButton')).click(function(e) {
+        _this.chart.zoomOut();
+        return ($('#zoomResetButton')).button("disable");
+      });
+      if (!this.isZoomLocked()) {
+        ($('#zoomResetButton')).button("disable");
+      } else {
+        ($('#zoomResetButton')).button("enable");
+      }
+      ($('#zoomOutButton')).button();
+      ($('#zoomOutButton')).click(function(e) {
+        return _this.zoomOutExtremes();
+      });
       ($('.mode_radio')).click(function(e) {
         _this.mode = Number(e.target.value);
         return _this.delayedUpdate();
       });
       ($('.tooltip_box')).click(function(e) {
-        _this.advancedTooltips = ($('.tooltip_box')).is(':checked');
+        _this.advancedTooltips = (_this.advancedTooltips + 1) % 2;
         return true;
       });
       ($('.full_detail_box')).click(function(e) {
-        _this.fullDetail = ($('.full_detail_box')).is(':checked');
+        _this.fullDetail = (_this.fullDetail + 1) % 2;
         _this.delayedUpdate();
-        return true;
-      });
-      ($('.lock_zoom_box')).click(function(e) {
-        _this.lockZoom = ($('.lock_zoom_box')).is(':checked');
         return true;
       });
       ($('.logY_box')).click(function(e) {
@@ -437,7 +448,7 @@
       }
       controls += '</div></div>';
       ($('#controldiv')).append(controls);
-      ($('.xAxis_input')).click(function(e) {
+      ($('.xAxis_input')).change(function(e) {
         var selection;
         selection = null;
         ($('.xAxis_input')).each(function() {
@@ -446,7 +457,8 @@
           }
         });
         _this.xAxis = Number(selection);
-        return _this.delayedUpdate();
+        _this.update();
+        return _this.resetExtremes();
       });
       if ((_ref1 = globals.xAxisOpen) == null) {
         globals.xAxisOpen = 0;
@@ -458,6 +470,94 @@
       return ($('#xAxisControl > h3')).click(function() {
         return globals.xAxisOpen = (globals.xAxisOpen + 1) % 2;
       });
+    };
+
+    /*
+        Checks if the user has requested a specific zoom
+    */
+
+
+    Scatter.prototype.isZoomLocked = function() {
+      return !(void 0 === this.xBounds.userMin || void 0 === this.xBounds.userMax);
+    };
+
+    Scatter.prototype.resetExtremes = function() {
+      if (this.chart !== void 0) {
+        this.xAxisExtremes = this.chart.xAxis[0].getExtremes();
+        this.yAxisExtremes = this.chart.yAxis[0].getExtremes();
+        if (this.xAxisExtremes !== void 0) {
+          this.chart.xAxis[0].setExtremes(this.xAxisExtremes['dataMin'], this.xAxisExtremes['dataMax'], true);
+        }
+        if (this.yAxisExtremes !== void 0) {
+          return this.chart.yAxis[0].setExtremes(this.yAxisExtremes['dataMin'], this.yAxisExtremes['dataMax'], true);
+        }
+      }
+    };
+
+    Scatter.prototype.getExtremes = function() {
+      if (this.chart !== void 0) {
+        this.xAxisExtremes = this.chart.xAxis[0].getExtremes();
+        return this.yAxisExtremes = this.chart.yAxis[0].getExtremes();
+      }
+    };
+
+    Scatter.prototype.setExtremes = function() {
+      if ((this.xAxisExtremes !== void 0) && (this.yAxisExtremes !== void 0)) {
+        this.chart.xAxis[0].setExtremes(this.xAxisExtremes['min'], this.xAxisExtremes['max'], true);
+        return this.chart.yAxis[0].setExtremes(this.yAxisExtremes['min'], this.yAxisExtremes['max'], true);
+      }
+    };
+
+    Scatter.prototype.zoomOutExtremes = function() {
+      var xRange, yRange;
+      this.getExtremes();
+      xRange = this.xAxisExtremes.max - this.xAxisExtremes.min;
+      yRange = this.yAxisExtremes.max - this.yAxisExtremes.min;
+      this.xAxisExtremes.max += xRange * 0.1;
+      this.xAxisExtremes.min -= xRange * 0.1;
+      if (globals.logY === 1) {
+        this.yAxisExtremes.max *= 10;
+        this.yAxisExtremes.min /= 10;
+      } else {
+        this.yAxisExtremes.max += yRange * 0.1;
+        this.yAxisExtremes.min -= yRange * 0.1;
+      }
+      return this.setExtremes();
+    };
+
+    Scatter.prototype.clearExtremes = function() {
+      this.xAxisExtremes = void 0;
+      return this.yAxisExtremes = void 0;
+    };
+
+    /*
+        Saves the current zoom level
+    */
+
+
+    Scatter.prototype.end = function() {
+      this.getExtremes();
+      return Scatter.__super__.end.call(this);
+    };
+
+    /*
+        Sets the previous zoom level
+    */
+
+
+    Scatter.prototype.start = function() {
+      Scatter.__super__.start.call(this);
+      return this.setExtremes();
+    };
+
+    /*
+        Saves the zoom level before cleanup
+    */
+
+
+    Scatter.prototype.serializationCleanup = function() {
+      this.getExtremes();
+      return Scatter.__super__.serializationCleanup.call(this);
     };
 
     return Scatter;

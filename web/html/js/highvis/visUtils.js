@@ -392,4 +392,17 @@
     }
   };
 
+  /*
+  Override default highcarts zoom behavior (because it sucks when allowing zoom out)
+  */
+
+
+  Highcharts.Axis.prototype.zoom = function(newMin, newMax) {
+    this.displayBtn = newMin !== void 0 || newMax !== void 0;
+    this.setExtremes(newMin, newMax, true, void 0, {
+      trigger: 'zoom'
+    });
+    return true;
+  };
+
 }).call(this);

@@ -81,9 +81,6 @@ class window.Timeline extends Scatter
     drawXAxisControls: ->
         super (fieldIndex) -> fieldIndex in data.timeFields
 
-    drawToolControls: ->
-        super(false)
-
 if "Timeline" in data.relVis
     globals.timeline = new Timeline 'timeline_canvas'
 else

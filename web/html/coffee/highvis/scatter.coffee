@@ -45,7 +45,7 @@ class window.Scatter extends BaseHighVis
 
         @xAxis = data.normalFields[0]
 
-        @advancedTooltips = false
+        @advancedTooltips = 0
 
         @xBounds =
             dataMax: undefined
@@ -63,8 +63,7 @@ class window.Scatter extends BaseHighVis
             userMax: undefined
             userMin: undefined
 
-        @fullDetail = false
-        @lockZoom = false
+        @fullDetail = 0
 
     storeXBounds: (bounds) ->
         @xBounds = bounds
@@ -86,6 +85,9 @@ class window.Scatter extends BaseHighVis
             chart:
                 type: "line"
                 zoomType: "xy"
+                resetZoomButton:
+                    theme:
+                        display: "none"
             title:
                 text: ""
             tooltip:
@@ -115,19 +117,20 @@ class window.Scatter extends BaseHighVis
                 type: 'linear'
                 gridLineWidth: 1
                 minorTickInterval: 'auto'
-#                 events:
-#                     afterSetExtremes: (e) =>
-#                         console.log 'X'
-#                         @storeXBounds e
                 }]
             yAxis:
                 type: if globals.logY is 1 then 'logarithmic' else 'linear'
                 events:
                     afterSetExtremes: (e) =>
-                        @storeXBounds @chart.xAxis[0].getExtremes()
-                        @storeYBounds @chart.yAxis[0].getExtremes()
-                        if not @lockZoom
-                          @delayedUpdate()
+                      @storeXBounds @chart.xAxis[0].getExtremes()
+                      @storeYBounds @chart.yAxis[0].getExtremes()
+                      
+                      if not @isZoomLocked()
+                        @delayedUpdate()
+                        ($ '#zoomResetButton').button("disable")
+                      else
+                        ($ '#zoomResetButton').button("enable")
+                        
 
     ###
     Build the dummy series for the legend.
@@ -174,17 +177,18 @@ class window.Scatter extends BaseHighVis
     ###
     Update the chart by removing all current series and recreating them
     ###
-    update: ->
+    update: () ->
         #Remove all series and draw legend
         super()
+        
 
         #Set axis title
         title =
            text: globals.getAxisLabel @xAxis
         @chart.xAxis[0].setTitle title, false
 
-        #Compute max bounds
-        if (@xBounds.userMax is undefined or @xBounds.userMax is null) and not @lockZoom
+        #Compute max bounds if there is no user zoom
+        if not @isZoomLocked()
 
             @yBounds.min = @xBounds.min =  Number.MAX_VALUE
             @yBounds.max = @xBounds.max = -Number.MAX_VALUE
@@ -242,15 +246,10 @@ class window.Scatter extends BaseHighVis
 
                 @chart.addSeries options, false
                 
-        if (@xBounds.userMax isnt undefined and @xBounds.userMax isnt null) or @lockZoom
-          if (@chart.xAxis[0].getExtremes().min is undefined) or @lockZoom
-            @chart.xAxis[0].setExtremes @xBounds.min, @xBounds.max, false
-            @chart.yAxis[0].setExtremes @yBounds.min, @yBounds.max, false
-
-            if (@xBounds.userMax isnt undefined and @xBounds.userMax isnt null)
-              if ($ 'g[title="Reset zoom level 1:1"]').length is 0
-                @chart.showResetZoom()
-        
+        if @isZoomLocked()
+          @chart.xAxis[0].setExtremes @xBounds.min, @xBounds.max, false
+          @chart.yAxis[0].setExtremes @yBounds.min, @yBounds.max, false
+                
         @chart.redraw()
 
         @storeXBounds @chart.xAxis[0].getExtremes()
@@ -265,6 +264,11 @@ class window.Scatter extends BaseHighVis
 
         controls += "<h3 class='clean_shrink'><a href='#'>Tools:</a></h3>"
         controls += "<div class='outer_control_div'>"
+        
+        controls += "<h4 class='clean_shrink'>Zoom</h4>"
+        controls += '<div class="inner_control_div">'
+        controls += "<button id='zoomResetButton' class='zoom_reset_button'>Reset Zoom </button>"
+        controls += "<button id='zoomOutButton' class='zoom_out_button'>Zoom Out </button>"
 
         controls += "<h4 class='clean_shrink'>Display Mode</h4>"
 
@@ -286,13 +290,9 @@ class window.Scatter extends BaseHighVis
         controls += "<input class='full_detail_box' type='checkbox' name='full_detail_selector' #{if @fullDetail then 'checked' else ''}/> Full Detail "
         controls += "</div>"
 
-        controls += '<div class="inner_control_div">'
-        controls += "<input class='lock_zoom_box' type='checkbox' name='lock_zoom_selector' #{if @fullDetail then 'checked' else ''}/> Lock Zoom "
-        controls += "</div>"
-
         if data.logSafe is 1
             controls += '<div class="inner_control_div">'
-            controls += "<input class='logY_box' type='checkbox' name='tooltip_selector' #{if globals.logY is 1 then 'checked' else ''}/> Logarithmic Y Axis "
+            controls += "<input class='logY_box' type='checkbox' name='log_selector' #{if globals.logY is 1 then 'checked' else ''}/> Logarithmic Y Axis "
             controls += "</div>"
 
         if elapsedTimeButton
@@ -305,23 +305,34 @@ class window.Scatter extends BaseHighVis
         # Write HTML
         ($ '#controldiv').append controls
 
+        ($ '#zoomResetButton').button()
+        ($ '#zoomResetButton').click (e) =>
+          @chart.zoomOut()
+          ($ '#zoomResetButton').button("disable")
+        
+        # Set initial state of zoom reset
+        if not @isZoomLocked()
+          ($ '#zoomResetButton').button("disable")
+        else
+          ($ '#zoomResetButton').button("enable")
+        
+        ($ '#zoomOutButton').button()
+        ($ '#zoomOutButton').click (e) =>
+          @zoomOutExtremes()
+        
         ($ '.mode_radio').click (e) =>
             @mode = Number e.target.value
             @delayedUpdate()
 
         ($ '.tooltip_box').click (e) =>
-            @advancedTooltips = ($ '.tooltip_box').is(':checked')
+            @advancedTooltips = (@advancedTooltips + 1) % 2
             true
 
         ($ '.full_detail_box').click (e) =>
-            @fullDetail = ($ '.full_detail_box').is(':checked')
+            @fullDetail = (@fullDetail + 1) % 2
             @delayedUpdate()
             true
-
-        ($ '.lock_zoom_box').click (e) =>
-            @lockZoom = ($ '.lock_zoom_box').is(':checked')
-            true
-
+            
         ($ '.logY_box').click (e) =>
             globals.logY = (globals.logY + 1) % 2
             @start()
@@ -370,14 +381,16 @@ class window.Scatter extends BaseHighVis
         ($ '#controldiv').append controls
 
         # Make xAxis radio handler
-        ($ '.xAxis_input').click (e) =>
+        ($ '.xAxis_input').change (e) =>
             selection = null
             ($ '.xAxis_input').each ()->
                 if @checked
                     selection = @value
             @xAxis = Number selection
 
-            @delayedUpdate()
+            #@delayedUpdate()
+            @update()
+            @resetExtremes()
 
         #Set up accordion
         globals.xAxisOpen ?= 0
@@ -388,6 +401,74 @@ class window.Scatter extends BaseHighVis
 
         ($ '#xAxisControl > h3').click ->
             globals.xAxisOpen = (globals.xAxisOpen + 1) % 2
+
+    ###
+    Checks if the user has requested a specific zoom
+    ###
+    isZoomLocked: ->
+        not (undefined in [@xBounds.userMin, @xBounds.userMax])
+
+    resetExtremes: ->
+        if @chart isnt undefined
+            @xAxisExtremes = @chart.xAxis[0].getExtremes()
+            @yAxisExtremes = @chart.yAxis[0].getExtremes()
+            
+            if @xAxisExtremes isnt undefined then @chart.xAxis[0].setExtremes(@xAxisExtremes['dataMin'],@xAxisExtremes['dataMax'],true)
+            if @yAxisExtremes isnt undefined then @chart.yAxis[0].setExtremes(@yAxisExtremes['dataMin'],@yAxisExtremes['dataMax'],true)
+            
+    getExtremes: ->
+        if @chart isnt undefined
+            @xAxisExtremes = @chart.xAxis[0].getExtremes()
+            @yAxisExtremes = @chart.yAxis[0].getExtremes()
+
+    setExtremes: ->
+        if (@xAxisExtremes isnt undefined) and (@yAxisExtremes isnt undefined)
+            @chart.xAxis[0].setExtremes(@xAxisExtremes['min'],@xAxisExtremes['max'],true)
+            @chart.yAxis[0].setExtremes(@yAxisExtremes['min'],@yAxisExtremes['max'],true)
+            
+    zoomOutExtremes: ->
+      @getExtremes()
+      
+      xRange = @xAxisExtremes.max - @xAxisExtremes.min
+      yRange = @yAxisExtremes.max - @yAxisExtremes.min
+      
+      @xAxisExtremes.max += xRange * 0.1
+      @xAxisExtremes.min -= xRange * 0.1
+      
+      if globals.logY is 1
+        @yAxisExtremes.max *= 10
+        @yAxisExtremes.min /= 10
+      else
+        @yAxisExtremes.max += yRange * 0.1
+        @yAxisExtremes.min -= yRange * 0.1
+      
+      @setExtremes()
+            
+    clearExtremes: ->
+        @xAxisExtremes = undefined;
+        @yAxisExtremes = undefined;
+
+    ###
+    Saves the current zoom level
+    ###
+    end: ->
+        @getExtremes()
+        super()
+        
+    ###
+    Sets the previous zoom level
+    ###
+    start: ->
+        super()
+        @setExtremes()
+        
+    ###
+    Saves the zoom level before cleanup
+    ###
+    serializationCleanup: ->
+        @getExtremes()
+        super()
+        
 
 if "Scatter" in data.relVis
     globals.scatter = new Scatter "scatter_canvas"

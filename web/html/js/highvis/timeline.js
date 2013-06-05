@@ -109,10 +109,6 @@
       });
     };
 
-    Timeline.prototype.drawToolControls = function() {
-      return Timeline.__super__.drawToolControls.call(this, false);
-    };
-
     return Timeline;
 
   })(Scatter);

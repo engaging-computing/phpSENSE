@@ -324,3 +324,14 @@ globals.getAxisLabel = (fieldIndex) ->
     data.fields[fieldIndex].fieldName
   else
     "#{data.fields[fieldIndex].fieldName} (#{data.fields[fieldIndex].unitAbbreviation})"
+        
+###
+Override default highcarts zoom behavior (because it sucks when allowing zoom out)
+###
+Highcharts.Axis.prototype.zoom = (newMin, newMax) ->
+
+  this.displayBtn = newMin != undefined || newMax != undefined
+  
+  this.setExtremes newMin, newMax, true, undefined, {trigger: 'zoom'}
+  
+  true
