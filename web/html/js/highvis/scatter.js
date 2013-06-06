@@ -72,6 +72,7 @@
         userMin: void 0
       };
       this.fullDetail = 0;
+      this.updateOnZoom = 1;
     }
 
     Scatter.prototype.storeXBounds = function(bounds) {
@@ -146,8 +147,18 @@
             afterSetExtremes: function(e) {
               _this.storeXBounds(_this.chart.xAxis[0].getExtremes());
               _this.storeYBounds(_this.chart.yAxis[0].getExtremes());
+              /*
+              +                     If We actually zoomed, we want to update so the data reduction can trigger.
+              +                     Otherwise this zoom was triggered by an update, so don't recurse!
+              +
+              */
+
+              if (_this.updateOnZoom === 1) {
+                _this.delayedUpdate;
+              } else {
+                _this.updateOnZoom = 1;
+              }
               if (!_this.isZoomLocked()) {
-                _this.delayedUpdate();
                 return ($('#zoomResetButton')).button("disable");
               } else {
                 return ($('#zoomResetButton')).button("enable");
@@ -302,6 +313,7 @@
         }
       }
       if (this.isZoomLocked()) {
+        this.updateOnZoom = 0;
         this.chart.xAxis[0].setExtremes(this.xBounds.min, this.xBounds.max, false);
         this.chart.yAxis[0].setExtremes(this.yBounds.min, this.yBounds.max, false);
       }
