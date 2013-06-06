@@ -108,7 +108,7 @@
     for (index = _i = 1, _ref1 = arr.length; 1 <= _ref1 ? _i < _ref1 : _i > _ref1; index = 1 <= _ref1 ? ++_i : --_i) {
       cur = test(arr[index - 1].x, arr[index - 1].y, arr[index].x, arr[index].y);
       if ((!prev) && (!cur)) {
-        arr[index]["delete"] = true;
+        arr[index-1]["delete"] = true;
       }
       prev = cur;
     }

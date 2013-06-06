@@ -105,7 +105,7 @@ globals.clip = (arr, xBounds, yBounds) ->
         cur = test arr[index - 1].x, arr[index - 1].y, arr[index].x, arr[index].y
 
         if (not prev) and (not cur)
-            arr[index].delete = true
+            arr[index-1].delete = true
 
         prev = cur
 
