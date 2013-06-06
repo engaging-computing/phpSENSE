@@ -154,7 +154,7 @@
               */
 
               if (_this.updateOnZoom === 1) {
-                _this.delayedUpdate;
+                _this.delayedUpdate();
               } else {
                 _this.updateOnZoom = 1;
               }

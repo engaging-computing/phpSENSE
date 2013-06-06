@@ -130,7 +130,7 @@ class window.Scatter extends BaseHighVis
 +                     Otherwise this zoom was triggered by an update, so don't recurse!
 +                     ###
                       if @updateOnZoom is 1
-                        @delayedUpdate
+                        @delayedUpdate()
                       else
                         @updateOnZoom = 1
                       
