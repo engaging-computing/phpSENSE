@@ -11,10 +11,10 @@
 
  Requires: rgbcolor.js - http://www.phpied.com/rgb-color-parser-in-javascript/
 
- Highcharts JS v2.3.0 (2012-08-24)
+ Highcharts JS v3.0.2 (2013-06-05)
  CanVGRenderer Extension module
 
- (c) 2011-2012 Torstein H?nsi, Erik Olsson
+ (c) 2011-2012 Torstein Hønsi, Erik Olsson
 
  License: www.highcharts.com/license
 */
