@@ -249,12 +249,20 @@ data.generateElapsedTime = (name, sourceField) ->
             fieldName: name
             typeID: 21
             typeName: 'Numeric'
-            unitAbbreviation: 's'
+            unitAbbreviation: 'ms'
             unitID: 66
             unitName: "Number"
 
     data.numericFields.push (data.fields.length - 1)
     data.normalFields.push (data.fields.length - 1)
+    
+    if globals.scatter instanceof DisabledVis
+      delete globals.scatter
+      globals.scatter = new Scatter "scatter_canvas"
+      ($ "#visTabList li[aria-controls='scatter_canvas'] a").css "text-decoration", ""
+      
+    globals.scatter.xAxis = data.normalFields[data.normalFields.length - 1]
+    ($ "#visTabList li[aria-controls='scatter_canvas'] a").click()
 
 ###
 If there is only one time field, generates an appropriate
