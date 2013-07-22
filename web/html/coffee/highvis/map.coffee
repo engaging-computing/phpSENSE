@@ -72,7 +72,7 @@ class window.Map extends BaseVis
         mapOptions =
             center: new google.maps.LatLng(0,0)
             zoom: 8
-            mapTypeId: google.maps.MapTypeId.SATELLITE
+            mapTypeId: google.maps.MapTypeId.ROADMAP
 
         @gmap = new google.maps.Map(document.getElementById(@canvas), mapOptions)
         
@@ -118,10 +118,15 @@ class window.Map extends BaseVis
                 if groupIndex in globals.groupSelection
                     latlngbounds.extend latlng
 
-                newMarker = new StyledMarker
-                  styleIcon: (new StyledIcon StyledIconTypes.MARKER, {color: color})
+                pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|#{color.slice 1}", new google.maps.Size(21, 34), new google.maps.Point(0,0), new google.maps.Point(10, 34))
+                
+                pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow", new google.maps.Size(40, 37), new google.maps.Point(0, 0), new google.maps.Point(12, 35))
+                
+                newMarker = new google.maps.Marker
                   position: latlng
                   map: @gmap
+                  icon: pinImage
+                  shadow: pinShadow
 
                 google.maps.event.addListener newMarker, 'click', =>
                     info.open @gmap, newMarker
