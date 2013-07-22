@@ -323,10 +323,10 @@
     if (globals.scatter instanceof DisabledVis) {
       delete globals.scatter;
       globals.scatter = new Scatter("scatter_canvas");
-      ($("#visTabList li[aria-controls='scatter_canvas'] a")).css("text-decoration", "");
+      ($("#visTabList li[href='#scatter_canvas'] a")).css("text-decoration", "");
     }
     globals.scatter.xAxis = data.normalFields[data.normalFields.length - 1];
-    return ($("#visTabList li[aria-controls='scatter_canvas'] a")).click();
+    return ($("#visTabList li[href='#scatter_canvas'] a")).click();
   };
 
   /*
